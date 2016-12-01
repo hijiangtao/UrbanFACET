@@ -41,10 +41,11 @@ def queryUserMatrix(dbname, collectname, queryrate, recordsthre = 0):
 
 	if recordsthre != 0:
 		# bug
-		qresult = list(db[collectname].find({'_id': { '$in' : getUsers(recordsthre) }}, {'vec': 1, 'gt11sim': 1, 'whlsim': 1, 'recnum': 1}).sort([ ("_id", 1) ]))
+		qresult = list(db[collectname].find({ '$and': [ { '_id': { '$mod' : [queryrate, 0] } }, { 'recnum': { '$gt': recordsthre } } ] }, {'vec': 1, 'gt11sim': 1, 'whlsim': 1, 'recnum': 1}).sort([ ("_id", 1) ]))
 	else:
 		qresult = list(db[collectname].find({'_id': { '$mod' : [queryrate, 0] }}, {'vec': 1, 'gt11sim': 1, 'whlsim': 1, 'recnum': 1}).sort([ ("_id", 1) ]))
 	
+	print "User query result: %s people." % str(len(qresult))
 	data = {
 		'id': [],
 		'data': []
@@ -83,6 +84,8 @@ def drawFigure(data, featureDict, plotsize, queryrate, fthre):
 	"""
 
 	# Init transformation
+	matrixData = np.asarray( np.array(data['data'])[:, 0:2] )
+	matrixData2 = []
 	queryrate, fthre = str(queryrate), str(fthre)
 	colormap = {
 		'4': '#1924B1',
@@ -94,30 +97,48 @@ def drawFigure(data, featureDict, plotsize, queryrate, fthre):
 	}
 
 	# Scatter plot 
+	X, Y = data['data'][:,0], data['data'][:,1]
+	whlC, gt11C = [], []
+	for x in xrange(0, len(data['id'])):
+		whlSimVal = int(math.floor( featureDict[ str(data['id'][x]) ]['whlsim']*10 ))
+		gt11SimVal = int(math.floor( featureDict[ str(data['id'][x]) ]['gt11sim']*10 ))
+		whlC.append( colormap[ str( whlSimVal ) ] )
+		gt11C.append( colormap[ str( gt11SimVal ) ] )
+		# matrixData[x].append( data['id'][x] )
+		matrixData2.append( [ matrixData[x][0], matrixData[x][1], data['id'][x] ] )
+
+	func.matrixtofile(matrixData2, 'ScatterData-1-in-%s-%s.csv' % (queryrate, fthre))
+
 	scatterTC = TimeConsuming('Scatter Plot-1-in-%s-%s' % (queryrate, fthre))
 	plt.figure()
-	X, Y = data['data'][:,0], data['data'][:,1]
-	C = []
-	for x in xrange(0, len(data['id'])):
-		intSimVal = int(math.floor( featureDict[ str(data['id'][x]) ]['whlsim']*10 ))
-		C.append( colormap[ str( intSimVal ) ] )
+	plt.title('Scatter Plot-1-in-%s-%s' % (queryrate, fthre))
+	plt.scatter(X, Y, s=plotsize, c=whlC, lw=0)
 
-	plt.scatter(X, Y, s=plotsize, c=C, lw=0)
+	# for i, txt in enumerate(data['id']):
+	# 	plt.annotate(txt, (X[i],Y[i]))
+
 	img = plt.gcf()
-	img.savefig('Scatter-figure-1-in-%s-%s.png' % (queryrate, fthre), dpi=300)
+	img.savefig('Scatter-figure-1-in-%s-%s(whl).png' % (queryrate, fthre), dpi=400)
 	scatterTC.end()
 
+	# scatterTC2 = TimeConsuming('Scatter Plot-1-in-%s-%s' % (queryrate, fthre))
+	# plt.figure()
+	# plt.scatter(X, Y, s=plotsize, c=gt11C, lw=0)
+	# img2 = plt.gcf()
+	# img2.savefig('Scatter-figure-1-in-%s-%s(gt11).png' % (queryrate, fthre), dpi=400)
+	# scatterTC2.end()
+
 	# Heatmap matrix
-	hmatrixTC = TimeConsuming('Heatmap Matrix-1-in-%s-%s' % (queryrate, fthre))
-	plt.figure()
-	dmatrix = func.dotstomatrix(data['data'], 15, 310, 0.1 )
-	plt.imshow(dmatrix, cmap='seismic', interpolation='nearest')
-	img = plt.gcf()
-	img.savefig('heatmap-matrix-1-in-%s-%s.png' % (queryrate, fthre), dpi=300)
-	hmatrixTC.end()
+	# hmatrixTC = TimeConsuming('Heatmap Matrix-1-in-%s-%s' % (queryrate, fthre))
+	# plt.figure()
+	# dmatrix = func.dotstomatrix(data['data'], 15, 310, 0.1 )
+	# plt.imshow(dmatrix, cmap='seismic', interpolation='nearest')
+	# img = plt.gcf()
+	# img.savefig('heatmap-matrix-1-in-%s-%s.png' % (queryrate, fthre), dpi=300)
+	# hmatrixTC.end()
 
 	# heatmap matrix saved to file
-	func.matrixtofile(dmatrix, 'matrix-1-in-%s-%s.csv' % (queryrate, fthre))
+	# func.matrixtofile(dmatrix, 'matrix-1-in-%s-%s.csv' % (queryrate, fthre))
 
 	# hm = heatmap.Heatmap()
 	# heatmapimg = hm.heatmap(data, scheme='pbj')
@@ -141,12 +162,12 @@ def selectFeature(data, threshold, typestr):
 	"""Feature selection
 	
 	Args:
-	    data (TYPE): Description
-	    threshold (TYPE): Description
-	    typestr (TYPE): Description
+		data (TYPE): Description
+		threshold (TYPE): Description
+		typestr (TYPE): Description
 	
 	Returns:
-	    TYPE: Description
+		TYPE: Description
 	"""
 	if typestr == 'low-variance':
 		print 'In threshold %s\nbefore feature selection: %s features' % (str(threshold), str(len(data[0])))
@@ -163,13 +184,13 @@ def tsne(data, featureDict, x, queryrate, plotsize):
 	"""t-SNE methods
 	
 	Args:
-	    data (TYPE): Description
-	    x (TYPE): Description
-	    queryrate (TYPE): Description
-	    plotsize (TYPE): Description
+		data (TYPE): Description
+		x (TYPE): Description
+		queryrate (TYPE): Description
+		plotsize (TYPE): Description
 	
 	Returns:
-	    TYPE: Description
+		TYPE: Description
 	"""
 	x = 'tsne-%s' % x 
 	X = np.array( data['data'] )
@@ -191,13 +212,13 @@ def pca(data, featureDict, x, queryrate, plotsize):
 	"""PCA methods
 	
 	Args:
-	    data (TYPE): Description
-	    x (TYPE): Description
-	    queryrate (TYPE): Description
-	    plotsize (TYPE): Description
+		data (TYPE): Description
+		x (TYPE): Description
+		queryrate (TYPE): Description
+		plotsize (TYPE): Description
 	
 	Returns:
-	    TYPE: Description
+		TYPE: Description
 	"""
 	x = 'PCA-%s' % x 
 
@@ -238,10 +259,14 @@ def pca(data, featureDict, x, queryrate, plotsize):
 	# img = plt.gcf()
 	# img.savefig('Scatter-1-in-%s-%s.png' % (str(queryrate), str(x)), dpi=400)
 
+def decompose():
+	pass
+
 if __name__ == '__main__':
 	# parameters' setting
-	queryrate = 10
-	plotsize = 0.3
+	queryrate, queryrate2, queryrate3 = 10, 3, 2
+	plotsize, plotsize2, plotsize3 = 1, 0.8, 0.8
+	recnumthreshold = 11
 	dbname = 'tdBJ'
 	collectname = 'beijing_features'
 	
@@ -258,33 +283,63 @@ if __name__ == '__main__':
 	# conn.close()
 	
 	data, featureDict = queryUserMatrix(dbname, collectname, queryrate)
-	# qdata = func.matrixtoarray(data, rowlist, collist)
+	qdata = func.matrixtoarray(data, rowlist, collist)
 
-	# # 全量feature数据的两种降维方法尝试
+	# # # 全量feature数据的两种降维方法尝试
 	# tsne(qdata, featureDict, 'origin', queryrate, plotsize)
 	# pca(qdata, featureDict, 'origin', queryrate, plotsize)
 
-	# # 按照方差，对全量feature进行筛选，后采用两种降维方法分别尝试
-	# for x in list(func.frange(0, 0.21, 0.05)):
-	# 	gc.collect()
-	# 	sdata = selectFeature(qdata, x, 'low-variance')
-	# 	tsne(sdata, featureDict, 'varthre-%s' % str(x), queryrate, plotsize)
-	# 	pca(sdata, featureDict, 'varthre-%s' % str(x), queryrate, plotsize)
+	# # # 按照方差，对全量feature进行筛选，后采用两种降维方法分别尝试
+	# # for x in list(func.frange(0, 0.21, 0.05)):
+	# # 	gc.collect()
+	# # 	sdata = selectFeature(qdata, x, 'low-variance')
+	# # 	tsne(sdata, featureDict, 'varthre-%s' % str(x), queryrate, plotsize)
+	# # 	pca(sdata, featureDict, 'varthre-%s' % str(x), queryrate, plotsize)
 		
-	# del qdata
+	# # del qdata
 
-	# # 六种不同的时间段feature方案
+	# # # 六种不同的时间段feature方案
 	for x in xrange(0,5):
 		# only deal with the holiday and workday dataset
 		if x == 1 or x == 2:
 			gc.collect()
 			filterqdata = func.matrixtoarray(data, rowcollects[x], collist)
-			tsne(filterqdata, featureDict, 'deftype-%s' % str(x), queryrate, plotsize)
-			pca(filterqdata, featureDict, 'deftype-%s' % str(x), queryrate, plotsize)
+			tsne(filterqdata, featureDict, 'label-deftype-%s' % str(x), queryrate, plotsize)
+			pca(filterqdata, featureDict, 'label-deftype-%s' % str(x), queryrate, plotsize)
 		
-	# # 两种不同的POI类型feature方案
-	# for x in xrange(0,2):
-	# 	gc.collect()
-	# 	filterqdata = func.matrixtoarray(data, rowlist, colcollects[x])
-	# 	tsne(filterqdata, featureDict, 'deftypePOI-%s' % str(x), queryrate, plotsize)
-	# 	pca(filterqdata, featureDict, 'deftypePOI-%s' % str(x), queryrate, plotsize)
+	# # # 两种不同的POI类型feature方案
+	# # for x in xrange(0,2):
+	# # 	gc.collect()
+	# # 	filterqdata = func.matrixtoarray(data, rowlist, colcollects[x])
+	# # 	tsne(filterqdata, featureDict, 'deftypePOI-%s' % str(x), queryrate, plotsize)
+	# # 	pca(filterqdata, featureDict, 'deftypePOI-%s' % str(x), queryrate, plotsize)
+	
+	# # 1/3 rate
+	# data2, featureDict2 = queryUserMatrix(dbname, collectname, queryrate2)
+	# qdata2 = func.matrixtoarray(data2, rowlist, collist)
+
+	# tsne(qdata2, featureDict2, 'origin2', queryrate2, plotsize2)
+	# pca(qdata2, featureDict2, 'origin2', queryrate2, plotsize2)
+	# del qdata2
+
+	# for x in xrange(0,5):
+	# 	if x == 1 or x == 2:
+	# 		gc.collect()
+	# 		filterqdata2 = func.matrixtoarray(data2, rowcollects[x], collist)
+	# 		tsne(filterqdata2, featureDict2, 'deftype2-%s' % str(x), queryrate2, plotsize2)
+	# 		pca(filterqdata2, featureDict2, 'deftype2-%s' % str(x), queryrate2, plotsize2)
+
+	# only control the records number of one user
+	# data3, featureDict3 = queryUserMatrix(dbname, collectname, queryrate3, recnumthreshold)
+	# # qdata3 = func.matrixtoarray(data3, rowlist, collist)
+
+	# # tsne(qdata3, featureDict3, 'origin-recnum', queryrate3, plotsize3)
+	# # pca(qdata3, featureDict3, 'origin-recnum', queryrate3, plotsize3)
+	# # del qdata3
+
+	# for x in xrange(0,5):
+	# 	if x == 1 or x == 2:
+	# 		gc.collect()
+	# 		filterqdata3 = func.matrixtoarray(data3, rowcollects[x], collist)
+	# 		tsne(filterqdata3, featureDict3, 'deftype3-recnum-%s' % str(x), queryrate3, plotsize3)
+	# 		pca(filterqdata3, featureDict3, 'deftype3-recnum-%s' % str(x), queryrate3, plotsize3)

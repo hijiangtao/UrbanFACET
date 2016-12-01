@@ -46,10 +46,9 @@ def matrixtoarray(origin, row, col):
 	Returns:
 		array: in the array, each element is one user's behavior feature array
 	"""
-	result = origin
-	originD = origin['data']
+	originD = np.asarray(origin['data'])
 	data = []
-	colnum, rownum = len(originD[0][0]), len(originD[0])
+	colnum, rownum = len(np.asarray(originD[0][0])), len(originD[0])
 	print 'Start to deal with matrix to array converting work.'
 
 	for x in originD:
@@ -66,9 +65,11 @@ def matrixtoarray(origin, row, col):
 		filterdata.append( tmparray )
 
 	print 'Matrix to array converting work complete!'
-	result['data'] = filterdata
 
-	return result
+	return {
+		'id': origin['id'],
+		'data': filterdata
+	}
 
 def dotstomatrix(data, base, num, interval):
 	"""Change 2D space dots to a density based matrix, in which every grid stores the number of dots belonged to thsi grid
@@ -121,3 +122,6 @@ def frange(x, y, jump):
 	while x < y:
 		yield x
 		x += jump
+
+def timeDisQuery(prop):
+	pass
