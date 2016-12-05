@@ -112,7 +112,7 @@ def matrixtofile(data, filename):
 	for each in data:
 		result.append( ','.join( [str(x) for x in each] ) )
 
-	print '%s lines data are wrote into file.' % str(len(result))
+	print '%s lines data are wrote into %s.' % (str(len(result)), filename)
 
 	with open(filename, 'w') as target:
 		target.writelines( '\n'.join(result) )
