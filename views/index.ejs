@@ -1,11 +1,110 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <style type="text/css" rel="stylesheet" >
+    	@import '/css/style.css';
+    	@import "/css/foundation.css";
+    	@import '/css/leaflet.css';
+    </style>
+</head>
+
+<body>
+	<div class="expanded row">
+	  <div id="userpanel" class="no-lr-margin small-12 large-3 columns">
+	  	<div class="row">
+	  		<!-- operation modes -->
+	  		<div id="moderadio" class="small-12 large-12 columns">
+	  			<h5>Operation Modes</h5>
+	  			<span v-for='btn in modebtngroup'>
+	  				<input type="radio" :name="modebtngroupprop.name" checked="{checked: $index<2}">
+	        		<label class='inputlabel'>{{ btn.label }}</label>
+	  			</span>
+	  		</div>
+
+	  		<!-- city regions -->
+	  		<div id="cityradio" class="small-12 large-12 columns">
+	  			<h5>Region Selection</h5>
+	  			<input type="radio" name="region">
+  				<label>Beijing</label>
+  				<input type="radio" name="region">
+  				<label>Tianjin</label>
+  				<input type="radio" name="region">
+  				<label>Zhangjiakou</label>
+  				
+	  		</div>
+
+	  		<!-- different group people -->
+	  		<div id="groupcontainer" class="small-12 large-12 columns">
+	  			<h5>People Groups</h5>
+	  			<div class="row">
+	  				<div class="small-4 large-2 columns"></div>
+	  				<div class="small-4 large-2 columns"></div>
+	  				<div class="small-4 large-2 columns"></div>
+	  				<div class="small-4 large-2 columns"></div>
+	  				<div class="small-4 large-2 columns"></div>
+	  				<div class="small-4 large-2 columns"></div>
+	  				<div class="small-4 large-2 columns"></div>
+	  			</div>
+	  		</div>
+
+	  		<!-- lasting time selection input range -->
+	  		<div class="small-12 large-12 columns">
+	  			<h5>Lasting Time</h5>
+	  			<input class="expanded" type="range"  min="0" max="100" />
+	  		</div>
+
+	  		<!-- time periods button group -->
+	  		<div class="small-12 large-12 columns button-group">
+	  			<h5>Time Periods</h5>
+	  			<a v-for="btn in timebtngroup" :class="timebtngroupcla" v-on:click='test' track-by="$index">{{ btn.text }}</a>
+	  		</div>
+
+	  		<!--  range -->
+	  		<div class="small-12 large-12 columns">
+		  		<h5>Space Threshold</h5>
+	  			<input class="expanded" type="range"  min="0" max="100" />
+	  		</div>
+
+			<div id="poicheckbox" class="small-12 large-12 columns">
+				<h5>POI Types</h5>
+				<input type="checkbox" checked="">
+  				<label>Food</label>
+  				<input type="checkbox">
+  				<label>Clothes</label>
+  				<input type="checkbox">
+  				<label>Residence</label>
+  				<input type="checkbox">
+  				<label>Transport</label>
+  				<input type="checkbox">
+  				<label>Finance</label>
+  				<input type="checkbox">
+  				<label>Education</label>
+  				<input type="checkbox">
+  				<label>Other</label>
+			</div>
+			<div class="small-12 large-12 columns">
+				<h5>User Record Query</h5>
+			</div>
+	  		<div class="small-8 large-8 columns">
+	  			<input class="tinyinput" type="text" placeholder="Input ID..." v-model="useridstring" v-on:keyup.enter="queryuser">
+	  		</div>
+	  		<div class="small-4 large-4 columns">
+                <button id="recordsquerybtn" class="tiny ui primary button" v-on:click="queryuser">Start</button>
+	  		</div>
+	  	</div>
+	  </div>
+	  <div class="no-lr-margin small-12 large-9 columns">
+	  	<div class="map" id="map"></div>
+	  </div>
+	</div>
+	<script type="text/javascript" src='/dist/common.js'></script>
+	<script src="/dist/<%= name %>.js"></script>
+</body>
+
 </html>

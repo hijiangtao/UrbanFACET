@@ -10,6 +10,25 @@ var users = require('./routes/users');
 
 var app = express();
 
+// webpack
+var webpack = require('webpack'),
+    webpackDevMiddleware = require('webpack-dev-middleware'),
+    webpackHotMiddleware = require('webpack-hot-middleware'),
+    webpackDevConfig = require('./webpack.config.js');
+
+var compiler = webpack(webpackDevConfig);
+
+// attach to the compiler & the server
+app.use(webpackDevMiddleware(compiler, {
+    // public path should be the same with webpack config
+    publicPath: webpackDevConfig.output.publicPath,
+    noInfo: true,
+    stats: {
+        colors: true
+    }
+}));
+app.use(webpackHotMiddleware(compiler));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -20,6 +39,12 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(require('node-sass-middleware')({
+  src: path.join(__dirname, 'public'),
+  dest: path.join(__dirname, 'public'),
+  indentedSyntax: true,
+  sourceMap: true
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
