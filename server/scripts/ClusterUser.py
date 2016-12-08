@@ -26,6 +26,22 @@ def getMatrixfromFile(file):
 	csvfile.close()
 	return np.asarray(feature), np.asarray(idlist)
 
+def getMatrixfromMongo(dbname, collectname, queryrate):
+	conn, db = func.connectMongo(dbname)
+
+	rawdata = list(db[collectname].find({'_id': { '$mod' : [queryrate, 0] }}, {'vec': 1}).sort([ ("_id", 1) ]))
+
+	feature, idlist = [], []
+	for each in rawdata:
+		tmparr = []
+		for x in xrange(0, 6):
+			tmparr = np.concatenate((tmparr,each['vec'][x]), axis=0)
+		feature.append( tmparr )
+		idlist.append( each['_id'] )
+
+	conn.close()
+	return np.asarray(feature), np.asarray(idlist)
+
 def combineArrs(a, b):
 	if len(a) != len(b):
 		return 0
@@ -38,20 +54,22 @@ if __name__ == '__main__':
 	collectname = 'beijing_features'
 	plotsize = 1
 	baseurl = '/home/taojiang/datasets/tdBJ/decomp-data/Feature-Decompose-with-TimeDisColor'
-	files = ['1-in-10-tsne-label-deftype-1', '1-in-10-tsne-label-deftype-2', '1-in-2-tsne-deftype3-recnum-1', '1-in-2-tsne-deftype3-recnum-2', '1-in-2-tsne-origin-recnum']
+	# files = ['1-in-10-tsne-label-deftype-1', '1-in-10-tsne-label-deftype-2', '1-in-2-tsne-deftype3-recnum-1', '1-in-2-tsne-deftype3-recnum-2', '1-in-2-tsne-origin-recnum']
+	files = ['1-in-10-tsne-label-deftype-1']
 
 	for each in files:
 		feature, idlist = getMatrixfromFile(os.path.join(baseurl, 'ScatterData-%s.csv' % each))
+		feature2, idlist2 = getMatrixfromMongo('tdBJ', 'beijing_features', 10)
 
 		for x in xrange(3, 14):
 			lablist = [i for i in xrange(0,x)]
 
-			Y = KMeans(n_clusters=x, random_state=0).fit(feature)
-			y_predict = Y.predict(feature)
+			Y = KMeans(n_clusters=x, random_state=0).fit(feature2)
+			y_predict = Y.predict(feature2)
 			plt.figure()
 			
 			plt.scatter(feature[:,0], feature[:,1], s=plotsize, c=Y.labels_, edgecolors='none', cmap=plt.cm.coolwarm)
-			plt.title("%s(k=%s) KMeans cluster" % (each, str(x)))
+			plt.title("%s(k=%s) KMeans cluster(origin)" % (each, str(x)))
 			
 			recs = []
 			colorlist = [plt.cm.coolwarm(i) for i in xrange(0, x)]

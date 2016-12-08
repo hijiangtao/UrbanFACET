@@ -28,7 +28,9 @@ input[type=range] {
   width: 100%;
   background: transparent; }
 
-#poicheckbox > label, #moderadio > span > label {
+#poicheckbox > label,
+#moderadio > span > label,
+#cityradio > label {
   margin-left: 0.1rem;
   margin-right: .6rem; }
 
