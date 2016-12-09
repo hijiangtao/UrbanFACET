@@ -10,7 +10,7 @@ from area import area
 import pymongo
 import numpy as np
 from geojson_utils import centroid
-from CommonFunc import calFeatureType, connectMongo
+from CommonFunc import getCityLocs, calFeatureType, connectMongo
 
 class POICollection(object):
 	"""docstring for POICollection"""
@@ -219,67 +219,6 @@ class POICollection(object):
 
 		outfile.close()
 
-	def gridGeneration(self, split):
-		"""Generate city grids data and store them into mongoDB, collection: beijing_grid
-		
-		Args:
-			split (Float): Divide interval
-		
-		Returns:
-			NULL: Description
-		"""
-		# print self.citylocs['north']
-		logging.info("Grid generation starting...")
-
-		count = 100000
-		tmparray = []
-		latnum = int((self.citylocs['north'] - self.citylocs['south']) / split + 1)
-		lngnum = int((self.citylocs['east'] - self.citylocs['west']) / split + 1)
-
-		conn, db = connectMongo(self.db.dbname)
-		grid = db[self.db.gridcolname]
-
-		for latind in xrange(0, latnum):
-			for lngind in xrange(0, lngnum):
-				lat = self.citylocs['south'] + latind * split
-				lng = self.citylocs['west'] + lngind * split
-				# 一个正方形 geojson 对象，代表当前方块对应的地理边界
-				coordsarr = [ [lng, lat], [lng + 0.001, lat], [lng + 0.001, lat + 0.001], [lng, lat + 0.001], [lng, lat] ]
-
-				# single feature format
-				# uid: to locate grid index according to it's lat and lng
-				# vec: feature type
-				# center: center position of current feature
-				tmparray.append({
-					"type": "Feature",
-					"_id": "%s-%s-%s" % (self.city, str(lat), str(lng)),
-					"properties": {
-						"id": "%s-%s-%s" % (self.city, str(lat), str(lng)),
-						"type": "Polygon",
-						"center": {"type": "Point", "coordinates": [lng + 0.0005, lat + 0.0005]},
-						"uid": int(lngind + latind * lngnum),
-						"vec": [0]*11
-					},
-					"geometry": {
-						"type": "Polygon",
-						"coordinates": [ coordsarr ]
-					}
-				})
-
-				if len( tmparray ) == 100000:
-					grid.insert( tmparray )
-					tmparray = []
-					logging.debug("100000 features has been inserted into mongoDB.")
-
-		if len( tmparray ) != 0:
-			grid.insert( tmparray )
-
-		grid.createIndex({
-			"geometry": "2dsphere"
-		})
-		conn.close()
-		logging.info("Grid generation complete!")
-
 def usage():
 	print 'python POIExtraction.py -c <city> -d <work direcotry>'
 
@@ -301,23 +240,7 @@ def main(argv):
 		elif opt in ("-d", "--direcotry"):
 			dic = arg
 
-	# 城市边界信息列表
-	citylocslist = {
-		'beijing': {
-			'north': 40.412,
-			'south': 39.390,
-			'west': 115.642,
-			'east': 117.153
-		}，
-		'tianjin': {
-
-		},
-		'zhangjiakou': {
-
-		}
-	}
-
-	cityins = POICollection(city, citylocslist[city], 'POI', dic)
+	cityins = POICollection(city, func.getCityLocs(city), 'POI', dic)
 	# 建立 POI 列表
 	pois = cityins.readFiletoJson("%s_china_fPOI.geojson" % city)
 	# 向 POI 完善附加信息并存入文件

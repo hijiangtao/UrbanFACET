@@ -5,19 +5,28 @@
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
 
-import os, math, sys, time
+import os, math, sys, getopt, logging, time, pymongo
 import numpy as np
 from scipy import stats
-import pymongo
-# https://pypi.python.org/pypi/geopy/1.11.0
-from geopy.distance import great_circle
+from geopy.distance import great_circle # https://pypi.python.org/pypi/geopy/1.11.0
+from CommonFunc import connectMongo, getCityLocs
 
 class CityGrid(object):
 	"""docstring for CityGrid"""
-	def __init__(self, defaultRadius):
+	def __init__(self, city, citylocs, baseurl, defaultRadius):
 		super(CityGrid, self).__init__()
+		self.city = city
 		self.citylocs = {'north': 40.412, 'south': 39.390, 'west': 115.642, 'east': 117.153}
 		self.defaultRadius = defaultRadius
+		self.maxQRadius = 500
+		self.baseurl = baseurl
+		self.db = {
+			'url': '192.168.1.42',
+			'port': 27017,
+			'dbname': 'tdVC',
+			'gridcolname': 'grids_%s' % city,
+			'POIcolname': 'pois_%s' % city
+		}
 
 	def gridGeneration(self, split, gridname, poiname, locs={}):
 		"""Generate City Grid sets
@@ -31,7 +40,7 @@ class CityGrid(object):
 		Returns:
 		    NULL: Description
 		"""
-		print "CityGrid generation is starting..."
+		logging.info("CityGrid generation is starting...")
 
 		if locs != {}:
 			self.citylocs = locs
@@ -41,30 +50,30 @@ class CityGrid(object):
 		latnum = int((self.citylocs['north'] - self.citylocs['south']) / split + 1)
 		lngnum = int((self.citylocs['east'] - self.citylocs['west']) / split + 1)
 
-		client = pymongo.MongoClient('localhost', 27017)
-		db = client.tdBJ
-		grid = db[gridname]
-		POIs = db[poiname]
+		conn, db = connectMongo(self.db.dbname)
+		grid = db[self.db.gridcolname]
+		POIs = db[self.POIcolname]
 
 		for latind in xrange(0, latnum):
 			for lngind in xrange(0, lngnum):
 				lat = self.citylocs['south'] + latind * split
 				lng = self.citylocs['west'] + lngind * split
+				# 一个正方形 geojson 对象，代表当前方块对应的地理边界
 				coordsarr = [ [lng, lat], [lng + 0.001, lat], [lng + 0.001, lat + 0.001], [lng, lat + 0.001], [lng, lat] ]
 
 				featurelistarray = [0]*11
 				typevalid = False
 
-				# query all the POIs less than 2000 meters
+				# query all the POIs less than maxQRadius
 				nearPOIList = list(POIs.find({
-									"properties.center": {
-										'$near': {
-											'$geometry': { 'type': "Point", 'coordinates': [ lng+0.0005, lat+0.0005 ] },
-											'$minDistance': 0,
-											'$maxDistance': 2000
-										}
-									}
-								}))
+					"properties.center": {
+						'$near': {
+							'$geometry': { 'type': "Point", 'coordinates': [ lng+0.0005, lat+0.0005 ] },
+							'$minDistance': 0,
+							'$maxDistance': self.maxQRadius
+						}
+					}
+				}))
 				
 				# construct vector with POIs types info
 				if len(nearPOIList) != 0:
@@ -74,13 +83,13 @@ class CityGrid(object):
 					for each in nearPOIList:
 						cpoint = each["properties"]["center"]["coordinates"]
 						radius = each["properties"]["radius"]
+						sigma = self.defaultRadius * 2
 						if radius > 0:
-							p = self.gaussian2D([lng+0.0005, lat+0.0005], cpoint, radius*2 )
-						else:
-							p = self.simple2D([lng+0.0005, lat+0.0005], cpoint)
+							sigma = radius * 2
+						P = self.gaussian2D([lng+0.0005, lat+0.0005], cpoint, radius*2 )
 						
 						curPInd = each["properties"]["ftype"] - 1
-						abbP = featurelistarray[ curPInd ] + p
+						abbP = featurelistarray[ curPInd ] + P
 
 						if abbP > 1:
 							featurelistarray[ curPInd ] = 1
@@ -93,9 +102,9 @@ class CityGrid(object):
 				# center: center position of current feature
 				tmparray.append({
 					"type": "Feature",
-					"_id": "BJ-%s-%s" % (str(lat), str(lng)),
+					"_id": "%s-%s-%s" % (self.city, str(lat), str(lng)),
 					"properties": {
-						"id": "BJ-%s-%s" % (str(lat), str(lng)),
+						"id": "%s-%s-%s" % (self.city, str(lat), str(lng)),
 						"type": "Polygon",
 						"typevalid": typevalid,
 						"center": {"type": "Point", "coordinates": [lng + 0.0005, lat + 0.0005]},
@@ -111,7 +120,7 @@ class CityGrid(object):
 				if len( tmparray ) == 100000:
 					grid.insert( tmparray )
 					tmparray = []
-					print "100000 features has been inserted into mongoDB."
+					logging.debug("100000 features has been inserted into mongoDB.")
 
 		if len( tmparray ) != 0:
 			grid.insert( tmparray )
@@ -128,23 +137,8 @@ class CityGrid(object):
 			raise e
 		
 
-		print "Grid generation complete!"
-		client.close()
-
-	def simple2D(self, source, target):
-		"""Simple 2D possibility function, gaussian distribution with scale as default radius
-		
-		Args:
-		    source (object): A geojson object
-		    target (object): A geojson object
-		
-		Returns:
-		    float: Distance between two points
-		"""
-		d = great_circle(source, target).meters
-		X = stats.norm(loc=0, scale=self.defaultRadius**2)
-
-		return (1-X.cdf(d)) * 2
+		logging.info("Grid generation complete!")
+		conn.close()
 
 	def gaussian2D(self, source, target, sigma):
 		"""Gaussian distribution function
@@ -162,7 +156,27 @@ class CityGrid(object):
 		
 		return (1-X.cdf(d)) * 2
 
-if __name__ == "__main__":
+def usage():
+	# print 'python POIExtraction.py -c <city> -d <work direcotry>'
+
+def main(argv):
+	try:
+		opts, args = getopt.getopt(argv, "hc:d:", ["help", "city=", "direcotry="])
+	except getopt.GetoptError as err:
+		# print help information and exit:
+		print str(err)  # will print something like "option -a not recognized"
+		usage()
+		sys.exit(2)
+
+	for opt, arg in opts:
+		if opt == '-h':
+			usage()
+			sys.exit()
+		# elif opt in ("-c", "--city"):
+		# 	city = arg
+		# elif opt in ("-d", "--direcotry"):
+		# 	dic = arg
+		
 	start_time = time.time()
 
 	bjGrid = CityGrid(10)
@@ -181,4 +195,8 @@ if __name__ == "__main__":
 	#     job()
 	# job_server.print_stats()
 
-	print "City grid construction consumption: %s s" % str(time.time() - start_time)
+	logging.info("City grid construction consumption: %s s" % str(time.time() - start_time))
+
+if __name__ == "__main__":
+	logging.basicConfig(filename='logger.log', level=logging.DEBUG)
+	main(sys.argv[1:])

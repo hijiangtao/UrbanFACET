@@ -126,6 +126,25 @@ def frange(x, y, jump):
 def timeDisQuery(prop):
 	pass
 
+def getCityLocs(city):
+	# 城市边界信息列表
+	citylocslist = {
+		'beijing': {
+			'north': 40.412,
+			'south': 39.390,
+			'west': 115.642,
+			'east': 117.153
+		}，
+		'tianjin': {
+
+		},
+		'zhangjiakou': {
+
+		}
+	}
+
+	return citylocslist[city]
+
 def calFeatureType(data):
 	"""Calculate feature type and return it's represented index number, 1-11 is available features, 12 is the abandoned type
 	
