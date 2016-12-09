@@ -5,7 +5,7 @@
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
 
-import os, csv, gc
+import os, csv, gc, getopt
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans

@@ -5,37 +5,44 @@
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
 
-import os, json, csv, math
+import os, json, csv, math, sys, getopt, logging
 from area import area
 import pymongo
 import numpy as np
 from geojson_utils import centroid
+from CommonFunc import calFeatureType, connectMongo
 
 class POICollection(object):
 	"""docstring for POICollection"""
-	def __init__(self, city, citylocs, type, baseurl):
+	def __init__(self, city, citylocs, datatype, baseurl):
 		"""Initialization
 		
 		Args:
-		    city (String): City code, such as "BJ"
-		    citylocs (Object): Store the four direction locations of current city (region)
-		    type (String): Define the processed data type, "POI"
-		    baseurl (String): the basic path of POI files
+			city (String): City code, such as "BJ"
+			citylocs (Object): Store the four direction locations of current city (region)
+			type (String): Define the processed data type, "POI"
+			baseurl (String): the basic path of POI files
 		"""
 		super(POICollection, self).__init__()
 		self.city = city
 		self.citylocs = citylocs
-		self.type = type
+		self.type = datatype
 		self.baseurl = baseurl
+		self.db = {
+			'url': '192.168.1.42',
+			'port': 27017,
+			'dbname': 'tdVC',
+			'gridcolname': 'grids_%s' % city
+		}
 		
 	def readFiletoJson(self, name):
 		"""Read file and return the POIs object (not null or way objects)
 		
 		Args:
-		    name (String): File name
+			name (String): File name
 		
 		Returns:
-		    Object: POI Collection
+			Object: POI Collection
 		"""
 		with open(os.path.join(self.baseurl, name)) as f:
 			# 
@@ -62,42 +69,34 @@ class POICollection(object):
 							typelist.append(poitype)
 							count[poitype] = 1
 
-						# 
+						# Statistics landuse POI's number in total
 						if "landuse" in each["properties"]:
-							# print "Landuse POI: %s" % each["properties"]["name"]
 							landusecount += 1
 
-				print "Construct a list contains %d POIs from file:%s" % (len(notnulldata["features"]), name)
+				logging.info("POI list has been constructed, contains %d objects from file: %s" % (len(notnulldata["features"]), name))
 				for key, value in count.items():
-					print "POI type: %s, number: %d" % (key, value)
+					logging.info("POI type: %s, number: %d" % (key, value))
 
-				print "Landuse Feature Number: %d" % landusecount
+				logging.info("Landuse Feature Number: %d" % landusecount)
+
 				return notnulldata
 			else:
 				return {}
 
 	def formatPOI(self, name):
-		"""Read POI file and transfer it into POI list
+		"""Read POI file and transfer it into POI list, ABANDONED
 		
 		Args:
-		    name (String): File name
+			name (String): File name
 		
 		Returns:
-		    List: POI list
+			List: POI list
 		"""
 		# store POI list
 		data = list()
-
 		# options for transfer GEO-ID to id in geojson object
-		options = {
-			"N": "node/",
-			"W": "way/",
-			"R": "relation/"
-		}
-		count = {
-			"N": 0,
-			"R": 0
-		}
+		options = { "N": "node/", "W": "way/", "R": "relation/" }
+		count = { "N": 0, "R": 0 }
 
 		with open(os.path.join(self.baseurl, name)) as f:
 			spamreader = f.readlines()
@@ -111,35 +110,34 @@ class POICollection(object):
 					data.append(options[ptype] + rawid[1:])
 					count[ptype] += 1
 
-		print "Extract %d Nodes and %d Relations from results." % (count["N"], count["R"])
+		logging.info("Extract %d Nodes and %d Relations from results." % (count["N"], count["R"]))
 		return data
 
 	def filterObj(self, filterlist, objset):
-		"""Filter object according to given list
+		"""Filter object according to given list, ABANDONED
 		
 		Args:
-		    filterlist (List): Description
-		    objset (Object): Description
+			filterlist (List): Description
+			objset (Object): Description
 		
 		Returns:
-		    List: Filtered POI list
+			List: Filtered POI list
 		"""
 		data = list()
 		for x in objset:
-			if x[id] in filterlist:
+			if x['id'] in filterlist:
 				data.append(x)
-
 		return data
 
 	def writeFile(self, data, name):
 		"""Write object to json file
 		
 		Args:
-		    data (Object): Description
-		    name (String): Description
+			data (Object): Description
+			name (String): Description
 		
 		Returns:
-		    NULL: Description
+			NULL: Description
 		"""
 		with open(os.path.join(self.baseurl, name), 'wb') as outfile:
 			json.dump(data, outfile)
@@ -149,25 +147,26 @@ class POICollection(object):
 		"""Append feature attributes, input and output are both featurecollection
 		
 		Args:
-		    data (Object): POI Collection Object
+			data (Object): POI Collection Object
 		
 		Returns:
-		    Object: POI Collection Object with attributes' appended into each of single POI
+			Object: POI Collection Object with attributes' appended into each of single POI
 		"""
-		print "Atrributes appending starting..."
+		logging.info("Atrributes appending starting...")
 		result = {"type": "FeatureCollection", "features": []}
 
 		features = data["features"]
 		featurelen = len(features)
 		for i in xrange(featurelen):
+			# 当前 POI 对象
 			currentObj = data["features"][i]
+			# 当前 POI 类型
 			geotype = currentObj['geometry']['type']
+			# 当前 POI 对应面积与半径
 			areaval = self.calArea(currentObj["geometry"])
-			if areaval >= 0:
-				radius = math.sqrt(areaval / math.pi)
-			else:
-				radius = 0
-			featureType = self.calFeatureType(currentObj["properties"])
+			radius = math.sqrt(areaval / math.pi)
+
+			featureType = calFeatureType(currentObj["properties"])
 
 			if featureType != 12:
 				currentObj["properties"]["area"] = areaval
@@ -180,91 +179,20 @@ class POICollection(object):
 					currentObj["properties"]["center"] = centroid( currentObj["geometry"] )
 				else:
 					currentObj['properties']['center'] = { "type": "Point", "coordinates": [0,0] }
-					# judge if polygon coordinates loop is closed
-					# if not np.array_equal( np.array(currentObj["geometry"]["coordinates"][0][0]), np.array(currentObj["geometry"]["coordinates"][0][-1]) ):
-					# 	currentObj["geometry"]["coordinates"][0].append( currentObj["geometry"]["coordinates"][0][0] )
 
 				result["features"].append(currentObj)
 			
-		print "Atrributes appending complete!"
+		logging.info("Atrributes appending complete!")
 		return result
-
-	def calFeatureType(self, data):
-		"""Calculate feature type and return it's represented index number
-		
-		Args:
-		    data (Object): One POI's properties
-		
-		Returns:
-		    Int: index number
-		"""
-		amen_sustenance = ['bar', 'bbq', 'biergarten', 'cafe', 'drinking_water', 'fast_food', 'food_court', 'ice_cream', 'pub', 'restaurant' ]
-		amen_education = ['college', 'kindergarten', 'library', 'public_bookcase', 'school', 'music_school', 'driving_school', 'language_school', 'university']
-		amen_transportation = ['bicycle_parking', 'bicycle_repair_station', 'bicycle_rental', 'boat_sharing', 'bus_station', 'car_rental', 'car_sharing', 'car_wash', 'charging_station', 'ferry_terminal', 'fuel', 'grit_bin', 'motorcycle_parking', 'parking', 'parking_entrance', 'parking_space', 'taxi']
-		amen_financial = ['atm', 'bank', 'bureau_de_change']
-		amen_healthcare = ['baby_hatch', 'clinic', 'dentist', 'doctors', 'hospital', 'nursing_home', 'pharmacy', 'social_facility', 'veterinary', 'blood_donation']
-		amen_eac = ['arts_centre', 'brothel', 'casino', 'cinema', 'community_centre', 'fountain', 'gambling', 'nightclub', 'planetarium', 'social_centre', 'stripclub', 'studio', 'swingerclub', 'theatre']
-		build_accommodation = ['apartments', 'farm', 'hotel', 'house', 'detached', 'residential', 'dormitory', 'terrace', 'houseboat', 'bungalow', 'static_caravan']
-		build_commercial = ['commercial', 'industrial', 'retail', 'warehouse']
-		build_civic = ['cathedral', 'chapel', 'church', 'mosque', 'temple', 'synagogue', 'shrine', 'civic', 'stadium', 'train_station', 'transportation', 'public']
-		build_civic_hc = ['hospital']
-		build_civic_edu = ['school', 'university']
-
-		datakeyset = data.keys()
-		if "amenity" in datakeyset:
-			featurekey = data["amenity"]
-			if featurekey in amen_sustenance:
-				return 1
-			elif featurekey in amen_eac:
-				return 2
-			elif featurekey in amen_education:
-				return 3
-			elif featurekey in amen_transportation:
-				return 4
-			elif featurekey in amen_healthcare:
-				return 5
-			elif featurekey in amen_financial:
-				return 6
-			else:
-				return 11
-		elif "building" in datakeyset:
-			featurekey = data["building"]
-			if featurekey in build_accommodation:
-				return 7
-			elif featurekey in build_commercial:
-				return 6
-			elif featurekey in build_civic:
-				return 4
-			elif featurekey in build_civic_edu:
-				return 3
-			elif featurekey in build_civic_hc:
-				return 5
-			else:
-				return 11
-		elif "emergency" in datakeyset:
-			return 5
-		elif "office" in datakeyset:
-			return 8
-		elif "leisure" in datakeyset or "shop" in datakeyset or "tourism" in datakeyset:
-			return 2
-		elif "natural" in datakeyset:
-			return 9
-		elif "craft" in datakeyset:
-			return 10
-		elif "historic" in datakeyset:
-			return 11
-		
-
-		return 12
 
 	def calArea(self, data):
 		"""Calculate feature area and return it
 		
 		Args:
-		    data (Object): Geojson object
+			data (Object): Geojson object
 		
 		Returns:
-		    Float: area value
+			Float: area value
 		"""
 		areaval = area(data)
 		if areaval < 0:
@@ -273,20 +201,21 @@ class POICollection(object):
 		return areaval
 
 	def extractLanduse(self, data, name):
-		"""Extract features of landuse type and write the data into csv file
+		"""Extract features of landuse type and write the data into csv file, ADANDONED
 		
 		Args:
-		    data (Object): FeatureCollection
-		    name (String): File name
+			data (Object): FeatureCollection
+			name (String): File name
 		
 		Returns:
-		    NULL: Description
+			NULL: Description
 		"""
 		with open(os.path.join(self.baseurl, name), 'wb') as outfile:
+			outfile.write('ID,NAME,LANDUSE-TYPE,GEO-TYPE\n')
 			for each in data["features"]:
 				if "landuse" in each["properties"].keys():
 					item = each["properties"]
-					outfile.write(item["id"].encode('utf-8') + "," + item["name"].encode('utf-8') + "," + item["landuse"].encode('utf-8') + "," + each["geometry"]["type"].encode('utf-8') + "\n")
+					outfile.write('%s,%s,%s,%s\n' % (item["id"].encode('utf-8'), item["name"].encode('utf-8'), item["landuse"].encode('utf-8'), each["geometry"]["type"].encode('utf-8')))
 
 		outfile.close()
 
@@ -294,27 +223,27 @@ class POICollection(object):
 		"""Generate city grids data and store them into mongoDB, collection: beijing_grid
 		
 		Args:
-		    split (Float): Divide interval
+			split (Float): Divide interval
 		
 		Returns:
-		    NULL: Description
+			NULL: Description
 		"""
 		# print self.citylocs['north']
-		print "Grid generation starting..."
+		logging.info("Grid generation starting...")
 
 		count = 100000
 		tmparray = []
 		latnum = int((self.citylocs['north'] - self.citylocs['south']) / split + 1)
 		lngnum = int((self.citylocs['east'] - self.citylocs['west']) / split + 1)
 
-		client = pymongo.MongoClient('localhost', 27017)
-		db = client.tdBJ
-		grid = db.beijing_grid
+		conn, db = connectMongo(self.db.dbname)
+		grid = db[self.db.gridcolname]
 
 		for latind in xrange(0, latnum):
 			for lngind in xrange(0, lngnum):
 				lat = self.citylocs['south'] + latind * split
 				lng = self.citylocs['west'] + lngind * split
+				# 一个正方形 geojson 对象，代表当前方块对应的地理边界
 				coordsarr = [ [lng, lat], [lng + 0.001, lat], [lng + 0.001, lat + 0.001], [lng, lat + 0.001], [lng, lat] ]
 
 				# single feature format
@@ -323,9 +252,9 @@ class POICollection(object):
 				# center: center position of current feature
 				tmparray.append({
 					"type": "Feature",
-					"_id": "BJ-%s-%s" % (str(lat), str(lng)),
+					"_id": "%s-%s-%s" % (self.city, str(lat), str(lng)),
 					"properties": {
-						"id": "BJ-%s-%s" % (str(lat), str(lng)),
+						"id": "%s-%s-%s" % (self.city, str(lat), str(lng)),
 						"type": "Polygon",
 						"center": {"type": "Point", "coordinates": [lng + 0.0005, lat + 0.0005]},
 						"uid": int(lngind + latind * lngnum),
@@ -340,7 +269,7 @@ class POICollection(object):
 				if len( tmparray ) == 100000:
 					grid.insert( tmparray )
 					tmparray = []
-					print "100000 features has been inserted into mongoDB."
+					logging.debug("100000 features has been inserted into mongoDB.")
 
 		if len( tmparray ) != 0:
 			grid.insert( tmparray )
@@ -348,21 +277,53 @@ class POICollection(object):
 		grid.createIndex({
 			"geometry": "2dsphere"
 		})
+		conn.close()
+		logging.info("Grid generation complete!")
 
-		print "Grid generation complete!"
+def usage():
+	print 'python POIExtraction.py -c <city> -d <work direcotry>'
+
+def main(argv):
+	try:
+		opts, args = getopt.getopt(argv, "hc:d:", ["help", "city=", "direcotry="])
+	except getopt.GetoptError as err:
+		# print help information and exit:
+		print str(err)  # will print something like "option -a not recognized"
+		usage()
+		sys.exit(2)
+
+	for opt, arg in opts:
+		if opt == '-h':
+			usage()
+			sys.exit()
+		elif opt in ("-c", "--city"):
+			city = arg
+		elif opt in ("-d", "--direcotry"):
+			dic = arg
+
+	# 城市边界信息列表
+	citylocslist = {
+		'beijing': {
+			'north': 40.412,
+			'south': 39.390,
+			'west': 115.642,
+			'east': 117.153
+		}，
+		'tianjin': {
+
+		},
+		'zhangjiakou': {
+
+		}
+	}
+
+	cityins = POICollection(city, citylocslist[city], 'POI', dic)
+	# 建立 POI 列表
+	pois = cityins.readFiletoJson("%s_china_fPOI.geojson" % city)
+	# 向 POI 完善附加信息并存入文件
+	cityins.writeFile(cityins.appendAttr(pois), "%s_china_fPOI_with_area_prop.geojson" % city)
 
 if __name__ == "__main__":
+	logging.basicConfig(filename='logger.log', level=logging.DEBUG)
 	# 抽取 POI 并添加半径、面积、中心点等信息，存入文件
-	bj = POICollection("BJ", {
-				'north': 40.412,
-				'south': 39.390,
-				'west': 115.642,
-				'east': 117.153
-			}, "POI", "/home/taojiang/tools")
-
-	# 建立 POI 列表
-	pois = bj.readFiletoJson("beijing_china_fPOI.geojson")
-	# 向 POI 完善附加信息并存入文件
-	bj.writeFile(bj.appendAttr(pois), "beijing_china_fPOI_with_area_prop.geojson")
-	# 生成城市网格依据数据初始化数据库：在本脚本不使用
-	# bj.gridGeneration(0.001)
+	main(sys.argv[1:])

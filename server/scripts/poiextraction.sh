@@ -2,7 +2,7 @@
 
 cd /home/taojiang/git/socialgroupVisualComparison/server/scripts
 
-python ./POIExtraction.py
+python ./POIExtraction.py -c beijing -d /home/taojiang/tools
 
 cd /home/taojiang/tools
 

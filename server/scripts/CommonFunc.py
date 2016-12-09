@@ -125,3 +125,71 @@ def frange(x, y, jump):
 
 def timeDisQuery(prop):
 	pass
+
+def calFeatureType(data):
+	"""Calculate feature type and return it's represented index number, 1-11 is available features, 12 is the abandoned type
+	
+	Args:
+		data (Object): One POI's properties
+	
+	Returns:
+		Int: index number
+	"""
+	amen_sustenance = ['bar', 'bbq', 'biergarten', 'cafe', 'drinking_water', 'fast_food', 'food_court', 'ice_cream', 'pub', 'restaurant' ]
+	amen_education = ['college', 'kindergarten', 'library', 'public_bookcase', 'school', 'music_school', 'driving_school', 'language_school', 'university']
+	amen_transportation = ['bicycle_parking', 'bicycle_repair_station', 'bicycle_rental', 'boat_sharing', 'bus_station', 'car_rental', 'car_sharing', 'car_wash', 'charging_station', 'ferry_terminal', 'fuel', 'grit_bin', 'motorcycle_parking', 'parking', 'parking_entrance', 'parking_space', 'taxi']
+	amen_financial = ['atm', 'bank', 'bureau_de_change']
+	amen_healthcare = ['baby_hatch', 'clinic', 'dentist', 'doctors', 'hospital', 'nursing_home', 'pharmacy', 'social_facility', 'veterinary', 'blood_donation']
+	amen_eac = ['arts_centre', 'brothel', 'casino', 'cinema', 'community_centre', 'fountain', 'gambling', 'nightclub', 'planetarium', 'social_centre', 'stripclub', 'studio', 'swingerclub', 'theatre']
+	build_accommodation = ['apartments', 'farm', 'hotel', 'house', 'detached', 'residential', 'dormitory', 'terrace', 'houseboat', 'bungalow', 'static_caravan']
+	build_commercial = ['commercial', 'industrial', 'retail', 'warehouse']
+	build_civic = ['cathedral', 'chapel', 'church', 'mosque', 'temple', 'synagogue', 'shrine', 'civic', 'stadium', 'train_station', 'transportation', 'public']
+	build_civic_hc = ['hospital']
+	build_civic_edu = ['school', 'university']
+
+	datakeyset = data.keys()
+	if "amenity" in datakeyset:
+		featurekey = data["amenity"]
+		if featurekey in amen_sustenance:
+			return 1
+		elif featurekey in amen_eac:
+			return 2
+		elif featurekey in amen_education:
+			return 3
+		elif featurekey in amen_transportation:
+			return 4
+		elif featurekey in amen_healthcare:
+			return 5
+		elif featurekey in amen_financial:
+			return 6
+		else:
+			return 11
+	elif "building" in datakeyset:
+		featurekey = data["building"]
+		if featurekey in build_accommodation:
+			return 7
+		elif featurekey in build_commercial:
+			return 6
+		elif featurekey in build_civic:
+			return 4
+		elif featurekey in build_civic_edu:
+			return 3
+		elif featurekey in build_civic_hc:
+			return 5
+		else:
+			return 11
+	elif "emergency" in datakeyset:
+		return 5
+	elif "office" in datakeyset:
+		return 8
+	elif "leisure" in datakeyset or "shop" in datakeyset or "tourism" in datakeyset:
+		return 2
+	elif "natural" in datakeyset:
+		return 9
+	elif "craft" in datakeyset:
+		return 10
+	elif "historic" in datakeyset:
+		return 11
+	
+
+	return 12
