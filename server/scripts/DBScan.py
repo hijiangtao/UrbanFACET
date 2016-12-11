@@ -108,7 +108,7 @@ def plotFeature(data, clusters, clusterNum):
 	for i in range(clusterNum + 1):
 		colorSytle = scatterColors[i % len(scatterColors)]
 		subCluster = data[:, np.nonzero(matClusters[:, 0].A == i)]
-		ax.scatter(subCluster[0, :].flatten().A[0], subCluster[1, :].flatten().A[0], c=colorSytle, s=50, label= "noise" if i==0 else i)
+		ax.scatter(subCluster[0, :].flatten().A[0], subCluster[1, :].flatten().A[0], c=colorSytle, s=6, lw=0, label= "noise" if i==0 else i)
 
 	ax.legend(loc=1, scatterpoints=1, ncol=3, fontsize=8)
 
@@ -129,15 +129,19 @@ def main():
 	}, {
 		"name": "all",
 		"minPts": 14
+	}],
+	mode3 = [{
+		'name': 'all',
+		'minPts': 20
 	}]
 
-	for x in mode:
+	for x in mode3:
 		
-		dataSet = loadDataSet('./data/5081.csv', ',', 2, 1, 3, x["name"])
+		dataSet = loadDataSet('../data/2D-ScatterData_1-in-10_tsne-workday.csv', ',', 0, 1, 2, x["name"])
 		dataSet = np.mat(dataSet).transpose()
-		# print(dataSet)
+		# print("ing...")
 
-		epsValue = 0.01
+		epsValue = 0.0001
 		minPtsValue = x["minPts"]
 		# for x in xrange(1,10):
 		# 	clusters, clusterNum = dbscan(dataSet, epsValue * x, minPtsValue)

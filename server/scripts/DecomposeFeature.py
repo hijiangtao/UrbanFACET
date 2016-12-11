@@ -71,7 +71,7 @@ def queryFeatureDistribution(db, collectname, findex):
 		print "%d position has %s zero element." % (findex, str(each['total']))
 
 
-def drawFigure(data, featureDict, plotsize, queryrate, fthre):
+def drawFigure(data, featureDict, prop):
 	"""Figures' drawing and saving
 	
 	Args:
@@ -109,15 +109,14 @@ def drawFigure(data, featureDict, plotsize, queryrate, fthre):
 		whlC.append( simcolormap[ str( whlSimVal ) ] )
 		gt11C.append( simcolormap[ str( gt11SimVal ) ] )
 
-		numC.append( func.calColorbyNum( int(featureDict[ str(data['id'][x]) ]['recnum']) ) )
-		matrixDataRes.append( [ matrixDataRaw[x][0], matrixDataRaw[x][1], data['id'][x] ] )
-
-	
+		totalNum = featureDict[ str(data['id'][x]) ]['totalNum']
+		numC.append( func.calColorbyNum( int(totalNum) ) )
+		matrixDataRes.append( [ data['id'][x], matrixDataRaw[x][0], matrixDataRaw[x][1], totalNum, whlSimVal, gt11SimVal ] )
 
 	textRecNum = '2D-ScatterData_1-in-%s_%s(byRecNum)' % (queryrate, fthre)
 	textAveSim = '2D-ScatterData_1-in-%s_%s(byAveSim)' % (queryrate, fthre)
 
-	func.matrixtofile(matrixDataRes, '2D-ScatterData_1-in-%s_%s.csv' % (queryrate, fthre))
+	func.matrixtofile(matrixDataRes, '%s/2D-ScatterData_1-in-%s_%s.csv' % (prop['dic'], queryrate, fthre))
 
 	scatterTC = TimeConsuming(textRecNum)
 	plt.figure()
@@ -131,11 +130,11 @@ def drawFigure(data, featureDict, plotsize, queryrate, fthre):
 		recs.append(mpatches.Rectangle((0,0),1,1,fc=class_colours[i]))
 	plt.legend(recs,classes,
 		scatterpoints=1,
-		loc='lower right',
+		loc='lower left',
 		ncol=4,
-		fontsize=6)
+		fontsize=5)
 	img = plt.gcf()
-	img.savefig('%s.png' % textRecNum, dpi=400)
+	img.savefig('%s/%s.png' % (prop['dic'], textRecNum), dpi=400)
 	plt.close()
 	scatterTC.end()
 
@@ -151,12 +150,12 @@ def drawFigure(data, featureDict, plotsize, queryrate, fthre):
 		whlRecs.append(mpatches.Rectangle((0,0),1,1,fc=whlClassColours[i]))
 	plt.legend(whlRecs,whlClasses,
 		scatterpoints=1,
-		loc='lower right',
+		loc='lower left',
 		ncol=3,
-		fontsize=6)
+		fontsize=5)
 
 	img2 = plt.gcf()
-	img2.savefig('%s.png' % textAveSim, dpi=400)
+	img2.savefig('%s/%s.png' % (prop['dic'], textAveSim), dpi=400)
 	plt.close()
 	scatterTC2.end()
 
@@ -201,7 +200,7 @@ def tsne(data, featureDict, x, prop):
 	Y = model.fit_transform(X) 
 	
 	print "t-SNE embedding of the digits (time %.2fs)" % (time.clock() - t0)
-	func.matrixtofile(Y, 'PointsPosition-1-in-%s-%s.csv' % (str(prop['queryrate']), str(x)))
+	func.matrixtofile(Y, '%s/PointsPosition-1-in-%s-%s.csv' % (prop['dic'], str(prop['queryrate']), str(x)))
 
 	result = {
 		'data': Y,
@@ -230,7 +229,7 @@ def pca(data, featureDict, x, prop):
 	X_pca = pca.fit_transform(data['data'])
 	
 	print "Principal Components projection of the digits (time %.2fs)" %(time.clock() - t0)
-	func.matrixtofile(X_pca, 'PointsPosition-1-in-%s-%s.csv' % (str(prop['queryrate']), str(x)))
+	func.matrixtofile(X_pca, '%s/PointsPosition-1-in-%s-%s.csv' % (prop['dic'], str(prop['queryrate']), str(x)))
 	result = {
 		'data': X_pca,
 		'id': data['id']
@@ -259,7 +258,7 @@ def mds(data, featureDict, x, prop):
 	print("Done. Stress: %f" % clf.stress_)
 
 	print "MDS embedding of the digits (time %.2fs)" % (time.clock() - t0)
-	func.matrixtofile(X_mds, 'PointsPosition-1-in-%s-%s.csv' % (str(prop['queryrate']), str(x)))
+	func.matrixtofile(X_mds, '%s/PointsPosition-1-in-%s-%s.csv' % (prop['dic'], str(prop['queryrate']), str(x)))
 	result = {
 		'data': X_mds,
 		'id': data['id']
@@ -278,7 +277,11 @@ def decompose(data, featureDict, rowstring, deapproaches, prop):
 		'workday': [0,1,2,3,4,5], 
 		'weekend': [6,7,8,9,10,11],
 		'daytime': [1,2,3,7,8,9],
-		'evening': [4,10]
+		'evening': [4,10],
+		'wodaytime': [1,2,3],
+		'woevening': [4],
+		'wedaytime': [7,8,9],
+		'weevening': [10]
 	}
 	decomposelists = ['t-SNE', 'PCA', 'MDS']
 	filterqdata = func.matrixtoarray(data, rowlists[rowstring], collists['total'])
@@ -302,11 +305,12 @@ def main(argv):
 		usage()
 		sys.exit(2)
 
-	city, dic = 'beijing', '/home/taojiang/git/socialgroupVisualComparison/result'
+	city = 'beijing'
 	prop = {
 		'plotsize': 1,
 		'numthreshold': 0,
-		'queryrate': 10
+		'queryrate': 10,
+		'dic': '/home/taojiang/git/socialgroupVisualComparison/result'
 	}
 	for opt, arg in opts:
 		if opt == '-h':
@@ -315,7 +319,7 @@ def main(argv):
 		elif opt in ("-c", "--city"):
 			city = arg
 		elif opt in ("-d", "--direcotry"):
-			dic = arg
+			prop['dic'] = arg
 		elif opt in ("-ps", "--plotsize"):
 			prop['plotsize'] = float(arg)
 		elif opt in ("-nt", "--numthreshold"):
@@ -342,19 +346,27 @@ workday: workday
 weekend: weekend
 daytime: daytime
 evening: evening
-
+wodaytime: workdaydaytime
+woevening: workdayevening
+wedaytime: weekenddaytime
+weevening: weekendevening
 Multiple selections can be separated by comma, please enter your row selection strategy: """
 		arows = str(raw_input()).split(',')
 
 
-		print """All 11 POI types are included in our feature selection strategy by default.
+		print """
+All 11 POI types are included in our feature selection strategy by default.
 Please choose the decomposing approaches
 1: t-SNE
 2: PCA (Not include Kernel PCA)
 3: MDS
-
 Multiple selections can be separated by comma, please enter your column selection strategy: """
 		acols = str(raw_input()).split(',')
+
+		print "Current queryrate is %s, you can input a new value or just leave it blank: " % prop['queryrate']
+		aqrate = str(raw_input())
+		if aqrate != '':
+			prop['queryrate'] = int(aqrate)
 
 		feaData, attrDict = queryUserMatrix(dbname, featurecolname, prop['queryrate'], prop['numthreshold'])
 		for each in arows:
