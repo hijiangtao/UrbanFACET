@@ -68,7 +68,7 @@ def impleAttr(disdata, numdata):
 		'gt11': basevecFromFile('/home/taojiang/datasets/tdBJ/rec-24h-dis/users-gt-11-24hours-distribution.csv'),
 		'whole': basevecFromFile('/home/taojiang/datasets/tdBJ/rec-24h-dis/users-whole-24hours-distribution.csv')
 	}
-	conn, db = func.connectMongo('tdBJ')
+	conn, db = func.connectMongo('tdVC')
 	tmpArr, count = {}, 0
 	maxWSim, minWSim, maxGSim, minGSim = 0, 1, 0, 1
 
@@ -91,38 +91,18 @@ def impleAttr(disdata, numdata):
 			'gt11sim'	: dis2
 		}
 
-		# if count == 10000:
-		# 	print '10000 lines data are inserting into mongoDB.'
-		# 	db['beijing_features'].update_many({}, {
-		# 		'tdisvec'	: disdata['$_id'],
-		# 		'whlsim'	: tmpArr['$_id']['whlsim'],
-		# 		'gt11sim'	: tmpArr['$_id']['gt11sim'],
-		# 		'recnum'	: numdata['$_id']
-		# 	})
-		# 	tmpArr = {}
-		# 	count = 0
-
-	bulk = db['beijing_features'].initialize_ordered_bulk_op()
+	bulk = db['features_beijing'].initialize_ordered_bulk_op()
 	for key in disdata:
 		bulk.find({'_id': int(key)}).update({'$set': {
-			'tdisvec'	: disdata[key],
+			'hourDisVec'	: disdata[key],
 			'whlsim'	: tmpArr[key]['whlsim'],
-			'gt11sim'	: tmpArr[key]['gt11sim'],
-			'recnum'	: numdata[key]
+			'gt11sim'	: tmpArr[key]['gt11sim']
 			# 
-			# 'tdisvec'	: '',
+			# 'hourDisVec'	: '',
 			# 'whlsim'	: '',
-			# 'gt11sim'	: '',
-			# 'recnum'	: ''
+			# 'gt11sim'	: ''
 		}})
 
-	# db['beijing_features'].update_many({}, {
-	# 	'tdisvec'	: disdata['$_id'],
-	# 	'whlsim'	: tmpArr['$_id']['whlsim'],
-	# 	'gt11sim'	: tmpArr['$_id']['gt11sim'],
-	# 	'recnum'	: numdata['$_id']
-	# })
-	
 	print "WHOLE RECORDS\nMAX: %s MIN: %s\nGT11\nMAX: %s MIN: %s" % (maxWSim, minWSim, maxGSim, minGSim)
 	
 	result = bulk.execute()

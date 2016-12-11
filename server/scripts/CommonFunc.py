@@ -5,8 +5,10 @@
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
 
-import os, pymongo, math, MySQLdb
+import os, pymongo, math, MySQLdb, sys, logging
 import numpy as np
+# from scipy import stats
+# import geopy.distance  # https://pypi.python.org/pypi/geopy/1.11.0
 
 def connectMongo(dbname):
 	"""Connect MongoDB
@@ -134,7 +136,7 @@ def getCityLocs(city):
 			'south': 39.390,
 			'west': 115.642,
 			'east': 117.153
-		}，
+		},
 		'tianjin': {
 
 		},
@@ -212,3 +214,170 @@ def calFeatureType(data):
 	
 
 	return 12
+
+def gaussian2D(source, target, sigma):
+	"""Gaussian distribution function
+	
+	Args:
+	    source (object): A geojson object
+	    target (object): A geojson object
+	    sigma (float): sigma parameter
+	
+	Returns:
+	    float: Distance between two points
+	"""
+	from scipy import stats
+	from geopy.distance import great_circle
+	d = great_circle(source, target).meters
+	X = stats.norm(loc=0, scale=sigma**2)
+	
+	return (1-X.cdf(d)) * 2
+
+def sep4Citylocs(citylocs, midLat, midLng, split):
+	return [{
+		'north': midLat,
+		'south': citylocs['south'],
+		'west': citylocs['west'],
+		'east': midLng
+	},{
+		'north': midLat,
+		'south': citylocs['south'],
+		'west': midLng + split,
+		'east': citylocs['east']
+	},{
+		'north': citylocs['north'],
+		'south': midLat + split,
+		'west': midLng + split,
+		'east': citylocs['east']
+	},{
+		'north': citylocs['north'],
+		'south': midLat + split,
+		'west': citylocs['west'],
+		'east': midLng
+	}]
+
+def initTimePeriods():
+	tpVectors = { 
+		'workdayM': {
+			'num': 0,
+			'vec': [0]*11
+		},
+		'workdayF': {
+			'num': 0,
+			'vec': [0]*11
+		},
+		'workdayN': {
+			'num': 0,
+			'vec': [0]*11
+		},
+		'workdayA': {
+			'num': 0,
+			'vec': [0]*11
+		},
+		'workdayE': {
+			'num': 0,
+			'vec': [0]*11
+		},
+		'workdayI': {
+			'num': 0,
+			'vec': [0]*11
+		},
+		'holidayM': {
+			'num': 0,
+			'vec': [0]*11
+		},
+		'holidayF': {
+			'num': 0,
+			'vec': [0]*11
+		},
+		'holidayN': {
+			'num': 0,
+			'vec': [0]*11
+		},
+		'holidayA': {
+			'num': 0,
+			'vec': [0]*11
+		},
+		'holidayE': {
+			'num': 0,
+			'vec': [0]*11
+		},
+		'holidayI': {
+			'num': 0,
+			'vec': [0]*11
+		}
+	}
+
+	tpNames = ['workdayM', 'workdayF', 'workdayN', 'workdayA', 'workdayE', 'workdayI', 'holidayM', 'holidayF', 'holidayN', 'holidayA', 'holidayE', 'holidayI']
+
+	return {
+		'tpVectors': tpVectors,
+		'tpNames': tpNames
+	}
+
+def judFeatureTP(daytype, timesegid):
+	# vector attributes
+	# workday, weekend with both morning, forenoon, noon, afternoon, evening, night 6 periods
+	# morning: 5:00-9:00
+	# forenoon: 8:00-12:00
+	# noon: 11:00-14:00
+	# afternoon: 13:00-19:00
+	# evening: 18:00-24:00
+	# night: 23:00-6:00
+	vecInd = []
+	if daytype == "workday":
+		if timesegid >= 5 and timesegid < 9:
+			vecInd.append('workdayM')
+		if timesegid >= 8 and timesegid < 12:
+			vecInd.append('workdayF')
+		if timesegid >= 11 and timesegid < 14:
+			vecInd.append('workdayN')
+		if timesegid >= 13 and timesegid < 19:
+			vecInd.append('workdayA')
+		if timesegid >= 18:
+			vecInd.append('workdayE')
+		if timesegid >= 23 or timesegid < 6:
+			vecInd.append('workdayI')
+	else:
+		if timesegid >= 5 and timesegid < 9:
+			vecInd.append('holidayM')
+		if timesegid >= 8 and timesegid < 12:
+			vecInd.append('holidayF')
+		if timesegid >= 11 and timesegid < 14:
+			vecInd.append('holidayN')
+		if timesegid >= 13 and timesegid < 19:
+			vecInd.append('holidayA')
+		if timesegid >= 18:
+			vecInd.append('holidayE')
+		if timesegid >= 23 or timesegid < 6:
+			vecInd.append('holidayI')
+
+	return vecInd
+
+def calColorbyNum(num):
+	numcolormap = [{
+		'value': 5,
+		'color': '#000000'
+	}, {
+		'value': 10,
+		'color': '#1924B1'
+	}, {
+		'value': 200,
+		'color': '#37B6CE'
+	}, {
+		'value': 800,
+		'color': '#25D500'
+	}, {
+		'value': 2000,
+		'color': '#FFC700'
+	}, {
+		'value': 4000,
+		'color': '#FF8E00'
+	}, {
+		'value': 8500,
+		'color': '#FF1300'
+	}]
+
+	for x in xrange(0, len(numcolormap)):
+		if num < numcolormap[x]['value']:
+			return numcolormap[x]['color']

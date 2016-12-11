@@ -5,11 +5,9 @@
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
 
-import os, time
+import os, time, pp, logging, sys, getopt, gc
 import numpy as np
-import MySQLdb
-import pymongo
-import pp
+from CommonFunc import connectMongo, connectMYSQL, getCityLocs, initTimePeriods, judFeatureTP
 
 class UserFeature(object):
 	"""docstring for UserFeature"""
@@ -18,46 +16,26 @@ class UserFeature(object):
 		self.city = city
 		self.split = split
 		self.citylocs = citylocs
-
-	def connectMYSQL(self):
-		"""Connect MySQL
-		
-		Returns:
-		    TYPE: db, cursor
-		"""
-		db = MySQLdb.connect(host="localhost",    	# your host, usually localhost
-							user="root",         	# your username
-							passwd="vis_2014",  	# your password
-							db="tsu_explore")		# name of the data base
-		cur = db.cursor()
-
-		return db, cur
-
-	def connectMongo(self):
-		"""Connect MongoDB
-		
-		Returns:
-		    TYPE: Client, database
-		"""
-		try:
-		    conn = pymongo.MongoClient('localhost', 27017)
-		    mdb = conn.tdBJ
-		    print "Connected successfully!!!"
-		except pymongo.errors.ConnectionFailure, e:
-		   	print "Could not connect to MongoDB: %s" % e
-
-		return conn, mdb
+		self.db = {
+			'url': '192.168.1.42',
+			'port': 27017,
+			'dbname': 'tdVC',
+			'gridcolname': 'grids_%s' % city,
+			'featurecolname': 'features_%s' % city,
+			'usercolname': 'users_%s' % city,
+			'mysqldb': 'tsu_explore'
+		}
 
 	def getUserList(self, subtasknum):
 		"""Get user list, sperate it into N sublists, N equals to subtasknum
 		
 		Args:
-		    subtasknum (int): Sub task number
+			subtasknum (int): Sub task number
 		
 		Returns:
-		    array: sperated userlist 
+			array: sperated userlist 
 		"""
-		db, cur = self.connectMYSQL()
+		db, cur = connectMYSQL(self.db['mysqldb'])
 		cur.execute("SELECT id from tdid_link")
 		res = []
 		for each in cur.fetchall():
@@ -65,33 +43,61 @@ class UserFeature(object):
 		reslen = len(res)
 		userlist = []
 
-		print "%s id has be selected from database." % reslen
+		logging.info("%s id has be selected from database." % reslen)
 
-		for x in xrange(0,subtasknum):
+		for x in xrange(0, subtasknum):
 			userlist.append( res[int(reslen*x/subtasknum):int(reslen*(x+1)/subtasknum)] )
 
-		# print res
 		cur.close()
 		db.close()
+
 		return userlist
 
-	def enumUserRecords(self, split, jobID, userlist, colname):
+	def getGridList(self):
+		"""connect to mongoDB and get gridlist results
+		
+		Args:
+			collection (string): collection name that stored city grid set
+		
+		Returns:
+			TYPE: false grid uid list, true grid object collection
+		"""
+		conn, mdb = connectMongo(self.db['dbname'])
+		grid = mdb[self.db['gridcolname']]
+
+		falseuidlist = []
+		truegridobj = {}
+
+		gridlists = list( grid.find({}, {"properties.typevalid": 1, "properties.uid": 1, "properties.vec": 1}) )
+
+		for gridlist in gridlists:
+			typevalid, uid, vec = gridlist['properties']['typevalid'], str(gridlist['properties']['uid']), gridlist['properties']['vec']
+
+			if typevalid == False:
+				falseuidlist.append( uid )
+			else:
+				truegridobj[ uid ] = vec
+
+		conn.close()
+		return falseuidlist, truegridobj
+
+	def matchUserRecords(self, split, jobID, userlist):
 		"""Enumerate users with all their records, matching with grid and store them into mongoDB
 		
 		Args:
-		    split (float): distance interval of lat and lng, the unit is degree
-		    jobID (int): Job Number
-		    userlist (array): userlist is consists of many tdid strings
-		    colname (string): Collection name in MongoDB
+			split (float): distance interval of lat and lng, the unit is degree
+			jobID (int): Job Number
+			userlist (array): userlist is consists of many tdid strings
+			colname (string): Collection name in MongoDB
 		
 		Returns:
-		    NULL: Description
+			NULL: Description
 		"""
 		
 		# initialize database connections and data structure
-		db, cur = self.connectMYSQL()
-		conn, mdb = self.connectMongo()
-		users = mdb[colname]
+		db, cur = connectMYSQL(self.db['mysqldb'])
+		conn, mdb = connectMongo(self.db['dbname'])
+		users = mdb[self.db['usercolname']]
 
 		userrecords, usernum = [], 0
 
@@ -139,7 +145,7 @@ class UserFeature(object):
 			
 			# insert into mongoDB
 			if usernum == 300:
-				print "Job %s inserted 300 records into database." % jobID 
+				logging.info("Job %s inserted 300 records into database." % jobID) 
 				users.insert(userrecords)
 				userrecords = []
 				usernum = 0
@@ -152,174 +158,33 @@ class UserFeature(object):
 		db.close()
 		conn.close()
 
-	def sepUserTaskes(self, userlist, usercolname):
-		"""Seperate all users query and matching work into N subtask, N equals to userlist's length
-		
-		Args:
-		    userlist (array): array to store userlist
-		    usercolname (string): collection name that to store users' records
-		
-		Returns:
-		    NULL: Description
-		"""
-		ppservers = ()
-		
-		# Creates jobserver with automatically detected number of workers
-		job_server = pp.Server(ppservers=ppservers)
-		print "pp 可以用的工作核心线程数 %s workers" % job_server.get_ncpus()
-		start_time = time.time()
-		jobs, index = [], 0
-		for sublist in userlist:
-			jobs.append( (index, job_server.submit(self.enumUserRecords, (0.001, index, sublist, usercolname, ), (self.connectMYSQL, self.connectMongo), ('MySQLdb', 'pymongo'))) )
-			index += 1
-
-		for index, job in jobs:
-		    job()
-		print "多线程下执行耗时: ", time.time() - start_time, "s"
-		job_server.print_stats()
-
-	def getGridList(self, collection):
-		"""connect to mongoDB and get gridlist results
-		
-		Args:
-		    collection (string): collection name that stored city grid set
-		
-		Returns:
-		    TYPE: false grid uid list, true grid object collection
-		"""
-		conn, mdb = self.connectMongo()
-		grid = mdb[collection]
-
-		falseuidlist = []
-		truegridobj = {}
-
-		gridlists = list( grid.find({}, {"properties.typevalid": 1, "properties.uid": 1, "properties.vec": 1}) )
-
-		for gridlist in gridlists:
-			typevalid, uid, vec = gridlist['properties']['typevalid'], str(gridlist['properties']['uid']), gridlist['properties']['vec']
-
-			if typevalid == False:
-				falseuidlist.append( uid )
-			else:
-				truegridobj[ uid ] = vec
-
-		conn.close()
-		return falseuidlist, truegridobj
-
-	def sepFeatureTaskes(self, falseuidlist, truegridobj, userlist):
-		"""seperate getting feature work into different subtasks
-		
-		Args:
-		    falseuidlist (array): false grid uid list
-		    truegridobj (object): true grid object collection
-		    userlist (array): user list
-		
-		Returns:
-		    NULL: Description
-		"""
-		ppservers = ()
-
-		# remove all documents in beijing_features collection
-		conn, mdb = self.connectMongo()
-		mdb['beijing_features'].remove({})
-		conn.close()
-
-		job_server = pp.Server(ppservers=ppservers)
-		print "The number of working kernel threads that can be used is %s." % job_server.get_ncpus()
-		start_time = time.time()
-		jobs, index = [], 0
-		for sublist in userlist:
-			jobs.append( (index, job_server.submit(self.aggregateVector, (sublist, falseuidlist, truegridobj, ), (self.connectMYSQL, self.connectMongo, self.vecAdd), ('MySQLdb', 'pymongo'))) )
-			index += 1
-
-		for index, job in jobs:
-		    job()
-		print "Multi-threaded time-consuming: ", time.time() - start_time, "s"
-		job_server.print_stats()
-
 	def aggregateVector(self, userlist, invalidlist, validobj):
 		"""aggregate user behavior vector, according to given userlist
 		
 		Args:
-		    userlist (array): user list
-		    invalidlist (array): false grid uid list
-		    validobj (object): true grid object collection
+			userlist (array): user list
+			invalidlist (array): false grid uid list
+			validobj (object): true grid object collection
 		
 		Returns:
-		    NULL: Description
+			NULL: Description
 		"""
-		conn, mdb = self.connectMongo()
-		features, users = mdb['beijing_features'], mdb["beijing_users"]
+		conn, mdb = connectMongo(self.db['dbname'])
+		features, users = mdb[self.db['featurecolname']], mdb[self.db['usercolname']]
 
 		userveclist = [] # used to store user vectors
 
 		# enum users, aggreate each user's records in an average strategy
 		for user in userlist:
 			# used to store current user's unaggreated sub-vector sets
-			tmpvecs = { 
-				'workdayM': {
-					'num': 0,
-					'vec': [0]*11
-				},
-				'workdayF': {
-					'num': 0,
-					'vec': [0]*11
-				},
-				'workdayN': {
-					'num': 0,
-					'vec': [0]*11
-				},
-				'workdayA': {
-					'num': 0,
-					'vec': [0]*11
-				},
-				'workdayE': {
-					'num': 0,
-					'vec': [0]*11
-				},
-				'workdayI': {
-					'num': 0,
-					'vec': [0]*11
-				},
-				'holidayM': {
-					'num': 0,
-					'vec': [0]*11
-				},
-				'holidayF': {
-					'num': 0,
-					'vec': [0]*11
-				},
-				'holidayN': {
-					'num': 0,
-					'vec': [0]*11
-				},
-				'holidayA': {
-					'num': 0,
-					'vec': [0]*11
-				},
-				'holidayE': {
-					'num': 0,
-					'vec': [0]*11
-				},
-				'holidayI': {
-					'num': 0,
-					'vec': [0]*11
-				}
-			}
-			typearr = ['workdayM', 'workdayF', 'workdayN', 'workdayA', 'workdayE', 'workdayI', 'holidayM', 'holidayF', 'holidayN', 'holidayA', 'holidayE', 'holidayI']
+			tpCol = initTimePeriods()
+			tmpvecs = tpCol['tpVectors']
+			typearr = tpCol['tpNames']
 
 			# user: user ID
 			user = int(user)
 			reclists = list( users.find({"id": user}, {"properties.gridUID": 1, "properties.timesegid": 1, "properties.daytype": 1}) )
 
-			# vector attributes
-			# workday, weekend with both morning, forenoon, noon, afternoon, evening, night 6 periods
-			# morning: 5:00-9:00
-			# forenoon: 8:00-12:00
-			# noon: 11:00-14:00
-			# afternoon: 13:00-19:00
-			# evening: 18:00-24:00
-			# night: 23:00-6:00
 			for x in reclists:
 				uid = str(x['properties']['gridUID'])
 
@@ -327,48 +192,27 @@ class UserFeature(object):
 				if uid in invalidlist:
 					continue
 				else:
-					vec = validobj[ uid ]
-					daytype = str(x['properties']['daytype'])
-					timesegid = int(x['properties']['timesegid'] / 10)
+					try:
+						vec = validobj[ uid ]
+						daytype = str(x['properties']['daytype'])
+						timesegid = int(x['properties']['timesegid'] / 10)
 
-					# judge which type of feature it is
-					vecInd = []
-					if daytype == "workday":
-						if timesegid >= 5 and timesegid < 9:
-							vecInd.append('workdayM')
-						if timesegid >= 8 and timesegid < 12:
-							vecInd.append('workdayF')
-						if timesegid >= 11 and timesegid < 14:
-							vecInd.append('workdayN')
-						if timesegid >= 13 and timesegid < 19:
-							vecInd.append('workdayA')
-						if timesegid >= 18:
-							vecInd.append('workdayE')
-						if timesegid >= 23 or timesegid < 6:
-							vecInd.append('workdayI')
-					else:
-						if timesegid >= 5 and timesegid < 9:
-							vecInd.append('holidayM')
-						if timesegid >= 8 and timesegid < 12:
-							vecInd.append('holidayF')
-						if timesegid >= 11 and timesegid < 14:
-							vecInd.append('holidayN')
-						if timesegid >= 13 and timesegid < 19:
-							vecInd.append('holidayA')
-						if timesegid >= 18:
-							vecInd.append('holidayE')
-						if timesegid >= 23 or timesegid < 6:
-							vecInd.append('holidayI')
+						# judge which type of feature it is
+						vecInd = judFeatureTP(daytype, timesegid)
 
-					for eachvecInd in vecInd:
-						tmpvecs[eachvecInd]['num'] += 1
-						tmpvecs[eachvecInd]['vec'] = self.vecAdd(tmpvecs[eachvecInd]['vec'], vec)
+						for eachvecInd in vecInd:
+							tmpvecs[eachvecInd]['num'] += 1
+							tmpvecs[eachvecInd]['vec'] = self.vecAdd(tmpvecs[eachvecInd]['vec'], vec)
+					except Exception as e:
+						raise e
+					
 					
 			# used to be a template for generating one's feature vector 
 			vectmpl = { 
 				'_id': user,
-				'vec': [],
-				'num': []
+				'pVec': [],
+				'tpNumVec': [],
+				'totalNum': len(reclists)
 			}
 
 			# aggreate vector
@@ -376,11 +220,11 @@ class UserFeature(object):
 			for x in typearr:
 				if tmpvecs[x]['num'] != 0:
 					notallnull = True
-					vectmpl['vec'].append( [tmpvecs[x]['vec'][i] / float(tmpvecs[x]['num']) for i in xrange(len(tmpvecs[x]['vec'])) ] ) 
-					vectmpl['num'].append( int(tmpvecs[x]['num']) )
+					vectmpl['pVec'].append( [tmpvecs[x]['vec'][i] / float(tmpvecs[x]['num']) for i in xrange(len(tmpvecs[x]['vec'])) ] ) 
+					vectmpl['tpNumVec'].append( int(tmpvecs[x]['num']) )
 				else:
-					vectmpl['vec'].append( [0] * len(tmpvecs[x]['vec']) )
-					vectmpl['num'].append(0) 
+					vectmpl['pVec'].append( [0] * len(tmpvecs[x]['vec']) )
+					vectmpl['tpNumVec'].append(0) 
 
 			if notallnull:
 				userveclist.append( vectmpl )
@@ -388,32 +232,120 @@ class UserFeature(object):
 			if len(userveclist) == 300:
 				features.insert( userveclist )
 				userveclist = []
+				gc.collect()
 
 		if len(userveclist) != 0:
 			features.insert( userveclist )
 		
 		conn.close()
 
+	def sepUserTaskes(self, userlist, split):
+		"""Seperate all users query and matching work into N subtask, N equals to userlist's length
+		
+		Args:
+			userlist (array): array to store userlist
+			usercolname (string): collection name that to store users' records
+		
+		Returns:
+			NULL: Description
+		"""
+		ppservers = ()
+		
+		# Creates jobserver with automatically detected number of workers
+		job_server = pp.Server(ppservers=ppservers)
+		logging.info("pp 可以用的工作核心线程数 %s workers" % job_server.get_ncpus())
+		start_time = time.time()
+		jobs, index = [], 0
+		for sublist in userlist:
+			jobs.append( (index, job_server.submit(self.matchUserRecords, (split, index, sublist, ), (connectMongo, connectMYSQL, getCityLocs, initTimePeriods, judFeatureTP), ("os", "time", "pp", "CommonFunc", "numpy", "pymongo", "MySQLdb", "logging", "sys"))) )
+			index += 1
+
+		for index, job in jobs:
+			job()
+		logging.info("多线程下执行耗时: %ss" % str(time.time() - start_time))
+		job_server.print_stats()
+
+	def sepFeatureTaskes(self, falseuidlist, truegridobj, userlist):
+		"""seperate getting feature work into different subtasks
+		
+		Args:
+			falseuidlist (array): false grid uid list
+			truegridobj (object): true grid object collection
+			userlist (array): user list
+		
+		Returns:
+			NULL: Description
+		"""
+		ppservers = ()
+
+		# remove all documents in beijing_features collection
+		conn, mdb = connectMongo(self.db['dbname'])
+		mdb[self.db['featurecolname']].remove({})
+		conn.close()
+
+		job_server = pp.Server(ppservers=ppservers)
+		logging.info("pp 可以用的工作核心线程数 %s workers" % job_server.get_ncpus())
+		start_time = time.time()
+		jobs, index = [], 0
+		for sublist in userlist:
+			jobs.append( (index, job_server.submit(self.aggregateVector, (sublist, falseuidlist, truegridobj, ), (self.vecAdd, connectMongo, connectMYSQL, getCityLocs, initTimePeriods, judFeatureTP, ), ("os", "time", "pp", "CommonFunc", "numpy", "pymongo", "MySQLdb", "logging", "sys", "gc", ))) )
+			index += 1
+
+		for index, job in jobs:
+			job()
+
+		logging.info("多线程下执行耗时: %ss" % str(time.time() - start_time))
+		job_server.print_stats()
+
 	def vecAdd(self, first, second):
 		"""add two array with same length
 		
 		Args:
-		    first (array): An array
-		    second (array): Another array
+			first (array): An array
+			second (array): Another array
 		
 		Returns:
-		    array: calculated array
+			array: calculated array
 		"""
 		return [first[i]+second[i] for i in xrange(len(first))]
 
-if __name__ == "__main__":
-	ufeature = UserFeature("BJ", 0.001, {'north': 40.412, 'south': 39.390, 'west': 115.642, 'east': 117.153})
+def usage():
+	print 'python FeatureConstruction.py -c <city> -d <work direcotry> -s <split length> -t <tasks number>'
+
+def main(argv):
+	try:
+		opts, args = getopt.getopt(argv, "hc:d:s:t:", ["help", "city=", "direcotry=", "split=", "tasks="])
+	except getopt.GetoptError as err:
+		# print help information and exit:
+		print str(err)  # will print something like "option -a not recognized"
+		usage()
+		sys.exit(2)
+
+	city, dic, tasks, split = 'beijing', '/home/taojiang/tools', 22, 0.001
+	for opt, arg in opts:
+		if opt == '-h':
+			usage()
+			sys.exit()
+		elif opt in ("-c", "--city"):
+			city = arg
+		elif opt in ("-d", "--direcotry"):
+			dic = arg
+		elif opt in ("-s", "--split"):
+			split = float(arg)
+		elif opt in ("-t", "--tasks"):
+			tasks = int(arg)
+	
+	ufeature = UserFeature(city, split, getCityLocs(city))
 	# 20 threads to split the whole task
-	ulist = ufeature.getUserList(22)
+	ulist = ufeature.getUserList(tasks)
 
 	# Enum user records and assign them with region grid UID
-	# ufeature.sepUserTaskes(ulist, "beijing_users")
-
+	# ufeature.sepUserTaskes(ulist, split)
+	
 	# Filter out region grid UID list and aggreate user feature vector
-	flist, tobj = ufeature.getGridList('beijing_grids')
+	flist, tobj = ufeature.getGridList()
 	ufeature.sepFeatureTaskes( flist, tobj, ulist )
+
+if __name__ == "__main__":
+	logging.basicConfig(filename='logger-featureconstruction.log', level=logging.DEBUG)
+	main(sys.argv[1:])

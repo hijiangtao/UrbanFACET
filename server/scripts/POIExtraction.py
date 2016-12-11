@@ -183,7 +183,7 @@ class POICollection(object):
 				result["features"].append(currentObj)
 			
 		logging.info("Atrributes appending complete!")
-		return result
+		return result['features']
 
 	def calArea(self, data):
 		"""Calculate feature area and return it
@@ -231,6 +231,7 @@ def main(argv):
 		usage()
 		sys.exit(2)
 
+	city, dic = 'beijing', '/home/taojiang/tools'
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
@@ -240,13 +241,13 @@ def main(argv):
 		elif opt in ("-d", "--direcotry"):
 			dic = arg
 
-	cityins = POICollection(city, func.getCityLocs(city), 'POI', dic)
+	cityins = POICollection(city, getCityLocs(city), 'POI', dic)
 	# 建立 POI 列表
 	pois = cityins.readFiletoJson("%s_china_fPOI.geojson" % city)
 	# 向 POI 完善附加信息并存入文件
-	cityins.writeFile(cityins.appendAttr(pois), "%s_china_fPOI_with_area_prop.geojson" % city)
+	cityins.writeFile(cityins.appendAttr(pois), "%s_china_POIExtraction.geojson" % city)
 
 if __name__ == "__main__":
-	logging.basicConfig(filename='logger.log', level=logging.DEBUG)
+	logging.basicConfig(filename='logger-poiextraction.log', level=logging.DEBUG)
 	# 抽取 POI 并添加半径、面积、中心点等信息，存入文件
 	main(sys.argv[1:])

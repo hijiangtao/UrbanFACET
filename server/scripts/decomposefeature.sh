@@ -1,4 +1,5 @@
 # 
 
 cd /home/taojiang/git/socialgroupVisualComparison/server/scripts
-python ./FeatureConstruction.py -c beijing -t 22 -s 0.001
+
+python ./DecomposeFeature.py -c beijing -ps 1 -nt 0 -qr 10

@@ -5,7 +5,7 @@
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
 
-import math, heatmap, gc, pp, time
+import math, heatmap, gc, pp, time, logging, sys, getopt
 from sklearn.manifold import TSNE, MDS
 from sklearn.feature_selection import VarianceThreshold
 import matplotlib.pyplot as plt
@@ -14,18 +14,16 @@ from CommonCla import TimeConsuming
 import numpy as np
 from sklearn.decomposition import PCA, KernelPCA
 import matplotlib.patches as mpatches
-# import plotly.plotly as py
-# import plotly.graph_objs as go
 
-def getUsers(thre):
-	db, cur = func.connectMYSQL("tsu_explore")
+# def getUsers(thre):
+# 	db, cur = func.connectMYSQL("tsu_explore")
 
-	cur.execute("select tdid, count(1) AS num from cbeijing group by tdid HAVING num>%s;" % str(thre))
-	res = []
-	for each in cur.fetchall():
-		res.append(each[0])
+# 	cur.execute("select tdid, count(1) AS num from cbeijing group by tdid HAVING num>%s;" % str(thre))
+# 	res = []
+# 	for each in cur.fetchall():
+# 		res.append(each[0])
 
-	return res
+# 	return res
 
 def queryUserMatrix(dbname, collectname, queryrate, recordsthre = 0):
 	"""Query user matrix from database and return it as a matrix
@@ -42,9 +40,9 @@ def queryUserMatrix(dbname, collectname, queryrate, recordsthre = 0):
 
 	if recordsthre != 0:
 		# bug
-		qresult = list(db[collectname].find({ '$and': [ { '_id': { '$mod' : [queryrate, 0] } }, { 'recnum': { '$gt': recordsthre } } ] }, {'vec': 1, 'gt11sim': 1, 'whlsim': 1, 'recnum': 1}).sort([ ("_id", 1) ]))
+		qresult = list(db[collectname].find({ '$and': [ { '_id': { '$mod' : [queryrate, 0] } }, { 'totalNum': { '$gt': recordsthre } } ] }, {'pVec': 1, 'gt11sim': 1, 'whlsim': 1, 'totalNum': 1}).sort([ ("_id", 1) ]))
 	else:
-		qresult = list(db[collectname].find({'_id': { '$mod' : [queryrate, 0] }}, {'vec': 1, 'gt11sim': 1, 'whlsim': 1, 'recnum': 1}).sort([ ("_id", 1) ]))
+		qresult = list(db[collectname].find({'_id': { '$mod' : [queryrate, 0] }}, {'pVec': 1, 'gt11sim': 1, 'whlsim': 1, 'totalNum': 1}).sort([ ("_id", 1) ]))
 	
 	print "User query result: %s people." % str(len(qresult))
 	data = {
@@ -54,13 +52,13 @@ def queryUserMatrix(dbname, collectname, queryrate, recordsthre = 0):
 	featureDict = {}
 
 	for x in qresult:
-		data['data'].append( x['vec'] )
+		data['data'].append( x['pVec'] )
 		data['id'].append( str(x['_id']) )
 		featureDict[ str(x['_id']) ] = {
 			'_id': int(x['_id']),
 			'gt11sim': float(x['gt11sim']),
 			'whlsim': float(x['whlsim']),
-			'recnum': int(x['recnum'])
+			'totalNum': int(x['totalNum'])
 		}
 
 	conn.close()
@@ -72,35 +70,6 @@ def queryFeatureDistribution(db, collectname, findex):
 	for each in qresult:
 		print "%d position has %s zero element." % (findex, str(each['total']))
 
-def calColorbyNum(num):
-	numcolormap = [{
-		'value': 5,
-		'color': '#000000'
-	}, {
-		'value': 10,
-		'color': '#1924B1'
-	}, {
-		'value': 200,
-		'color': '#37B6CE'
-	}, {
-		'value': 800,
-		'color': '#25D500'
-	}, {
-		'value': 2000,
-		'color': '#FFC700'
-	}, {
-		'value': 4000,
-		'color': '#FF8E00'
-	}, {
-		'value': 8500,
-		'color': '#FF1300'
-	}]
-
-
-
-	for x in xrange(0, len(numcolormap)):
-		if num < numcolormap[x]['value']:
-			return numcolormap[x]['color']
 
 def drawFigure(data, featureDict, plotsize, queryrate, fthre):
 	"""Figures' drawing and saving
@@ -115,9 +84,13 @@ def drawFigure(data, featureDict, plotsize, queryrate, fthre):
 	"""
 
 	# Init transformation
-	matrixData = np.asarray( np.array(data['data'])[:, 0:2] )
-	matrixData2 = []
-	queryrate, fthre = str(queryrate), str(fthre)
+	plotsize, queryrate, fthre = prop['plotsize'], str(prop['queryrate']), str(prop['text'])
+	
+	# matrixData 用于存储降维后点值的二维位置与对应 ID 信息
+	matrixDataRaw = np.asarray( np.array(data['data'])[:, 0:2] )
+	matrixDataRes = []
+	
+	# 相似度对应的 colormap 取值表
 	simcolormap = {
 		'4': '#1924B1',
 		'5': '#37B6CE',
@@ -135,16 +108,21 @@ def drawFigure(data, featureDict, plotsize, queryrate, fthre):
 		gt11SimVal = int(math.floor( featureDict[ str(data['id'][x]) ]['gt11sim']*10 ))
 		whlC.append( simcolormap[ str( whlSimVal ) ] )
 		gt11C.append( simcolormap[ str( gt11SimVal ) ] )
-		numC.append( calColorbyNum( int(featureDict[ str(data['id'][x]) ]['recnum']) ) )
-		# matrixData[x].append( data['id'][x] )
-		matrixData2.append( [ matrixData[x][0], matrixData[x][1], data['id'][x] ] )
 
-	func.matrixtofile(matrixData2, 'ScatterData-1-in-%s-%s.csv' % (queryrate, fthre))
+		numC.append( func.calColorbyNum( int(featureDict[ str(data['id'][x]) ]['recnum']) ) )
+		matrixDataRes.append( [ matrixDataRaw[x][0], matrixDataRaw[x][1], data['id'][x] ] )
 
-	scatterTC = TimeConsuming('Scatter Plot-1-in-%s-%s(recNum)' % (queryrate, fthre))
+	
+
+	textRecNum = '2D-ScatterData_1-in-%s_%s(byRecNum)' % (queryrate, fthre)
+	textAveSim = '2D-ScatterData_1-in-%s_%s(byAveSim)' % (queryrate, fthre)
+
+	func.matrixtofile(matrixDataRes, '2D-ScatterData_1-in-%s_%s.csv' % (queryrate, fthre))
+
+	scatterTC = TimeConsuming(textRecNum)
 	plt.figure()
-	plt.title('Scatter Plot-1-in-%s-%s(recNum)' % (queryrate, fthre))
-	sca = plt.scatter(X, Y, s=plotsize, c=numC, lw=0)
+	plt.title(textRecNum)
+	plt.scatter(X, Y, s=plotsize, c=numC, lw=0)
 
 	classes = ['5', '10', '200', '800', '2000', '4000', '8500']
 	class_colours = ['#000000', '#1924B1', '#37B6CE', '#25D500', '#FFC700', '#FF8E00', '#FF1300']
@@ -157,15 +135,16 @@ def drawFigure(data, featureDict, plotsize, queryrate, fthre):
 		ncol=4,
 		fontsize=6)
 	img = plt.gcf()
-	img.savefig('Scatter-figure-1-in-%s-%s(recNum).png' % (queryrate, fthre), dpi=400)
+	img.savefig('%s.png' % textRecNum, dpi=400)
+	plt.close()
 	scatterTC.end()
 
-	scatterTC2 = TimeConsuming('Scatter Plot-1-in-%s-%s(whlRec)' % (queryrate, fthre))
+	scatterTC2 = TimeConsuming(textAveSim)
 	plt.figure()
-	plt.title('Scatter Plot-1-in-%s-%s(whlRec)' % (queryrate, fthre))
+	plt.title(textAveSim)
 	plt.scatter(X, Y, s=plotsize, c=whlC, lw=0)
 
-	whlClasses = [x for x in simcolormap]
+	whlClasses = [float(x)/10 for x in simcolormap]
 	whlClassColours = [simcolormap[x] for x in simcolormap]
 	whlRecs = []
 	for i in range(0,len(whlClassColours)):
@@ -177,41 +156,12 @@ def drawFigure(data, featureDict, plotsize, queryrate, fthre):
 		fontsize=6)
 
 	img2 = plt.gcf()
-	img2.savefig('Scatter-figure-1-in-%s-%s(whlRec).png' % (queryrate, fthre), dpi=400)
+	img2.savefig('%s.png' % textAveSim, dpi=400)
+	plt.close()
 	scatterTC2.end()
 
-	# Heatmap matrix
-	# hmatrixTC = TimeConsuming('Heatmap Matrix-1-in-%s-%s' % (queryrate, fthre))
-	# plt.figure()
-	# dmatrix = func.dotstomatrix(data['data'], 15, 310, 0.1 )
-	# plt.imshow(dmatrix, cmap='seismic', interpolation='nearest')
-	# img = plt.gcf()
-	# img.savefig('heatmap-matrix-1-in-%s-%s.png' % (queryrate, fthre), dpi=300)
-	# hmatrixTC.end()
-
-	# heatmap matrix saved to file
-	# func.matrixtofile(dmatrix, 'matrix-1-in-%s-%s.csv' % (queryrate, fthre))
-
-	# hm = heatmap.Heatmap()
-	# heatmapimg = hm.heatmap(data, scheme='pbj')
-	# heatmapimg.save('heatmap-1-in-%s-%s.png' % (queryrate, fthre))
-
-	# try:
-	# 	py.sign_in('shaonian', 'tCr57ESYSnmQN5wDfl6y')
-
-	# 	data = [
-	# 	    go.Heatmap(
-	# 	        z=dmatrix
-	# 	    )
-	# 	]
-	# 	py.iplot(data, filename='basic-heatmap-%s' % str(queryrate))
-	# 	fig = go.Figure(data=data)
-	# 	py.image.save_as(fig, filename='a-simple-plot.png')
-	# except Exception as e:
-	# 	raise e
-
 def selectFeature(data, threshold, typestr):
-	"""Feature selection
+	"""Feature selection, ABANDONED
 	
 	Args:
 		data (TYPE): Description
@@ -227,12 +177,8 @@ def selectFeature(data, threshold, typestr):
 		result = sel.fit_transform(data)
 		print 'after feature selection: %s features' % str(len(result[0]))
 		return result
-	elif typestr == 'univariate':
-		pass
-	elif typestr == '':
-		pass
 
-def tsne(data, featureDict, x, queryrate, plotsize):
+def tsne(data, featureDict, x, prop):
 	"""t-SNE methods
 	
 	Args:
@@ -245,25 +191,26 @@ def tsne(data, featureDict, x, queryrate, plotsize):
 		TYPE: Description
 	"""
 	x = 'tsne-%s' % x 
+	print "Computing t-SNE embedding"
+	t0 = time.clock()
+	
 	X = np.array( data['data'] )
 	model = TSNE(n_components=2, random_state=0)
 	np.set_printoptions(suppress=True)
-	print("Computing t-SNE embedding")
-	t0 = time.clock()
-	
 	# list, each of them is formatted as (x,y)
 	Y = model.fit_transform(X) 
 	
 	print "t-SNE embedding of the digits (time %.2fs)" % (time.clock() - t0)
-	func.matrixtofile(Y, 'dots-position-1-in-%s-%s.csv' % (str(queryrate), str(x)))
+	func.matrixtofile(Y, 'PointsPosition-1-in-%s-%s.csv' % (str(prop['queryrate']), str(x)))
 
 	result = {
 		'data': Y,
 		'id': data['id']
 	}
-	drawFigure(result, featureDict, plotsize, queryrate, x )
+	prop['text'] = x
+	drawFigure(result, featureDict, prop )
 
-def pca(data, featureDict, x, queryrate, plotsize):
+def pca(data, featureDict, x, prop):
 	"""PCA methods
 	
 	Args:
@@ -283,12 +230,13 @@ def pca(data, featureDict, x, queryrate, plotsize):
 	X_pca = pca.fit_transform(data['data'])
 	
 	print "Principal Components projection of the digits (time %.2fs)" %(time.clock() - t0)
-	func.matrixtofile(X_pca, 'dots-position-1-in-%s-%s.csv' % (str(queryrate), str(x)))
+	func.matrixtofile(X_pca, 'PointsPosition-1-in-%s-%s.csv' % (str(prop['queryrate']), str(x)))
 	result = {
 		'data': X_pca,
 		'id': data['id']
 	}
-	drawFigure(result, featureDict, plotsize, queryrate, x )
+	prop['text'] = x
+	drawFigure(result, featureDict, prop )
 
 	# kpca = KernelPCA(kernel="rbf", fit_inverse_transform=True, gamma=10)
 	# X_kpca = kpca.fit_transform(data['data'])
@@ -298,131 +246,122 @@ def pca(data, featureDict, x, queryrate, plotsize):
 	# 	'data': X_kpca,
 	# 	'id': data['id']
 	# }
-	# drawFigure(resultK, featureDict, plotsize, queryrate, 'Kernel-%s' % x)
+	# prop['text'] = 'Kernel%s' % x
+	# drawFigure(resultK, featureDict, prop)
 
-	# Plot results
-	# plt.figure()
-	# plt.subplot(2,1,1)
-	# plt.scatter(X_pca[:, 0], X_pca[:, 1], plotsize)
-	# plt.title("Projection by PCA")
-	# plt.xlabel("1st principal component")
-	# plt.ylabel("2nd component")
-
-	# plt.subplot(2,1,2)
-	# plt.scatter(X_kpca[:, 0], X_kpca[:, 1], plotsize)
-	# plt.title("Projection by KPCA")
-	# plt.xlabel("1st principal component in space induced by $\phi$")
-	# plt.ylabel("2nd component")
-
-	# plt.subplots_adjust(bottom=0.1, top=0.3)
-	# img = plt.gcf()
-	# img.savefig('Scatter-1-in-%s-%s.png' % (str(queryrate), str(x)), dpi=400)
-
-def mds(data, featureDict, x, queryrate, plotsize):
+def mds(data, featureDict, x, prop):
 	x = 'MDS-%s' % x 
 
-	print("Computing MDS embedding")
+	print "Computing MDS embedding"
 	t0 = time.clock()
 	clf = MDS(n_components=2, n_init=1, max_iter=100)
 	X_mds = clf.fit_transform(data['data'])
 	print("Done. Stress: %f" % clf.stress_)
 
 	print "MDS embedding of the digits (time %.2fs)" % (time.clock() - t0)
-	func.matrixtofile(X_mds, 'dots-position-1-in-%s-%s.csv' % (str(queryrate), str(x)))
+	func.matrixtofile(X_mds, 'PointsPosition-1-in-%s-%s.csv' % (str(prop['queryrate']), str(x)))
 	result = {
 		'data': X_mds,
 		'id': data['id']
 	}
-	drawFigure(result, featureDict, plotsize, queryrate, x )
+	prop['text'] = x
+	drawFigure(result, featureDict, prop )
 
-def decompose():
-	pass
+def decompose(data, featureDict, rowstring, deapproaches, prop):
+	collists = {
+		'total': [0,1,2,3,4,5,6,7,8,9,10],
+		'poi1': [0,1,2,4,5,6,7],
+		'poi2': [0,1,5,6,7]
+	}
+	rowlists = {
+		'total': [0,1,2,3,4,5,6,7,8,9,10,11],
+		'workday': [0,1,2,3,4,5], 
+		'weekend': [6,7,8,9,10,11],
+		'daytime': [1,2,3,7,8,9],
+		'evening': [4,10]
+	}
+	decomposelists = ['t-SNE', 'PCA', 'MDS']
+	filterqdata = func.matrixtoarray(data, rowlists[rowstring], collists['total'])
+
+	if '1' in deapproaches:
+		tsne(filterqdata, featureDict, rowstring, prop)
+	if '2' in deapproaches:
+		pca(filterqdata, featureDict, rowstring, prop)
+	if '3' in deapproaches:
+		mds(filterqdata, featureDict, rowstring, prop)
+
+def usage():
+	print 'python FeatureConstruction.py -c <city> -d <work direcotry> -s <split length> -t <tasks number>'
+
+def main(argv):
+	try:
+		opts, args = getopt.getopt(argv, "hc:d:ps:nt:qr:", ["help", "city=", "direcotry=", "plotsize=", "numthreshold=", "queryrate="])
+	except getopt.GetoptError as err:
+		# print help information and exit:
+		print str(err)  # will print something like "option -a not recognized"
+		usage()
+		sys.exit(2)
+
+	city, dic = 'beijing', '/home/taojiang/git/socialgroupVisualComparison/result'
+	prop = {
+		'plotsize': 1,
+		'numthreshold': 0,
+		'queryrate': 10
+	}
+	for opt, arg in opts:
+		if opt == '-h':
+			usage()
+			sys.exit()
+		elif opt in ("-c", "--city"):
+			city = arg
+		elif opt in ("-d", "--direcotry"):
+			dic = arg
+		elif opt in ("-ps", "--plotsize"):
+			prop['plotsize'] = float(arg)
+		elif opt in ("-nt", "--numthreshold"):
+			prop['numthreshold'] = int(arg)
+		elif opt in ("-qr", "--queryrate"):
+			prop['queryrate'] = int(arg)
+
+	dbname = 'tdVC'
+	featurecolname = 'features_%s' % city
+
+	print "Inpuy your analysis mode. 1 stands for zero-vector statistics, 2 leads you to decomposing pipeline: "
+	amode = int(raw_input())
+
+	if amode == 1:
+		conn, db = func.connectMongo(featurecolname)
+		for x in xrange(0,12):
+			queryFeatureDistribution(db, featurecolname, x)
+		conn.close()
+	else:
+		print """--- Decomposing feature mode ---
+First choose time periods you want to include in your feature
+total: Total
+workday: workday
+weekend: weekend
+daytime: daytime
+evening: evening
+
+Multiple selections can be separated by comma, please enter your row selection strategy: """
+		arows = str(raw_input()).split(',')
+
+
+		print """All 11 POI types are included in our feature selection strategy by default.
+Please choose the decomposing approaches
+1: t-SNE
+2: PCA (Not include Kernel PCA)
+3: MDS
+
+Multiple selections can be separated by comma, please enter your column selection strategy: """
+		acols = str(raw_input()).split(',')
+
+		feaData, attrDict = queryUserMatrix(dbname, featurecolname, prop['queryrate'], prop['numthreshold'])
+		for each in arows:
+			decompose(feaData, attrDict, each, acols, prop)
+			gc.collect()
+			
 
 if __name__ == '__main__':
-	# parameters' setting
-	queryrate, queryrate2, queryrate3 = 10, 3, 2
-	plotsize, plotsize2, plotsize3 = 1, 0.8, 0.8
-	recnumthreshold = 11
-	dbname = 'tdBJ'
-	collectname = 'beijing_features'
-	
-	# feature rows and columns index arrays
-	rowcollects = [ [1,2,3,4,9,10], [0,1,2,3,4,5], [6,7,8,9,10,11], [1,2,3,7,8,9], [4,10] ]
-	colcollects = [ [0,1,2,4,5,6,7], [0,1,5,6,7] ]
-	rowlist = [0,1,2,3,4,5,6,7,8,9,10,11]
-	collist = [0,1,2,3,4,5,6,7,8,9,10]
-
-	# # 统计不同时间段内用户feature vector全为0的情况
-	# conn, db = func.connectMongo(dbname)
-	# for x in xrange(0,12):
-	# 	queryFeatureDistribution(db, collectname, x)
-	# conn.close()
-	
-	# data, featureDict = queryUserMatrix(dbname, collectname, queryrate)
-	# qdata = func.matrixtoarray(data, rowlist, collist)
-
-	# # # # 全量feature数据的两种降维方法尝试
-	# tsne(qdata, featureDict, 'origin', queryrate, plotsize)
-	# pca(qdata, featureDict, 'origin', queryrate, plotsize)
-	# mds(qdata, featureDict, 'origin', queryrate, plotsize)
-
-	# # # # 按照方差，对全量feature进行筛选，后采用两种降维方法分别尝试
-	# # # for x in list(func.frange(0, 0.21, 0.05)):
-	# # # 	gc.collect()
-	# # # 	sdata = selectFeature(qdata, x, 'low-variance')
-	# # # 	tsne(sdata, featureDict, 'varthre-%s' % str(x), queryrate, plotsize)
-	# # # 	pca(sdata, featureDict, 'varthre-%s' % str(x), queryrate, plotsize)
-		
-	# # # del qdata
-
-	# # # # 六种不同的时间段feature方案
-	# for x in xrange(0,5):
-	# 	# only deal with the holiday and workday dataset
-	# 	if x == 1 or x == 2:
-	# 		gc.collect()
-	# 		filterqdata = func.matrixtoarray(data, rowcollects[x], collist)
-	# 		tsne(filterqdata, featureDict, 'label-deftype-%s' % str(x), queryrate, plotsize)
-	# 		pca(filterqdata, featureDict, 'label-deftype-%s' % str(x), queryrate, plotsize)
-	# 		mds(filterqdata, featureDict, 'label-deftype-%s' % str(x), queryrate, plotsize)
-
-	# # # 两种不同的POI类型feature方案
-	# # for x in xrange(0,2):
-	# # 	gc.collect()
-	# # 	filterqdata = func.matrixtoarray(data, rowlist, colcollects[x])
-	# # 	tsne(filterqdata, featureDict, 'deftypePOI-%s' % str(x), queryrate, plotsize)
-	# # 	pca(filterqdata, featureDict, 'deftypePOI-%s' % str(x), queryrate, plotsize)
-	
-	# # 1/3 rate
-	# data2, featureDict2 = queryUserMatrix(dbname, collectname, queryrate2)
-	# qdata2 = func.matrixtoarray(data2, rowlist, collist)
-
-	# # tsne(qdata2, featureDict2, 'origin2', queryrate2, plotsize2)
-	# pca(qdata2, featureDict2, 'origin2', queryrate2, plotsize2)
-	# mds(qdata2, featureDict2, 'origin2', queryrate2, plotsize2)
-	# del qdata2
-
-	# for x in xrange(0,5):
-	# 	if x == 1 or x == 2:
-	# 		gc.collect()
-	# 		filterqdata2 = func.matrixtoarray(data2, rowcollects[x], collist)
-	# 		tsne(filterqdata2, featureDict2, 'deftype2-%s' % str(x), queryrate2, plotsize2)
-	# 		pca(filterqdata2, featureDict2, 'deftype2-%s' % str(x), queryrate2, plotsize2)
-	# 		mds(filterqdata2, featureDict2, 'deftype2-%s' % str(x), queryrate2, plotsize2)
-
-
-	# only control the records number of one user
-	data3, featureDict3 = queryUserMatrix(dbname, collectname, queryrate3, recnumthreshold)
-	qdata3 = func.matrixtoarray(data3, rowlist, collist)
-
-	tsne(qdata3, featureDict3, 'origin-recnum', queryrate3, plotsize3)
-	pca(qdata3, featureDict3, 'origin-recnum', queryrate3, plotsize3)
-	mds(qdata3, featureDict3, 'origin-recnum', queryrate3, plotsize3)
-	del qdata3
-
-	# for x in xrange(0,5):
-	# 	if x == 1 or x == 2:
-	# 		gc.collect()
-	# 		filterqdata3 = func.matrixtoarray(data3, rowcollects[x], collist)
-	# 		tsne(filterqdata3, featureDict3, 'deftype3-recnum-%s' % str(x), queryrate3, plotsize3)
-	# 		pca(filterqdata3, featureDict3, 'deftype3-recnum-%s' % str(x), queryrate3, plotsize3)
-	# 		mds(filterqdata3, featureDict3, 'deftype3-recnum-%s' % str(x), queryrate3, plotsize3)
+	logging.basicConfig(filename='logger-decomposefeature.log', level=logging.DEBUG)
+	main(sys.argv[1:])
