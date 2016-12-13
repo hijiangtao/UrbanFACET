@@ -18,6 +18,7 @@ var devConfig = {
     // 页面入口文件配置
     entry: {
         index: ['./public/js/index.js', hotMiddlewareScript],
+        lab: ['./public/js/lab.js', hotMiddlewareScript],
         common: [
           './public/js/components/lib.js'
         ]

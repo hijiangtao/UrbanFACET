@@ -19,7 +19,7 @@ class LMap {
 	  this.id = 'map'
 	  this.baseLayer = L.tileLayer(
 		'https://api.mapbox.com/styles/v1/hijiangtao/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw', {
-		  attribution: 'Living-Modes-Visual-Comparison'
+		  attribution: 'Living-Modes-Visual-Comparison 2016 &copy; ISCAS VIS'
 		})
 	  this.map = new L.map(self.id, {
 		center: L.latLng(39.914,116.396),
