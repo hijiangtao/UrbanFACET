@@ -26,6 +26,7 @@ class LMap {
 		zoom: 12,
 		layers: [self.baseLayer]
 	  })
+	  this.map.zoomControl.setPosition('topright');
 	}
 
 	/**

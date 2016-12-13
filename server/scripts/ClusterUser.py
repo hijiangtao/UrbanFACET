@@ -60,39 +60,89 @@ def kmeans(feature, idlist, txt, prop):
 		txtCluster = "KMeansCluster-%s(k=%s)" % (txt, str(x))
 		labels = Y.labels_
 
-		drawScatterPlot(feature, idlist, prop, labels, lablist, txtCluster, x)
+		drawScatterPlot({
+			'feature': feature, 
+			'idlist': idlist	
+		}, prop, labels, lablist, txtCluster, x)
 	gc.collect()
 
 def dbscan(feature, idlist, txt, prop):
 	# feature2 is read from mongoDB, contains origin multi-dimension information
 	# feature2, idlist2 = getMatrixfromMongo(prop['dbname'], prop['featurecolname'], prop['queryrate'])
 
-	for x in xrange(0,20):
-		eps = 0.3 + 0.01 * x
-		db = DBSCAN(eps=eps, min_samples=10).fit(feature)
+	for x in xrange(0,2):
+		eps = 0.1 + 0.02 * x
+		db = DBSCAN(eps=eps, min_samples=50).fit(feature)
+		core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+		core_samples_mask[db.core_sample_indices_] = True
 		labels = db.labels_
 
 		# Number of clusters in labels, ignoring noise if present.
 		n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-		lablist = [i for i in xrange(0,n_clusters_)]
+		lablist = [i-1 for i in xrange(0,n_clusters_)]
 
 		txtCluster = "DBScanCluster-%s(dis=%s)" % (txt, str(eps))
-		drawScatterPlot(feature, idlist, prop, labels, lablist, txtCluster, n_clusters_)
+		# if n_clusters_ < 4:
+		# 	print "n_clusters_ shouldn't be smaller than 4"
+		drawScatterPlot({
+			'feature': feature, 
+			'idlist': idlist,
+			'core_samples_mask': core_samples_mask	
+		}, prop, labels, lablist, txtCluster, n_clusters_, "dbscan")
 	
-def drawScatterPlot(feature, idlist, prop, labels, lablist, txtCluster, x):
+def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans'):
+	feature, idlist = data['feature'], data['idlist']
+
 	plt.figure()
-	plt.scatter(feature[:,0], feature[:,1], s=prop['plotsize'], c=labels, edgecolors='none', cmap=plt.cm.coolwarm)
-	plt.title(txtCluster)
 	
+	if type == 'kmeans':
+		plt.scatter(feature[:,0], feature[:,1], s=prop['plotsize'], c=labels, edgecolors='none', cmap=plt.cm.prism)
+	elif type == 'dbscan':
+		# Black removed and is used for noise instead.
+		core_samples_mask = data['core_samples_mask']
+		unique_labels = set(labels)
+		colors = plt.cm.Spectral(np.linspace(0, 1, len(unique_labels)))
+
+		for k, col in zip(unique_labels, colors):
+			if k == -1:
+				# Black used for noise.
+				col = '#D9D1C9'
+
+			class_member_mask = (labels == k)
+
+			xy = feature[class_member_mask & core_samples_mask]
+			plt.plot(xy[:, 0], xy[:, 1], 'o', markerfacecolor=col,
+					 markeredgecolor='none', markersize=prop['plotsize'])
+
+			xy = feature[class_member_mask & ~core_samples_mask]
+			plt.plot(xy[:, 0], xy[:, 1], 'o', markerfacecolor=col,
+					 markeredgecolor='none', markersize=prop['plotsize'] * 0.6)
+
+	plt.title(txtCluster)
+
+	print "%s clusters are detected." % str(x)
+	
+	ncolnum = int(x/4)
+	if ncolnum == 0:
+		ncolnum = 4
+
 	recs = []
 	norm = plt.Normalize(0, x-1)
+	if type == 'dbscan':
+		recs = []
+		recs.append(mpatches.Rectangle((0,0),1,1,color='gray'))
+		norm = plt.Normalize(1, x)
 
-	for i in range(0, x):
-		recs.append(mpatches.Rectangle((0,0),1,1,color=plt.cm.coolwarm(norm(i))))
+		for i in colors:
+			recs.append(mpatches.Rectangle((0,0),1,1,color=i))
+	elif type == 'kmeans':
+		for i in xrange(0, x):
+			recs.append(mpatches.Rectangle(0,0),1,1,color=plt.cm.hsv(norm(i)))
+	
 	plt.legend(recs, lablist,
 		scatterpoints=1,
 		loc='lower left',
-		ncol=4,
+		ncol=int(ncolnum),
 		fontsize=5)
 
 	img = plt.gcf()
@@ -115,11 +165,17 @@ def main(argv):
 		sys.exit(2)
 
 	city, method = 'beijing', ['km']
-	files = ['1-in-10_tsne-workday']
+	files = [
+		# '1-in-10_tsne-workday', '1-in-10_tsne-weekend', '1-in-10_tsne-daytime', 
+		# '1-in-10_tsne-evening', '1-in-10_tsne-wodaytime', '1-in-10_tsne-weevening', 
+		'1-in-3_tsne-workday'#, '1-in-3_tsne-weekend', '1-in-3_tsne-daytime',
+		# '1-in-3_tsne-evening', '1-in-3_tsne-wodaytime', '1-in-3_tsne-weevening'
+	]
 	prop = {
 		'dbname': 'tdVC',
 		'featurecolname': 'features_%s' % city,
-		'baseurl': '/home/taojiang/datasets/tdVC/decomp-data/Feature-Decompose-in-2D',
+
+		'baseurl': '/home/joe/Downloads/DecomposeResult-Specific-in-some-tp',
 		'plotsize': 1.0,
 		'queryrate': 10
 	}
@@ -138,7 +194,7 @@ def main(argv):
 
 	print """--- Cluster Mode ---
 Please enter the clustering method you want to use: 
-km: kmeans
+km: Kmeans
 db: DBScan"""
 	method = raw_input().split(',')
 	
