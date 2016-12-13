@@ -70,25 +70,28 @@ def dbscan(feature, idlist, txt, prop):
 	# feature2 is read from mongoDB, contains origin multi-dimension information
 	# feature2, idlist2 = getMatrixfromMongo(prop['dbname'], prop['featurecolname'], prop['queryrate'])
 
-	for x in xrange(0,2):
-		eps = 0.1 + 0.02 * x
-		db = DBSCAN(eps=eps, min_samples=50).fit(feature)
-		core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
-		core_samples_mask[db.core_sample_indices_] = True
-		labels = db.labels_
+	for minpls in xrange(20, 80, 5):
+		for x in xrange(0,20):
+			eps = 0.1 + 0.01 * x
+			db = DBSCAN(eps=eps, min_samples=minpls).fit(feature)
+			core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+			core_samples_mask[db.core_sample_indices_] = True
+			labels = db.labels_
 
-		# Number of clusters in labels, ignoring noise if present.
-		n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-		lablist = [i-1 for i in xrange(0,n_clusters_)]
+			# Number of clusters in labels, ignoring noise if present.
+			n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+			lablist = [i-1 for i in xrange(0,n_clusters_)]
 
-		txtCluster = "DBScanCluster-%s(dis=%s)" % (txt, str(eps))
-		# if n_clusters_ < 4:
-		# 	print "n_clusters_ shouldn't be smaller than 4"
-		drawScatterPlot({
-			'feature': feature, 
-			'idlist': idlist,
-			'core_samples_mask': core_samples_mask	
-		}, prop, labels, lablist, txtCluster, n_clusters_, "dbscan")
+			txtCluster = "DBScanCluster-%s(dis=%s)" % (txt, str(eps))
+			# if n_clusters_ < 4:
+			# 	print "n_clusters_ shouldn't be smaller than 4"
+			drawScatterPlot({
+				'feature': feature, 
+				'idlist': idlist,
+				'core_samples_mask': core_samples_mask	
+			}, prop, labels, lablist, txtCluster, n_clusters_, "dbscan")
+
+		gc.collect()
 	
 def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans'):
 	feature, idlist = data['feature'], data['idlist']
@@ -168,14 +171,14 @@ def main(argv):
 	files = [
 		# '1-in-10_tsne-workday', '1-in-10_tsne-weekend', '1-in-10_tsne-daytime', 
 		# '1-in-10_tsne-evening', '1-in-10_tsne-wodaytime', '1-in-10_tsne-weevening', 
-		'1-in-3_tsne-workday'#, '1-in-3_tsne-weekend', '1-in-3_tsne-daytime',
-		# '1-in-3_tsne-evening', '1-in-3_tsne-wodaytime', '1-in-3_tsne-weevening'
+		'1-in-3_tsne-workday', '1-in-3_tsne-weekend', '1-in-3_tsne-daytime',
+		'1-in-3_tsne-evening', '1-in-3_tsne-wodaytime', '1-in-3_tsne-weevening'
 	]
 	prop = {
 		'dbname': 'tdVC',
 		'featurecolname': 'features_%s' % city,
 
-		'baseurl': '/home/joe/Downloads/DecomposeResult-Specific-in-some-tp',
+		'baseurl': '/home/taojiang/datasets/tdVC/decomp-data/Feature-Decompose-in-2D',
 		'plotsize': 1.0,
 		'queryrate': 10
 	}
