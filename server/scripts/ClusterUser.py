@@ -52,7 +52,7 @@ def kmeans(feature, idlist, txt, prop):
 	# feature2 is read from mongoDB, contains origin multi-dimension information
 	# feature2, idlist2 = getMatrixfromMongo(prop['dbname'], prop['featurecolname'], prop['queryrate'])
 
-	for x in xrange(4, 20):
+	for x in xrange(2, 20):
 		lablist = [i for i in xrange(0,x)]
 
 		Y = KMeans(n_clusters=x, random_state=0).fit(feature)
@@ -72,7 +72,7 @@ def dbscan(feature, idlist, txt, prop):
 
 	for minpls in xrange(20, 80, 5):
 		for x in xrange(0,20):
-			eps = 0.1 + 0.01 * x
+			eps = 0.10 + 0.01 * x
 			db = DBSCAN(eps=eps, min_samples=minpls).fit(feature)
 			core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
 			core_samples_mask[db.core_sample_indices_] = True
@@ -82,7 +82,7 @@ def dbscan(feature, idlist, txt, prop):
 			n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
 			lablist = [i-1 for i in xrange(0,n_clusters_)]
 
-			txtCluster = "DBScanCluster-%s(dis=%s)" % (txt, str(eps))
+			txtCluster = "DBScanCluster-%s(dis=%s,minpls=%s)" % (txt, str(eps), str(minpls))
 			# if n_clusters_ < 4:
 			# 	print "n_clusters_ shouldn't be smaller than 4"
 			drawScatterPlot({
@@ -140,7 +140,7 @@ def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans')
 			recs.append(mpatches.Rectangle((0,0),1,1,color=i))
 	elif type == 'kmeans':
 		for i in xrange(0, x):
-			recs.append(mpatches.Rectangle(0,0),1,1,color=plt.cm.hsv(norm(i)))
+			recs.append(mpatches.Rectangle((0,0),1,1,color=plt.cm.prism(norm(i))))
 	
 	plt.legend(recs, lablist,
 		scatterpoints=1,
@@ -160,7 +160,7 @@ def usage():
 
 def main(argv):
 	try:
-		opts, args = getopt.getopt(argv, "hc:m:p:", ["help", "city=", "method=", "plotsize="])
+		opts, args = getopt.getopt(argv, "hc:m:p:d:", ["help", "direcotry=", "city=", "method=", "plotsize="])
 	except getopt.GetoptError as err:
 		# print help information and exit:
 		print str(err)  # will print something like "option -a not recognized"
@@ -194,6 +194,8 @@ def main(argv):
 			method = [arg]
 		elif opt in ("-p", "--plotsize"):
 			prop['plotsize'] = float(arg)
+		elif opt in ("-d", "--direcotry"):
+			prop['baseurl'] = arg
 
 	print """--- Cluster Mode ---
 Please enter the clustering method you want to use: 
