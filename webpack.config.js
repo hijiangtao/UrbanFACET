@@ -10,7 +10,6 @@ var hotMiddlewareScript = 'webpack-hot-middleware/client?reload=true';
 var devConfig = {
     // 插件项
     plugins: [
-        commonsPlugin,
         new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin()
@@ -18,10 +17,7 @@ var devConfig = {
     // 页面入口文件配置
     entry: {
         index: ['./public/js/index.js', hotMiddlewareScript],
-        lab: ['./public/js/lab.js', hotMiddlewareScript],
-        common: [
-          './public/js/components/lib.js'
-        ]
+        lab: ['./public/js/lab.js', hotMiddlewareScript]
     },
     output: {
         filename: '[name].js',

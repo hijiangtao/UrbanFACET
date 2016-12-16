@@ -5,7 +5,16 @@
  * @version $Id$
  */
 
+let ArrayContains = function(obj, val) {
+    var i = obj.length;
+    while (i--) {
+        if (obj[i] == val) {
+            return true;
+        }
+    }
+    return false;
+}
 
-// import Vue from 'vue'
-// import VueRouter from 'vue-router'
-// import d3 from 'd3'
+export {
+	ArrayContains
+}

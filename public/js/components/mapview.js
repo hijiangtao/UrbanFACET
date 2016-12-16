@@ -6,6 +6,7 @@
  */
 
 'use strict'
+
 import L from 'leaflet'
 import * as d3 from 'd3'
 
