@@ -27,10 +27,10 @@
 							<div class="active section"><%= title %></div>
 						</div>
 					</div>
-					<div class="twelve wide column">
+					<div class="eightyvhcol twelve wide column">
 						<div id="scatterplot"></div>
 					</div>
-					<div class="four wide column">
+					<div class="eightyvhcol two wide column">
 						<h4 class="ui header">Parameters</h4>
 						<div class="ui divider"></div>
 						
@@ -39,27 +39,31 @@
 							<label>Data origin</label>
 							<div v-for="key in results"  class="field">
 							  <div class="ui radio checkbox">
-								<input type="radio" name="resultselection" value="{{key.name}}" v-model="resultsel">
+								<input type="radio" name="resultselection" :value="key.name" v-model="resultsel">
 								<label>{{key.name}}</label>
 							  </div>
 							</div>
 						  </div>
 						</div>
 
-						<button id="loadCluster" class="ui button">Load</button>
+						<div class="ui divider"></div>
+
+						<button id="loadCluster" class="ui button" v-on:click='loadData'>Load</button>
 						<div class="ui divider"></div>
 						
 						<h5>Cluster IDs</h5>
 						<div class="ui fluid input">
 						  <input type="text" placeholder="ClusterID..." v-model="idlist">
 						</div>
+					</div>
 
+					<div class="eightyvhcol two wide column">
 						<div class="ui form">
 						  <div class="grouped fields">
 							<label>POI Type</label>
 							<div v-for="key in cluster"  class="field">
 							  <div class="ui radio checkbox">
-								<input type="radio" name="clusterinfostats" value="{{key.val}}" v-model="clustersel">
+								<input type="radio" name="clusterinfostats" :value="key.val" v-model="clustersel">
 								<label>{{key.name}}</label>
 							  </div>
 							</div>
@@ -72,7 +76,7 @@
 						  <div class="grouped fields">
 						  	<label>Time periods</label>
 						  	<div v-for="key in timeperiods" class="ui checkbox field">
-							  	<input type="checkbox" name="timeperiodstats" value="{{key.value}}" v-model="tpsel">
+							  	<input type="checkbox" name="timeperiodstats" :value="key.value" v-model="tpsel">
 							  	<label>{{key.name}}</label>
 							</div>
 						  </div>
@@ -82,10 +86,10 @@
 						<button class="ui button" v-on:click="getStats">Stats</button>
 					</div>
 
-					<div id="matrixplot" class="ten wide column"></div>
-					<div id="pieplot" class="six wide column"></div>
-					<div id="barplot" class="twelve wide column"></div>
-					<div id="recnumplot" class="four wide column"></div>
+					<div id="matrixplot" class="visvhcol ten wide column"></div>
+					<div id="pieplot" class="visvhcol six wide column"></div>
+					<div id="barplot" class="visvhcol twelve wide column"></div>
+					<div id="recnumplot" class="visvhcol four wide column"></div>
 				</div>
 			</div>
 		</div>
@@ -97,6 +101,18 @@
 <style type="text/css">
 	#labcontainer {
 		padding: 1rem;
+	}
+
+	#scatterplot {
+		height: 100%;
+		width: 100%;
+	}
+
+	.eightyvhcol {
+		height: 80vh;
+	}
+	.visvhcol {
+		height: 500px;
 	}
 </style>
 

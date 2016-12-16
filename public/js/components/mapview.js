@@ -10,7 +10,7 @@
 import L from 'leaflet'
 import * as d3 from 'd3'
 
-class LMap {
+class mapview {
 	/**
 	 * LMap class constructor
 	 * @return {[type]} [description]
@@ -99,4 +99,4 @@ class LMap {
 	}
 }
 
-export default LMap
+export default mapview

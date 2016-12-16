@@ -6,9 +6,9 @@
  */
 
 let ArrayContains = function(obj, val) {
-    let i = obj.length;
+    var i = obj.length;
     while (i--) {
-        if (obj[i] === val) {
+        if (obj[i] == val) {
             return true;
         }
     }
@@ -38,7 +38,6 @@ let MatrixAdd = function(a, b, times, dim) {
     return result
 }
 
-export {
-    ArrayContains,
-    MatrixAdd
+module.exports = {
+	MatrixAdd: MatrixAdd
 }

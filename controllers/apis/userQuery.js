@@ -1,5 +1,5 @@
 // /userQuery.js
-// 实现与MySQL交互
+'use strict'
 
 let Http = require('http');
 let fs = require('fs');
@@ -7,13 +7,14 @@ let path = require('path');
 let GeoJSON = require('geojson');
 
 // 使用连接池，提升性能
-var $sql = require('./userSqlMapping');
-var pool = require('../../conf/db');
+let $sql = require('./userSqlMapping');
+let pool = require('../../conf/db');
 
-var mongodb = require('mongodb');
-var MongoClient = mongodb.MongoClient;
-var url = 'mongodb://192.168.1.42:27017/tdVC';
+let mongodb = require('mongodb');
+let MongoClient = mongodb.MongoClient;
+let url = 'mongodb://192.168.1.42:27017/tdVC';
 
+let lib = require('../../conf/lib');
 
 /**
  * [formatCluster description]
@@ -23,13 +24,13 @@ var url = 'mongodb://192.168.1.42:27017/tdVC';
  * @return {[type]}        [description]
  */
 function formatCluster(data, clubeg, cluend) {
-	var idlist = {}, clusterlist = []
-	for (var i = clubeg; i <= cluend; i++) {
+	let idlist = {}, clusterlist = []
+	for (let i = clubeg; i <= cluend; i++) {
 		idlist[ i.toString() ] = []
 		clusterlist.push(i.toString())
 	}
 
-	for (var i = data.length - 1; i >= 0; i--) {
+	for (let i = data.length - 1; i >= 0; i--) {
 		idlist[ data[i][1].toString() ].push( parseInt(data[i][0]) )
 	}
 
@@ -37,30 +38,6 @@ function formatCluster(data, clubeg, cluend) {
 		'userlist': idlist,
 		'clusterlist': clusterlist
 	}
-}
-
-let MatrixAdd = function(a,b,times,dim) {
-	var result = [];
-
-	if (dim == 1) {
-		for (var i = 0; i < a.length; i++) {
-		  result.push(parseFloat(a[i]) + parseFloat(b[i])); 
-		}
-		return result
-	}
-
-	for (var i = 0; i < a.length; i++) {
-
-	  var arr = []; // 一般矩陣
-	  for (var j = 0; j < a[i].length; j++) {
-		var sum = (parseFloat(a[i][j]) + parseFloat(b[i][j])) * times;
-		arr.push(sum);  // 或 arr[j] = sum;
-	  }
-	  result.push(arr); // 或 result[i] = arr;
-	  // 把一維矩陣的結果，放進 result，因此 result 等於是二維矩陣
-	}
-
-	return result
 }
 
 let userQuery = {
@@ -122,7 +99,7 @@ let userQuery = {
 			});
 		})
 	},
-	queryAttrStats(req, res, next) {
+	queryClusterStats(req, res, next) {
 		let params = req.body,
 			file = params.file,
 			classes = params['id[]'][0]
@@ -134,9 +111,9 @@ let userQuery = {
 			  return console.error(err);
 		   }
 		   data = data.toString().split('\r\n')
-		   // console.log(data)
-		   for (var i = 0; i < data.length; i++) {
-		   	tmparr = data[i].split(',');
+
+		   for (let i = 0; i < data.length; i++) {
+		   	let tmparr = data[i].split(',');
 		   	if (tmparr[5] == classes) {
 		   		idlist.push(parseInt(tmparr[0]))
 		   	}
@@ -149,7 +126,7 @@ let userQuery = {
 				//HURRAY!! We are connected. :)
 				console.log('Connection established to', url);
 
-				var collection = db.collection('features_beijing');
+				let collection = db.collection('features_beijing');
 
 				collection.find({'_id': {
 					"$in": idlist
@@ -157,17 +134,15 @@ let userQuery = {
 				  if (err) {
 					console.log(err);
 				  } else if (result.length) {
-					// console.log('Found:', result);
-
-					var resdata =[], recnumdata = []; // 存的所有人 matrix 集合加和
+					let resdata =[], recnumdata = []; // 存的所有人 matrix 集合加和
 					
-					for (var i = 0; i < result.length; i++) {
+					for (let i = 0; i < result.length; i++) {
 							if (i == 0) {
-								resdata = MatrixAdd(result[i]['pVec'], result[i]['pVec'], 0.5, 2)
+								resdata = lib.MatrixAdd(result[i]['pVec'], result[i]['pVec'], 0.5, 2)
 								recnumdata = result[i]['tpNumVec']	
 							} else {
-								resdata = MatrixAdd(result[i]['pVec'], resdata, 1, 2)
-								recnumdata = MatrixAdd(recnumdata, result[i]['tpNumVec'], 1, 1)
+								resdata = lib.MatrixAdd(result[i]['pVec'], resdata, 1, 2)
+								recnumdata = lib.MatrixAdd(recnumdata, result[i]['tpNumVec'], 1, 1)
 							}
 							
 					}
@@ -186,7 +161,7 @@ let userQuery = {
 			});
 		});
 
-		// for (var i = 0; i < data.length; i++) {
+		// for (let i = 0; i < data.length; i++) {
 		// 	if (data[i]['class'].toString() === classes) {
 		// 		idlist.push(data[i]['id'])
 		// 	}
@@ -252,10 +227,10 @@ let userQuery = {
 	 */
 	clusterInit(req, res, next) {
 		// console.log(process.cwd())
-		var stream = fs.createReadStream("public/data/KMeans-1-in-10-tsne-label-deftype-1-[k-8].csv");
-		var idlist = [], cluster = []
+		let stream = fs.createReadStream("public/data/KMeans-1-in-10-tsne-label-deftype-1-[k-8].csv");
+		let idlist = [], cluster = []
 
-		var csvStream = csv()
+		let csvStream = csv()
 			.on("data", function(data){
 				 idlist.push(data);
 			})
@@ -264,7 +239,7 @@ let userQuery = {
 				 res.send(formatCluster(idlist, 0, 7));
 			});
 
-		var tmp = stream.pipe(csvStream);
+		let tmp = stream.pipe(csvStream);
 		// console.log(tmp);
 	}, 
 	clusterUserQuery(req, res, next) {
@@ -279,7 +254,7 @@ let userQuery = {
 			//HURRAY!! We are connected. :)
 			console.log('Connection established to', url);
 
-			var collection = db.collection('beijing_features');
+			let collection = db.collection('beijing_features');
 
 			collection.find({'_id': id}).toArray(function (err, result) {
 			  if (err) {
@@ -287,8 +262,8 @@ let userQuery = {
 			  } else if (result.length) {
 				// console.log('Found:', result);
 
-				var resdata = [], definedtype = ['workdayM', 'workdayF', 'workdayN', 'workdayA', 'workdayE', 'workdayI', 'holidayM', 'holidayF', 'holidayN', 'holidayA', 'holidayE', 'holidayI']
-				for (var i = 0; i <= result[0]['vec'].length - 1; i++) {
+				let resdata = [], definedtype = ['workdayM', 'workdayF', 'workdayN', 'workdayA', 'workdayE', 'workdayI', 'holidayM', 'holidayF', 'holidayN', 'holidayA', 'holidayE', 'holidayI']
+				for (let i = 0; i <= result[0]['vec'].length - 1; i++) {
 					resdata.push( [definedtype[i]].concat(result[0]['vec'][i]) )
 				}
 				res.send({

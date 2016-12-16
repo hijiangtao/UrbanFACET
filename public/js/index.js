@@ -9,13 +9,13 @@
 
 import $ from "jquery"
 import Vue from 'vue'
-import LMap from './components/mapview'
+import mapview from './components/mapview'
 
 /**
  * LMap instance: hold map view instance and its' related operating approaches
  * @type {LMap}
  */
-let mapins = new LMap()
+let mapins = new mapview()
 
 let vuedata = {
     timebtngroup: [

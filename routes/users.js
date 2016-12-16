@@ -11,4 +11,8 @@ router.get('/api/v1/ui/q', function(req, res, next) {
   userQuery.queryUserbyID(req, res, next);
 });
 
+router.post('/api/v1/lab/queryClusterStats', function(req, res, next) {
+	userQuery.queryClusterStats(req, res, next);
+})
+
 module.exports = router;
