@@ -32,7 +32,7 @@
 
 				<!-- operation modes -->
 				<div id="moderadio" class="sixteen wide column">
-					<h3 class="ui header">Operation Modes</h3>
+					<h5 class="ui header">Operation Modes</h5>
 					<div class="ui form">
 						<div class="inline fields">
 							<div v-for='btn in modebtngroup' class="field">
@@ -47,7 +47,7 @@
 
 				<!-- city regions -->
 				<div id="cityradio" class="sixteen wide column">
-					<h3 class="ui header">Region Selection</h3>
+					<h5 class="ui header">Region Selection</h5>
 					<div class="ui form">
 						<div class="inline fields">
 							<div v-for='btn in regionbtngroup' class="field">
@@ -62,7 +62,7 @@
 
 				<!-- different group people -->
 				<div id="groupcontainer" class="sixteen wide column">
-					<h3 class="ui header">People Groups</h3>
+					<h5 class="ui header">People Groups</h5>
 					<div class="row">
 						
 					</div>
@@ -70,26 +70,26 @@
 
 				<!-- lasting time selection input range -->
 				<div class="sixteen wide column">
-					<h3 class="ui header">Lasting Time</h3>
+					<h5 class="ui header">Lasting Time</h5>
 					<input type="range" min="0" max="100" />
 				</div>
 
 				<!-- time periods button group -->
 				<div class="sixteen wide column">
-					<h3 class="ui header">Time Periods</h3>
+					<h5 class="ui header">Time Periods</h5>
 					<button v-for="btn in timebtngroup" class="narrowbutton mini ui black basic button" track-by="$index">{{ btn.text }}</button>
 				</div>
 
 				<!--  range -->
 				<div class="sixteen wide column">
-					<h3 class="ui header">Space Threshold</h3>
+					<h5 class="ui header">Space Threshold</h5>
 					<input type="range" min="0" max="100" />
 				</div>
 				<div id="poicheckbox" class="sixteen wide column">
 					
 					<div class="ui grid">
 						<div class="eight wide column">
-							<h3 class="ui header">POI Types</h3>
+							<h5 class="ui header">POI Types</h5>
 							<div class="ui form">
 								<div class="grouped fields">
 									<div v-for='btn in poibtngroup' class="field">
@@ -103,16 +103,39 @@
 						</div>
 
 						<div class="eight wide column">
-							<h3 class="ui header">Others</h3>
+							<h5 class="ui header">Others</h5>
+							<div class="ui mini compact menu">
+							  <div class="ui simple dropdown item">
+							    Records Number
+							    <i class="dropdown icon"></i>
+							    <div class="menu">
+							      <div class="item">Low</div>
+							      <div class="item">Medium</div>
+							      <div class="item">High</div>
+							    </div>
+							  </div>
+							</div>
 						</div>
 					</div>
 				</div>
 
 				<!-- single user records query entry -->
 				<div class="sixteen wide column">
-					<h3 class="ui header">User Record Query</h3>
+					<h5 class="ui header">User Record Query</h5>
 					<div class="ui grid">
 						<div class="twelve wide column">
+							<div class="ui mini compact menu">
+							  <div class="ui simple dropdown item">
+							    Records Number
+							    <i class="dropdown icon"></i>
+							    <div class="menu">
+							      <div class="item">Low</div>
+							      <div class="item">Medium</div>
+							      <div class="item">High</div>
+							    </div>
+							  </div>
+							</div>
+
 							<div class="ui fluid mini input">
 								<input type="text" placeholder="Input User ID..." v-model="useridstring" v-on:keyup.enter="queryuser">
 							</div>
@@ -161,6 +184,10 @@
 	.narrowbutton.mini.ui.black.basic.button {
 		padding: .5em .6em;
 		margin-bottom: .75em;
+	}
+
+	.ui.radio.checkbox label {
+	    padding-left: 1.25714em;
 	}
 </style>
 
