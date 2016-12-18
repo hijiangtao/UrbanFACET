@@ -1,5 +1,5 @@
 /**
- * 
+ * mapview.js
  * @authors Joe Jiang (hijiangtao@gmail.com)
  * @date    2016-12-07 15:31:51
  * @version $Id$
