@@ -350,7 +350,9 @@ class analysistools {
 			grid: {
 				show: true,
 				left: "5%",
-				right: '2%'
+				right: '2%',
+				top: '7.5%',
+				bottom: '16%'
 			},
 			toolbox: {
 				// y: 'bottom',

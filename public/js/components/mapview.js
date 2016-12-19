@@ -8,6 +8,7 @@
 'use strict'
 
 import L from 'leaflet'
+// L = require('leaflet')
 import * as d3 from 'd3'
 
 class mapview {
@@ -15,17 +16,20 @@ class mapview {
 	 * LMap class constructor
 	 * @return {[type]} [description]
 	 */
-	constructor() {
+	constructor(id) {
 	  let self = this
-	  this.id = 'map'
+	  this.id = id
 	  this.baseLayer = L.tileLayer(
-		'https://api.mapbox.com/styles/v1/hijiangtao/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw', {
-		  attribution: 'Living-Modes-Visual-Comparison 2016 &copy; ISCAS VIS'
+		'https://api.mapbox.com/styles/v1/{id}/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
+		  attribution: 'Living-Modes-Visual-Comparison 2016 &copy; ISCAS VIS',
+		  maxZoom: 18,
+		  id: 'hijiangtao',
+		  accessToken: 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'
 		})
 	  this.map = new L.map(self.id, {
 		center: L.latLng(39.914,116.396),
 		zoom: 12,
-		layers: [self.baseLayer]
+		layers: self.baseLayer
 	  })
 	  this.map.zoomControl.setPosition('topright');
 	}
@@ -61,7 +65,7 @@ class mapview {
 			.attr("opacity", "0.8")
 			.attr("class", "pointmapfeature");
 
-		self.map.on("viewreset", reset);
+		self.map.on("moveend", reset);
 		reset();
 
 		/**

@@ -45,12 +45,9 @@ var devConfig = {
         }, { test: /\.ejs$/, loader: 'ejs-loader?variable=data' }]
     },
     resolve: {
-      alias: {
-        'vue$': 'vue/dist/vue.js'
-      }
-    },
-    sassLoader: {
-        includePaths: [path.resolve(__dirname, "./public/css")]
+        alias: {
+            'vue$': 'vue/dist/vue.js'
+        }
     }
 };
 

@@ -19,6 +19,7 @@
     "leaflet": "0.7.7",
     "morgan": "~1.7.0",
     "node-sass-middleware": "0.8.0",
+    "semantic-ui": "^2.2.6",
     "serve-favicon": "~2.3.0",
     "vue": "^2.1.4",
     "vue-router": "^2.1.1"

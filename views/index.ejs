@@ -14,11 +14,65 @@
 	@import '/css/leaflet.css';
 	@import '/css/semantic.css'
 	</style>
+	
+	<style type="text/css">
+		body {
+			margin: 0 !important;
+			padding: 0 !important;
+			border: none !important;
+		}
+
+		#map {
+			height: 100vh;
+		  	width: 100vw;
+		}
+
+		.basic-margin {
+			margin: 1rem !important;
+		}
+		.no-padding {
+			padding: 0 !important;
+		}
+		  
+
+		/*user panel background stylesheets*/
+		#userpanel {
+			top: 0;
+			width: 25vw;
+			position: absolute;
+			/*padding: 1rem;*/
+			margin: 0;
+			height: 100vh;
+		 	z-index: 999;
+		  	background-color: rgba(255,255,255,.7);
+		}
+
+		.ui.radio.checkbox label {
+		    padding-left: 1.25714em;
+		}
+
+		.ui.mini.table {
+			font-size: 0.78571429rem;
+		}
+
+		td>input {
+			width: 87%;
+		}
+		td>span {
+			vertical-align: top;
+			float: right;
+		}
+
+		.wide.column {
+			padding-top: .4rem;
+			padding-bottom: .4rem;
+		}
+	</style>
 </head>
 
-<body>
+<body class="ui segment">
 	<div id="map"></div>
-	<div id="userpanel" class="row">
+	<div id="userpanel" class="ui row segment">
 		<div class="sixteen wide column">
 			<div class="row">
 				<div class="sixteen wide column">
@@ -29,67 +83,111 @@
 					</div>
 				</div>
 				<div class="ui divider"></div>
-
-				<!-- operation modes -->
-				<div id="moderadio" class="sixteen wide column">
-					<h5 class="ui header">Operation Modes</h5>
-					<div class="ui form">
-						<div class="inline fields">
-							<div v-for='btn in modebtngroup' class="field">
-								<div class="ui radio checkbox">
-									<input type="radio" name="mode" :value="btn.label">
-									<label>{{ btn.label }}</label>
-								</div>
+				
+				<!--  -->
+				<div class="ui accordion">
+				  <div class="active title">
+				    <i class="dropdown icon"></i>
+				    Training Model Setting
+				  </div>
+				  <div class="active content">
+				    <div class="ui grid">
+				    	<div id="" class="sixteen wide column">
+				    		<!-- city regions -->
+					    	<div class="ui mini compact menu">
+							  <div class="ui simple dropdown item">
+							    <span>{{ selections.regionVal }}</span>
+							    <i class="dropdown icon"></i>
+							    <div class="menu">
+							      <div v-for='item in settings.regions' class="item" :class="{'disabled': item.name != 'Beijing'}" v-on:click='changeRegion(item.name)' >{{ item.name }}</div>
+							    </div>
+							  </div>
 							</div>
-						</div>
-					</div>
-				</div>
 
-				<!-- city regions -->
-				<div id="cityradio" class="sixteen wide column">
-					<h5 class="ui header">Region Selection</h5>
-					<div class="ui form">
-						<div class="inline fields">
-							<div v-for='btn in regionbtngroup' class="field">
-								<div class="ui radio checkbox">
-									<input type="radio" name="city" :value="btn.label">
-									<label>{{ btn.label }}</label>
-								</div>
+					    	<div class="ui mini compact menu">
+							  <div class="ui simple dropdown item">
+							    <span>{{ selections.featureName }}</span>
+							    <i class="dropdown icon"></i>
+							    <div class="menu">
+							      <div v-for='item in settings.features' class="item" v-on:click='changeFeature(item.name, item.value)' >{{ item.name }}</div>
+							    </div>
+							  </div>
 							</div>
-						</div>
-					</div>
-				</div>
 
-				<!-- different group people -->
-				<div id="groupcontainer" class="sixteen wide column">
-					<h5 class="ui header">People Groups</h5>
-					<div class="row">
+							<button id="tsneBtn" class="ui tiny secondary button" v-on:click='tsneTrain'>t-SNE</button>
+					    </div>
 						
-					</div>
+						<!-- decompose approach buttons -->
+					    <!-- <div id="" class="sixteen wide column">
+							<div class="ui form">
+								<div class="inline fields">
+									<label>{{ selections.decompName }}</label>
+									<div v-for='item in settings.decomps' class="field">
+										<div class="ui radio checkbox" :class="{'read-only': item.name != 't-SNE'}">
+											<input type="radio" name="decomps" :value="item.value">
+											<label>{{ item.name }}</label>
+										</div>
+									</div>
+								</div>
+							</div>
+					    </div> -->
+				    </div>
+
+				  </div>
+				  <div class="title">
+				    <i class="dropdown icon"></i>
+				    Cluster Discovery Setting
+				  </div>
+				  <div class="content">
+				    <div class="ui grid">
+				    	<div id="" class="sixteen wide column">
+				    		<div class="ui mini compact menu">
+							  <div class="ui simple dropdown item">
+							    <span>{{ selections.themeName }}</span>
+							    <i class="dropdown icon"></i>
+							    <div class="menu">
+							      <div v-for='item in settings.themes' class="item" v-on:click='changeTheme(item.value)' >{{ item.name }}</div>
+							    </div>
+							  </div>
+							</div>
+				    	</div>
+
+				    	<div class="sixteen wide column">
+				    		<table v-show='selections.tmodelVal.length' class="ui mini celled table">
+							  <thead>
+							    <tr><th>Cluster Field</th>
+							    <th>Control</th>
+							  </tr></thead>
+							  <tbody>
+							    <tr v-for='item in selections.tmodelVal'>
+							      <td>{{ item.field }}</td>
+							      <td><input type="range" :name="item.field" :min="item.min" :max="item.max" v-model="item.pred"><span>{{ item.pred }}</span></td>
+							    </tr>
+							  </tbody>
+							</table>
+				    	</div>
+
+				    	<button id="clusterBtn" class="ui tiny secondary button" v-on:click='clusterTrain'>Cluster</button>
+				    </div>
+				  </div>
+				  <div class="title">
+				    <i class="dropdown icon"></i>
+				    Visual Analytics Panel
+				  </div>
+				  <div class="content">
+				    <div class="ui grid">
+				    	
+				    </div>
+				  </div>
 				</div>
 
-				<!-- lasting time selection input range -->
-				<div class="sixteen wide column">
-					<h5 class="ui header">Lasting Time</h5>
-					<input type="range" min="0" max="100" />
-				</div>
-
-				<!-- time periods button group -->
-				<div class="sixteen wide column">
-					<h5 class="ui header">Time Periods</h5>
-					<button v-for="btn in timebtngroup" class="narrowbutton mini ui black basic button" track-by="$index">{{ btn.text }}</button>
-				</div>
+				
 
 				<!--  range -->
-				<div class="sixteen wide column">
-					<h5 class="ui header">Space Threshold</h5>
-					<input type="range" min="0" max="100" />
-				</div>
 				<div id="poicheckbox" class="sixteen wide column">
-					
 					<div class="ui grid">
 						<div class="eight wide column">
-							<h5 class="ui header">POI Types</h5>
+							<label>POI types</label>
 							<div class="ui form">
 								<div class="grouped fields">
 									<div v-for='btn in poibtngroup' class="field">
@@ -103,7 +201,7 @@
 						</div>
 
 						<div class="eight wide column">
-							<h5 class="ui header">Others</h5>
+							<h5 class="ui header">Time Periods</h5>
 							<div class="ui mini compact menu">
 							  <div class="ui simple dropdown item">
 							    Records Number
@@ -119,20 +217,6 @@
 					</div>
 				</div>
 
-				<!-- single user records query entry -->
-				<div class="sixteen wide column">
-					<h5 class="ui header">User Record Query</h5>
-					<div class="ui grid">
-						<div class="twelve wide column">
-							<div class="ui fluid mini input">
-								<input type="text" placeholder="Input User ID..." v-model="useridstring" v-on:keyup.enter="queryuser">
-							</div>
-						</div>
-						<div class="four wide column">
-							<button id="recordsquerybtn" class="mini ui primary button" v-on:click="queryuser">Start</button>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -140,43 +224,6 @@
 	<script src="/dist/<%= name %>.js"></script>
 </body>
 
-<style type="text/css">
-	#map {
-		height: 100vh;
-	  	width: 100vw;
-	}
 
-	.basic-margin {
-		margin: 1rem !important;
-	}
-	.no-padding {
-		padding: 0 !important;
-	}
-	  
-
-	/*user panel background stylesheets*/
-	#userpanel {
-		top: 0;
-		width: 25vw;
-		position: absolute;
-		padding: 1rem;
-		height: 100vh;
-	 	z-index: 2;
-	  	background-color: rgba(255,255,255,.7);
-	}
-
-	input[type=range] {
-		width: 100%;
-	}
-
-	.narrowbutton.mini.ui.black.basic.button {
-		padding: .5em .6em;
-		margin-bottom: .75em;
-	}
-
-	.ui.radio.checkbox label {
-	    padding-left: 1.25714em;
-	}
-</style>
 
 </html>

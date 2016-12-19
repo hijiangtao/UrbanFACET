@@ -38,6 +38,10 @@ let MatrixAdd = function(a, b, times, dim) {
     return result
 }
 
+let test = function(argument) {
+    // body...
+}
+
 export {
     ArrayContains,
     MatrixAdd
