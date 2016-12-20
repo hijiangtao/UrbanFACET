@@ -9,9 +9,11 @@ const express = require('express');
 const router = express.Router();
 const home = require('../controllers/apis/home');
 
-/* GET users listing. */
 router.get('/v1/tsnetrain', function(req, res, next) {
 	home.tsnetrain(req, res, next);
+})
+router.post('/v1/clustertrain', function(req, res, next) {
+	home.clustertrain(req, res, next);
 })
 
 module.exports = router;

@@ -157,10 +157,18 @@ let userpanel = new Vue({
         },
         clusterTrain() {
             this.states.clsutertrain = true
-            let self = this, minpts = this.selections.dbscanminptsName, eps = this.selections.dbscaneps
+            let self = this, minpts = this.selections.dbscanminptsName, eps = this.selections.dbscaneps, theme = this.selections.themeName
 
-            if (minpts !== '' && eps !== '') {
-                
+            if (minpts !== '' && eps !== '' && theme !== 'Select Theme') {
+                let data = {
+                    'eps': eps,
+                    'minpts': minpts,
+                    'pkg': JSON.stringify(self.selections.tmodelVal)
+                }
+
+                $.post(`/home/v1/clustertrain`, data, function(res, err) {
+                    // body...
+                })
             } else {
                 
             }

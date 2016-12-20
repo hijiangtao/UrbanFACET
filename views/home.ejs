@@ -149,9 +149,11 @@
 				  <div class="content">
 				    <div class="ui grid">
 				    	<div id="" class="sixteen wide column">
-				    		<div class="eps ui mini input">
+				    		<label>eps value</label>
+				    		<div class="eps ui mini input">  
 							  <input type="text" placeholder="EPS..." v-model='selections.dbscaneps'>
 							</div>
+							<label>minpts value</label>
 							<div class="ui mini compact menu">
 							  <div class="ui simple dropdown item">
 							    <span>{{ selections.dbscanminptsName }}</span>
@@ -161,8 +163,9 @@
 							    </div>
 							  </div>
 							</div>
+						</div>
 
-
+						<div id="" class="sixteen wide column">
 				    		<div class="ui mini compact menu">
 							  <div class="ui simple dropdown item">
 							    <span>{{ selections.themeName }}</span>

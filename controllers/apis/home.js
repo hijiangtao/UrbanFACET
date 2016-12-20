@@ -14,7 +14,17 @@ const lib = require('../../conf/lib');
 const path = require('path');
 const DATA = require('../../conf/data')
 
+const execSync = require('child_process').execSync;
+const shell = require('shelljs');
+
 let home = {
+	/**
+	 * [tsnetrain description]
+	 * @param  {[type]}   req  [description]
+	 * @param  {[type]}   res  [description]
+	 * @param  {Function} next [description]
+	 * @return {[type]}        [description]
+	 */
 	tsnetrain(req, res, next) {
 		let params = req.query,
 			region = params.region,
@@ -28,6 +38,25 @@ let home = {
 		} else {
 			res.json({'scode': 0})
 		}
+	},
+	/**
+	 * [clustertrain description]
+	 * @param  {[type]}   req  [description]
+	 * @param  {[type]}   res  [description]
+	 * @param  {Function} next [description]
+	 * @return {[type]}        [description]
+	 */
+	clustertrain(req, res, next) {
+		let params = req.body,
+			eps = params.eps,
+			minpts = params.minpts,
+			pkg = JSON.parse(params['pkg']);
+
+		shell.exec('node --version', {async: true}, function(code, stdout, stderr) {
+		  console.log('Exit code:', code);
+		  console.log('Program output:', stdout);
+		  console.log('Program stderr:', stderr);
+		});
 	}
 }
 
