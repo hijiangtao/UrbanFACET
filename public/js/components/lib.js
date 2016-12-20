@@ -20,7 +20,7 @@ let MatrixAdd = function(a, b, times, dim) {
 
     if (dim == 1) {
         for (let i = 0; i < a.length; i++) {
-            result.push(parseFloat(a[i]) + parseFloat(b[i]));
+            result.push(Number.parseFloat(a[i]) + Number.parseFloat(b[i]));
         }
         return result
     }
@@ -29,7 +29,7 @@ let MatrixAdd = function(a, b, times, dim) {
 
         let arr = []; // 一般矩陣
         for (let j = 0; j < a[i].length; j++) {
-            let sum = (parseFloat(a[i][j]) + parseFloat(b[i][j])) * times;
+            let sum = (Number.parseFloat(a[i][j]) + Number.parseFloat(b[i][j])) * times;
             arr.push(sum);
         }
         result.push(arr);
@@ -38,11 +38,17 @@ let MatrixAdd = function(a, b, times, dim) {
     return result
 }
 
-let test = function(argument) {
-    // body...
+let genNumArr = function(base, sep, num) {
+    base = Number.parseInt(base), sep = Number.parseInt(sep), num = Number.parseInt(num)
+    let array = []
+    for (var i = 0; i < num; i++) {
+        array.push(base + sep * i)
+    }
+    return array
 }
 
 export {
     ArrayContains,
-    MatrixAdd
+    MatrixAdd,
+    genNumArr
 }

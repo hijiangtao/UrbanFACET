@@ -156,18 +156,18 @@ def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans')
 	func.matrixtofile(result, '%s.csv' % txtCluster)
 
 def usage():
-	print 'python FeatureConstruction.py -c <city> -d <work direcotry> -s <split length> -t <tasks number>'
+	print 'python ClusterUser.py -d <direcotry> -c <city> -m <method> -p <plotsize>'
 
 def main(argv):
 	try:
-		opts, args = getopt.getopt(argv, "hc:m:p:d:", ["help", "direcotry=", "city=", "method=", "plotsize="])
+		opts, args = getopt.getopt(argv, "hc:m:p:d:w:f:", ["help", "direcotry=", "city=", "method=", "plotsize=", "pipeway=", "file="])
 	except getopt.GetoptError as err:
 		# print help information and exit:
 		print str(err)  # will print something like "option -a not recognized"
 		usage()
 		sys.exit(2)
 
-	city, method = 'beijing', ['km']
+	city, method, pipeway, file = 'beijing', ['km'], 'default', ''
 	files = [
 		# '1-in-10_tsne-workday', '1-in-10_tsne-weekend', '1-in-10_tsne-daytime', 
 		# '1-in-10_tsne-evening', '1-in-10_tsne-wodaytime', '1-in-10_tsne-weevening', 
@@ -179,6 +179,7 @@ def main(argv):
 		'featurecolname': 'features_%s' % city,
 
 		'baseurl': '/home/taojiang/datasets/tdVC/decomp-data/Feature-Decompose-in-2D',
+		# 'baseurl': '/home/joe/Documents/git/living-modes-visual-comparison/server/data/',
 		'plotsize': 1.0,
 		'queryrate': 10
 	}
@@ -196,27 +197,40 @@ def main(argv):
 			prop['plotsize'] = float(arg)
 		elif opt in ("-d", "--direcotry"):
 			prop['baseurl'] = arg
+		elif opt in ("-w", "--pipeway"):
+			pipeway = arg
+		elif opt in ("-f", "--file"):
+			file = arg
 
-	print """--- Cluster Mode ---
+	if pipeway == 'default':
+		filename = os.path.join(prop['baseurl'], '2D-ScatterData_%s.csv' % each)
+		feature, idlist = getMatrixfromFile(filename)
+		dbscan(feature, idlist, file, prop)
+	else:
+		print """--- Cluster Mode ---
 Please enter the clustering method you want to use: 
 km: Kmeans
 db: DBScan"""
-	method = raw_input().split(',')
-	
-	# kmeans situation
-	for each in files:
-		filename = os.path.join(prop['baseurl'], '2D-ScatterData_%s.csv' % each)
-		feature, idlist = getMatrixfromFile(filename)
-		if len(method) == 1:
-			if method == 'km':
-				kmeans(feature, idlist, each, prop)
-			else:
-				dbscan(feature, idlist, each, prop)
-		else:
-			kmeans(feature, idlist, each, prop)
-			dbscan(feature, idlist, each, prop)
+		method = raw_input().split(',')
 		
+		# kmeans situation
+		for each in files:
+			filename = os.path.join(prop['baseurl'], '2D-ScatterData_%s.csv' % each)
+			feature, idlist = getMatrixfromFile(filename)
+			if len(method) == 1:
+				if method == 'km':
+					kmeans(feature, idlist, each, prop)
+				else:
+					dbscan(feature, idlist, each, prop)
+			else:
+				kmeans(feature, idlist, each, prop)
+				dbscan(feature, idlist, each, prop)
+	
+	return True
 
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-clusteruser.log', level=logging.DEBUG)
-	main(sys.argv[1:])
+	if main(sys.argv[1:]):
+		return True
+	else:
+		return False

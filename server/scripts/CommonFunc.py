@@ -120,6 +120,14 @@ def matrixtofile(data, filename):
 		target.writelines( '\n'.join(result) )
 	target.close()
 
+def filetoMatrix(filename):
+	result = []
+	with open(filename, 'rb') as target:
+		for each in target:
+			result.append( each.split(',') )
+
+	return result
+
 def frange(x, y, jump):
 	while x < y:
 		yield x
@@ -141,6 +149,9 @@ def getCityLocs(city):
 
 		},
 		'zhangjiakou': {
+
+		},
+		'tangshan': {
 
 		}
 	}

@@ -1,9 +1,12 @@
 /**
- * 
+ * lib.js in backend
  * @authors Joe Jiang (hijiangtao@gmail.com)
  * @date    2016-12-07 12:31:51
  * @version $Id$
  */
+
+'use strict'
+let fs = require('fs');
 
 let ArrayContains = function(obj, val) {
     var i = obj.length;
@@ -38,6 +41,15 @@ let MatrixAdd = function(a, b, times, dim) {
     return result
 }
 
+let checkDirectory = function(directory) {  
+    if (fs.existsSync(directory)) {
+        return true
+    }
+
+    return false
+}
+
 module.exports = {
-	MatrixAdd: MatrixAdd
+	MatrixAdd: MatrixAdd,
+    checkDirectory: checkDirectory
 }

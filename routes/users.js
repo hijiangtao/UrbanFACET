@@ -1,6 +1,6 @@
-var express = require('express');
-var router = express.Router();
-var userQuery = require('../controllers/apis/userQuery');
+const express = require('express');
+const router = express.Router();
+const userQuery = require('../controllers/apis/userQuery');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {

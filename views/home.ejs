@@ -43,7 +43,7 @@
 			/*padding: 1rem;*/
 			margin: 0;
 			height: 100vh;
-		 	z-index: 999;
+		 	z-index: 9;
 		  	background-color: rgba(255,255,255,.7);
 		}
 
@@ -67,10 +67,13 @@
 			padding-top: .4rem;
 			padding-bottom: .4rem;
 		}
+		.eps.ui.mini.input {
+			width: 6em;
+		}
 	</style>
 </head>
 
-<body class="ui segment">
+<body class="ui loading segment">
 	<div id="map"></div>
 	<div id="userpanel" class="ui row segment">
 		<div class="sixteen wide column">
@@ -114,7 +117,12 @@
 							  </div>
 							</div>
 
-							<button id="tsneBtn" class="ui tiny secondary button" v-on:click='tsneTrain'>t-SNE</button>
+							<div class="ui mini radio checkbox">
+							  <input type="radio" name="selectrate" checked="checked">
+							  <label>1/3&nbsp;&nbsp;&nbsp;&nbsp;</label>
+							</div>
+
+							<button id="tsneBtn" class="ui tiny secondary button" :class="{ 'loading': states.tsnetrain }" v-on:click='tsneTrain'>t-SNE</button>
 					    </div>
 						
 						<!-- decompose approach buttons -->
@@ -141,19 +149,33 @@
 				  <div class="content">
 				    <div class="ui grid">
 				    	<div id="" class="sixteen wide column">
+				    		<div class="eps ui mini input">
+							  <input type="text" placeholder="EPS..." v-model='selections.dbscaneps'>
+							</div>
+							<div class="ui mini compact menu">
+							  <div class="ui simple dropdown item">
+							    <span>{{ selections.dbscanminptsName }}</span>
+							    <i class="dropdown icon"></i>
+							    <div class="menu">
+							      <div v-for='item in settings.dbscan.minpts' class="item" v-on:click='changeDBScanInp(item)' >{{ item }}</div>
+							    </div>
+							  </div>
+							</div>
+
+
 				    		<div class="ui mini compact menu">
 							  <div class="ui simple dropdown item">
 							    <span>{{ selections.themeName }}</span>
 							    <i class="dropdown icon"></i>
 							    <div class="menu">
-							      <div v-for='item in settings.themes' class="item" v-on:click='changeTheme(item.value)' >{{ item.name }}</div>
+							      <div v-for='item in settings.themes' class="item" v-on:click='changeTheme(item.name, item.value)' >{{ item.name }}</div>
 							    </div>
 							  </div>
 							</div>
 				    	</div>
 
-				    	<div class="sixteen wide column">
-				    		<table v-show='selections.tmodelVal.length' class="ui mini celled table">
+				    	<div v-show='selections.tmodelVal.length' class="sixteen wide column">
+				    		<table class="ui mini celled table">
 							  <thead>
 							    <tr><th>Cluster Field</th>
 							    <th>Control</th>
@@ -167,7 +189,9 @@
 							</table>
 				    	</div>
 
-				    	<button id="clusterBtn" class="ui tiny secondary button" v-on:click='clusterTrain'>Cluster</button>
+				    	<div v-show='selections.tmodelVal.length' class="sixteen wide column">
+				    		<button id="clusterBtn" class="ui tiny secondary button" :class="{ 'loading': states.clsutertrain }" v-on:click='clusterTrain'>Cluster</button>
+				    	</div>
 				    </div>
 				  </div>
 				  <div class="title">
@@ -176,7 +200,64 @@
 				  </div>
 				  <div class="content">
 				    <div class="ui grid">
-				    	
+				    	<div class="sixteen wide column">
+							<div class="ui mini compact menu">
+							  <div class="ui simple dropdown item">
+							    <span>{{ selections.themeName }}</span>
+							    <i class="dropdown icon"></i>
+							    <div class="menu">
+							      <div v-for='item in settings.themes' class="item" v-on:click='changeTheme(item.name, item.value)' >{{ item.name }}</div>
+							    </div>
+							  </div>
+							</div>
+
+				    		<div class="ui mini compact menu">
+							  <div class="ui simple dropdown item">
+							    <span>{{ selections.vctimeName }}</span>
+							    <i class="dropdown icon"></i>
+							    <div class="menu">
+							      <div v-for='item in settings.daytypes' class="item" >
+							      	<i class="dropdown icon"></i>
+								      <span>{{ item.name }}</span>
+								      <div class="menu">
+								        <div v-for="tpitem in settings.timeperiods" class="item" v-on:click='changevcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
+								      </div>
+								  </div>
+						        </div>
+						      </div>
+						    </div>
+
+						    <button id="vcBtn" class="ui tiny secondary button" :class="{ 'loading': states.vcquery }" v-on:click='vcQuery'>Query</button>
+				    	</div>
+					</div>
+
+				    	<!-- <div class="eight wide column">
+							<label>POI types</label>
+							<div class="ui form">
+								<div class="grouped fields">
+									<div v-for='item in settings.poitypes' class="field">
+										<div class="ui checkbox">
+											<input type="checkbox" name="poitypes" :value="item.val">
+											<label>{{ item.name }}</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="eight wide column">
+							<label>Time periods</label>
+							<div class="ui form">
+								<div class="grouped fields">
+									<div v-for='item in settings.timeperiods' class="field">
+										<div class="ui checkbox">
+											<input type="checkbox" name="timeperiods" :value="item.val">
+											<label>{{ item.name }}</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div> -->
 				    </div>
 				  </div>
 				</div>
@@ -186,34 +267,7 @@
 				<!--  range -->
 				<div id="poicheckbox" class="sixteen wide column">
 					<div class="ui grid">
-						<div class="eight wide column">
-							<label>POI types</label>
-							<div class="ui form">
-								<div class="grouped fields">
-									<div v-for='btn in poibtngroup' class="field">
-										<div class="ui checkbox">
-											<input type="checkbox" name="pois" :value="btn.label">
-											<label>{{ btn.label }}</label>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="eight wide column">
-							<h5 class="ui header">Time Periods</h5>
-							<div class="ui mini compact menu">
-							  <div class="ui simple dropdown item">
-							    Records Number
-							    <i class="dropdown icon"></i>
-							    <div class="menu">
-							      <div class="item">Low</div>
-							      <div class="item">Medium</div>
-							      <div class="item">High</div>
-							    </div>
-							  </div>
-							</div>
-						</div>
+						
 					</div>
 				</div>
 
