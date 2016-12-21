@@ -99,7 +99,7 @@ let vuedata = {
         'vctimeName': 'Select query time',
         'vcdaytypeVal': '',
         'vctimeperiodVal': '',
-        'dbscanminptsName': 'Selection MinPts',
+        'dbscanminptsName': 'Select MinPts',
         'dbscaneps': '0'
     },
     'states': {
@@ -173,11 +173,16 @@ let userpanel = new Vue({
                     if (res['scode'] === 1) {
                         self.states.clustertrain = false
                         alert('clustering work complete')
+                    } else {
+                        alert('cluster work failed, please try again later')
                     }
                 })
             } else {
                 
             }
+        },
+        labelTrain() {
+
         },
         vcQuery() {
             this.states.vcquery = true
