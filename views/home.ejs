@@ -163,6 +163,8 @@
 							    </div>
 							  </div>
 							</div>
+
+							<button id="clusterBtn" class="ui tiny secondary button" :class="{ 'loading': states.clustertrain }" v-on:click='clusterTrain'>Cluster</button>
 						</div>
 
 						<div id="" class="sixteen wide column">
@@ -180,7 +182,7 @@
 				    	<div v-show='selections.tmodelVal.length' class="sixteen wide column">
 				    		<table class="ui mini celled table">
 							  <thead>
-							    <tr><th>Cluster Field</th>
+							    <tr><th>Label Field</th>
 							    <th>Control</th>
 							  </tr></thead>
 							  <tbody>
@@ -193,7 +195,7 @@
 				    	</div>
 
 				    	<div v-show='selections.tmodelVal.length' class="sixteen wide column">
-				    		<button id="clusterBtn" class="ui tiny secondary button" :class="{ 'loading': states.clsutertrain }" v-on:click='clusterTrain'>Cluster</button>
+				    		<button id="labelBtn" class="ui tiny secondary button" :class="{ 'loading': states.labeltrain }" v-on:click='labelTrain'>Label</button>
 				    	</div>
 				    </div>
 				  </div>

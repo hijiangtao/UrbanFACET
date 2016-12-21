@@ -13,15 +13,16 @@ import CommonFunc as func
 import matplotlib.patches as mpatches
 
 def getMatrixfromFile(file):
-	feature, idlist = [], []
+	rawdata, feature, idlist = [], [], []
 	with open(file, 'rb') as csvfile:
 		for row in csvfile.readlines():
-			tmparr = np.array( row.split(',') )
+			tmparr = np.array( row.strip('\n').split(',') )
 			feature.append( tmparr[1:3].astype(float) )
 			idlist.append( int(tmparr[0]) )
+			rawdata.append( tmparr )
 
 	csvfile.close()
-	return np.asarray(feature), np.asarray(idlist)
+	return np.asarray(rawdata), np.asarray(feature), np.asarray(idlist)
 
 def getMatrixfromMongo(dbname, collectname, queryrate):
 	conn, db = func.connectMongo(dbname)
@@ -46,7 +47,7 @@ def combineArrs(a, b):
 	a, b = np.asarray(a), np.asarray(b)
 	return [[a[x], b[x]] for x in xrange(0,len(a))]
 
-def kmeans(feature, idlist, txt, prop):
+def kmeans(rawdata, feature, idlist, txt, prop):
 	# feature is read from file, contains 2D dimension
 	# feature, idlist = getMatrixfromFile(filename)
 	# feature2 is read from mongoDB, contains origin multi-dimension information
@@ -61,40 +62,70 @@ def kmeans(feature, idlist, txt, prop):
 		labels = Y.labels_
 
 		drawScatterPlot({
+			'rawdata': rawdata,
 			'feature': feature, 
 			'idlist': idlist	
 		}, prop, labels, lablist, txtCluster, x)
 	gc.collect()
 
-def dbscan(feature, idlist, txt, prop):
+def dbscan(rawdata, feature, idlist, txt, prop, eps = 0.0, minpts = 0):
 	# feature2 is read from mongoDB, contains origin multi-dimension information
 	# feature2, idlist2 = getMatrixfromMongo(prop['dbname'], prop['featurecolname'], prop['queryrate'])
 
-	for minpls in xrange(20, 80, 5):
-		for x in xrange(0,20):
-			eps = 0.10 + 0.01 * x
-			db = DBSCAN(eps=eps, min_samples=minpls).fit(feature)
-			core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
-			core_samples_mask[db.core_sample_indices_] = True
-			labels = db.labels_
+	# print "eps: %s, minpts: %s" % (eps, minpts)
 
-			# Number of clusters in labels, ignoring noise if present.
-			n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-			lablist = [i-1 for i in xrange(0,n_clusters_)]
+	if eps != 0.0 and minpts != 0:
+		minpts = minpts
+		db = DBSCAN(eps=eps, min_samples=minpts).fit(feature)
+		core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+		core_samples_mask[db.core_sample_indices_] = True
+		labels = db.labels_
 
-			txtCluster = "DBScanCluster-%s(dis=%s,minpls=%s)" % (txt, str(eps), str(minpls))
-			# if n_clusters_ < 4:
-			# 	print "n_clusters_ shouldn't be smaller than 4"
-			drawScatterPlot({
-				'feature': feature, 
-				'idlist': idlist,
-				'core_samples_mask': core_samples_mask	
-			}, prop, labels, lablist, txtCluster, n_clusters_, "dbscan")
+		# Number of clusters in labels, ignoring noise if present.
+		n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+		lablist = [i-1 for i in xrange(0,n_clusters_)]
 
-		gc.collect()
+		txtCluster = "DBScanCluster-%s(eps=%s,minpts=%s)" % (txt, str(eps), str(minpts))
+		# if n_clusters_ < 4:
+		# 	print "n_clusters_ shouldn't be smaller than 4"
+		resultfilename = drawScatterPlot({
+			'rawdata': rawdata,
+			'feature': feature, 
+			'idlist': idlist,
+			'core_samples_mask': core_samples_mask	
+		}, prop, labels, lablist, txtCluster, n_clusters_, "dbscan")
+
+		return resultfilename
+	else:
+		for minpts in xrange(20, 80, 5):
+			for x in xrange(0,20):
+				eps = 0.10 + 0.01 * x
+				db = DBSCAN(eps=eps, min_samples=minpts).fit(feature)
+				core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
+				core_samples_mask[db.core_sample_indices_] = True
+				labels = db.labels_
+
+				# Number of clusters in labels, ignoring noise if present.
+				n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+				lablist = [i-1 for i in xrange(0,n_clusters_)]
+
+				txtCluster = "DBScanCluster-%s(eps=%s,minpts=%s)" % (txt, str(eps), str(minpts))
+				# if n_clusters_ < 4:
+				# 	print "n_clusters_ shouldn't be smaller than 4"
+				drawScatterPlot({
+					'rawdata': rawdata,
+					'feature': feature, 
+					'idlist': idlist,
+					'core_samples_mask': core_samples_mask	
+				}, prop, labels, lablist, txtCluster, n_clusters_, "dbscan")
+
+			gc.collect()
+
+		return True
 	
 def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans'):
-	feature, idlist = data['feature'], data['idlist']
+	rawdata, feature, idlist = data['rawdata'], data['feature'], data['idlist']
+	baseurl = prop['baseurl']
 
 	plt.figure()
 	
@@ -149,18 +180,24 @@ def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans')
 		fontsize=5)
 
 	img = plt.gcf()
-	img.savefig('%s.png' % txtCluster, dpi=400)
+	img.savefig('%s/%s.png' % (baseurl, txtCluster), dpi=400)
 	plt.close()
 
-	result = combineArrs(idlist, labels)
-	func.matrixtofile(result, '%s.csv' % txtCluster)
+	# result = combineArrs(idlist, labels)
+
+	result = []
+	for x in xrange(0, len(rawdata)):
+		result.append( np.append( rawdata[x], labels[x] ) )
+	func.matrixtofile(result, '%s/%s.csv' % (baseurl, txtCluster))
+
+	return  '%s.csv' % txtCluster
 
 def usage():
 	print 'python ClusterUser.py -d <direcotry> -c <city> -m <method> -p <plotsize>'
 
 def main(argv):
 	try:
-		opts, args = getopt.getopt(argv, "hc:m:p:d:w:f:", ["help", "direcotry=", "city=", "method=", "plotsize=", "pipeway=", "file="])
+		opts, args = getopt.getopt(argv, "hc:m:p:d:w:f:x:y:", ["help", "direcotry=", "city=", "method=", "plotsize=", "pipeway=", "file=", "eps=", "minpts="])
 	except getopt.GetoptError as err:
 		# print help information and exit:
 		print str(err)  # will print something like "option -a not recognized"
@@ -168,6 +205,7 @@ def main(argv):
 		sys.exit(2)
 
 	city, method, pipeway, file = 'beijing', ['km'], 'default', ''
+	eps, minpts = 0.0, 0
 	files = [
 		# '1-in-10_tsne-workday', '1-in-10_tsne-weekend', '1-in-10_tsne-daytime', 
 		# '1-in-10_tsne-evening', '1-in-10_tsne-wodaytime', '1-in-10_tsne-weevening', 
@@ -178,11 +216,13 @@ def main(argv):
 		'dbname': 'tdVC',
 		'featurecolname': 'features_%s' % city,
 
-		'baseurl': '/home/taojiang/datasets/tdVC/decomp-data/Feature-Decompose-in-2D',
-		# 'baseurl': '/home/joe/Documents/git/living-modes-visual-comparison/server/data/',
+		# 'baseurl': '/home/taojiang/datasets/tdVC/decomp-data/Feature-Decompose-in-2D',
+		'baseurl': '/home/joe/Documents/git/living-modes-visual-comparison/server/data/',
 		'plotsize': 1.0,
-		'queryrate': 10
+		'queryrate': 3
 	}
+
+	print 'Python received params: ', opts
 
 	for opt, arg in opts:
 		if opt == '-h':
@@ -201,11 +241,17 @@ def main(argv):
 			pipeway = arg
 		elif opt in ("-f", "--file"):
 			file = arg
+		elif opt in ("-x", "--eps"):
+			eps = float(arg)
+		elif opt in ("-y", "--minpts"):
+			minpts = int(arg)
 
 	if pipeway == 'default':
-		filename = os.path.join(prop['baseurl'], '2D-ScatterData_%s.csv' % each)
-		feature, idlist = getMatrixfromFile(filename)
-		dbscan(feature, idlist, file, prop)
+		filename = os.path.join(prop['baseurl'], '2D-ScatterData_%s.csv' % file)
+		rawdata, feature, idlist = getMatrixfromFile(filename)
+		resultfilename = dbscan(rawdata, feature, idlist, file, prop, eps, minpts)
+
+		return resultfilename
 	else:
 		print """--- Cluster Mode ---
 Please enter the clustering method you want to use: 
@@ -216,12 +262,12 @@ db: DBScan"""
 		# kmeans situation
 		for each in files:
 			filename = os.path.join(prop['baseurl'], '2D-ScatterData_%s.csv' % each)
-			feature, idlist = getMatrixfromFile(filename)
+			rawdata, feature, idlist = getMatrixfromFile(filename)
 			if len(method) == 1:
 				if method == 'km':
-					kmeans(feature, idlist, each, prop)
+					kmeans(rawdata, feature, idlist, each, prop)
 				else:
-					dbscan(feature, idlist, each, prop)
+					dbscan(rawdata, feature, idlist, each, prop)
 			else:
 				kmeans(feature, idlist, each, prop)
 				dbscan(feature, idlist, each, prop)
@@ -230,7 +276,5 @@ db: DBScan"""
 
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-clusteruser.log', level=logging.DEBUG)
-	if main(sys.argv[1:]):
-		return True
-	else:
-		return False
+	result = main(sys.argv[1:])
+	# print result

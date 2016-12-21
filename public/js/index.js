@@ -104,7 +104,7 @@ let vuedata = {
     },
     'states': {
         'tsnetrain': false,
-        'clsutertrain': false,
+        'clustertrain': false,
         'vcquery': false
     },
     'results': {
@@ -156,18 +156,24 @@ let userpanel = new Vue({
             
         },
         clusterTrain() {
-            this.states.clsutertrain = true
-            let self = this, minpts = this.selections.dbscanminptsName, eps = this.selections.dbscaneps, theme = this.selections.themeName
+            this.states.clustertrain = true
+            let self = this, minpts = this.selections.dbscanminptsName, eps = this.selections.dbscaneps, theme = this.selections.themeName, regionVal = this.selections.regionVal, featureVal = this.selections.featureVal
 
             if (minpts !== '' && eps !== '' && theme !== 'Select Theme') {
                 let data = {
                     'eps': eps,
                     'minpts': minpts,
-                    'pkg': JSON.stringify(self.selections.tmodelVal)
+                    'pkg': JSON.stringify(self.selections.tmodelVal),
+                    'region': regionVal,
+                    'feature': featureVal,
+                    'srate': 3
                 }
 
                 $.post(`/home/v1/clustertrain`, data, function(res, err) {
-                    // body...
+                    if (res['scode'] === 1) {
+                        self.states.clustertrain = false
+                        alert('clustering work complete')
+                    }
                 })
             } else {
                 
