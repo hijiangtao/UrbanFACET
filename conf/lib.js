@@ -50,6 +50,7 @@ let checkDirectory = function(directory) {
 }
 
 module.exports = {
+    ArrayContains: ArrayContains,
 	MatrixAdd: MatrixAdd,
     checkDirectory: checkDirectory
 }

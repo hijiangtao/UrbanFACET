@@ -71,7 +71,7 @@ let data = {
 	tpsel: []
 }
 
-let labins = new analysistools()
+let labins = new analysistools('scatterplot', 'matrixplot')
 let clarifyins = new Vue({
 	el: "#labcontainer",
 	data: data,
@@ -83,7 +83,7 @@ let clarifyins = new Vue({
 			let idarr = self.idlist.split(',')
 
 			// 拼接用户id以及所选统计模式
-			$.post("/users/api/v1/lab/queryClusterStats", {
+			$.post("/lab/v1/queryClusterStats", {
 				'file': self.resultsel,
 				'id': idarr
 			}, function(res, err) {

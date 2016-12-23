@@ -22,15 +22,15 @@ let configData = {
 }
 
 class analysistools {
-	constructor() {
+	constructor(scatterid, matrixid, pieid = 'pieplot', barid = 'barplot', recid = 'recnumplot') {
 		let bottom = this
 		this.data = {}
 		this.dividlist = {
-			'scatterid': 'scatterplot',
-			'matrixid': 'matrixplot',
-			'pieid': 'pieplot',
-			'barid': 'barplot',
-			'recid': 'recnumplot'
+			'scatterid': scatterid,
+			'matrixid': matrixid,
+			'pieid': pieid,
+			'barid': barid,
+			'recid': recid
 		}
 		this.num = 0
 	}
@@ -41,7 +41,7 @@ class analysistools {
 	 * @param  {[type]} id   [description]
 	 * @return {[type]}      [description]
 	 */
-	drawMatrix(data, id) {
+	drawMatrix(data, id, titlestr='Location Distribution Possibility Matrix', grid={height:'85%',y:'10%',left:'9%',right:'0%'}) {
 		let myChart = echarts.init(document.getElementById(id));
 
 		let maxVal = 0, series = []
@@ -61,29 +61,30 @@ class analysistools {
 
 		let option = {
 			title: {
-				text: 'Location Distribution Possibility Matrix'
+				text: titlestr
 			},
 			tooltip: {
 				position: 'top'
 			},
 			animation: false,
 			grid: {
-				height: '72%',
+				height: '85%',
 				y: '10%',
-				right: '2%'
+				left: '9%',
+				right: '0%'
 			},
 			xAxis: {
 				type: 'category',
 				data: configData['pois'],
 				splitArea: {
-					show: true
+					show: false
 				}
 			},
 			yAxis: {
 				type: 'category',
 				data: configData['timeperiods'],
 				splitArea: {
-					show: true
+					show: false
 				}
 			},
 			visualMap: {
@@ -91,8 +92,8 @@ class analysistools {
 				max: maxVal,
 				calculable: true,
 				orient: 'horizontal',
-				left: 'center',
-				bottom: '3%'
+				left: 'right',
+				top: '0'
 			},
 			series: [{
 				name: 'Feature Matrix',

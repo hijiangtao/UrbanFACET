@@ -9,108 +9,20 @@
 
 import Vue from 'vue'
 import mapview from './components/mapview'
+import analysistools from './components/analysistools' 
 import $ from "jquery"
 window.jQuery = $
 require('../../semantic/dist/components/accordion')
 
-import { genNumArr } from './components/lib'
+import { vuedata } from './components/initdata'
 
 /**
  * LMap instance: hold map view instance and its' related operating approaches
  * @type {LMap}
  */
-let mapins = new mapview('map')
+let mapins = new mapview('map'),
+    anains = new analysistools('', 'clamatrixheatmap')
 
-let vuedata = {
-    'settings': {
-        'regions': [
-            { 'name': 'Beijing' },
-            { 'name': 'Tianjin' },
-            { 'name': 'Zhangjiakou' },
-            { 'name': 'Tangshan' }
-        ],
-        'features': [
-            { 'name': 'Workday', 'value': 1 },
-            { 'name': 'Weekend', 'value': 2 },
-            { 'name': 'Daytime', 'value': 3 }, 
-            { 'name': 'Evening', 'value': 4 },
-            { 'name': 'Workday Daytime', 'value': 5 },
-            { 'name': 'Weekend Evening', 'value': 6 }
-        ],
-        'decomps': [
-            { 'name': 't-SNE', 'value': 1 },
-            { 'name': 'PCA', 'value': 2 },
-            { 'name': 'MDS', 'value': 3 }, 
-        ],
-        'dbscan': {
-            'minpts': genNumArr(20, 5, 7)
-        },
-        'themes': [
-            { 'name': 'Education related', 'value': 'edu' },
-            { 'name': 'Employee related', 'value': 'empl' },
-            { 'name': 'Tourists related', 'value': 'tour' },
-            { 'name': 'Healthcare related', 'value': 'heal' },
-            { 'name': 'Students related', 'value': 'stu' },
-            { 'name': 'Finicial related', 'value': 'fini' }
-        ],
-        'tmodels': {
-            'edu': [ 
-                { 'field': 'Daytime Occupation', 'min': 0, 'max': 100, 'pred': 40 },
-                { 'field': 'Evening Occupation', 'min': 0, 'max': 100, 'pred': 40 },
-                { 'field': 'Weekday Occupation', 'min': 0, 'max': 100, 'pred': 40 },
-                { 'field': 'Class time Occupation', 'min': 0, 'max': 100, 'pred': 40 }
-            ],
-            'empl': [],
-            'tour': [],
-            'heal': [],
-            'stu': [],
-            'fini': []
-        },
-        'timeperiods': [
-            { 'name': 'morning', 'val': 1 },
-            { 'name': 'forenoon', 'val': 2 },
-            { 'name': 'noon', 'val': 3 },
-            { 'name': 'afternoon', 'val': 4 },
-            { 'name': 'evening', 'val': 5 },
-            { 'name': 'night', 'val': 6 }
-        ],
-        'poitypes': [
-            { 'name': 'Food', 'val': 1 },
-            { 'name': 'Clothes', 'val': 2 },
-            { 'name': 'Residence', 'val': 3 },
-            { 'name': 'Transport', 'val': 4 },
-            { 'name': 'Finance', 'val': 5 },
-            { 'name': 'Education', 'val': 6 },
-            { 'name': 'Other', 'val': 7 }
-        ],
-        'daytypes': [
-            { 'name': 'Workday', 'val': 'wo' },
-            { 'name': 'Weekend', 'val': 'we' }
-        ]
-    },
-    'selections': {
-        'regionVal': 'Select Region',
-        'featureName': 'Select Feature',
-        'featureVal': 0,
-        'decompName': 'Decompose Method',
-        'themeName': 'Select Theme',
-        'themeVal': '',
-        'tmodelVal': [],
-        'vctimeName': 'Select query time',
-        'vcdaytypeVal': '',
-        'vctimeperiodVal': '',
-        'dbscanminptsName': 'Select MinPts',
-        'dbscaneps': '0'
-    },
-    'states': {
-        'tsnetrain': false,
-        'clustertrain': false,
-        'vcquery': false
-    },
-    'results': {
-        'peoplegroups': []
-    }
-}
 
 // index page vue instance
 let userpanel = new Vue({
@@ -125,6 +37,7 @@ let userpanel = new Vue({
             this.selections.featureVal = val
         },
         changeTheme(name, val) {
+            // console.log(name, val)
             this.selections.themeName = name
             this.selections.themeVal = val
             this.selections.tmodelVal = this.settings.tmodels[val]
@@ -137,12 +50,31 @@ let userpanel = new Vue({
         changeDBScanInp(val) {
             this.selections.dbscanminptsName = val
         },
+        changeThemeParam(name, val) {
+            // console.log(name, val)
+            this.selections.modelParamName = name
+            this.selections.modelParamVal = val
+        },
+        changeSelectCla(val) {
+            this.selections.vcclaName = val
+
+            if (val === 'ALL') {
+                alert('ATTENTION: the matrix will not updated.')
+            } else {
+                anains.drawMatrix(this.results.classmatrix[val], 'clamatrixheatmap', 'FeatureMatrix', {
+                    height:'90%',
+                    y:'10%',
+                    left:'0',
+                    right:'0%'
+                })
+            }
+        },
         tsneTrain() {
-            let self = this, regionVal = this.selections.regionVal, featureVal = this.selections.featureVal
+            let self = this, regionVal = this.selections.regionVal, featureVal = this.selections.featureVal, id = this.states.userid
 
             if (regionVal !== 'Select Region' && featureVal !== 0) {
                 self.states.tsnetrain = true
-                $.get(`/home/v1/tsnetrain?region=${this.selections.regionVal}&feature=${this.selections.featureVal}&srate=3`, function(res, err) {
+                $.get(`/home/v1/tsnetrain?region=${this.selections.regionVal}&feature=${this.selections.featureVal}&srate=3&id=${id}`, function(res, err) {
                     if (res['scode']) {
                         alert('success');
                         self.states.tsnetrain = false
@@ -156,37 +88,63 @@ let userpanel = new Vue({
             
         },
         clusterTrain() {
-            this.states.clustertrain = true
-            let self = this, minpts = this.selections.dbscanminptsName, eps = this.selections.dbscaneps, theme = this.selections.themeName, regionVal = this.selections.regionVal, featureVal = this.selections.featureVal
+            let self = this, minpts = this.selections.dbscanminptsName, eps = this.selections.dbscaneps, theme = this.selections.themeName, regionVal = this.selections.regionVal, featureVal = this.selections.featureVal, id = this.states.userid
 
-            if (minpts !== '' && eps !== '' && theme !== 'Select Theme') {
+            if (minpts !== '' && eps !== '') {
+                this.states.clustertrain = true
+
                 let data = {
                     'eps': eps,
                     'minpts': minpts,
                     'pkg': JSON.stringify(self.selections.tmodelVal),
                     'region': regionVal,
                     'feature': featureVal,
-                    'srate': 3
+                    'srate': 3,
+                    'id': id
                 }
 
                 $.post(`/home/v1/clustertrain`, data, function(res, err) {
                     if (res['scode'] === 1) {
+                        this.states.clustertrain = false
+
+                        self.states.themesdisplay = true
                         self.states.clustertrain = false
+                        self.states.userid = res['id']
                         alert('clustering work complete')
                     } else {
                         alert('cluster work failed, please try again later')
                     }
                 })
             } else {
-                
+                alert('all fields must be input.')
             }
         },
         labelTrain() {
+            let self = this, theme = this.selections.themeName, paramval = this.selections.modelParamVal, rangeval = this.selections.modelParamRangeVal, id = this.states.userid
 
+            $.get(`/home/v1/labeltrain?theme=${theme}&paramval=${paramval}&rangeval=${rangeval}&id=${id}`, function(res, err) {
+                if (res['scode'] === 1) {
+                    self.results.classlist = res['clalist']
+                    self.results.classmatrix = res['matrixlist']
+
+                    self.settings.classes = res['classlist']
+                    self.settings.classes.push('ALL')
+                } else {
+                    alert('server error, please try again later.')
+                }
+            })
         },
         vcQuery() {
             this.states.vcquery = true
         },
+    },
+    computed: {
+        labelbtndisplay: function() {
+            return this.selections.tmodelVal !== '' && this.selections.modelParamVal !== ''
+        }
+    },
+    watch: {
+
     },
     mounted: function () {
       this.$nextTick(function () {

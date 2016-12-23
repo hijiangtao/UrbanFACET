@@ -2,131 +2,155 @@
 <html>
 
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>
-		<%= title %>
-	</title>
-	<meta name="description" content="">
-	<meta name="keywords" content="">
-	<link href="/favicon.ico" rel="shortcut icon">
-	<style type="text/css" rel="stylesheet">
-	@import '/css/leaflet.css';
-	@import '/css/semantic.css'
-	</style>
-	
-	<style type="text/css">
-		body {
-			margin: 0 !important;
-			padding: 0 !important;
-			border: none !important;
-		}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>
+        <%= title %>
+    </title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="/favicon.ico" rel="shortcut icon">
+    <style type="text/css" rel="stylesheet">
+    @import '/css/leaflet.css';
+    @import '/css/semantic.css'
+    </style>
+    <style type="text/css">
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+    
+    #map {
+        height: 100vh;
+        width: 100vw;
+    }
+    
+    .basic-margin {
+        margin: 1rem !important;
+    }
+    
+    .no-padding {
+        padding: 0 !important;
+    }
+    /*user panel background stylesheets*/
+    
+    #userpanel {
+        top: 0;
+        width: 25vw;
+        position: absolute;
+        /*padding: 1rem;*/
+        margin: 0;
+        height: 100vh;
+        z-index: 9;
+        background-color: rgba(255, 255, 255, .7);
+    }
+    
+    .ui.radio.checkbox label {
+        padding-left: 1.25714em;
+    }
+    
+    .ui.mini.table {
+        font-size: 0.78571429rem;
+    }
+    
+    .column>input {
+        width: 50%;
+    }
+    
+    .column>label {
+        vertical-align: top;
+        /*float: right;*/
+    }
+    
+    .ui.grid > .wide.column {
+        padding-top: .4rem;
+        padding-bottom: .4rem;
+    }
+    
+    .eps.ui.mini.input {
+        width: 5em;
+    }
+    
+    .ui.form .inline.fields {
+        margin-bottom: .2em;
+    }
 
-		#map {
-			height: 100vh;
-		  	width: 100vw;
-		}
-
-		.basic-margin {
-			margin: 1rem !important;
-		}
-		.no-padding {
-			padding: 0 !important;
-		}
-		  
-
-		/*user panel background stylesheets*/
-		#userpanel {
-			top: 0;
-			width: 25vw;
-			position: absolute;
-			/*padding: 1rem;*/
-			margin: 0;
-			height: 100vh;
-		 	z-index: 9;
-		  	background-color: rgba(255,255,255,.7);
-		}
-
-		.ui.radio.checkbox label {
-		    padding-left: 1.25714em;
-		}
-
-		.ui.mini.table {
-			font-size: 0.78571429rem;
-		}
-
-		td>input {
-			width: 87%;
-		}
-		td>span {
-			vertical-align: top;
-			float: right;
-		}
-
-		.wide.column {
-			padding-top: .4rem;
-			padding-bottom: .4rem;
-		}
-		.eps.ui.mini.input {
-			width: 5em;
-		}
-	</style>
+    #clamatrixheatmap {
+    	height: 350px;
+    }
+    </style>
 </head>
 
 <body class="ui loading segment">
-	<div id="map"></div>
-	<div id="userpanel" class="ui row segment">
-		<div class="sixteen wide column">
-			<div class="row">
-				<div class="sixteen wide column">
-					<div class="ui breadcrumb">
-						<a class="section" href="/">Home</a>
-						<i class="right angle icon divider"></i>
-						<div class="active section"><%= title %></div>
-					</div>
-				</div>
-				<div class="ui divider"></div>
-				
-				<!--  -->
-				<div class="ui accordion">
-				  <div class="active title">
-				    <i class="dropdown icon"></i>
-				    Training Model Setting
-				  </div>
-				  <div class="active content">
-				    <div class="ui grid">
-				    	<div id="" class="sixteen wide column">
-				    		<!-- city regions -->
-					    	<div class="ui mini compact menu">
-							  <div class="ui simple dropdown item">
-							    <span>{{ selections.regionVal }}</span>
-							    <i class="dropdown icon"></i>
-							    <div class="menu">
-							      <div v-for='item in settings.regions' class="item" :class="{'disabled': item.name != 'Beijing'}" v-on:click='changeRegion(item.name)' >{{ item.name }}</div>
-							    </div>
-							  </div>
-							</div>
-
-					    	<div class="ui mini compact menu">
-							  <div class="ui simple dropdown item">
-							    <span>{{ selections.featureName }}</span>
-							    <i class="dropdown icon"></i>
-							    <div class="menu">
-							      <div v-for='item in settings.features' class="item" v-on:click='changeFeature(item.name, item.value)' >{{ item.name }}</div>
-							    </div>
-							  </div>
-							</div>
-
-							<div class="ui mini radio checkbox">
-							  <input type="radio" name="selectrate" checked="checked">
-							  <label>1/3&nbsp;&nbsp;&nbsp;&nbsp;</label>
-							</div>
-
-							<button id="tsneBtn" class="ui tiny secondary button" :class="{ 'loading': states.tsnetrain }" v-on:click='tsneTrain'>t-SNE</button>
-					    </div>
-						
-						<!-- decompose approach buttons -->
-					    <!-- <div id="" class="sixteen wide column">
+    <div id="map"></div>
+    <div id="userpanel" class="ui row segment">
+        <div class="sixteen wide column">
+            <div class="row">
+                <div class="sixteen wide column">
+                    <div class="ui breadcrumb">
+                        <a class="section" href="/">Home</a>
+                        <i class="right angle icon divider"></i>
+                        <div class="active section">
+                            <%= title %>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui divider"></div>
+                <!--  -->
+                <div class="ui accordion">
+                    <div class="active title">
+                        <i class="dropdown icon"></i> Training Model Setting
+                    </div>
+                    <div class="active content">
+                        <div class="ui grid">
+                            <div id="" class="sixteen wide column">
+                                <!-- city regions -->
+                                <!-- <label>City:</label> -->
+                                <div class="ui mini compact menu">
+                                    <div class="ui simple dropdown item">
+                                        <span>{{ selections.regionVal }}</span>
+                                        <i class="dropdown icon"></i>
+                                        <div class="menu">
+                                            <div v-for='item in settings.regions' class="item" :class="{'disabled': item.name != 'Beijing'}" v-on:click='changeRegion(item.name)'>{{ item.name }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <label>Feature Rules:</label> -->
+                                <div class="ui mini compact menu">
+                                    <div class="ui simple dropdown item">
+                                        <span>{{ selections.featureName }}</span>
+                                        <i class="dropdown icon"></i>
+                                        <div class="menu">
+                                            <div v-for='item in settings.features' class="item" v-on:click='changeFeature(item.name, item.value)'>{{ item.name }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="" class="sixteen wide column">
+                                <div class="ui form">
+                                    <div class="inline fields">
+                                        <label>Sample rate:</label>
+                                        <div class="field">
+                                            <div class="ui mini radio checkbox">
+                                                <input type="radio" name="selectrate" checked="checked">
+                                                <label>1/3</label>
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <div class="ui mini radio disabled checkbox">
+                                                <input type="radio" name="selectrate" disabled="disabled">
+                                                <label>1/10</label>
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <button id="tsneBtn" class="ui tiny secondary button" :class="{ 'loading': states.tsnetrain }" v-on:click='tsneTrain'>t-SNE</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- decompose approach buttons -->
+                            <!-- <div id="" class="sixteen wide column">
 							<div class="ui form">
 								<div class="inline fields">
 									<label>{{ selections.decompName }}</label>
@@ -139,48 +163,68 @@
 								</div>
 							</div>
 					    </div> -->
-				    </div>
+                        </div>
+                    </div>
+                    <div class="title">
+                        <i class="dropdown icon"></i> Cluster Discovery Setting
+                    </div>
+                    <div class="content">
+                        <div class="ui grid">
+                            <div id="" class="sixteen wide column">
+                                <label>eps:</label>
+                                <div class="eps ui mini input">
+                                    <input type="text" placeholder="EPS..." v-model='selections.dbscaneps'>
+                                </div>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <label>Minpts:</label>
+                                <div class="ui mini compact menu">
+                                    <div class="ui simple dropdown item">
+                                        <span>{{ selections.dbscanminptsName }}</span>
+                                        <i class="dropdown icon"></i>
+                                        <div class="menu">
+                                            <div v-for='item in settings.dbscan.minpts' class="item" v-on:click='changeDBScanInp(item)'>{{ item }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button id="clusterBtn" class="ui tiny secondary button" :class="{ 'loading': states.clustertrain }" v-on:click='clusterTrain'>Cluster</button>
+                            </div>
+                            <!-- v-show='states.themesdisplay' -->
+                            <div v-show='states.themesdisplay' class="ui sixteen wide column">
+                                <div class="ui mini compact menu">
+                                    <div class="ui simple dropdown item">
+                                        <span>{{ selections.themeName }}</span>
+                                        <i class="dropdown icon"></i>
+                                        <div class="menu">
+                                            <div v-for='item in settings.themes' class="item" v-on:click='changeTheme(item.name, item.value)'>{{ item.name }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui mini compact menu">
+                                    <div class="ui simple dropdown item">
+                                        <span>{{ selections.modelParamName }}</span>
+                                        <i class="dropdown icon"></i>
+                                        <div class="menu">
+                                            <div v-for='item in settings.modelparams' class="item" :class="{'disabled': Number.parseInt(item.val) > 9}" v-on:click='changeThemeParam(item.name, item.val)'>{{ item.name }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="ui form">
+                                	<div class="inline fields">
+	                                    <div class="field">
 
-				  </div>
-				  <div class="title">
-				    <i class="dropdown icon"></i>
-				    Cluster Discovery Setting
-				  </div>
-				  <div class="content">
-				    <div class="ui grid">
-				    	<div id="" class="sixteen wide column">
-				    		<label>eps:</label>
-				    		<div class="eps ui mini input">  
-							  <input type="text" placeholder="EPS..." v-model='selections.dbscaneps'>
-							</div>
-							<label>Minpts:</label>
-							<div class="ui mini compact menu">
-							  <div class="ui simple dropdown item">
-							    <span>{{ selections.dbscanminptsName }}</span>
-							    <i class="dropdown icon"></i>
-							    <div class="menu">
-							      <div v-for='item in settings.dbscan.minpts' class="item" v-on:click='changeDBScanInp(item)' >{{ item }}</div>
-							    </div>
-							  </div>
-							</div>
-
-							<button id="clusterBtn" class="ui tiny secondary button" :class="{ 'loading': states.clustertrain }" v-on:click='clusterTrain'>Cluster</button>
-						</div>
-
-						<div id="" class="sixteen wide column">
-				    		<div class="ui mini compact menu">
-							  <div class="ui simple dropdown item">
-							    <span>{{ selections.themeName }}</span>
-							    <i class="dropdown icon"></i>
-							    <div class="menu">
-							      <div v-for='item in settings.themes' class="item" v-on:click='changeTheme(item.name, item.value)' >{{ item.name }}</div>
-							    </div>
-							  </div>
-							</div>
-				    	</div>
-
-				    	<div v-show='selections.tmodelVal.length' class="sixteen wide column">
-				    		<table class="ui mini celled table">
+	                                    </div>
+	                                    <label>Sort:</label>
+	                                    <div v-for="item in settings.sortorders" class="field">
+	                                        <div class="ui radio checkbox">
+	                                            <input type="radio" name="sortorder" :value='item.val' v-model='selections.sortorderVal'>
+	                                            <label>{{item.name}}</label>
+	                                        </div>
+	                                    </div>
+	                                </div>
+                                </div> -->
+                            </div>
+                            <div v-show='labelbtndisplay' class="sixteen wide column">
+                                <!-- <table class="ui mini celled table">
 							  <thead>
 							    <tr><th>Label Field</th>
 							    <th>Control</th>
@@ -191,52 +235,55 @@
 							      <td><input type="range" :name="item.field" :min="item.min" :max="item.max" v-model="item.pred"><span>{{ item.pred }}</span></td>
 							    </tr>
 							  </tbody>
-							</table>
-				    	</div>
+							</table> -->
 
-				    	<div v-show='selections.tmodelVal.length' class="sixteen wide column">
-				    		<button id="labelBtn" class="ui tiny secondary button" :class="{ 'loading': states.labeltrain }" v-on:click='labelTrain'>Label</button>
-				    	</div>
-				    </div>
-				  </div>
-				  <div class="title">
-				    <i class="dropdown icon"></i>
-				    Visual Analytics Panel
-				  </div>
-				  <div class="content">
-				    <div class="ui grid">
-				    	<div class="sixteen wide column">
-							<div class="ui mini compact menu">
-							  <div class="ui simple dropdown item">
-							    <span>{{ selections.themeName }}</span>
-							    <i class="dropdown icon"></i>
-							    <div class="menu">
-							      <div v-for='item in settings.themes' class="item" v-on:click='changeTheme(item.name, item.value)' >{{ item.name }}</div>
-							    </div>
-							  </div>
-							</div>
+								<input type="range" name="modelparamrange" min="0" max="100" v-model='selections.modelParamRangeVal'>
+								<label>{{ selections.modelParamRangeVal + '%' }}</label>
+								
+								&nbsp;&nbsp;&nbsp;&nbsp;
+								<button id="labelBtn" class="ui tiny secondary button" :class="{ 'loading': states.labeltrain }" v-on:click='labelTrain'>Label</button>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="title">
+                        <i class="dropdown icon"></i> Visual Analytics Panel
+                    </div>
+                    <div class="content">
+                        <div class="ui grid">
+                            <div class="sixteen wide column">
+                                <div class="ui mini compact menu">
+                                    <div class="ui simple dropdown item">
+                                        <span>{{ selections.vcclaName }}</span>
+                                        <i class="dropdown icon"></i>
+                                        <div class="menu">
+                                            <div v-for='item in settings.classes' class="item" v-on:click='changeSelectCla(item)'>{{ item }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui mini compact menu">
+                                    <div class="ui simple dropdown item">
+                                        <span>{{ selections.vctimeName }}</span>
+                                        <i class="dropdown icon"></i>
+                                        <div class="menu">
+                                            <div v-for='item in settings.daytypes' class="item">
+                                                <i class="dropdown icon"></i>
+                                                <span>{{ item.name }}</span>
+                                                <div class="menu">
+                                                    <div v-for="tpitem in settings.timeperiods" class="item" v-on:click='changevcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button id="vcBtn" class="ui tiny secondary button" :class="{ 'loading': states.vcquery }" v-on:click='vcQuery'>Query</button>
+                            </div>
 
-				    		<div class="ui mini compact menu">
-							  <div class="ui simple dropdown item">
-							    <span>{{ selections.vctimeName }}</span>
-							    <i class="dropdown icon"></i>
-							    <div class="menu">
-							      <div v-for='item in settings.daytypes' class="item" >
-							      	<i class="dropdown icon"></i>
-								      <span>{{ item.name }}</span>
-								      <div class="menu">
-								        <div v-for="tpitem in settings.timeperiods" class="item" v-on:click='changevcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
-								      </div>
-								  </div>
-						        </div>
-						      </div>
-						    </div>
-
-						    <button id="vcBtn" class="ui tiny secondary button" :class="{ 'loading': states.vcquery }" v-on:click='vcQuery'>Query</button>
-				    	</div>
-					</div>
-
-				    	<!-- <div class="eight wide column">
+                            <div class="sixteen wide column">
+                            	<div id="clamatrixheatmap"></div>
+                            </div>
+                        </div>
+                        <!-- <div class="eight wide column">
 							<label>POI types</label>
 							<div class="ui form">
 								<div class="grouped fields">
@@ -263,26 +310,18 @@
 								</div>
 							</div>
 						</div> -->
-				    </div>
-				  </div>
-				</div>
-
-				
-
-				<!--  range -->
-				<div id="poicheckbox" class="sixteen wide column">
-					<div class="ui grid">
-						
-					</div>
-				</div>
-
-			</div>
-		</div>
-	</div>
-	
-	<script src="/dist/<%= name %>.js"></script>
+                    </div>
+                </div>
+            </div>
+            <!--  range -->
+            <div id="poicheckbox" class="sixteen wide column">
+                <div class="ui grid">
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="/dist/<%= name %>.js"></script>
 </body>
-
-
 
 </html>

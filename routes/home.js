@@ -15,5 +15,8 @@ router.get('/v1/tsnetrain', function(req, res, next) {
 router.post('/v1/clustertrain', function(req, res, next) {
 	home.clustertrain(req, res, next);
 })
+router.get('/v1/labeltrain', function(req, res, next) {
+	home.labeltrain(req, res, next);
+})
 
 module.exports = router;
