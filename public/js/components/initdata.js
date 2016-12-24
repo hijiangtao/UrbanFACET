@@ -87,8 +87,8 @@ let vuedata = {
             { 'name': 'Other', 'val': 7 }
         ],
         'daytypes': [
-            { 'name': 'Workday', 'val': 'wo' },
-            { 'name': 'Weekend', 'val': 'we' }
+            { 'name': 'Workday', 'val': 'workday' },
+            { 'name': 'Weekend', 'val': 'holiday' }
         ],
         'sortorders': [
             { 'name': 'ASC', 'val': 1 },

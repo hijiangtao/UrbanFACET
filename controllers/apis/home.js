@@ -8,10 +8,15 @@
 
 let fs = require('fs');
 let path = require('path');
+let GeoJSON = require('geojson');
 
 let mongodb = require('mongodb');
 let MongoClient = mongodb.MongoClient;
 let url = 'mongodb://192.168.1.42:27017/tdVC';
+
+// 使用连接池，提升性能
+let $sql = require('./userSqlMapping');
+let pool = require('../../conf/db');
 
 const lib = require('../../conf/lib');
 const DATA = require('../../conf/data')
@@ -355,13 +360,45 @@ let home = {
 				if (err) {
 					return console.error(err);
 				}
+
+				let tp = DATA.getValue(timeperiod, 'timeperiod'),
+					prop = {
+						'tp': tp,
+						'daytype': daytype
+					}
+
+				vcqueryCallback(data, cla, prop)
 			});
 		} else {
 			res.json({ 'scode': 0 })
 		}
-
-
 	}
 }
 
+let vcqueryCallback = function(data, clalist, prop) {
+	let rawdata = data.toString().split('\n'),
+		idlist = []
+
+	console.log('File Row: ', rawdata.length)
+	for (let i = 0; i < rawdata.length; i++) {
+		let tmparr = rawdata[i].split(','),
+			cla = Number.parseInt(tmparr[6]).toString(),
+			id = Number.parseInt(tmparr[0]);
+
+		if (lib.ArrayContains(clalist, cla)) {
+			idlist.push(id);
+		}
+	}
+
+	pool.getConnection(function(err, connection) {
+		connection.query($sql., [], function(err, result) {
+			if (err) throw err;
+
+			let data = GeoJSON.parse(result, {Point: ['lat', 'lng']});
+
+			res.json(data);
+			connection.release();
+		});
+	})
+}
 module.exports = home

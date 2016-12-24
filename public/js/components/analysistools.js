@@ -56,7 +56,7 @@ class analysistools {
 		}
 
 		series = series.map(function (item) {
-			return [item[1], item[0], item[2].toFixed(2) || '-'];
+			return [item[1], item[0], item[2].toFixed(1) || '-'];
 		});
 
 		let option = {
