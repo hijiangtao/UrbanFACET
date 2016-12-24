@@ -62,9 +62,9 @@ let userpanel = new Vue({
                 alert('ATTENTION: the matrix will not updated.')
             } else {
                 anains.drawMatrix(this.results.classmatrix[val], 'clamatrixheatmap', 'FeatureMatrix', {
-                    height:'90%',
-                    y:'10%',
-                    left:'0',
+                    height:'87%',
+                    y:'13%',
+                    left:'0%',
                     right:'0%'
                 })
             }
@@ -84,8 +84,7 @@ let userpanel = new Vue({
                 })
             } else {
                 alert('Both region and feature rule should be selected before the t-SNE program runs!');
-            }
-            
+            }          
         },
         clusterTrain() {
             let self = this, minpts = this.selections.dbscanminptsName, eps = this.selections.dbscaneps, theme = this.selections.themeName, regionVal = this.selections.regionVal, featureVal = this.selections.featureVal, id = this.states.userid
@@ -105,12 +104,16 @@ let userpanel = new Vue({
 
                 $.post(`/home/v1/clustertrain`, data, function(res, err) {
                     if (res['scode'] === 1) {
-                        this.states.clustertrain = false
+                        self.states.clustertrain = false
 
                         self.states.themesdisplay = true
                         self.states.clustertrain = false
-                        self.states.userid = res['id']
-                        alert('clustering work complete')
+                        self.results.clafilename = res['clafilename']
+
+                        if (self.states.userid !== res['id']) {
+                            self.states.userid = res['id']
+                        }
+                        console.log('clustering work complete')
                     } else {
                         alert('cluster work failed, please try again later')
                     }
@@ -120,22 +123,51 @@ let userpanel = new Vue({
             }
         },
         labelTrain() {
-            let self = this, theme = this.selections.themeName, paramval = this.selections.modelParamVal, rangeval = this.selections.modelParamRangeVal, id = this.states.userid
+            let self = this, theme = this.selections.themeVal, paramval = this.selections.modelParamVal, rangeval = this.selections.modelParamRangeVal, id = this.states.userid
 
             $.get(`/home/v1/labeltrain?theme=${theme}&paramval=${paramval}&rangeval=${rangeval}&id=${id}`, function(res, err) {
                 if (res['scode'] === 1) {
                     self.results.classlist = res['clalist']
                     self.results.classmatrix = res['matrixlist']
 
-                    self.settings.classes = res['classlist']
+                    self.settings.classes = res['clalist']
                     self.settings.classes.push('ALL')
+
                 } else {
                     alert('server error, please try again later.')
                 }
             })
         },
         vcQuery() {
-            this.states.vcquery = true
+            let self = this, daytype = this.selections.vcdaytypeVal, timeperiod = this.selections.vctimeperiodVal, cla = this.selections.vcclaName, clafilename = this.results.clafilename
+
+            if (daytype !== '' && timeperiod !== '' && cla !== '') {
+                self.states.vcquery = true
+                // judge if class is ALL type
+                if (cla === 'ALL') {
+                    cla = self.results.classlist
+                } else {
+                    cla = [cla]
+                }
+
+                let data = {
+                    'daytype': daytype,
+                    'timeperiod': timeperiod,
+                    'cla': cla,
+                    'clafilename': clafilename
+                }
+                $.post(`/home/v1/vcquery`, data, function(res, err) {
+                    if (res['scode'] === 1) {
+                        self.states.vcquery = false
+                    } else {
+                        alert('server error.')
+                    }
+                })
+            } else {
+                alert('All fields should be filled.')
+            }
+
+            
         },
     },
     computed: {

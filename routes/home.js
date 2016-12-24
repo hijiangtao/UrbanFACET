@@ -18,5 +18,8 @@ router.post('/v1/clustertrain', function(req, res, next) {
 router.get('/v1/labeltrain', function(req, res, next) {
 	home.labeltrain(req, res, next);
 })
+router.post('/v1/vcquery', function(req, res, next) {
+	home.vcquery(req, res, next);
+})
 
 module.exports = router;

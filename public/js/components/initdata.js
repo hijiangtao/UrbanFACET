@@ -114,18 +114,18 @@ let vuedata = {
         'modelParamVal': '',
         'sortorderVal': '',
         'modelParamRangeVal': 10,
-        'vcclaName': 'Select Class',
-        'vcclaVal': ''
+        'vcclaName': 'Select Class'
     },
     'states': {
-        'userid': Math.random()*10000,
+        'userid': '-1',
         'tsnetrain': false,
         'clustertrain': false,
         'vcquery': false,
         'themesdisplay': false
     },
     'results': {
-        'classlist': []
+        'classlist': [],
+        'clafilename': ''
     }
 }
 

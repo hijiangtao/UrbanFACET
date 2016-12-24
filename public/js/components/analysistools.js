@@ -67,12 +67,7 @@ class analysistools {
 				position: 'top'
 			},
 			animation: false,
-			grid: {
-				height: '85%',
-				y: '10%',
-				left: '9%',
-				right: '0%'
-			},
+			grid: grid,
 			xAxis: {
 				type: 'category',
 				data: configData['pois'],
