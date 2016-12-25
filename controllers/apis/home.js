@@ -15,7 +15,7 @@ let MongoClient = mongodb.MongoClient;
 let url = 'mongodb://192.168.1.42:27017/tdVC';
 
 // 使用连接池，提升性能
-let $sql = require('./userSqlMapping');
+let $sql = require('./mysqlMapping');
 let pool = require('../../conf/db');
 
 const lib = require('../../conf/lib');
@@ -220,7 +220,7 @@ let recomdCal = function(dir, file, idstr, res) {
 						"idstr": idstr,
 						"db": db,
 						"claidRelation": claidRelation,
-						"file": dir + file
+						"file": path.join(dir, file)
 					})
 				});
 			}
@@ -355,6 +355,7 @@ let home = {
 			cla = params['cla[]'],
 			clafilename = params['clafilename']
 
+		console.log(clafilename)
 		if (lib.checkDirectory(clafilename)) {
 			fs.readFile(clafilename, function(err, data) {
 				if (err) {
@@ -367,7 +368,7 @@ let home = {
 						'daytype': daytype
 					}
 
-				vcqueryCallback(data, cla, prop)
+				vcqueryCallback(data, cla, prop, res)
 			});
 		} else {
 			res.json({ 'scode': 0 })
@@ -375,7 +376,7 @@ let home = {
 	}
 }
 
-let vcqueryCallback = function(data, clalist, prop) {
+let vcqueryCallback = function(data, clalist, prop, res) {
 	let rawdata = data.toString().split('\n'),
 		idlist = []
 
@@ -390,13 +391,15 @@ let vcqueryCallback = function(data, clalist, prop) {
 		}
 	}
 
+	console.log('prop is:', prop)
+
 	pool.getConnection(function(err, connection) {
-		connection.query($sql., [], function(err, result) {
+		connection.query($sql.tpqueryrecords, [idlist, prop['daytype'], prop['tp']['starthour'], prop['tp']['endhour'] ], function(err, result) {
 			if (err) throw err;
 
-			let data = GeoJSON.parse(result, {Point: ['lat', 'lng']});
+			let data = GeoJSON.parse(result, {Point: ['lat', 'lng'], include: ['name']});
 
-			res.json(data);
+			res.json({ 'scode': 1, 'data': data, 'clalist': clalist });
 			connection.release();
 		});
 	})

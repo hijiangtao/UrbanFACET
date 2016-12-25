@@ -62,8 +62,8 @@ let userpanel = new Vue({
                 alert('ATTENTION: the matrix will not updated.')
             } else {
                 anains.drawMatrix(this.results.classmatrix[val], 'clamatrixheatmap', 'FeatureMatrix', {
-                    height:'87%',
-                    y:'13%',
+                    height:'85%',
+                    y:'15%',
                     left:'0%',
                     right:'0%'
                 })
@@ -124,25 +124,32 @@ let userpanel = new Vue({
         },
         labelTrain() {
             let self = this, theme = this.selections.themeVal, paramval = this.selections.modelParamVal, rangeval = this.selections.modelParamRangeVal, id = this.states.userid
+            if (theme !== '' && paramval !== '' && id !== '-1') {
+                self.states.labeltrain = true
+                $.get(`/home/v1/labeltrain?theme=${theme}&paramval=${paramval}&rangeval=${rangeval}&id=${id}`, function(res, err) {
+                    self.states.labeltrain = false
+                    if (res['scode'] === 1) {
+                        self.results.classlist = res['clalist']
+                        self.results.classmatrix = res['matrixlist']
 
-            $.get(`/home/v1/labeltrain?theme=${theme}&paramval=${paramval}&rangeval=${rangeval}&id=${id}`, function(res, err) {
-                if (res['scode'] === 1) {
-                    self.results.classlist = res['clalist']
-                    self.results.classmatrix = res['matrixlist']
+                        self.settings.classes = res['clalist']
+                        self.settings.classes.push('ALL')
 
-                    self.settings.classes = res['clalist']
-                    self.settings.classes.push('ALL')
-
-                } else {
-                    alert('server error, please try again later.')
-                }
-            })
+                    } else {
+                        alert('server error, please try again later.')
+                    }
+                })
+            } else {
+                alert('All fields should be filled.')
+            }
+            
         },
         vcQuery() {
             let self = this, daytype = this.selections.vcdaytypeVal, timeperiod = this.selections.vctimeperiodVal, cla = this.selections.vcclaName, clafilename = this.results.clafilename
 
             if (daytype !== '' && timeperiod !== '' && cla !== '') {
                 self.states.vcquery = true
+                document.getElementsByTagName('body')[0].classList.add('loading');
                 // judge if class is ALL type
                 if (cla === 'ALL') {
                     cla = self.results.classlist
@@ -159,6 +166,9 @@ let userpanel = new Vue({
                 $.post(`/home/v1/vcquery`, data, function(res, err) {
                     if (res['scode'] === 1) {
                         self.states.vcquery = false
+                        document.getElementsByTagName('body')[0].classList.remove('loading');
+
+                        mapins.pointmapDrawing(res['data'], res['clalist'])
                     } else {
                         alert('server error.')
                     }

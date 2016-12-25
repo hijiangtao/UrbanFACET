@@ -120,6 +120,7 @@ let vuedata = {
         'userid': '-1',
         'tsnetrain': false,
         'clustertrain': false,
+        'labeltrain': false,
         'vcquery': false,
         'themesdisplay': false
     },

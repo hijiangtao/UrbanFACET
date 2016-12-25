@@ -59,12 +59,20 @@ class analysistools {
 			return [item[1], item[0], item[2].toFixed(1) || '-'];
 		});
 
+		function fixjudge(val) {
+			// body...
+		}
+
 		let option = {
 			title: {
 				text: titlestr
 			},
 			tooltip: {
-				position: 'top'
+				position: 'top',
+				formatter: function(params, ticket) {
+					let ttipstr = `${params.name} in ${configData['timeperiods'][params.data[1]]}<br>Possibility: ${params.data[2]}`
+					return ttipstr;
+				}
 			},
 			animation: false,
 			grid: grid,
@@ -96,7 +104,7 @@ class analysistools {
 				data: series,
 				label: {
 					normal: {
-						show: true
+						show: false
 					}
 				},
 				itemStyle: {
