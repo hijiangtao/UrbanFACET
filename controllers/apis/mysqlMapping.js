@@ -7,7 +7,7 @@
 
 // CRUD SQL
 let mapping = {
-	tpqueryrecords: "select tdid AS name, lat, lng from cbeijing WHERE tdid in (?) AND dayType = ? AND timeSegID >= ? AND timeSegID < ? LIMIT 10000",
+	tpqueryrecords: "select tdid AS name, lat, lng from cbeijing WHERE tdid in (?) AND dayType = ? AND timeSegID >= ? AND timeSegID < ?",
 	randomQuery: "select tdid, lat, lng from ?? WHERE tdid = ? and dayType IN (?);"
 };
  

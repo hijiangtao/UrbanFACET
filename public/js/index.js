@@ -169,7 +169,6 @@ let userpanel = new Vue({
             } else {
                 alert('All fields should be filled.')
             }
-            
         },
         vcQuery() {
             let self = this, 

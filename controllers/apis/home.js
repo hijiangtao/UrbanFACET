@@ -244,7 +244,7 @@ let home = {
 			id = params.id;
 
 		let file = `2D-ScatterData_1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}.csv`
-		console.log(path.join(__dirname, '../../server/data', file))
+		// console.log(path.join(__dirname, '../../server/data', file))
 		if (lib.checkDirectory(path.join(__dirname, '../../server/data', file))) {
 			res.json({ 'scode': 1 })
 		} else {
@@ -391,7 +391,7 @@ let vcqueryCallback = function(data, clalist, prop, res) {
 		}
 	}
 
-	console.log('prop is:', prop)
+	// console.log('prop is:', prop)
 
 	pool.getConnection(function(err, connection) {
 		connection.query($sql.tpqueryrecords, [idlist, prop['daytype'], prop['tp']['starthour'], prop['tp']['endhour'] ], function(err, result) {
