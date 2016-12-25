@@ -95,7 +95,13 @@ let vuedata = {
             { 'name': 'DEC', 'val': -1 }
         ],
         // vc class dropdown menu
-        'classes': []
+        'classes': [],
+        // 
+        'qmodes': [
+        	{ 'name': 'VA', 'val': 0 },
+        	{ 'name': 'VC (Classes)', 'val': 1 },
+        	{ 'name': 'VC (TimePeriods)', 'val': 2 },
+        ]
     },
     'selections': {
         'regionVal': 'Select Region',
@@ -105,16 +111,23 @@ let vuedata = {
         'themeName': 'Select Theme',
         'themeVal': '',
         'tmodelVal': '',
-        'vctimeName': 'Select query time',
-        'vcdaytypeVal': '',
-        'vctimeperiodVal': '',
+        
         'dbscanminptsName': 'Select MinPts',
         'dbscaneps': '0',
         'modelParamName': 'Stats index',
         'modelParamVal': '',
         'sortorderVal': '',
         'modelParamRangeVal': 10,
-        'vcclaName': 'Select Class'
+        
+        'vctimeName': 'Select query time',
+        'compvctimeName': 'Select compared time',
+        'vcdaytypeVal': '',
+        'vctimeperiodVal': '',
+        'compvcdaytypeVal': '',
+        'compvctimeperiodVal': '',
+        'vcclaName': 'Select Class',
+        'compvcclaName': 'Select ComparedClass',
+        'vcqmodeVal': 0
     },
     'states': {
         'userid': '-1',

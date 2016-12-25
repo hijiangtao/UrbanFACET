@@ -1,0 +1,80 @@
+<div class="ui grid">
+    <div id="" class="sixteen wide column">
+        <div class="ui form">
+            <div class="inline fields">
+                <label>eps</label>
+                <div class="field">
+                    <div class="eps ui mini input">
+                        <input type="text" placeholder="EPS..." v-model='selections.dbscaneps'>
+                    </div>
+                </div>
+                <label>minpts</label>
+                <div class="field">
+                    <div class="ui mini compact menu">
+                        <div class="ui simple dropdown item">
+                            <span>{{ selections.dbscanminptsName }}</span>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <div v-for='item in settings.dbscan.minpts' class="item" v-on:click='changeDBScanInp(item)'>{{ item }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="clusterBtn" class="ui tiny secondary button" :class="{ 'loading': states.clustertrain }" v-on:click='clusterTrain'>Cluster</button>
+            </div>
+        </div>
+    </div>
+    <!-- v-show='states.themesdisplay' -->
+    <div v-show='states.themesdisplay' class="ui sixteen wide column">
+        <div class="ui mini compact menu">
+            <div class="ui simple dropdown item">
+                <span>{{ selections.themeName }}</span>
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div v-for='item in settings.themes' class="item" v-on:click='changeTheme(item.name, item.value)'>{{ item.name }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="ui mini compact menu">
+            <div class="ui simple dropdown item">
+                <span>{{ selections.modelParamName }}</span>
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div v-for='item in settings.modelparams' class="item" :class="{'disabled': Number.parseInt(item.val) > 9}" v-on:click='changeThemeParam(item.name, item.val)'>{{ item.name }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="ui form">
+                                	<div class="inline fields">
+	                                    <div class="field">
+
+	                                    </div>
+	                                    <label>Sort:</label>
+	                                    <div v-for="item in settings.sortorders" class="field">
+	                                        <div class="ui radio checkbox">
+	                                            <input type="radio" name="sortorder" :value='item.val' v-model='selections.sortorderVal'>
+	                                            <label>{{item.name}}</label>
+	                                        </div>
+	                                    </div>
+	                                </div>
+                                </div> -->
+    </div>
+    <div v-show='labelbtndisplay' class="sixteen wide column">
+        <!-- <table class="ui mini celled table">
+							  <thead>
+							    <tr><th>Label Field</th>
+							    <th>Control</th>
+							  </tr></thead>
+							  <tbody>
+							    <tr v-for='item in selections.tmodelVal'>
+							      <td>{{ item.field }}</td>
+							      <td><input type="range" :name="item.field" :min="item.min" :max="item.max" v-model="item.pred"><span>{{ item.pred }}</span></td>
+							    </tr>
+							  </tbody>
+							</table> -->
+        <input type="range" name="modelparamrange" min="0" max="100" v-model='selections.modelParamRangeVal'>
+        <label>{{ selections.modelParamRangeVal + '%' }}</label>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button id="labelBtn" class="ui tiny secondary button" :class="{ 'loading': states.labeltrain }" v-on:click='labelTrain'>Label</button>
+    </div>
+</div>

@@ -244,8 +244,8 @@ let home = {
 			id = params.id;
 
 		let file = `2D-ScatterData_1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}.csv`
-		console.log(path.join('/home/joe/Documents/git/living-modes-visual-comparison/server/data', file))
-		if (lib.checkDirectory(path.join('/home/joe/Documents/git/living-modes-visual-comparison/server/data', file))) {
+		console.log(path.join(__dirname, '../../server/data', file))
+		if (lib.checkDirectory(path.join(__dirname, '../../server/data', file))) {
 			res.json({ 'scode': 1 })
 		} else {
 			res.json({ 'scode': 0 })

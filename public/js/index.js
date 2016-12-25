@@ -13,6 +13,9 @@ import analysistools from './components/analysistools'
 import $ from "jquery"
 window.jQuery = $
 require('../../semantic/dist/components/accordion')
+require('../../semantic/dist/components/modal')
+require('../../semantic/dist/components/dimmer')
+require('../../semantic/dist/components/transition')
 
 import { vuedata } from './components/initdata'
 
@@ -47,6 +50,11 @@ let userpanel = new Vue({
             this.selections.vcdaytypeVal = dayval
             this.selections.vctimeperiodVal = tpval
         },
+        changecompvcTime(dayname, tpname, dayval, tpval) {
+            this.selections.compvctimeName = `${dayname} - ${tpname}`
+            this.selections.compvcdaytypeVal = dayval
+            this.selections.compvctimeperiodVal = tpval
+        },
         changeDBScanInp(val) {
             this.selections.dbscanminptsName = val
         },
@@ -62,12 +70,25 @@ let userpanel = new Vue({
                 alert('ATTENTION: the matrix will not updated.')
             } else {
                 anains.drawMatrix(this.results.classmatrix[val], 'clamatrixheatmap', 'FeatureMatrix', {
-                    height:'85%',
-                    y:'15%',
+                    height:'80%',
+                    y:'20%',
                     left:'0%',
                     right:'0%'
                 })
             }
+        },
+        changeSelectCompCla(val) {
+            this.selections.compvcclaName = val
+
+            anains.drawMatrix(this.results.classmatrix[val], 'compclamatrixheatmap', 'FeatureMatrix', {
+                    height:'80%',
+                    y:'20%',
+                    left:'0%',
+                    right:'0%'
+                })
+        },
+        usageguidanceShow() {
+            $('.ui.modal').modal('show')
         },
         tsneTrain() {
             let self = this, regionVal = this.selections.regionVal, featureVal = this.selections.featureVal, id = this.states.userid
@@ -129,6 +150,12 @@ let userpanel = new Vue({
                 $.get(`/home/v1/labeltrain?theme=${theme}&paramval=${paramval}&rangeval=${rangeval}&id=${id}`, function(res, err) {
                     self.states.labeltrain = false
                     if (res['scode'] === 1) {
+                        document.getElementById('vcclaDropdown').classList.remove('disabled')
+                        let compClaDropdown = document.getElementById('compvcclaDropdown')
+                        if (compClaDropdown) {
+                            compClaDropdown.classList.remove('disabled')
+                        }
+
                         self.results.classlist = res['clalist']
                         self.results.classmatrix = res['matrixlist']
 
@@ -145,7 +172,11 @@ let userpanel = new Vue({
             
         },
         vcQuery() {
-            let self = this, daytype = this.selections.vcdaytypeVal, timeperiod = this.selections.vctimeperiodVal, cla = this.selections.vcclaName, clafilename = this.results.clafilename
+            let self = this, 
+                daytype = this.selections.vcdaytypeVal, 
+                timeperiod = this.selections.vctimeperiodVal, 
+                cla = this.selections.vcclaName, 
+                clafilename = this.results.clafilename
 
             if (daytype !== '' && timeperiod !== '' && cla !== '') {
                 self.states.vcquery = true
@@ -186,11 +217,28 @@ let userpanel = new Vue({
         }
     },
     watch: {
+        'selections.vcqmodeVal': function(val) {
+            if (this.settings.classes.length !== 0) {
+                document.getElementById('vcclaDropdown').classList.remove('disabled')
+                let compClaDropdown = document.getElementById('compvcclaDropdown')
+                if (compClaDropdown) {
+                    compClaDropdown.classList.remove('disabled')
+                }
+            }
 
+
+            if (this.selections.vcqmodeVal !== 0) {
+                console.log(this.selections.vcqmodeVal)
+                setTimeout(function() {
+                    document.getElementById('vcBtn').classList.add('disabled')
+                }, 200)
+            }
+        }
     },
     mounted: function () {
       this.$nextTick(function () {
-        $('.ui.accordion').accordion();
+        $('.ui.accordion').accordion()
+        $('.ui.modal').modal('show')
       })
       console.log('The vue isntance has mounted.')
 
@@ -201,4 +249,5 @@ let userpanel = new Vue({
 // remove loading effect
 document.addEventListener("DOMContentLoaded", function(event) { 
   document.getElementsByTagName('body')[0].classList.remove('loading');
+;
 });
