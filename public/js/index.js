@@ -135,6 +135,7 @@ let userpanel = new Vue({
                             self.states.userid = res['id']
                         }
                         console.log('clustering work complete')
+                        alert('success');
                     } else {
                         alert('cluster work failed, please try again later')
                     }
@@ -161,7 +162,7 @@ let userpanel = new Vue({
 
                         self.settings.classes = res['clalist']
                         self.settings.classes.push('ALL')
-
+                        alert('success');
                     } else {
                         alert('server error, please try again later.')
                     }
@@ -237,7 +238,7 @@ let userpanel = new Vue({
     mounted: function () {
       this.$nextTick(function () {
         $('.ui.accordion').accordion()
-        $('.ui.modal').modal('show')
+        $('.ui.fullscreen.modal').modal('show')
       })
       console.log('The vue isntance has mounted.')
 
