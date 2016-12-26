@@ -27,6 +27,8 @@ let mapins = new mapview('map'),
     anains = new analysistools('', 'clamatrixheatmap')
 
 
+let featureTypes = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'weevening']
+
 // index page vue instance
 let userpanel = new Vue({
     el: '#userpanel',
@@ -77,6 +79,11 @@ let userpanel = new Vue({
                 })
             }
         },
+        showDecomposeImg() {
+            if (this.results.decomposeimgurl !== '') {
+                window.open(this.results.decomposeimgurl, '_blank');    
+            }
+        },
         changeSelectCompCla(val) {
             this.selections.compvcclaName = val
 
@@ -99,6 +106,7 @@ let userpanel = new Vue({
                     if (res['scode']) {
                         alert('success');
                         self.states.tsnetrain = false
+                        self.results.decomposeimgurl = `/img/decompose/2D-ScatterData_1-in-3_tsne-${featureTypes[featureVal-1]}(byRecNum).png`
                     } else {
                         alert('server error')
                     }
@@ -176,9 +184,24 @@ let userpanel = new Vue({
                 daytype = this.selections.vcdaytypeVal, 
                 timeperiod = this.selections.vctimeperiodVal, 
                 cla = this.selections.vcclaName, 
-                clafilename = this.results.clafilename
+                compdaytype = this.selections.compvcdaytypeVal,
+                comptimeperiod = this.selections.compvctimeperiodVal,
+                compcla = this.selections.compvcclaName,
+                clafilename = this.results.clafilename,
+                qmode = this.selections.vcqmodeVal
 
-            if (daytype !== '' && timeperiod !== '' && cla !== '') {
+
+            if (daytype !== '' && timeperiod !== '' && cla !== '' && clafilename !== '') {
+                if (qmode === 1 && compcla === '') {
+                    alert('All fields should be filled.')
+                    return ;
+                }
+
+                if (qmode === 2 && (comptimeperiod === '' || compdaytype === '')) {
+                    alert('All fields should be filled.')
+                    return ;
+                }
+
                 self.states.vcquery = true
                 document.getElementsByTagName('body')[0].classList.add('loading');
                 // judge if class is ALL type
@@ -189,9 +212,13 @@ let userpanel = new Vue({
                 }
 
                 let data = {
+                    'qmode': qmode,
                     'daytype': daytype,
                     'timeperiod': timeperiod,
                     'cla': cla,
+                    'compdaytype': compdaytype,
+                    'comptimeperiod': comptimeperiod,
+                    'compcla': compcla,
                     'clafilename': clafilename
                 }
                 $.post(`/home/v1/vcquery`, data, function(res, err) {

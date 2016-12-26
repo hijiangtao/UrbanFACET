@@ -51,16 +51,20 @@ class mapview {
 		let transform = d3.geoTransform({ point: projectPoint }),
 			path = d3.geoPath().projection(transform);
 
-		path.pointRadius(2);
+		let color = d3.scaleOrdinal(d3.schemeCategory20)
+
+		path.pointRadius(1);
 
 		var feature = g.selectAll("path")
 			.data(data.features)
 			.enter().append("path")
 			.attr("stroke", function(d) {
-				return "rgb(250,150,30)";
+				return color(d['properties']['name'])
+				// return "rgb(250,150,30)";
 			})
 			.attr("fill", function(d) {
-				return "rgb(250,150,30)";
+				return color(d['properties']['cla'])
+				// return "rgb(250,150,30)";
 			})
 			.attr("opacity", "0.8")
 			.attr("class", "pointmapfeature");

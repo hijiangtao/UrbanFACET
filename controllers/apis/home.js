@@ -294,6 +294,13 @@ let home = {
 			}
 		}
 	},
+	/**
+	 * [labeltrain description]
+	 * @param  {[type]}   req  [description]
+	 * @param  {[type]}   res  [description]
+	 * @param  {Function} next [description]
+	 * @return {[type]}        [description]
+	 */
 	labeltrain(req, res, next) {
 		let params = req.query,
 			theme = params.theme,
@@ -348,6 +355,13 @@ let home = {
 			}
 		});
 	},
+	/**
+	 * [vcquery description]
+	 * @param  {[type]}   req  [description]
+	 * @param  {[type]}   res  [description]
+	 * @param  {Function} next [description]
+	 * @return {[type]}        [description]
+	 */
 	vcquery(req, res, next) {
 		let params = req.body,
 			daytype = params.daytype,

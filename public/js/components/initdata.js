@@ -112,8 +112,8 @@ let vuedata = {
         'themeVal': '',
         'tmodelVal': '',
         
-        'dbscanminptsName': 'Select MinPts',
-        'dbscaneps': '0',
+        'dbscanminptsName': '40',
+        'dbscaneps': '0.13',
         'modelParamName': 'Stats index',
         'modelParamVal': '',
         'sortorderVal': '',
@@ -139,7 +139,8 @@ let vuedata = {
     },
     'results': {
         'classlist': [],
-        'clafilename': ''
+        'clafilename': '',
+        'decomposeimgurl': ''
     }
 }
 
