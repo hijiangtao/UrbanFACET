@@ -64,8 +64,8 @@
     }
     
     .ui.grid > .wide.column {
-        padding-top: .4rem;
-        padding-bottom: .4rem;
+        padding-top: .2rem;
+        padding-bottom: .2rem;
     }
     
     .ui.form .fields .field .eps.ui.mini.input input {
@@ -85,12 +85,18 @@
     }
 
     .vcPanelRow.row {
-    	padding-bottom: .4rem;
-    	padding-top: .4rem;
+    	padding-bottom: .2rem;
+    	padding-top: .2rem;
     }
 
     #usageguidance {
     	cursor:pointer;
+    }
+
+    #decomposeImg {
+		position: absolute;
+    	bottom: 0;
+    	padding-right: 14px;
     }
     </style>
 </head>
@@ -112,6 +118,10 @@
 					  </div>
 					</div>
 				</div>
+
+				<div v-show='results.decomposeimgurl' id="decomposeImg" v-on:click="showDecomposeImg">
+			        <img class="ui fluid rounded image" :src="results.decomposeimgurl" >
+			    </div>
 
                 <div class="ui accordion">
                     <div class="active title">

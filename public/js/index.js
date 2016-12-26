@@ -72,9 +72,9 @@ let userpanel = new Vue({
                 alert('ATTENTION: the matrix will not updated.')
             } else {
                 anains.drawMatrix(this.results.classmatrix[val], 'clamatrixheatmap', 'FeatureMatrix', {
-                    height:'80%',
+                    height:'70%',
                     y:'20%',
-                    left:'0%',
+                    left:'10%',
                     right:'0%'
                 })
             }
@@ -88,9 +88,9 @@ let userpanel = new Vue({
             this.selections.compvcclaName = val
 
             anains.drawMatrix(this.results.classmatrix[val], 'compclamatrixheatmap', 'FeatureMatrix', {
-                    height:'80%',
+                    height:'70%',
                     y:'20%',
-                    left:'0%',
+                    left:'10%',
                     right:'0%'
                 })
         },
@@ -116,7 +116,13 @@ let userpanel = new Vue({
             }          
         },
         clusterTrain() {
-            let self = this, minpts = this.selections.dbscanminptsName, eps = this.selections.dbscaneps, theme = this.selections.themeName, regionVal = this.selections.regionVal, featureVal = this.selections.featureVal, id = this.states.userid
+            let self = this, 
+                minpts = this.selections.dbscanminptsName, 
+                eps = this.selections.dbscaneps, 
+                theme = this.selections.themeName, 
+                regionVal = this.selections.regionVal, 
+                featureVal = this.selections.featureVal, 
+                id = this.states.userid
 
             if (minpts !== '' && eps !== '') {
                 this.states.clustertrain = true
@@ -144,6 +150,8 @@ let userpanel = new Vue({
                         }
                         console.log('clustering work complete')
                         alert('success');
+
+                        self.results.decomposeimgurl = `/img/cluster/DBScanCluster-1-in-3_tsne-${featureTypes[featureVal-1]}(eps=${eps},minpts=${minpts}).png`
                     } else {
                         alert('cluster work failed, please try again later')
                     }

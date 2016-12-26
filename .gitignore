@@ -29,6 +29,7 @@ node_modules
 *.pyc
 
 public/data/*
+public/img/cluster/*
 
 semantic/*
 

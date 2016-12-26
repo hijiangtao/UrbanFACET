@@ -25,27 +25,38 @@
         </div>
     </div>
     <!-- v-show='states.themesdisplay' -->
-    <div v-show='states.themesdisplay' class="ui sixteen wide column">
-        <label>Analyzed People</label>
-        <div class="ui mini compact menu">
-            <div class="ui simple dropdown item">
-                <span>{{ selections.themeName }}</span>
-                <i class="dropdown icon"></i>
-                <div class="menu">
-                    <div v-for='item in settings.themes' class="item" v-on:click='changeTheme(item.name, item.value)'>{{ item.name }}</div>
-                </div>
-            </div>
-        </div>
-        <label>Filter Condition</label>
-        <div class="ui mini compact menu">
-            <div class="ui simple dropdown item">
-                <span>{{ selections.modelParamName }}</span>
-                <i class="dropdown icon"></i>
-                <div class="menu">
-                    <div v-for='item in settings.modelparams' class="item" :class="{'disabled': Number.parseInt(item.val) > 9}" v-on:click='changeThemeParam(item.name, item.val)'>{{ item.name }}</div>
-                </div>
-            </div>
-        </div>
+    <div  class="ui sixteen wide column">
+    	<div class="ui form">
+    		<div class="inline fields">
+    			<label>Theme</label>
+    			<div class="field">
+    				<div class="ui mini compact menu">
+			            <div class="ui simple dropdown item">
+			                <span>{{ selections.themeName }}</span>
+			                <i class="dropdown icon"></i>
+			                <div class="menu">
+			                    <div v-for='item in settings.themes' class="item" v-on:click='changeTheme(item.name, item.value)'>{{ item.name }}</div>
+			                </div>
+			            </div>
+			        </div>
+    			</div>
+
+    			<label>Filter</label>
+    			<div class="field">
+    				<div class="ui mini compact menu">
+			            <div class="ui simple dropdown item">
+			                <span>{{ selections.modelParamName }}</span>
+			                <i class="dropdown icon"></i>
+			                <div class="menu">
+			                    <div v-for='item in settings.modelparams' class="item" :class="{'disabled': Number.parseInt(item.val) > 9}" v-on:click='changeThemeParam(item.name, item.val)'>{{ item.name }}</div>
+			                </div>
+			            </div>
+			        </div>
+    			</div>
+			        
+    		</div>
+    	</div>
+
         <!-- <div class="ui form">
                                 	<div class="inline fields">
 	                                    <div class="field">
@@ -74,9 +85,24 @@
 							    </tr>
 							  </tbody>
 							</table> -->
-        <input type="range" name="modelparamrange" min="0" max="100" v-model='selections.modelParamRangeVal'>
+        <div class="ui form">
+        	
+        
+	        <div class="inline fields">
+	        	<label>Top rate</label>
+	        	<div class="field">
+	        		<input type="range" name="modelparamrange" min="0" max="100" v-model='selections.modelParamRangeVal'>
+	        	</div>
+	        	<label>{{ selections.modelParamRangeVal + '%' }}</label>
+	        	<div class="field">
+	        		<button id="labelBtn" class="ui tiny secondary button" :class="{ 'loading': states.labeltrain }" v-on:click='labelTrain'>Label</button>
+	        	</div>
+	        </div>
+	    </div>
+
+        <!-- <input type="range" name="modelparamrange" min="0" max="100" v-model='selections.modelParamRangeVal'>
         <label>{{ selections.modelParamRangeVal + '%' }}</label>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <button id="labelBtn" class="ui tiny secondary button" :class="{ 'loading': states.labeltrain }" v-on:click='labelTrain'>Label</button>
+        <button id="labelBtn" class="ui tiny secondary button" :class="{ 'loading': states.labeltrain }" v-on:click='labelTrain'>Label</button> -->
     </div>
 </div>

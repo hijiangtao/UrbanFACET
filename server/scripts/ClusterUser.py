@@ -180,7 +180,7 @@ def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans')
 		fontsize=5)
 
 	img = plt.gcf()
-	img.savefig('%s/tmp/%s.png' % (baseurl, txtCluster), dpi=400)
+	img.savefig( os.path.join(baseurl, '../../public/img/cluster', '%s.png' % txtCluster), dpi=400)
 	plt.close()
 
 	# result = combineArrs(idlist, labels)
