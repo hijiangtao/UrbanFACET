@@ -74,7 +74,7 @@ let userpanel = new Vue({
                 anains.drawMatrix(this.results.classmatrix[val], 'clamatrixheatmap', 'FeatureMatrix', {
                     height:'70%',
                     y:'20%',
-                    left:'10%',
+                    left:'12%',
                     right:'0%'
                 })
             }
@@ -90,7 +90,7 @@ let userpanel = new Vue({
             anains.drawMatrix(this.results.classmatrix[val], 'compclamatrixheatmap', 'FeatureMatrix', {
                     height:'70%',
                     y:'20%',
-                    left:'10%',
+                    left:'12%',
                     right:'0%'
                 })
         },

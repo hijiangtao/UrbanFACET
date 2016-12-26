@@ -51,7 +51,7 @@
                     <span>{{ selections.vcclaName }}</span>
                     <i class="dropdown icon"></i>
                     <div class="menu">
-                        <div v-for='item in settings.classes' class="item" v-on:click='changeSelectCla(item)'>{{ item }}</div>
+                        <div v-for='item in results.classlist' class="item" v-on:click='changeSelectCla(item)'>{{ item }}</div>
                     </div>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                     <span>{{ selections.compvcclaName }}</span>
                     <i class="dropdown icon"></i>
                     <div class="menu">
-                        <div v-for='item in settings.classes' class="item" v-on:click='changeSelectCompCla(item)'>{{ item }}</div>
+                        <div v-for='item in results.classlist' class="item" v-on:click='changeSelectCompCla(item)'>{{ item }}</div>
                     </div>
                 </div>
             </div>
