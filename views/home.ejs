@@ -119,24 +119,24 @@
 					</div>
 				</div>
 
-				<div v-show='results.decomposeimgurl' id="decomposeImg" v-on:click="showDecomposeImg">
+				<div v-show='results.decomposeimgurl' id="decomposeImg" v-on:click="showDecomposeImg" data-tooltip="Click the image to see details" data-position="right center" data-inverted="">
 			        <img class="ui fluid rounded image" :src="results.decomposeimgurl" >
 			    </div>
 
                 <div class="ui accordion">
-                    <div class="active title">
+                    <div class="active title" data-tooltip="Data and model selection, feature decomposing works" data-position="right center" data-inverted="">
                         <i class="dropdown icon"></i> Training Model Setting
                     </div>
                     <div class="active content">
                         <% include components/trainmodelsetting %>
                     </div>
-                    <div class="title">
+                    <div class="title" data-tooltip="Cluster and label works" data-position="right center" data-inverted="">
                         <i class="dropdown icon"></i> Cluster Discovery Setting
                     </div>
                     <div class="content">
                         <% include components/clusterlabelsetting %>
                     </div>
-                    <div class="title">
+                    <div class="title" data-tooltip="Visual analytics and comparison interaction works" data-position="right center" data-inverted="">
                         <i class="dropdown icon"></i> Visual Analytics Panel
                     </div>
                     <div class="content">

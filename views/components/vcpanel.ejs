@@ -3,7 +3,7 @@
         <div class="ui form">
             <div class="inline fields">
                 <label>Mode</label>
-                <div v-for="item in settings.qmodes" class="field">
+                <div v-for="item in settings.qmodes" class="field" :data-tooltip="item.tooltip" data-position="top left" data-inverted="">
                     <div class="ui mini radio checkbox">
                         <input type="radio" name="recordqmode" :value="item.val" v-model="selections.vcqmodeVal">
                         <label>{{item.name}}</label>

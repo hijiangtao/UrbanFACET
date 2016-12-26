@@ -53,18 +53,18 @@ class mapview {
 
 		let color = d3.scaleOrdinal(d3.schemeCategory20)
 
-		path.pointRadius(1);
+		path.pointRadius(1.4);
 
 		var feature = g.selectAll("path")
 			.data(data.features)
 			.enter().append("path")
 			.attr("stroke", function(d) {
-				return color(d['properties']['name'])
-				// return "rgb(250,150,30)";
+				// return color(d['properties']['cla'])
+				return "rgb(250,150,30)";
 			})
 			.attr("fill", function(d) {
-				return color(d['properties']['cla'])
-				// return "rgb(250,150,30)";
+				// return color(d['properties']['cla'])
+				return "rgb(250,150,30)";
 			})
 			.attr("opacity", "0.8")
 			.attr("class", "pointmapfeature");

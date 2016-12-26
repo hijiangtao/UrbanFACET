@@ -3,13 +3,13 @@
         <div class="ui form">
             <div class="inline fields">
                 <label>eps</label>
-                <div class="field">
+                <div class="field" data-tooltip="Maximum radius of the neighborhood from current point" data-position="top left" data-inverted="">
                     <div class="eps ui mini input">
-                        <input type="text" placeholder="EPS..." v-model='selections.dbscaneps'>
+                        <input type="text" type="number" placeholder="EPS..." v-model='selections.dbscaneps'>
                     </div>
                 </div>
                 <label>minpts</label>
-                <div class="field">
+                <div class="field" data-tooltip="Minimum number of points required to form a dense region" data-position="top left" data-inverted="">
                     <div class="ui mini compact menu">
                         <div class="ui simple dropdown item">
                             <span>{{ selections.dbscanminptsName }}</span>
@@ -25,11 +25,11 @@
         </div>
     </div>
     <!-- v-show='states.themesdisplay' -->
-    <div  class="ui sixteen wide column">
+    <div v-show='states.themesdisplay' class="ui sixteen wide column">
     	<div class="ui form">
     		<div class="inline fields">
     			<label>Theme</label>
-    			<div class="field">
+    			<div class="field" data-tooltip="The people group that you want to label and analysis" data-position="top left" data-inverted="">
     				<div class="ui mini compact menu">
 			            <div class="ui simple dropdown item">
 			                <span>{{ selections.themeName }}</span>
@@ -42,7 +42,7 @@
     			</div>
 
     			<label>Filter</label>
-    			<div class="field">
+    			<div class="field" data-tooltip="The time periods you used to filter out the top-N classes" data-position="top left" data-inverted="">
     				<div class="ui mini compact menu">
 			            <div class="ui simple dropdown item">
 			                <span>{{ selections.modelParamName }}</span>
@@ -90,7 +90,7 @@
         
 	        <div class="inline fields">
 	        	<label>Top rate</label>
-	        	<div class="field">
+	        	<div class="field" data-tooltip="Percentage N, refers to top-N classes in whole cluster results" data-position="top left" data-inverted="">
 	        		<input type="range" name="modelparamrange" min="0" max="100" v-model='selections.modelParamRangeVal'>
 	        	</div>
 	        	<label>{{ selections.modelParamRangeVal + '%' }}</label>
