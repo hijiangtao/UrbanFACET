@@ -277,13 +277,12 @@ let home = {
 		let clsrun;
 
 		if (lib.checkDirectory(path.join(datadir + '/tmp', oupfile))) {
-			// console.log('I am already exist.')
-			// res.json({ 'scode': 1, 'filename': datadir + oupfile })
-			if (params.id === '-1') {
-				recomdCal(datadir + '/tmp', oupfile, id, res)
-			} else {
-				res.json({ 'scode': 1, 'clafilename': `${datadir}/tmp/${oupfile}`, 'id': params.id, 'recomdData': [] })
-			}
+			recomdCal(datadir + '/tmp', oupfile, id, res)
+			// if (params.id === '-1') {
+			// 	recomdCal(datadir + '/tmp', oupfile, id, res)
+			// } else {
+			// 	res.json({ 'scode': 1, 'clafilename': `${datadir}/tmp/${oupfile}`, 'id': params.id, 'recomdData': [] })
+			// }
 
 		} else {
 			clsrun = shell.exec(`cd ${scriptdir} && python ./ClusterUser.py -d ${datadir} -f ${inpfile} -x ${eps} -y ${minpts}`).stdout;
@@ -412,6 +411,8 @@ let vcqueryCallback = function(data, clalist, prop, res) {
 			if (err) throw err;
 
 			let data = GeoJSON.parse(result, {Point: ['lat', 'lng'], include: ['name']});
+
+			appendInfo()
 
 			res.json({ 'scode': 1, 'data': data, 'clalist': clalist });
 			connection.release();
