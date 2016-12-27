@@ -45,13 +45,21 @@ class mapview {
 		
 		d3.select("#F_SVG").remove();
 
+		if(data.features.length === 0) {
+			alert("No records found!")
+			return ;
+		}
+
 		let svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr("id", "F_SVG"),
 			g = svg.append("g").attr("class", "leaflet-zoom-hide").attr("id", "F_G");
 
 		let transform = d3.geoTransform({ point: projectPoint }),
 			path = d3.geoPath().projection(transform);
 
-		let color = d3.scaleOrdinal(d3.schemeCategory20)
+		let color = d3.scaleOrdinal( ['#24AADD', 'rgb(250,150,30)'] ).domain(idlist)
+		// d3.schemeCategory20
+
+		// console.log(color)
 
 		path.pointRadius(1.4);
 
@@ -59,12 +67,12 @@ class mapview {
 			.data(data.features)
 			.enter().append("path")
 			.attr("stroke", function(d) {
-				// return color(d['properties']['cla'])
-				return "rgb(250,150,30)";
+				return color(d['properties']['group'])
+				// return "rgb(250,150,30)";
 			})
 			.attr("fill", function(d) {
-				// return color(d['properties']['cla'])
-				return "rgb(250,150,30)";
+				return color(d['properties']['group'])
+				// return "rgb(250,150,30)";
 			})
 			.attr("opacity", "0.8")
 			.attr("class", "pointmapfeature");

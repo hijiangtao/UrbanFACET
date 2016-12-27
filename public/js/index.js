@@ -234,7 +234,8 @@ let userpanel = new Vue({
                         self.states.vcquery = false
                         document.getElementsByTagName('body')[0].classList.remove('loading');
 
-                        mapins.pointmapDrawing(res['data'], res['clalist'])
+                        mapins.pointmapDrawing(res['data'], res['group'])
+                        console.log('Color map', res['group'])
                     } else {
                         alert('server error.')
                     }
@@ -253,21 +254,21 @@ let userpanel = new Vue({
     },
     watch: {
         'selections.vcqmodeVal': function(val) {
-            if (this.settings.classes.length !== 0) {
-                document.getElementById('vcclaDropdown').classList.remove('disabled')
-                let compClaDropdown = document.getElementById('compvcclaDropdown')
-                if (compClaDropdown) {
-                    compClaDropdown.classList.remove('disabled')
+            this.$nextTick(function () {
+               if (this.settings.classes.length !== 0) {
+                    document.getElementById('vcclaDropdown').classList.remove('disabled')
+                    let compClaDropdown = document.getElementById('compvcclaDropdown')
+                    if (compClaDropdown) {
+                        compClaDropdown.classList.remove('disabled')
+                    }
                 }
-            }
 
-
-            if (this.selections.vcqmodeVal !== 0) {
-                console.log(this.selections.vcqmodeVal)
-                setTimeout(function() {
-                    document.getElementById('vcBtn').classList.add('disabled')
-                }, 200)
-            }
+                // if (this.selections.vcqmodeVal !== 0) {
+                //     console.log(this.selections.vcqmodeVal)
+                //     document.getElementById('vcBtn').classList.add('disabled')
+                // } 
+            })
+            
         }
     },
     mounted: function () {

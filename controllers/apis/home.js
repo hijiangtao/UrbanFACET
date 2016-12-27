@@ -372,7 +372,9 @@ let home = {
             compcla = Number.parseInt(params['compcla']),
             clafilename = params['clafilename']
 
-        // console.log(clafilename)
+        if (typeof cla === 'string') {
+        	cla = [cla]
+        }
         if (lib.checkDirectory(clafilename)) {
             fs.readFile(clafilename, function(err, data) {
                 if (err) {
@@ -381,6 +383,7 @@ let home = {
 
                 let tp = DATA.getValue(timeperiod, 'timeperiod'),
                     prop = [{
+                    	'tpstr': timeperiod,
                         'tp': tp,
                         'daytype': daytype
                     }]
@@ -397,6 +400,7 @@ let home = {
                 	// visual comparison on two compared time periods
                 	let comptp = DATA.getValue(comptimeperiod, 'timeperiod')
                 	prop.push({
+                		'tpstr': comptimeperiod,
                 		'tp': comptp,
                 		'daytype': compdaytype
                 	})
@@ -414,7 +418,8 @@ let home = {
 
 let vcqueryCallback = function(data, clalist, prop, res) {
     let rawdata = data.toString().split('\n'),
-        idlist = []
+        idlist = [],
+        idclaRelation = {}
 
     console.log('File Row: ', rawdata.length)
     for (let i = 0; i < rawdata.length; i++) {
@@ -424,23 +429,43 @@ let vcqueryCallback = function(data, clalist, prop, res) {
 
         if (lib.ArrayContains(clalist, cla)) {
             idlist.push(id);
+            idclaRelation[ id.toString() ] = cla;
         }
     }
 
     pool.getConnection(function(err, connection) {
     	if (prop.length > 1) {
     		// more than one time periods
-    		
+    		connection.query($sql.tpqueryrecords+$sql.tpqueryrecords, [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour'], idlist, prop[1]['daytype'], prop[1]['tp']['starthour'], prop[1]['tp']['endhour']], function(err, result) {
+    			if (err) throw err;
+
+	            for (let i = result[0].length - 1; i >= 0; i--) {
+	            	result[0][i]['group'] = prop[0]['tpstr']
+	            }
+	            for (let i = result[1].length - 1; i >= 0; i--) {
+	            	result[1][i]['group'] = prop[1]['tpstr']
+	            }
+
+	            // combine two arrays
+
+	            let data = GeoJSON.parse(result[0].concat(result[1]), { Point: ['lat', 'lng'] });
+
+	            res.json({ 'scode': 1, 'data': data, 'group': [timeperiod, comptimeperiod] });
+	            connection.release();
+    		})
     	} else {
     		// one time period
-    		connection.query($sql.tpqueryrecords, [idlist, prop['daytype'], prop['tp']['starthour'], prop['tp']['endhour']], function(err, result) {
+    		connection.query($sql.tpqueryrecords, [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']], function(err, result) {
 	            if (err) throw err;
 
-	            let data = GeoJSON.parse(result, { Point: ['lat', 'lng'], include: ['name'] });
+	            for (let i = result.length - 1; i >= 0; i--) {
+	            	let tmpclastr = idclaRelation[ result[i]['id'].toString() ]
+	            	result[i]['group'] = tmpclastr
+	            }
 
-	            appendInfo()
+	            let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });
 
-	            res.json({ 'scode': 1, 'data': data, 'clalist': clalist });
+	            res.json({ 'scode': 1, 'data': data, 'group': clalist });
 	            connection.release();
 	        });
     	}
