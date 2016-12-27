@@ -20,27 +20,33 @@ let getValue = function(key, type) {
 		timeperiods = {
 			'1': {
 				'starthour': 5,
-				'endhour': 9
+				'endhour': 9,
+				'name': 'morning'
 			},
 			'2': {
 				'starthour': 8,
-				'endhour': 12
+				'endhour': 12,
+				'name': 'forenoon'
 			},
 			'3': {
 				'starthour': 11,
-				'endhour': 14
+				'endhour': 14,
+				'name': 'noon'
 			},
 			'4': {
 				'starthour': 13,
-				'endhour': 19
+				'endhour': 19, 
+				'name': 'afternoon'
 			},
 			'5': {
 				'starthour': 18,
-				'endhour': 24
+				'endhour': 24,
+				'name': 'evening'
 			},
 			'6': {
 				'starthour': 23,
-				'endhour': 6
+				'endhour': 6,
+				'name': 'night'
 			}
 		}
 

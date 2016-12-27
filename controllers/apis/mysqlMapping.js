@@ -8,6 +8,7 @@
 // CRUD SQL
 let mapping = {
 	tpqueryrecords: "select tdid AS id, lat, lng from cbeijing WHERE tdid in (?) AND dayType = ? AND timeSegID >= ? AND timeSegID < ?;",
+	tpqueryrecordsNight: "select tdid AS id, lat, lng from cbeijing WHERE tdid in (?) AND dayType = ? AND (timeSegID >= ? OR timeSegID < ?);",
 	randomQuery: "select tdid, lat, lng from ?? WHERE tdid = ? and dayType IN (?);"
 };
  

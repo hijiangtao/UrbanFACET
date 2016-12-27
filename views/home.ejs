@@ -98,11 +98,22 @@
     	bottom: 0;
     	padding-right: 14px;
     }
+
+    /*TEST STYLESHEETS FOR MAP OVERLAY LEGEND*/
+    #mapviewlegend {
+    	position: absolute;
+    	left: 26vw;
+    	top: 1rem;
+    	/*background-color: red;*/
+    	z-index: 3;
+    }
     </style>
 </head>
 
 <body class="ui loading segment">
-    <div id="map"></div>
+    <div id="map">
+    	<svg id='mapviewlegend' width='100' height='20'></svg>
+    </div>
     <div id="userpanel" class="ui row segment">
         <div class="sixteen wide column">
             <div class="row">

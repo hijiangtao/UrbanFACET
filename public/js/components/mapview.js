@@ -50,6 +50,7 @@ class mapview {
 			return ;
 		}
 
+
 		let svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr("id", "F_SVG"),
 			g = svg.append("g").attr("class", "leaflet-zoom-hide").attr("id", "F_G");
 
@@ -59,7 +60,29 @@ class mapview {
 		let color = d3.scaleOrdinal( ['#24AADD', 'rgb(250,150,30)'] ).domain(idlist)
 		// d3.schemeCategory20
 
-		// console.log(color)
+		let maplegend = d3.select("#mapviewlegend")
+		maplegend.selectAll("*").remove();
+
+		let legendg = maplegend.selectAll('g')
+			.data(idlist)
+			
+		legendg.enter().append('circle')
+			.attr("stroke", function(d) {
+				return color(d)
+			})
+			.attr("fill", function(d) {
+				return color(d)
+			})
+			.attr('cx', function(d, i) {
+				return i*40 + 10;
+			})
+			.attr('cy', '10')
+			.attr('r', '8')
+		
+		legendg.enter().append('text')
+			.attr("dx", function(d, i){return i*40 + 20})
+			.attr('dy', '14')
+	    	.text(function(d){return d})
 
 		path.pointRadius(1.4);
 

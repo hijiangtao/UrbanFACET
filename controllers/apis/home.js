@@ -383,7 +383,7 @@ let home = {
 
                 let tp = DATA.getValue(timeperiod, 'timeperiod'),
                     prop = [{
-                    	'tpstr': timeperiod,
+                    	'tpstr': `${daytype} ${tp['name']}`,
                         'tp': tp,
                         'daytype': daytype
                     }]
@@ -400,7 +400,7 @@ let home = {
                 	// visual comparison on two compared time periods
                 	let comptp = DATA.getValue(comptimeperiod, 'timeperiod')
                 	prop.push({
-                		'tpstr': comptimeperiod,
+                		'tpstr': `${compdaytype} ${comptp['name']}`,
                 		'tp': comptp,
                 		'daytype': compdaytype
                 	})
@@ -466,7 +466,7 @@ let vcqueryCallback = function(data, clalist, prop, res) {
 
 	            let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });
 
-	            res.json({ 'scode': 1, 'data': data, 'group': clalist });
+	            res.json({ 'scode': 1, 'data': data, 'group': clalist.map(function(d) {return `Class ${d}`}) });
 	            connection.release();
 	        });
     	}
