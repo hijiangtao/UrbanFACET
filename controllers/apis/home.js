@@ -421,7 +421,8 @@ let vcqueryCallback = function(data, clalist, prop, res) {
         idlist = [],
         idclaRelation = {}
 
-    console.log('File Row: ', rawdata.length)
+    console.log('File Row: ', rawdata.length, 'clalist', clalist)
+
     for (let i = 0; i < rawdata.length; i++) {
         let tmparr = rawdata[i].split(','),
             cla = Number.parseInt(tmparr[6]).toString(),
@@ -450,7 +451,7 @@ let vcqueryCallback = function(data, clalist, prop, res) {
 
 	            let data = GeoJSON.parse(result[0].concat(result[1]), { Point: ['lat', 'lng'] });
 
-	            res.json({ 'scode': 1, 'data': data, 'group': [timeperiod, comptimeperiod] });
+	            res.json({ 'scode': 1, 'data': data, 'group': [prop[0]['tpstr'], prop[1]['tpstr']] });
 	            connection.release();
     		})
     	} else {
