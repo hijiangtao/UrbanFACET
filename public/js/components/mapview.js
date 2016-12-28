@@ -41,6 +41,7 @@ class mapview {
 	 * @return {[type]}        [description]
 	 */
 	pointmapDrawing(data, idlist) {
+		const LEDINTERVAL = 120
 		let self = this
 		
 		d3.select("#F_SVG").remove();
@@ -49,7 +50,6 @@ class mapview {
 			alert("No records found!")
 			return ;
 		}
-
 
 		let svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr("id", "F_SVG"),
 			g = svg.append("g").attr("class", "leaflet-zoom-hide").attr("id", "F_G");
@@ -74,13 +74,13 @@ class mapview {
 				return color(d)
 			})
 			.attr('cx', function(d, i) {
-				return i*40 + 10;
+				return i*LEDINTERVAL + 10;
 			})
 			.attr('cy', '10')
 			.attr('r', '8')
 		
 		legendg.enter().append('text')
-			.attr("dx", function(d, i){return i*40 + 20})
+			.attr("dx", function(d, i){return i*LEDINTERVAL + 20})
 			.attr('dy', '14')
 	    	.text(function(d){return d})
 

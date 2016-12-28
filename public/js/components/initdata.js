@@ -7,7 +7,7 @@
 
 import { genNumArr } from './lib'
 
-let vuedata = {
+let indexvuedata = {
     'settings': {
         'regions': [
             { 'name': 'Beijing' },
@@ -104,18 +104,24 @@ let vuedata = {
         ]
     },
     'selections': {
-        'regionVal': 'Select Region',
-        'featureName': 'Select Feature',
-        'featureVal': 0,
+        'regionVal': 'Beijing',
+        'featureName': 'Workday',
+        'featureVal': 1,
         'decompName': 'Decompose Method',
-        'themeName': 'Select Theme',
-        'themeVal': '',
-        'tmodelVal': '',
+        'themeName': 'Education',
+        'themeVal': 'edu',
+        'tmodelVal': [ 
+            { 'field': 'Daytime Occupation', 'min': 0, 'max': 100, 'pred': 40 },
+            { 'field': 'Evening Occupation', 'min': 0, 'max': 100, 'pred': 40 },
+            { 'field': 'Weekday Occupation', 'min': 0, 'max': 100, 'pred': 40 },
+            { 'field': 'Class time Occupation', 'min': 0, 'max': 100, 'pred': 40 }
+        ],
+        'samplerateVal': '3',
         
         'dbscanminptsName': '40',
         'dbscaneps': '0.13',
-        'modelParamName': 'Stats index',
-        'modelParamVal': '',
+        'modelParamName': 'morning',
+        'modelParamVal': '1',
         'sortorderVal': '',
         'modelParamRangeVal': 10,
         
@@ -144,7 +150,68 @@ let vuedata = {
     }
 }
 
+let labvuedata = {
+	begin: false,
+	cluster: [{
+		'name': '居住区信息统计',
+		'val': 'res'
+	}, {
+		'name': '商业区信息统计',
+		'val': 'com'
+	}, {
+		'name': '饮食休闲娱乐信息统计',
+		'val': 'ent'
+	}, {
+		'name': '教育场所信息统计',
+		'val': 'edu'
+	}],
+	clustersel: "res",
+	results: [{
+		"name": 'workday',
+		"val": 1
+	}, {
+		"name": 'weekend',
+		"val": 2
+	}, {
+		'name': 'daytime',
+		'val': 3
+	}, {
+		'name': 'evening',
+		'val': 4
+	}, {
+		'name': 'wodaytime',
+		'val': 5
+	}, {
+		'name': 'weevening',
+		'val': 6
+	}],
+	resultsel: 'daytime',
+	idlist: "",
+	curDataset: [],
+	timeperiods: [{
+		'name': 'morning ',
+		'value': 0
+	},{
+		'name': 'forenoon ',
+		'value': 1
+	},{
+		'name': 'noon',
+		'value': 2
+	},{
+		'name': 'afternoon ',
+		'value': 3
+	},{
+		'name': 'evening ',
+		'value': 4
+	},{
+		'name': 'night ',
+		'value': 5
+	}],
+	tpsel: []
+}
+
 
 export {
-	vuedata
+	indexvuedata,
+	labvuedata
 }

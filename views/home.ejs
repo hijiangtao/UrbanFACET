@@ -75,9 +75,18 @@
     .ui.form .inline.fields {
         margin-bottom: .2em;
     }
+	
+	.heatmap {
+		position: absolute;
+		bottom: 1em;
+		left: 26vw;
+		width: 25vw;
+		z-index: 3;
+	}
 
     #clamatrixheatmap, #compclamatrixheatmap {
     	height: 200px;
+    	width: 100%;
     }
 
     .ui.checkbox label {
@@ -112,46 +121,36 @@
 
 <body class="ui loading segment">
     <div id="map">
-    	<svg id='mapviewlegend' width='100' height='20'></svg>
+    	<svg id='mapviewlegend' width='220' height='20'></svg>
+
+    	<div class="heatmap">
+	        <div id="compclamatrixheatmap"></div>
+	    	<div id="clamatrixheatmap"></div>
+	    </div>
     </div>
     <div id="userpanel" class="ui row segment">
         <div class="sixteen wide column">
             <div class="row">
-                <% include components/breadcrumb %>
-                <div class="ui divider"></div>
-                <!--  -->
-				<div class="sixteen wide column">
-					<div class="ui info mini message transition">
-					  <i class="close icon"></i>
-					  <div class="header">
-					    See the usage guidance <a id="usageguidance" v-on:click="usageguidanceShow">here
-					    </a>.
-					  </div>
-					</div>
-				</div>
+                <% include components/panelheader %>
+                
 
 				<div v-show='results.decomposeimgurl' id="decomposeImg" v-on:click="showDecomposeImg" data-tooltip="Click the image to see details" data-position="right center" data-inverted="">
 			        <img class="ui fluid rounded image" :src="results.decomposeimgurl" >
 			    </div>
 
                 <div class="ui accordion">
-                    <div class="active title" data-tooltip="Data and model selection, feature decomposing works" data-position="right center" data-inverted="">
-                        <i class="dropdown icon"></i> Training Model Setting
+                    <div id="accordionmodeltitle" class="active title" data-tooltip="Data and model selection, feature decomposing works" data-position="right center" data-inverted="">
+                        <i class="dropdown icon"></i> Model training and clustering
                     </div>
-                    <div class="active content">
-                        <% include components/trainmodelsetting %>
+                    <div id="accordionmodelcontent" class="active content">
+                        <% include components/model %>
                     </div>
-                    <div class="title" data-tooltip="Cluster and label works" data-position="right center" data-inverted="">
-                        <i class="dropdown icon"></i> Cluster Discovery Setting
+                    
+                    <div id="accordionanatitle" class="title" data-tooltip="Visual analytics and comparison interaction works" data-position="right center" data-inverted="">
+                        <i class="dropdown icon"></i> Label and visual analytics
                     </div>
-                    <div class="content">
-                        <% include components/clusterlabelsetting %>
-                    </div>
-                    <div class="title" data-tooltip="Visual analytics and comparison interaction works" data-position="right center" data-inverted="">
-                        <i class="dropdown icon"></i> Visual Analytics Panel
-                    </div>
-                    <div class="content">
-                        <% include components/vcpanel %>
+                    <div id="accordionanacontent" class="content">
+                        <% include components/analytics %>
                     </div>
                 </div>
             </div>

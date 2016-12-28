@@ -461,7 +461,7 @@ let vcqueryCallback = function(data, clalist, prop, res) {
 
 	            for (let i = result.length - 1; i >= 0; i--) {
 	            	let tmpclastr = idclaRelation[ result[i]['id'].toString() ]
-	            	result[i]['group'] = tmpclastr
+	            	result[i]['group'] = `Class ${tmpclastr}`
 	            }
 
 	            let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });

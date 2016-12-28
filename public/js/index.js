@@ -17,7 +17,7 @@ require('../../semantic/dist/components/modal')
 require('../../semantic/dist/components/dimmer')
 require('../../semantic/dist/components/transition')
 
-import { vuedata } from './components/initdata'
+import {indexvuedata} from './components/initdata'
 
 /**
  * LMap instance: hold map view instance and its' related operating approaches
@@ -32,7 +32,7 @@ let featureTypes = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'we
 // index page vue instance
 let userpanel = new Vue({
     el: '#userpanel',
-    data: vuedata,
+    data: indexvuedata,
     methods: {
         changeRegion(val) {
             this.selections.regionVal = val
@@ -45,7 +45,7 @@ let userpanel = new Vue({
             // console.log(name, val)
             this.selections.themeName = name
             this.selections.themeVal = val
-            this.selections.tmodelVal = this.settings.tmodels[val]
+            // this.selections.tmodelVal = this.settings.tmodels[val]
         },
         changevcTime(dayname, tpname, dayval, tpval) {
             this.selections.vctimeName = `${dayname} - ${tpname}`
@@ -71,10 +71,10 @@ let userpanel = new Vue({
             if (val === 'ALL') {
                 alert('ATTENTION: the matrix will not updated.')
             } else {
-                anains.drawMatrix(this.results.classmatrix[val], 'clamatrixheatmap', 'FeatureMatrix', {
+                anains.drawMatrix(this.results.classmatrix[val], 'clamatrixheatmap', `FeatureMatrix Class${val}`, {
                     height:'70%',
                     y:'20%',
-                    left:'12%',
+                    left:'16%',
                     right:'0%'
                 })
             }
@@ -87,10 +87,10 @@ let userpanel = new Vue({
         changeSelectCompCla(val) {
             this.selections.compvcclaName = val
 
-            anains.drawMatrix(this.results.classmatrix[val], 'compclamatrixheatmap', 'FeatureMatrix', {
+            anains.drawMatrix(this.results.classmatrix[val], 'compclamatrixheatmap', `FeatureMatrix Class${val}`, {
                     height:'70%',
                     y:'20%',
-                    left:'12%',
+                    left:'16%',
                     right:'0%'
                 })
         },
@@ -98,11 +98,15 @@ let userpanel = new Vue({
             $('.ui.modal').modal('show')
         },
         tsneTrain() {
-            let self = this, regionVal = this.selections.regionVal, featureVal = this.selections.featureVal, id = this.states.userid
+            let self = this, 
+                regionVal = this.selections.regionVal, 
+                featureVal = this.selections.featureVal, 
+                id = this.states.userid,
+                srate = this.selections.samplerateVal
 
             if (regionVal !== 'Select Region' && featureVal !== 0) {
                 self.states.tsnetrain = true
-                $.get(`/home/v1/tsnetrain?region=${this.selections.regionVal}&feature=${this.selections.featureVal}&srate=3&id=${id}`, function(res, err) {
+                $.get(`/home/v1/tsnetrain?region=${this.selections.regionVal}&feature=${this.selections.featureVal}&srate=${srate}&id=${id}`, function(res, err) {
                     if (res['scode']) {
                         alert('success');
                         self.states.tsnetrain = false
@@ -152,6 +156,13 @@ let userpanel = new Vue({
                         alert('success');
 
                         self.results.decomposeimgurl = `/img/cluster/DBScanCluster-1-in-3_tsne-${featureTypes[featureVal-1]}(eps=${eps},minpts=${minpts}).png`
+
+                        // trigger animation of accordion
+                        // document.getElementById('accordionmodeltitle').classList.remove('active')
+                        // document.getElementById('accordionmodelcontent').classList.remove('active')
+                        // document.getElementById('accordionanatitle').classList.add('active')
+                        // document.getElementById('accordionanacontent').classList.add('active')
+                        document.getElementById('accordionanatitle').click()
                     } else {
                         alert('cluster work failed, please try again later')
                     }
@@ -161,7 +172,12 @@ let userpanel = new Vue({
             }
         },
         labelTrain() {
-            let self = this, theme = this.selections.themeVal, paramval = this.selections.modelParamVal, rangeval = this.selections.modelParamRangeVal, id = this.states.userid
+            let self = this, 
+                theme = this.selections.themeVal, 
+                paramval = this.selections.modelParamVal, 
+                rangeval = this.selections.modelParamRangeVal, 
+                id = this.states.userid
+            
             if (theme !== '' && paramval !== '' && id !== '-1') {
                 self.states.labeltrain = true
                 $.get(`/home/v1/labeltrain?theme=${theme}&paramval=${paramval}&rangeval=${rangeval}&id=${id}`, function(res, err) {
@@ -198,8 +214,7 @@ let userpanel = new Vue({
                 clafilename = this.results.clafilename,
                 qmode = this.selections.vcqmodeVal
 
-
-            if (daytype !== '' && timeperiod !== '' && cla !== '' && clafilename !== '') {
+            if (daytype !== '' && timeperiod !== '' && cla !== 'Select Class' && clafilename !== '') {
                 if (qmode === 1 && compcla === '') {
                     alert('All fields should be filled.')
                     return ;
@@ -249,7 +264,7 @@ let userpanel = new Vue({
     },
     computed: {
         labelbtndisplay: function() {
-            return this.selections.tmodelVal !== '' && this.selections.modelParamVal !== ''
+            return this.selections.themeVal !== '' && this.selections.modelParamVal !== ''
         }
     },
     watch: {
@@ -274,7 +289,7 @@ let userpanel = new Vue({
     mounted: function () {
       this.$nextTick(function () {
         $('.ui.accordion').accordion()
-        $('.ui.fullscreen.modal').modal('show')
+        $('.ui.fullscreen.modal').modal()
       })
       console.log('The vue isntance has mounted.')
 
