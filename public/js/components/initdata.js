@@ -141,7 +141,9 @@ let indexvuedata = {
         'clustertrain': false,
         'labeltrain': false,
         'vcquery': false,
-        'themesdisplay': false
+        'themesdisplay': false,
+        'clusterdisplay': false,
+        'anadisplay': false
     },
     'results': {
         'classlist': [],

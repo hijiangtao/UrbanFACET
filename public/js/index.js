@@ -110,7 +110,8 @@ let userpanel = new Vue({
                     if (res['scode']) {
                         alert('success');
                         self.states.tsnetrain = false
-                        self.results.decomposeimgurl = `/img/decompose/2D-ScatterData_1-in-3_tsne-${featureTypes[featureVal-1]}(byRecNum).png`
+                        self.states.clusterdisplay = true
+                        self.results.decomposeimgurl = `/img/decompose/2D-ScatterData_1-in-${srate}_tsne-${featureTypes[featureVal-1]}(byRecNum).png`
                     } else {
                         alert('server error')
                     }
@@ -126,7 +127,8 @@ let userpanel = new Vue({
                 theme = this.selections.themeName, 
                 regionVal = this.selections.regionVal, 
                 featureVal = this.selections.featureVal, 
-                id = this.states.userid
+                id = this.states.userid,
+                srate = this.selections.samplerateVal
 
             if (minpts !== '' && eps !== '') {
                 this.states.clustertrain = true
@@ -137,7 +139,7 @@ let userpanel = new Vue({
                     'pkg': JSON.stringify(self.selections.tmodelVal),
                     'region': regionVal,
                     'feature': featureVal,
-                    'srate': 3,
+                    'srate': srate,
                     'id': id
                 }
 
@@ -155,7 +157,7 @@ let userpanel = new Vue({
                         console.log('clustering work complete')
                         alert('success');
 
-                        self.results.decomposeimgurl = `/img/cluster/DBScanCluster-1-in-3_tsne-${featureTypes[featureVal-1]}(eps=${eps},minpts=${minpts}).png`
+                        self.results.decomposeimgurl = `/img/cluster/DBScanCluster-1-in-${srate}_tsne-${featureTypes[featureVal-1]}(eps=${eps},minpts=${minpts}).png`
 
                         // trigger animation of accordion
                         // document.getElementById('accordionmodeltitle').classList.remove('active')
@@ -182,6 +184,7 @@ let userpanel = new Vue({
                 self.states.labeltrain = true
                 $.get(`/home/v1/labeltrain?theme=${theme}&paramval=${paramval}&rangeval=${rangeval}&id=${id}`, function(res, err) {
                     self.states.labeltrain = false
+                    self.states.anadisplay = true
                     if (res['scode'] === 1) {
                         document.getElementById('vcclaDropdown').classList.remove('disabled')
                         let compClaDropdown = document.getElementById('compvcclaDropdown')
@@ -258,13 +261,11 @@ let userpanel = new Vue({
             } else {
                 alert('All fields should be filled.')
             }
-
-            
         },
     },
     computed: {
         labelbtndisplay: function() {
-            return this.selections.themeVal !== '' && this.selections.modelParamVal !== ''
+            return this.selections.themeVal !== '' && this.selections.modelParamVal !== '' && this.states.themesdisplay
         }
     },
     watch: {

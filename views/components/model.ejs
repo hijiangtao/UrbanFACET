@@ -4,7 +4,7 @@
             <div class="inline fields">
                 <label>Region</label>
                 <div class="field">
-                    <div class="ui mini compact menu" >
+                    <div class="ui mini compact menu">
                         <div class="ui simple dropdown item">
                             <span>{{ selections.regionVal }}</span>
                             <i class="dropdown icon"></i>
@@ -28,28 +28,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- city regions -->
-        <!-- <label>Region</label>
-        <div class="ui mini compact menu" >
-            <div class="ui simple dropdown item">
-                <span>{{ selections.regionVal }}</span>
-                <i class="dropdown icon"></i>
-                <div class="menu">
-                    <div v-for='item in settings.regions' class="item" :class="{'disabled': item.name != 'Beijing'}" v-on:click='changeRegion(item.name)'>{{ item.name }}</div>
-                </div>
-            </div>
-        </div>
-        <label>Features</label>
-        <div class="ui mini compact menu">
-            <div class="ui simple dropdown item">
-                <span>{{ selections.featureName }}</span>
-                <i class="dropdown icon"></i>
-                <div class="menu">
-                    <div v-for='item in settings.features' class="item" v-on:click='changeFeature(item.name, item.value)'>{{ item.name }}</div>
-                </div>
-            </div>
-        </div> -->
     </div>
     <div id="" class="sixteen wide column">
         <div class="ui form">
@@ -87,7 +65,7 @@
 		</div>
 	</div>
 </div> -->
-    <div id="" class="sixteen wide column">
+    <div v-show='states.clusterdisplay' id="" class="sixteen wide column">
         <div class="ui form">
             <div class="inline fields">
                 <label>DBScan eps</label>

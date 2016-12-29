@@ -81,7 +81,7 @@
         <button id="labelBtn" class="ui tiny secondary button" :class="{ 'loading': states.labeltrain }" v-on:click='labelTrain'>Label</button> -->
     </div>
 
-    <div class="sixteen wide column">
+    <div v-show="states.anadisplay" class="sixteen wide column">
         <div class="ui form">
             <div class="inline fields">
                 <label>Mode</label>
@@ -96,7 +96,7 @@
     </div>
     
     <!-- Visual Analytics Mode -->
-    <div v-if='selections.vcqmodeVal === 0' class="sixteen wide column">
+    <div v-show="states.anadisplay" v-if='selections.vcqmodeVal === 0' class="sixteen wide column">
         <!-- VC Class selection dropdown menu -->
         <div class="ui mini compact menu">
             <div id="vcclaDropdown" class="ui simple disabled dropdown item">
@@ -126,7 +126,7 @@
         <button id="vcBtn" class="ui tiny secondary button" :class="{ 'loading': states.vcquery }" v-on:click='vcQuery'>Query</button>
     </div>
     <!-- Visual Comparison Mode -->
-    <div v-else-if='selections.vcqmodeVal === 1' class="sixteen wide column">
+    <div v-show="states.anadisplay" v-else-if='selections.vcqmodeVal === 1' class="sixteen wide column">
         <div class="vcPanelRow row">
             <div class="ui mini compact menu">
                 <div id="vcclaDropdown" class="ui simple disabled dropdown item">
@@ -167,7 +167,7 @@
             <button id="vcBtn" class="ui tiny secondary button" :class="{ 'loading': states.vcquery }" v-on:click='vcQuery'>Query</button>
         </div>
     </div>
-    <div v-else class="sixteen wide column">
+    <div v-show="states.anadisplay" v-else class="sixteen wide column">
         <div class="vcPanelRow row">
             <div class="ui mini compact menu">
                 <div class="ui simple dropdown item">
