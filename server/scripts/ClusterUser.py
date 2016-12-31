@@ -83,7 +83,7 @@ def dbscan(rawdata, feature, idlist, txt, prop, eps = 0.0, minpts = 0):
 
 		# Number of clusters in labels, ignoring noise if present.
 		n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-		lablist = [i-1 for i in xrange(0,n_clusters_)]
+		lablist = [i-1 for i in xrange(0 if -1 in labels else 1,n_clusters_+1)]
 
 		txtCluster = "DBScanCluster-%s(eps=%s,minpts=%s)" % (txt, str(eps), str(minpts))
 		# if n_clusters_ < 4:
@@ -107,7 +107,7 @@ def dbscan(rawdata, feature, idlist, txt, prop, eps = 0.0, minpts = 0):
 
 				# Number of clusters in labels, ignoring noise if present.
 				n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-				lablist = [i-1 for i in xrange(0,n_clusters_)]
+				lablist = [i-1 for i in xrange(0 if -1 in labels else 1,n_clusters_+1)]
 
 				txtCluster = "DBScanCluster-%s(eps=%s,minpts=%s)" % (txt, str(eps), str(minpts))
 				# if n_clusters_ < 4:
@@ -164,7 +164,7 @@ def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans')
 	norm = plt.Normalize(0, x-1)
 	if type == 'dbscan':
 		recs = []
-		recs.append(mpatches.Rectangle((0,0),1,1,color='gray'))
+		recs.append(mpatches.Rectangle((0,0),1,1,color='#D9D1C9'))
 		norm = plt.Normalize(1, x)
 
 		for i in colors:

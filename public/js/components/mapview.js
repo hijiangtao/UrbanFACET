@@ -44,15 +44,15 @@ class mapview {
 		const LEDINTERVAL = 120
 		let self = this
 		
-		d3.select("#F_SVG").remove();
+		d3.select('#F_SVG').remove();
 
 		if(data.features.length === 0) {
-			alert("No records found!")
+			alert('No records found!')
 			return ;
 		}
 
-		let svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr("id", "F_SVG"),
-			g = svg.append("g").attr("class", "leaflet-zoom-hide").attr("id", "F_G");
+		let svg = d3.select(self.map.getPanes().overlayPane).append('svg').attr('id', 'F_SVG'),
+			g = svg.append('g').attr('class', 'leaflet-zoom-hide').attr('id', 'F_G');
 
 		let transform = d3.geoTransform({ point: projectPoint }),
 			path = d3.geoPath().projection(transform);
@@ -60,17 +60,17 @@ class mapview {
 		let color = d3.scaleOrdinal( ['#24AADD', 'rgb(250,150,30)'] ).domain(idlist)
 		// d3.schemeCategory20
 
-		let maplegend = d3.select("#mapviewlegend")
-		maplegend.selectAll("*").remove();
+		let maplegend = d3.select('#mapviewlegend')
+		maplegend.selectAll('*').remove();
 
 		let legendg = maplegend.selectAll('g')
 			.data(idlist)
 			
 		legendg.enter().append('circle')
-			.attr("stroke", function(d) {
+			.attr('stroke', function(d) {
 				return color(d)
 			})
-			.attr("fill", function(d) {
+			.attr('fill', function(d) {
 				return color(d)
 			})
 			.attr('cx', function(d, i) {
@@ -80,27 +80,27 @@ class mapview {
 			.attr('r', '8')
 		
 		legendg.enter().append('text')
-			.attr("dx", function(d, i){return i*LEDINTERVAL + 20})
+			.attr('dx', function(d, i){return i*LEDINTERVAL + 20})
 			.attr('dy', '14')
 	    	.text(function(d){return d})
 
 		path.pointRadius(1.4);
 
-		var feature = g.selectAll("path")
+		let feature = g.selectAll('path')
 			.data(data.features)
-			.enter().append("path")
-			.attr("stroke", function(d) {
+			.enter().append('path')
+			.attr('stroke', function(d) {
 				return color(d['properties']['group'])
-				// return "rgb(250,150,30)";
+				// return 'rgb(250,150,30)';
 			})
-			.attr("fill", function(d) {
+			.attr('fill', function(d) {
 				return color(d['properties']['group'])
-				// return "rgb(250,150,30)";
+				// return 'rgb(250,150,30)';
 			})
-			.attr("opacity", "0.8")
-			.attr("class", "pointmapfeature");
+			.attr('opacity', '0.8')
+			.attr('class', 'pointmapfeature');
 
-		self.map.on("moveend", reset);
+		self.map.on('moveend', reset);
 		reset();
 
 		/**
@@ -108,21 +108,21 @@ class mapview {
 		 * @return {[type]} [description]
 		 */
 		function reset() {
-			var bounds = path.bounds(data),
+			let bounds = path.bounds(data),
 				topLeft = bounds[0],
 				bottomRight = bounds[1];
 
 			// console.log(bounds);
 
-			svg.attr("width", bottomRight[0] - topLeft[0] + 10)
-				.attr("height", bottomRight[1] - topLeft[1] + 10)
-				.style("left", (topLeft[0] - 5) + "px")
-				.style("top", (topLeft[1] - 5) + "px");
+			svg.attr('width', bottomRight[0] - topLeft[0] + 10)
+				.attr('height', bottomRight[1] - topLeft[1] + 10)
+				.style('left', (topLeft[0] - 5) + 'px')
+				.style('top', (topLeft[1] - 5) + 'px');
 
-			g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+			g.attr('transform', 'translate(' + -topLeft[0] + ',' + -topLeft[1] + ')');
 
-			feature.attr("d", path)
-				.attr("transform", "translate(5, 5)");
+			feature.attr('d', path)
+				.attr('transform', 'translate(5, 5)');
 		};
 
 		/**
@@ -132,9 +132,42 @@ class mapview {
 		 * @return {[type]}   [description]
 		 */
 		function projectPoint(x, y) {
-			var point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
+			let point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
 			this.stream.point(point.x, point.y);
 		}
+	}
+
+	scatterplotDrawing(data, idlist, containerid) {
+		let margin = {top: 20, right: 20, bottom: 30, left: 50},
+			containerbound = document.getElementById(containerid).getBoundingClientRect(),
+			width = containerbound.width - margin.left - margin.right,
+			height = containerbound.height - margin.top - margin.bottom;
+
+		let parseTime = d3.timeParse('%d-%b-%y'),
+			formatTime = d3.timeFormat('%e %B')
+
+		// set the ranges
+		let x = d3.scaleTime().range([0, width]);
+		let y = d3.scaleLinear().range([height, 0]);
+
+		// define the line
+		let valueline = d3.line()
+		    .x(function(d) { return x(d.date); })
+		    .y(function(d) { return y(d.close); });
+
+		let tooltip = d3.select('body').append('div')
+			.attr('id', 'scattertooltip')
+		    .attr('class', 'tooltip')
+		    .style('opacity', 0);
+
+		let svg = d3.select(`#${containerid}`).append("svg")
+		    .attr("width", width + margin.left + margin.right)
+		    .attr("height", height + margin.top + margin.bottom)
+		  	.append("g")
+		    .attr("transform",
+		          `translate(${margin.left},${margin.top})`);
+
+		
 	}
 }
 
