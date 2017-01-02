@@ -137,29 +137,20 @@ class mapview {
 		}
 	}
 
-	scatterplotDrawing(data, idlist, containerid) {
-		let margin = {top: 20, right: 20, bottom: 30, left: 50},
+	scatterplotDrawing(data, idlist, containerid, vueins) {
+		let margin = {top: 5, right: 5, bottom: 20, left: 20},
 			containerbound = document.getElementById(containerid).getBoundingClientRect(),
 			width = containerbound.width - margin.left - margin.right,
 			height = containerbound.height - margin.top - margin.bottom;
 
-		let parseTime = d3.timeParse('%d-%b-%y'),
-			formatTime = d3.timeFormat('%e %B')
+		let colorSchema = ['#CCCCCC', '#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a']
+		let color = idlist.length === 12? d3.scaleOrdinal(colorSchema).domain(idlist):d3.scaleOrdinal(colorSchema.slice(0, idlist.length+1)).domain(idlist)
 
 		// set the ranges
-		let x = d3.scaleTime().range([0, width]);
+		let x = d3.scaleLinear().range([0, width]);
 		let y = d3.scaleLinear().range([height, 0]);
 
-		// define the line
-		let valueline = d3.line()
-		    .x(function(d) { return x(d.date); })
-		    .y(function(d) { return y(d.close); });
-
-		let tooltip = d3.select('body').append('div')
-			.attr('id', 'scattertooltip')
-		    .attr('class', 'tooltip')
-		    .style('opacity', 0);
-
+		d3.select(`#${containerid}`).html("")
 		let svg = d3.select(`#${containerid}`).append("svg")
 		    .attr("width", width + margin.left + margin.right)
 		    .attr("height", height + margin.top + margin.bottom)
@@ -167,7 +158,144 @@ class mapview {
 		    .attr("transform",
 		          `translate(${margin.left},${margin.top})`);
 
-		
+		let factory = d3.quadtree()
+			.x(function(d) {
+				return d['x']
+			})
+			.y(function(d) {
+				return d['y']
+			})
+			.extent([
+				[0, 0],
+				[width, height]
+			]);
+
+		let chartArea = d3.select(`#${containerid}`).append("div")
+		  .attr('class', 'scatterplotcanvas')
+		  .style("left", margin.left + "px")
+		  .style("top", margin.top + "px");
+
+		let canvas = chartArea.append("canvas")
+		  .attr("width", width)
+		  .attr("height", height);
+
+		let context = canvas.node().getContext("2d");
+
+		// Layer on top of canvas, example of selection details
+		let highlight = chartArea.append("svg")
+		  .attr("width", width)
+		  .attr("height", height)
+		  .append("circle")
+	      .attr("r", 4)
+	      .classed("hidden", true);
+
+		// svg.selectAll('dot')
+		// 	.data(data)
+		// 	.enter().append('circle')
+		// 	.attr('r', 1)
+		// 	.attr('cx', function(d) {
+		// 		return x(d.x);
+		// 	}).
+		// 	attr('cy', function(d) {
+		// 		return y(d.y);
+		// 	})
+		// 	.on("mouseover", function(d) {
+		// 	  tooltip.transition()
+		// 	       .duration(200)
+		// 	       .style("opacity", .9);
+		// 	  tooltip.html(`CLASS: ${d['cla']}<br>ID: ${d['id']}, NUM: ${d['num']}`)
+		// 	       .style("left", (d3.event.pageX + 5) + "px")
+		// 	       .style("top", (d3.event.pageY - 28) + "px");
+		// 	})
+		// 	.on("mouseout", function(d) {
+		// 	  tooltip.transition()
+		// 	       .duration(500)
+		// 	       .style("opacity", 0)
+		//    	});
+
+		// Add the X Axis
+		let xg = svg.append("g")
+		  .attr("transform", "translate(0," + height + ")")
+
+		// Add the Y Axis
+		let yg = svg.append("g")
+
+		let tooltip = d3.select(`#${containerid}`).append('div')
+			.attr('id', 'scattertooltip')
+		    .attr('class', 'tooltip')
+		    .style('opacity', 0);
+
+		redraw();
+
+		function redraw() {
+			// Redraw axes
+			x.domain(d3.extent(data, function(d) {
+				return d.x;
+			}))
+			y.domain(d3.extent(data, function(d) {
+				return d.y;
+			}))
+			xg.call(d3.axisBottom(x));
+			yg.call(d3.axisLeft(y));
+
+			let tree = factory.addAll(data);
+
+			// Update canvas
+			context.clearRect(0, 0, width, height);
+
+			data.forEach(function(p,i){
+				context.beginPath();
+				context.arc(x(p['x']), y(p['y']), .5, 0, 2 * Math.PI);
+				context.fillStyle = p['cla'] in idlist? color(p['cla']):'#333333';
+				context.fill();
+
+			});
+
+			canvas.on("mousemove",function(){
+				let mouse = d3.mouse(this),
+				    closest = tree.find(x.invert(mouse[0]), y.invert(mouse[1]));
+
+				highlight.attr("cx", x(closest['x']))
+				  .attr("cy", y(closest['y']));
+
+				// display tooltip
+				tooltip.transition()
+			       .duration(200)
+			       .style("opacity", .9);
+			  	
+			  	tooltip.html(`CLASS: ${closest['cla']}<br>ID: ${closest['id']}, NUM: ${closest['num']}`)
+			       .style("left", (mouse[0] + 25) + "px")
+			       .style("top", (mouse[1] - 30) + "px");
+			});
+
+			canvas.on("mouseover",function(){
+				highlight.classed("hidden", false);
+				console.log('canvas mouseover')
+			});
+
+			canvas.on("mouseout",function(){
+				highlight.classed("hidden", true);
+
+				tooltip.transition()
+			       .duration(500)
+			       .style("opacity", 0)
+			});
+
+			canvas.on('click', function() {
+				let mouse = d3.mouse(this),
+				    closest = tree.find(x.invert(mouse[0]), y.invert(mouse[1])),
+				    cla = closest['cla'];
+
+				if (cla in idlist && cla !== '-1') {
+					if (vueins.selections.vcclaName == 'Select Class') {
+						vueins.selections.vcclaName = cla
+					} else {
+						vueins.selections.compvcclaName = vueins.selections.vcclaName
+						vueins.selections.vcclaName = cla
+					}
+				}
+			})
+		}
 	}
 }
 

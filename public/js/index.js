@@ -12,6 +12,7 @@ import mapview from './components/mapview'
 import analysistools from './components/analysistools' 
 import $ from "jquery"
 window.jQuery = $
+import * as d3 from 'd3'
 require('../../semantic/dist/components/accordion')
 require('../../semantic/dist/components/modal')
 require('../../semantic/dist/components/dimmer')
@@ -67,17 +68,6 @@ let userpanel = new Vue({
         },
         changeSelectCla(val) {
             this.selections.vcclaName = val
-
-            if (val === 'ALL') {
-                alert('ATTENTION: the matrix will not updated.')
-            } else {
-                anains.drawMatrix(this.results.classmatrix[val], 'clamatrixheatmap', `FeatureMatrix Class${val}`, {
-                    height:'70%',
-                    y:'20%',
-                    left:'16%',
-                    right:'0%'
-                })
-            }
         },
         showDecomposeImg() {
             if (this.results.decomposeimgurl !== '') {
@@ -86,16 +76,9 @@ let userpanel = new Vue({
         },
         changeSelectCompCla(val) {
             this.selections.compvcclaName = val
-
-            anains.drawMatrix(this.results.classmatrix[val], 'compclamatrixheatmap', `FeatureMatrix Class${val}`, {
-                    height:'70%',
-                    y:'20%',
-                    left:'16%',
-                    right:'0%'
-                })
         },
         usageguidanceShow() {
-            $('.ui.modal').modal('show')
+            $('.ui.fullscreen.modal').modal('show')
         },
         tsneTrain() {
             let self = this, 
@@ -149,6 +132,7 @@ let userpanel = new Vue({
 
                         self.states.themesdisplay = true
                         self.states.clustertrain = false
+                        self.states.anadisplay = true
                         self.results.clafilename = res['clafilename']
 
                         if (self.states.userid !== res['id']) {
@@ -157,13 +141,10 @@ let userpanel = new Vue({
                         console.log('clustering work complete')
                         alert('success');
 
-                        self.results.decomposeimgurl = `/img/cluster/DBScanCluster-1-in-${srate}_tsne-${featureTypes[featureVal-1]}(eps=${eps},minpts=${minpts}).png`
+                        // self.results.decomposeimgurl = `/img/cluster/DBScanCluster-1-in-${srate}_tsne-${featureTypes[featureVal-1]}(eps=${eps},minpts=${minpts}).png`
+                        self.results.decomposeimgurl = ''
+                        self.classplot()
 
-                        // trigger animation of accordion
-                        // document.getElementById('accordionmodeltitle').classList.remove('active')
-                        // document.getElementById('accordionmodelcontent').classList.remove('active')
-                        // document.getElementById('accordionanatitle').classList.add('active')
-                        // document.getElementById('accordionanacontent').classList.add('active')
                         document.getElementById('accordionanatitle').click()
                     } else {
                         alert('cluster work failed, please try again later')
@@ -184,13 +165,7 @@ let userpanel = new Vue({
                 self.states.labeltrain = true
                 $.get(`/home/v1/labeltrain?theme=${theme}&paramval=${paramval}&rangeval=${rangeval}&id=${id}`, function(res, err) {
                     self.states.labeltrain = false
-                    self.states.anadisplay = true
                     if (res['scode'] === 1) {
-                        document.getElementById('vcclaDropdown').classList.remove('disabled')
-                        let compClaDropdown = document.getElementById('compvcclaDropdown')
-                        if (compClaDropdown) {
-                            compClaDropdown.classList.remove('disabled')
-                        }
 
                         self.results.classlist = res['clalist']
                         self.results.classmatrix = res['matrixlist']
@@ -262,6 +237,45 @@ let userpanel = new Vue({
                 alert('All fields should be filled.')
             }
         },
+        classplot() {
+            let self = this,
+                minpts = this.selections.dbscanminptsName, 
+                eps = this.selections.dbscaneps, 
+                srate = this.selections.samplerateVal,
+                feature = this.selections.featureVal,
+                id = this.states.userid
+
+            $.get(`/home/v1/test/classplot?feature=${feature}&srate=${srate}&eps=${eps}&minpts=${minpts}&id=${id}`, function(res, err) {
+                if (res['scode'] === 1) {
+                    // remove class btn disabled effect
+                    document.getElementById('vcclaDropdown').classList.remove('disabled')
+                    let compClaDropdown = document.getElementById('compvcclaDropdown')
+                    if (compClaDropdown) {
+                        compClaDropdown.classList.remove('disabled')
+                    }
+
+                    let clalen = res['clalist'].length
+                    self.results['classlist'] = res['clalist'].slice(1, clalen)
+                    self.results['classmatrix'] = res['matrixlist']
+                    self.results['userpoints'] = res['data']
+
+                    self.settings.classes = res['clalist'].slice(1, clalen)
+                    self.settings.classes.push('ALL')   
+
+                    mapins.scatterplotDrawing(res['data'], res['clalist'], 'clascatterplot', self)
+                } else {
+                    alert('server error.')
+                }
+            })
+        },
+        claExpandDisplay() {
+            let self = this,
+                clalist = self.results['classlist'],
+                data = self.results['userpoints']
+
+            $('.ui.small.modal').modal('show')  
+            mapins.scatterplotDrawing(data, clalist, 'expclascatterplot', self)
+        }
     },
     computed: {
         labelbtndisplay: function() {
@@ -279,22 +293,47 @@ let userpanel = new Vue({
                     }
                 }
 
-                // if (this.selections.vcqmodeVal !== 0) {
-                //     console.log(this.selections.vcqmodeVal)
-                //     document.getElementById('vcBtn').classList.add('disabled')
-                // } 
+                if (val !== 1) {
+                    document.getElementById('compclamatrixheatmap').innerHTML = ''
+                }
+            }) 
+        },
+        'selections.vcclaName': function(val) {
+            this.$nextTick(function() {
+                if (val === 'ALL') {
+                    alert('ATTENTION: the matrix will not updated.')
+                } else {
+                    anains.drawMatrix(this.results.classmatrix[val], 'clamatrixheatmap', `FeatureMatrix Class${val}`, {
+                        height:'70%',
+                        y:'20%',
+                        left:'16%',
+                        right:'0%'
+                    })
+                }
             })
-            
+        },
+        'selections.compvcclaName': function(val) {
+            if (this.selections.vcqmodeVal === 1) {
+                this.$nextTick(function() {
+                    anains.drawMatrix(this.results.classmatrix[val], 'compclamatrixheatmap', `FeatureMatrix Class${val}`, {
+                        height:'70%',
+                        y:'20%',
+                        left:'16%',
+                        right:'0%'
+                    })
+                })
+            }
         }
     },
     mounted: function () {
       this.$nextTick(function () {
         $('.ui.accordion').accordion()
         $('.ui.fullscreen.modal').modal()
+        $('.ui.small.modal').modal()
       })
       console.log('The vue isntance has mounted.')
 
-      mapins.map.invalidateSize()
+      // mapins.map.invalidateSize()
     }
 })
 

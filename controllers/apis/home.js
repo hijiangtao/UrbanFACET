@@ -413,6 +413,110 @@ let home = {
         } else {
             res.json({ 'scode': 0 })
         }
+    },
+    classplot(req, res, next) {
+        let params = req.query,
+            srate = params.srate,
+            eps = params.eps,
+            minpts = params.minpts,
+            feature = params.feature,
+            userid = parseInt(params.id)
+
+        fs.readFile(path.join(__dirname, `../../server/data/tmp/DBScanCluster-1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}(eps=${eps},minpts=${minpts}).csv`), function(err, data) {
+                if (err) {
+                return console.error(err);
+            }
+
+            let rawdata = data.toString().split('\n'),
+                seriesData = [],
+                clanumlist = {},
+                clanumarr = [],
+                clalist = ['-1']
+
+            console.log('File Row: ', rawdata.length)
+            for (let i = 0; i < rawdata.length; i++) {
+                let tmparr = rawdata[i].split(','),
+                    cla = Number.parseInt(tmparr[6]).toString(),
+                    id = Number.parseInt(tmparr[0])
+
+                seriesData.push({
+                    'id': id,
+                    'cla': cla,
+                    'x': +tmparr[1],
+                    'y': +tmparr[2],
+                    'num': +tmparr[3]
+                })
+
+                // noise group
+                if (cla === '-1') {
+                    continue
+                }
+
+                if (!(cla in clanumlist)) {
+                    clanumlist[cla] = 1
+
+                } else {
+                    clanumlist[cla] += 1
+                }
+            }
+
+            // Construct class and number array from json object
+            for (let key in clanumlist) {
+                clanumarr.push({ 
+                    'cla': key, 
+                    'num': clanumlist[key] 
+                })
+            }
+
+            // sort array in 降序
+            clanumarr.sort(function(a, b) {
+                return a['num'] < b['num'] ? 1 : a['num'] == b['num'] ? 0 : -1;   
+            })
+
+            // filter top-10 class
+            let clalistlen = clanumarr.length > 10 ? 10:clanumarr.length 
+            console.log(`${clalistlen} classes are written into response`)
+            for (let i = 0; i < clalistlen; i++) {
+                clalist.push( clanumarr[i]['cla'] )
+            }
+
+            MongoClient.connect(url, function(err, db) {
+                if (err) {
+                    console.log('Unable to connect to the mongoDB server. Error:', err);
+                } else {
+                    //HURRAY!! We are connected. :)
+                    console.log('Connection established to', url);
+
+                    let collection = db.collection('tmp')
+
+                    console.log(userid)
+
+                    collection.find({ 'userid': userid }).toArray(function(err, result) {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            console.timeEnd("Label query from mongo")
+                            let matrixlist = {},
+                                clalen = Number.parseInt(result.length)
+
+                            for (let i = 0; i < clalen; i++) {
+                                matrixlist[result[i]['id']] = result[i]['matrix']
+                            }
+
+                            console.log('Class length:', clalen, 'Total result length:', result.length)
+
+                            res.json({
+                                'scode': 1,
+                                'data': seriesData,
+                                'length': clalen,
+                                'clalist': clalist,
+                                'matrixlist': matrixlist
+                            })
+                        }
+                    });
+                }
+            });
+        })
     }
 }
 

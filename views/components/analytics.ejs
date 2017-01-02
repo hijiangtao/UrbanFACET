@@ -123,6 +123,7 @@
             </div>
         </div>
 
+        <button id="claExpandBtn" class="ui tiny secondary button" v-on:click='claExpandDisplay'>Expand</button>
         <button id="vcBtn" class="ui tiny secondary button" :class="{ 'loading': states.vcquery }" v-on:click='vcQuery'>Query</button>
     </div>
     <!-- Visual Comparison Mode -->
@@ -164,6 +165,7 @@
                 </div>
             </div>
 
+            <button id="claExpandBtn" class="ui tiny secondary button" v-on:click='claExpandDisplay'>ClusterExpand</button>
             <button id="vcBtn" class="ui tiny secondary button" :class="{ 'loading': states.vcquery }" v-on:click='vcQuery'>Query</button>
         </div>
     </div>
@@ -210,7 +212,8 @@
                     </div>
                 </div>
             </div>
-
+            
+            <button id="claExpandBtn" class="ui tiny secondary button" v-on:click='claExpandDisplay'>ClusterExpand</button>
             <button id="vcBtn" class="ui tiny secondary button" :class="{ 'loading': states.vcquery }" v-on:click='vcQuery'>Query</button>
         </div>
     </div>

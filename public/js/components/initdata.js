@@ -125,14 +125,14 @@ let indexvuedata = {
         'sortorderVal': '',
         'modelParamRangeVal': 10,
         
-        'vctimeName': 'Select query time',
-        'compvctimeName': 'Select compared time',
+        'vctimeName': 'Time',
+        'compvctimeName': 'Compared time',
         'vcdaytypeVal': '',
         'vctimeperiodVal': '',
         'compvcdaytypeVal': '',
         'compvctimeperiodVal': '',
         'vcclaName': 'Select Class',
-        'compvcclaName': 'Select ComparedClass',
+        'compvcclaName': 'ComparedClass',
         'vcqmodeVal': 0
     },
     'states': {
@@ -143,12 +143,14 @@ let indexvuedata = {
         'vcquery': false,
         'themesdisplay': false,
         'clusterdisplay': false,
-        'anadisplay': false
+        'anadisplay': false,
+        'clusterscatterdisplay': false
     },
     'results': {
         'classlist': [],
         'clafilename': '',
-        'decomposeimgurl': ''
+        'decomposeimgurl': '',
+        'userpoints': []
     }
 }
 

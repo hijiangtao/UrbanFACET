@@ -22,4 +22,8 @@ router.post('/v1/vcquery', function(req, res, next) {
 	home.vcquery(req, res, next);
 })
 
+router.get('/v1/test/classplot', function(req, res, next) {
+	home.classplot(req, res, next);
+})
+
 module.exports = router;
