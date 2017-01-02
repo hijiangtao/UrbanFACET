@@ -138,13 +138,13 @@ class mapview {
 	}
 
 	scatterplotDrawing(data, idlist, containerid, vueins) {
-		let margin = {top: 5, right: 5, bottom: 20, left: 20},
+		let margin = {top: 5, right: 50, bottom: 20, left: 20},
 			containerbound = document.getElementById(containerid).getBoundingClientRect(),
 			width = containerbound.width - margin.left - margin.right,
 			height = containerbound.height - margin.top - margin.bottom;
 
 		let colorSchema = ['#CCCCCC', '#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a']
-		let color = idlist.length === 12? d3.scaleOrdinal(colorSchema).domain(idlist):d3.scaleOrdinal(colorSchema.slice(0, idlist.length+1)).domain(idlist)
+		let color = idlist.length === 12? d3.scaleOrdinal(colorSchema.concat('#666666')).domain(idlist.concat('-999')):d3.scaleOrdinal(colorSchema.slice(0, idlist.length+1).concat('#666666')).domain(idlist.concat('-999'))
 
 		// set the ranges
 		let x = d3.scaleLinear().range([0, width]);
@@ -152,9 +152,11 @@ class mapview {
 
 		d3.select(`#${containerid}`).html("")
 		let svg = d3.select(`#${containerid}`).append("svg")
+			.attr('class', 'posabs')
 		    .attr("width", width + margin.left + margin.right)
 		    .attr("height", height + margin.top + margin.bottom)
 		  	.append("g")
+		  	.attr('class', 'posabs')
 		    .attr("transform",
 		          `translate(${margin.left},${margin.top})`);
 
@@ -171,11 +173,12 @@ class mapview {
 			]);
 
 		let chartArea = d3.select(`#${containerid}`).append("div")
-		  .attr('class', 'scatterplotcanvas')
+		  .attr('class', 'posabs')
 		  .style("left", margin.left + "px")
 		  .style("top", margin.top + "px");
 
 		let canvas = chartArea.append("canvas")
+		  .attr('class', 'posabs')
 		  .attr("width", width)
 		  .attr("height", height);
 
@@ -183,10 +186,14 @@ class mapview {
 
 		// Layer on top of canvas, example of selection details
 		let highlight = chartArea.append("svg")
+		  .attr('class', 'posabs')
 		  .attr("width", width)
 		  .attr("height", height)
 		  .append("circle")
 	      .attr("r", 4)
+	      .attr('fill', 'none')
+	      .attr('stroke', 'red')
+	      .attr('stroke-width', '2px')
 	      .classed("hidden", true);
 
 		// svg.selectAll('dot')
@@ -220,6 +227,32 @@ class mapview {
 		// Add the Y Axis
 		let yg = svg.append("g")
 
+		let legend = svg.append("g").selectAll('.scatterLegend')
+			.data(idlist.concat('other'))
+			
+		legend.enter()
+			.append('circle')
+			.attr('r', 3)
+			.attr('fill', function(d) {
+				return color(d)
+			})
+			.attr('cx', width+5)
+			.attr('cy', function(d, i) {
+				return i*10 + 5
+			})
+
+		legend.enter()
+			.append('text')
+			.attr('x', width+10)
+			.attr('y', function(d, i) {
+				return i*10 + 4
+			})
+			.style("font-size", ".6em")
+			.text(function(d) {
+				return `Class ${d}`
+			})
+
+
 		let tooltip = d3.select(`#${containerid}`).append('div')
 			.attr('id', 'scattertooltip')
 		    .attr('class', 'tooltip')
@@ -246,7 +279,7 @@ class mapview {
 			data.forEach(function(p,i){
 				context.beginPath();
 				context.arc(x(p['x']), y(p['y']), .5, 0, 2 * Math.PI);
-				context.fillStyle = p['cla'] in idlist? color(p['cla']):'#333333';
+				context.fillStyle = p['cla'] in idlist? color(p['cla']):color('-999');
 				context.fill();
 
 			});

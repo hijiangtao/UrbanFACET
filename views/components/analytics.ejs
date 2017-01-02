@@ -1,7 +1,7 @@
 <div class="ui grid">
     <!-- v-show='states.themesdisplay' -->
     <div v-show='states.themesdisplay' class="ui sixteen wide column">
-        <div class="ui form">
+        <!-- <div class="ui form">
             <div class="inline fields">
                 <label>Theme</label>
                 <div class="field" data-tooltip="The people group that you want to label and analysis" data-position="top left" data-inverted="">
@@ -30,39 +30,25 @@
                 </div>
                     
             </div>
-        </div>
+        </div> -->
 
         <!-- <div class="ui form">
-                                    <div class="inline fields">
-                                        <div class="field">
+            <div class="inline fields">
+                <div class="field">
 
-                                        </div>
-                                        <label>Sort:</label>
-                                        <div v-for="item in settings.sortorders" class="field">
-                                            <div class="ui radio checkbox">
-                                                <input type="radio" name="sortorder" :value='item.val' v-model='selections.sortorderVal'>
-                                                <label>{{item.name}}</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
+                </div>
+                <label>Sort:</label>
+                <div v-for="item in settings.sortorders" class="field">
+                    <div class="ui radio checkbox">
+                        <input type="radio" name="sortorder" :value='item.val' v-model='selections.sortorderVal'>
+                        <label>{{item.name}}</label>
+                    </div>
+                </div>
+            </div>
+        </div> -->
     </div>
     <div v-show='labelbtndisplay' class="sixteen wide column">
-        <!-- <table class="ui mini celled table">
-                              <thead>
-                                <tr><th>Label Field</th>
-                                <th>Control</th>
-                              </tr></thead>
-                              <tbody>
-                                <tr v-for='item in selections.tmodelVal'>
-                                  <td>{{ item.field }}</td>
-                                  <td><input type="range" :name="item.field" :min="item.min" :max="item.max" v-model="item.pred"><span>{{ item.pred }}</span></td>
-                                </tr>
-                              </tbody>
-                            </table> -->
-        <div class="ui form">
-            
-        
+        <!-- <div class="ui form">
             <div class="inline fields">
                 <label>Top rate</label>
                 <div class="field" data-tooltip="Percentage N, refers to top-N classes in whole cluster results" data-position="top left" data-inverted="">
@@ -73,7 +59,7 @@
                     <button id="labelBtn" class="ui tiny secondary button" :class="{ 'loading': states.labeltrain }" v-on:click='labelTrain'>Label</button>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- <input type="range" name="modelparamrange" min="0" max="100" v-model='selections.modelParamRangeVal'>
         <label>{{ selections.modelParamRangeVal + '%' }}</label>
@@ -116,7 +102,7 @@
                         <i class="dropdown icon"></i>
                         <span>{{ item.name }}</span>
                         <div class="menu">
-                            <div v-for="tpitem in settings.timeperiods" class="item" v-on:click='changevcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
+                            <div v-for="tpitem in item.timeperiods" class="item" v-on:click='changevcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
                         </div>
                     </div>
                 </div>
@@ -158,7 +144,7 @@
                             <i class="dropdown icon"></i>
                             <span>{{ item.name }}</span>
                             <div class="menu">
-                                <div v-for="tpitem in settings.timeperiods" class="item" v-on:click='changevcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
+                                <div v-for="tpitem in item.timeperiods" class="item" v-on:click='changevcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
                             </div>
                         </div>
                     </div>
@@ -180,7 +166,7 @@
                             <i class="dropdown icon"></i>
                             <span>{{ item.name }}</span>
                             <div class="menu">
-                                <div v-for="tpitem in settings.timeperiods" class="item" v-on:click='changevcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
+                                <div v-for="tpitem in item.timeperiods" class="item" v-on:click='changevcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
                             </div>
                         </div>
                     </div>
@@ -195,7 +181,7 @@
                             <i class="dropdown icon"></i>
                             <span>{{ item.name }}</span>
                             <div class="menu">
-                                <div v-for="tpitem in settings.timeperiods" class="item" v-on:click='changecompvcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
+                                <div v-for="tpitem in item.timeperiods" class="item" v-on:click='changecompvcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
                             </div>
                         </div>
                     </div>

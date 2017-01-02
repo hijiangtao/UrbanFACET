@@ -128,11 +128,13 @@
     /*CHARTS*/
     #clascatterplot, #expclascatterplot {
         width: 100%;
-        height: 300px;
         position: relative;
     }
+    #clascatterplot {
+        height: 250px;
+    }
     #expclascatterplot {
-        width: 700px;
+        height: 450px;
     }
 
     .tooltip {
@@ -142,30 +144,19 @@
       pointer-events: none;
     }
     
-    .scatterplotcanvas,
-    svg,
-    canvas {
+    .posabs {
       position: absolute;
     }
 
-    svg {
+    svg.posabs {
       pointer-events: none;
     }
 
-    circle {
-      stroke-width: 2px;
-      stroke: red;
-      fill: none;
-    }
 
     .hidden {
       display: none;
     }
 
-    path,
-    line {
-      shape-rendering: crispEdges;
-    }
     </style>
 </head>
 

@@ -541,7 +541,24 @@ let vcqueryCallback = function(data, clalist, prop, res) {
     pool.getConnection(function(err, connection) {
     	if (prop.length > 1) {
     		// more than one time periods
-    		connection.query($sql.tpqueryrecords+$sql.tpqueryrecords, [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour'], idlist, prop[1]['daytype'], prop[1]['tp']['starthour'], prop[1]['tp']['endhour']], function(err, result) {
+            let sql1, param1, sql2, param2
+            if (prop[0]['daytype'] === 'all') {
+                sql1 = $sql.spetpqueryrecords
+                param1 = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
+            } else {
+                sql1 = $sql.tpqueryrecords
+                param1 = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
+            }
+
+            if (prop[1]['daytype'] === 'all') {
+                sql2 = $sql.spetpqueryrecords
+                param2 = [idlist, prop[1]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[1]['tp']['name']]]
+            } else {
+                sql2 = $sql.tpqueryrecords
+                param2 = [idlist, prop[1]['daytype'], prop[1]['tp']['starthour'], prop[1]['tp']['endhour']]
+            }
+
+    		connection.query(sql1+sql2, param1.concat(param2), function(err, result) {
     			if (err) throw err;
 
 	            for (let i = result[0].length - 1; i >= 0; i--) {
@@ -560,7 +577,16 @@ let vcqueryCallback = function(data, clalist, prop, res) {
     		})
     	} else {
     		// one time period
-    		connection.query($sql.tpqueryrecords, [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']], function(err, result) {
+            let sql, param
+            if (prop[0]['daytype'] === 'all') {
+                sql = $sql.spetpqueryrecords
+                param = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
+            } else {
+                sql = $sql.tpqueryrecords
+                param = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
+            }
+
+    		connection.query(sql, param, function(err, result) {
 	            if (err) throw err;
 
 	            for (let i = result.length - 1; i >= 0; i--) {

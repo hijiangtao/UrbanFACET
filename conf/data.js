@@ -47,6 +47,21 @@ let getValue = function(key, type) {
 				'starthour': 23,
 				'endhour': 6,
 				'name': 'night'
+			},
+			'7': {
+				'starthour': 0,
+				'endhour': 24,
+				'name': 'workday'
+			},
+			'8': {
+				'starthour': 0,
+				'endhour': 24,
+				'name': 'holiday'
+			},
+			'9': {
+				'starthour': 0,
+				'endhour': 24,
+				'name': 'all'
 			}
 		}
 

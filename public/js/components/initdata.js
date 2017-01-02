@@ -87,8 +87,27 @@ let indexvuedata = {
             { 'name': 'Other', 'val': 7 }
         ],
         'daytypes': [
-            { 'name': 'Workday', 'val': 'workday' },
-            { 'name': 'Weekend', 'val': 'holiday' }
+            { 'name': 'Workday', 'val': 'workday', 'timeperiods': [
+                { 'name': 'morning', 'val': 1 },
+                { 'name': 'forenoon', 'val': 2 },
+                { 'name': 'noon', 'val': 3 },
+                { 'name': 'afternoon', 'val': 4 },
+                { 'name': 'evening', 'val': 5 },
+                { 'name': 'night', 'val': 6 }
+            ] },
+            { 'name': 'Weekend', 'val': 'holiday', 'timeperiods': [
+                { 'name': 'morning', 'val': 1 },
+                { 'name': 'forenoon', 'val': 2 },
+                { 'name': 'noon', 'val': 3 },
+                { 'name': 'afternoon', 'val': 4 },
+                { 'name': 'evening', 'val': 5 },
+                { 'name': 'night', 'val': 6 }
+            ] },
+            { 'name': 'ALL', 'val': 'all', 'timeperiods': [
+                { 'name': 'workday', 'val': 7 },
+                { 'name': 'weekend', 'val': 8 },
+                { 'name': 'all', 'val': 9 },
+            ] }
         ],
         'sortorders': [
             { 'name': 'ASC', 'val': 1 },

@@ -273,8 +273,11 @@ let userpanel = new Vue({
                 clalist = self.results['classlist'],
                 data = self.results['userpoints']
 
-            $('.ui.small.modal').modal('show')  
-            mapins.scatterplotDrawing(data, clalist, 'expclascatterplot', self)
+            $('.ui.small.modal').modal({
+                onVisible: function() {
+                    mapins.scatterplotDrawing(data, ['-1'].concat(clalist), 'expclascatterplot', self)
+                }
+            }).modal('show')  
         }
     },
     computed: {
