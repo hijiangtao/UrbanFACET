@@ -571,7 +571,7 @@ let home = {
 
                 let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });
 
-                res.json({ 'scode': 1, 'data': data, 'group': prop[0]['tp']['hourlist'], 'id': id, 'other': point_assignment_result });
+                res.json({ 'scode': 1, 'data': data, 'group': prop[0]['tp']['hourlist'], 'id': id, 'other': [] });
             })
         })
     }
