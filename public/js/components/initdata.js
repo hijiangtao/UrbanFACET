@@ -109,6 +109,10 @@ let indexvuedata = {
                 { 'name': 'all', 'val': 9 },
             ] }
         ],
+        'madaytypes': [
+            { 'name': 'Workday', 'val': 'workday' },
+            { 'name': 'Weekend', 'val': 'holiday' }
+        ],
         'sortorders': [
             { 'name': 'ASC', 'val': 1 },
             { 'name': 'DEC', 'val': -1 }
@@ -152,7 +156,11 @@ let indexvuedata = {
         'compvctimeperiodVal': '',
         'vcclaName': 'Select Class',
         'compvcclaName': 'ComparedClass',
-        'vcqmodeVal': 0
+        'vcqmodeVal': 0,
+
+        'matimeVal': 'Select time',
+        'madaytypeVal': '',
+        'matimeperiodVal': ''
     },
     'states': {
         'userid': '-1',
@@ -163,7 +171,8 @@ let indexvuedata = {
         'themesdisplay': false,
         'clusterdisplay': false,
         'anadisplay': false,
-        'clusterscatterdisplay': false
+        'clusterscatterdisplay': false,
+        'madisplayquery': false
     },
     'results': {
         'classlist': [],

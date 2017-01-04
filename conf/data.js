@@ -19,49 +19,58 @@ let getValue = function(key, type) {
 		},
 		timeperiods = {
 			'1': {
-				'starthour': 5,
-				'endhour': 9,
-				'name': 'morning'
+				'starthour': 50,
+				'endhour': 90,
+				'name': 'morning',
+				'hourlist': [5,6,7,8]
 			},
 			'2': {
-				'starthour': 8,
-				'endhour': 12,
-				'name': 'forenoon'
+				'starthour': 80,
+				'endhour': 120,
+				'name': 'forenoon',
+				'hourlist': [8,9,10,11]
 			},
 			'3': {
-				'starthour': 11,
-				'endhour': 14,
-				'name': 'noon'
+				'starthour': 110,
+				'endhour': 140,
+				'name': 'noon',
+				'hourlist': [11,12,13]
 			},
 			'4': {
-				'starthour': 13,
-				'endhour': 19, 
-				'name': 'afternoon'
+				'starthour': 130,
+				'endhour': 190, 
+				'name': 'afternoon',
+				'hourlist': [13,14,15,16,17,18]
 			},
 			'5': {
-				'starthour': 18,
-				'endhour': 24,
-				'name': 'evening'
+				'starthour': 180,
+				'endhour': 240,
+				'name': 'evening',
+				'hourlist': [18,19,20,21,22,23]
 			},
 			'6': {
-				'starthour': 23,
-				'endhour': 6,
-				'name': 'night'
+				'starthour': 230,
+				'endhour': 60,
+				'name': 'night',
+				'hourlist': [23,0,1,2,3,4,5]
 			},
 			'7': {
 				'starthour': 0,
-				'endhour': 24,
-				'name': 'workday'
+				'endhour': 240,
+				'name': 'workday',
+				'hourlist': [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
 			},
 			'8': {
 				'starthour': 0,
-				'endhour': 24,
-				'name': 'holiday'
+				'endhour': 240,
+				'name': 'holiday',
+				'hourlist': [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
 			},
 			'9': {
 				'starthour': 0,
-				'endhour': 24,
-				'name': 'all'
+				'endhour': 240,
+				'name': 'all',
+				'hourlist': [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
 			}
 		}
 

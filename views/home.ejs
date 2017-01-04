@@ -192,18 +192,9 @@
 
                 <div class="ui divider"></div>
 
-                <!-- <div class="sixteen wide column">
-                    <button v-on:click='scattertest'>scatter test</button>
-
-                    <div id="clascatterplot"></div>
-                </div> -->
-
-                <div v-if='results.decomposeimgurl' class="sixteen wide column" id="panelChart">
-                    <img class="ui fluid rounded image" :src="results.decomposeimgurl" >         
-                </div>
-                <div v-else class="sixteen wide column" id="panelChart">
-                    <div id="clascatterplot"></div>
-                </div>
+                <% include components/model2 %>
+                
+                <% include components/panelfooter %>
             </div>
         </div>
 

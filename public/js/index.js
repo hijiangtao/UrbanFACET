@@ -53,6 +53,11 @@ let userpanel = new Vue({
             this.selections.vcdaytypeVal = dayval
             this.selections.vctimeperiodVal = tpval
         },
+        changecaTime(dayname, tpname, dayval, tpval) {
+            this.selections.matimeVal = `${dayname} - ${tpname}`
+            this.selections.madaytypeVal = dayval
+            this.selections.matimeperiodVal = tpval
+        },
         changecompvcTime(dayname, tpname, dayval, tpval) {
             this.selections.compvctimeName = `${dayname} - ${tpname}`
             this.selections.compvcdaytypeVal = dayval
@@ -92,6 +97,11 @@ let userpanel = new Vue({
                 $.get(`/home/v1/tsnetrain?region=${this.selections.regionVal}&feature=${this.selections.featureVal}&srate=${srate}&id=${id}`, function(res, err) {
                     if (res['scode']) {
                         alert('success');
+
+                        if (self.states.userid !== res['id']) {
+                            self.states.userid = res['id']
+                        }
+
                         self.states.tsnetrain = false
                         self.states.clusterdisplay = true
                         self.results.decomposeimgurl = `/img/decompose/2D-ScatterData_1-in-${srate}_tsne-${featureTypes[featureVal-1]}(byRecNum).png`
@@ -245,7 +255,7 @@ let userpanel = new Vue({
                 feature = this.selections.featureVal,
                 id = this.states.userid
 
-            $.get(`/home/v1/test/classplot?feature=${feature}&srate=${srate}&eps=${eps}&minpts=${minpts}&id=${id}`, function(res, err) {
+            $.get(`/home/v1/classplot?feature=${feature}&srate=${srate}&eps=${eps}&minpts=${minpts}&id=${id}`, function(res, err) {
                 if (res['scode'] === 1) {
                     // remove class btn disabled effect
                     document.getElementById('vcclaDropdown').classList.remove('disabled')
@@ -278,6 +288,31 @@ let userpanel = new Vue({
                     mapins.scatterplotDrawing(data, ['-1'].concat(clalist), 'expclascatterplot', self)
                 }
             }).modal('show')  
+        },
+        maDisplayQuery() {
+            let self = this,
+                daytype = self.selections.madaytypeVal,
+                timeperiod = self.selections.matimeperiodVal,
+                id = self.states.userid
+
+            if (daytype && timeperiod) {
+                self.states.madisplayquery = true
+                $.get(`/home/v1/madisplay?daytype=${daytype}&timeperiod=${timeperiod}&id=${id}`, function(res, err) {
+                    if (res['scode'] === 1) {
+                        self.states.madisplayquery = false
+                        mapins.pointmapDrawing(res['data'], res['group'])
+
+                        if (self.states.userid !== res['id']) {
+                            self.states.userid = res['id']
+                        }
+                    } else {
+                        alert('server error')
+                    }
+                })
+            } else {
+                alert('Please fill in all the fields.')
+            }
+            
         }
     },
     computed: {

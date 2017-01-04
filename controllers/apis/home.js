@@ -19,7 +19,8 @@ let $sql = require('./mysqlMapping');
 let pool = require('../../conf/db');
 
 const lib = require('../../conf/lib');
-const DATA = require('../../conf/data')
+const DATA = require('../../conf/data');
+let jDBSCAN = require('../../conf/jDBSCAN').jDBSCAN;
 
 const shell = require('shelljs');
 const ZERO = 0.00000001
@@ -141,7 +142,8 @@ let mongoCallback = function(err, result, res, prop) {
     console.timeEnd("Class aggregation")
 
     console.time("Insert class results into mongo")
-        // 插入统计档案数据,以便之后查询
+    
+    // 插入统计档案数据,以便之后查询,在每次插入清空该id所有记录
     db.collection('tmp').deleteMany({ 'userid': idstr }, function(err, result) {
         db.collection('tmp').insertMany(data, function(err, result) {
             if (err) {
@@ -241,12 +243,12 @@ let home = {
             region = params.region,
             feature = params.feature,
             srate = params.srate,
-            id = params.id;
+            id = params.id === '-1'? Date.parse(new Date()):params.id;
 
         let file = `2D-ScatterData_1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}.csv`
             // console.log(path.join(__dirname, '../../server/data', file))
         if (lib.checkDirectory(path.join(__dirname, '../../server/data', file))) {
-            res.json({ 'scode': 1 })
+            res.json({ 'scode': 1, 'id': id })
         } else {
             res.json({ 'scode': 0 })
         }
@@ -266,7 +268,7 @@ let home = {
             region = params.region,
             feature = params.feature,
             srate = params.srate,
-            id = Date.parse(new Date());
+            id = params.id === '-1'? Date.parse(new Date()):params.id;
 
         let ftypestr = DATA.getValue(feature, 'feature'),
             inpfile = `1-in-${srate}_tsne-${ftypestr}`,
@@ -414,6 +416,13 @@ let home = {
             res.json({ 'scode': 0 })
         }
     },
+    /**
+     * [classplot description]
+     * @param  {[type]}   req  [description]
+     * @param  {[type]}   res  [description]
+     * @param  {Function} next [description]
+     * @return {[type]}        [description]
+     */
     classplot(req, res, next) {
         let params = req.query,
             srate = params.srate,
@@ -517,6 +526,54 @@ let home = {
                 }
             });
         })
+    },
+    /**
+     * [madisplayquery description]
+     * @param  {[type]}   req  [description]
+     * @param  {[type]}   res  [description]
+     * @param  {Function} next [description]
+     * @return {[type]}        [description]
+     */
+    madisplayquery(req, res, next) {
+        let params = req.query,
+            daytype = params['daytype'],
+            timeperiod = params['timeperiod'],
+            id = params.id === '-1'? Date.parse(new Date()):params.id;
+
+        let tp = DATA.getValue(timeperiod, 'timeperiod'),
+            prop = [{
+                'tpstr': `${daytype} ${tp['name']}`,
+                'tp': tp,
+                'daytype': daytype
+            }]
+        pool.getConnection(function(err, connection) {
+            let sql, param = [ prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour'] ]
+            if (prop[0]['tp']['name'] === 'night') {
+                sql = $sql.madisplayqueryNight
+            } else {
+                sql = $sql.madisplayquery
+            }
+
+            connection.query(sql, param, function(err, result) {
+                if (err) throw err;
+
+                for (var i = result.length - 1; i >= 0; i--) {
+                    result[i]['location'] = {
+                        'longitude': Number.parseFloat(result[i]['lng']),
+                        'latitude': Number.parseFloat(result[i]['lat'])
+                    }
+                }
+
+                // console.time('DBSCAN')
+                // let dbscanner = jDBSCAN().eps(0.005).minPts(30).distance('HAVERSINE').data(result),
+                //     point_assignment_result = dbscanner();
+                // console.timeEnd('DBSCAN')
+
+                let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });
+
+                res.json({ 'scode': 1, 'data': data, 'group': prop[0]['tp']['hourlist'], 'id': id, 'other': point_assignment_result });
+            })
+        })
     }
 }
 
@@ -546,7 +603,11 @@ let vcqueryCallback = function(data, clalist, prop, res) {
                 sql1 = $sql.spetpqueryrecords
                 param1 = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
             } else {
-                sql1 = $sql.tpqueryrecords
+                if (prop[0]['tp']['name'] === 'night') {
+                    sql1 = $sql.tpqueryrecordsNight
+                } else {
+                    sql1 = $sql.tpqueryrecords
+                }
                 param1 = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
             }
 
@@ -554,7 +615,11 @@ let vcqueryCallback = function(data, clalist, prop, res) {
                 sql2 = $sql.spetpqueryrecords
                 param2 = [idlist, prop[1]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[1]['tp']['name']]]
             } else {
-                sql2 = $sql.tpqueryrecords
+                if (prop[1]['tp']['name'] === 'night') {
+                    sql2 = $sql.tpqueryrecordsNight
+                } else {
+                    sql2 = $sql.tpqueryrecords
+                }
                 param2 = [idlist, prop[1]['daytype'], prop[1]['tp']['starthour'], prop[1]['tp']['endhour']]
             }
 
@@ -582,6 +647,11 @@ let vcqueryCallback = function(data, clalist, prop, res) {
                 sql = $sql.spetpqueryrecords
                 param = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
             } else {
+                if (prop[0]['tp']['name'] === 'night') {
+                    sql = $sql.tpqueryrecordsNight
+                } else {
+                    sql = $sql.tpqueryrecords
+                }
                 sql = $sql.tpqueryrecords
                 param = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
             }

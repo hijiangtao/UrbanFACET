@@ -41,7 +41,7 @@ class mapview {
 	 * @return {[type]}        [description]
 	 */
 	pointmapDrawing(data, idlist) {
-		const LEDINTERVAL = 120
+		const LEDINTERVAL = 20
 		let self = this
 		
 		d3.select('#F_SVG').remove();
@@ -57,38 +57,55 @@ class mapview {
 		let transform = d3.geoTransform({ point: projectPoint }),
 			path = d3.geoPath().projection(transform);
 
-		let color = d3.scaleOrdinal( ['#24AADD', 'rgb(250,150,30)'] ).domain(idlist)
+		let color = d3.scaleOrdinal( d3.schemeCategory10 ).domain(idlist)
 		// d3.schemeCategory20
+		// ['#24AADD', 'rgb(250,150,30)']
 
 		let maplegend = d3.select('#mapviewlegend')
+			.attr('width', 160)
+			.attr('height', idlist.length * 30)
 		maplegend.selectAll('*').remove();
 
-		let legendg = maplegend.selectAll('g')
+		let legendg = maplegend.append('g').selectAll('.maplegendcircle')
 			.data(idlist)
 			
 		legendg.enter().append('circle')
+			.attr('class', 'maplegendcircle')
 			.attr('stroke', function(d) {
 				return color(d)
 			})
 			.attr('fill', function(d) {
 				return color(d)
 			})
-			.attr('cx', function(d, i) {
+			.attr('cx', '10')
+			.attr('cy', function(d, i) {
 				return i*LEDINTERVAL + 10;
 			})
-			.attr('cy', '10')
 			.attr('r', '8')
+			.on("click", function(d){
+				// Determine if current line is visible
+				let els = document.getElementsByClassName(`ma_class_${d}`),
+					active   = Number.parseInt(els[0].getAttribute('opacity')) ? true:false,
+				  newOpacity = active ? 0 : 1;
+				// Hide or show the elements
+				Array.prototype.forEach.call(els, function(el) {
+				    el.setAttribute('opacity', newOpacity)
+				});
+			})
 		
 		legendg.enter().append('text')
-			.attr('dx', function(d, i){return i*LEDINTERVAL + 20})
-			.attr('dy', '14')
+			.attr('dx', '24')
+			.attr('dy', function(d, i){return i*LEDINTERVAL + 14})
 	    	.text(function(d){return d})
 
-		path.pointRadius(1.4);
+		path.pointRadius(1);
 
 		let feature = g.selectAll('path')
 			.data(data.features)
 			.enter().append('path')
+			.attr('class', function(d) {
+				return `pointmapfeature ma_class_${d['properties']['group']}`
+			})
 			.attr('stroke', function(d) {
 				return color(d['properties']['group'])
 				// return 'rgb(250,150,30)';
@@ -97,8 +114,7 @@ class mapview {
 				return color(d['properties']['group'])
 				// return 'rgb(250,150,30)';
 			})
-			.attr('opacity', '0.8')
-			.attr('class', 'pointmapfeature');
+			.attr('opacity', '1')
 
 		self.map.on('moveend', reset);
 		reset();
