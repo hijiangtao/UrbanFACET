@@ -307,7 +307,7 @@ let home = {
             theme = params.theme,
             rangeval = Number.parseInt(params.rangeval),
             paramval = Number.parseInt(params.paramval),
-            id = parseInt(params.id);
+            id = params.id;
 
         let poi = DATA.getValue(theme, 'theme')
         console.log('Params', params)
@@ -429,7 +429,7 @@ let home = {
             eps = params.eps,
             minpts = params.minpts,
             feature = params.feature,
-            userid = parseInt(params.id)
+            userid = params.id
 
         fs.readFile(path.join(__dirname, `../../server/data/tmp/DBScanCluster-1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}(eps=${eps},minpts=${minpts}).csv`), function(err, data) {
                 if (err) {

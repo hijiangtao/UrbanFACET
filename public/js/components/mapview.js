@@ -41,7 +41,9 @@ class mapview {
 	 * @return {[type]}        [description]
 	 */
 	pointmapDrawing(data, idlist) {
-		const LEDINTERVAL = 20
+		const LEDINTERVAL = 20,
+			  colorSchema = ['#F3E500', '#F7B20F', '#EE7D1D', '#E74A21', '#D9051B', '#A0077C', '#4F2577', '#172C85'],
+			  colorJudge = idlist.length < 8 && idlist > 2
 		let self = this
 		
 		d3.select('#F_SVG').remove();
@@ -57,7 +59,7 @@ class mapview {
 		let transform = d3.geoTransform({ point: projectPoint }),
 			path = d3.geoPath().projection(transform);
 
-		let color = d3.scaleOrdinal( d3.schemeCategory10 ).domain(idlist)
+		let color = d3.scaleOrdinal( colorJudge ? colorSchema:d3.schemeCategory10 ).domain(idlist)
 		// d3.schemeCategory20
 		// ['#24AADD', 'rgb(250,150,30)']
 
