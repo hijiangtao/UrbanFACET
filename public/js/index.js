@@ -155,14 +155,13 @@ let userpanel = new Vue({
                         self.results.decomposeimgurl = ''
                         self.classplot()
 
-                        document.getElementById('accordionanatitle').click()
                     } else {
                         alert('cluster work failed, please try again later')
                     }
                 })
             } else {
                 alert('all fields must be input.')
-            }
+            } 
         },
         labelTrain() {
             let self = this, 

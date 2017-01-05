@@ -5,165 +5,25 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>
-        <%= title %>
+        <%= title %> | ISCAS-VIS
     </title>
     <meta name="description" content="">
     <meta name="keywords" content="">
     <link href="/favicon.ico" rel="shortcut icon">
     <style type="text/css" rel="stylesheet">
-    @import '/css/leaflet.css';
-    @import '/css/semantic.css'
-    </style>
-    <style type="text/css">
-    body {
-        margin: 0 !important;
-        padding: 0 !important;
-        border: none !important;
-    }
-    
-    #map {
-        height: 100vh;
-        width: 100vw;
-    }
-    
-    .basic-margin {
-        margin: 1rem !important;
-    }
-    
-    .no-padding {
-        padding: 0 !important;
-    }
-    /*user panel background stylesheets*/
-    
-    #userpanel {
-        top: 0;
-        width: 25vw;
-        position: absolute;
-        /*padding: 1rem;*/
-        margin: 0;
-        height: 100vh;
-        z-index: 9;
-        background-color: rgba(255, 255, 255, .7);
-    }
-    
-    .ui.radio.checkbox label {
-        padding-left: 1.3rem;
-    }
-    
-    .ui.mini.table {
-        font-size: 0.78571429rem;
-    }
-    
-    .column>input {
-        width: 50%;
-    }
-    
-    .column>label {
-        vertical-align: top;
-        /*float: right;*/
-    }
-    
-    .ui.grid > .wide.column {
-        padding-top: .2rem;
-        padding-bottom: .2rem;
-    }
-    
-    .ui.form .fields .field .eps.ui.mini.input input {
-        width: 4.3em;
-    }
-    
-    .ui.form .inline.fields {
-        margin-bottom: .2em;
-    }
-	
-	.heatmap {
-		position: absolute;
-		bottom: 1em;
-		left: 26vw;
-		width: 25vw;
-		z-index: 3;
-	}
-
-    #clamatrixheatmap, #compclamatrixheatmap {
-    	height: 200px;
-    	width: 100%;
-    }
-
-    .ui.checkbox label {
-    	font-size: .8rem;
-    }
-
-    .vcPanelRow.row {
-    	padding-bottom: .2rem;
-    	padding-top: .2rem;
-    }
-
-    #usageguidance, #panelChart>img {
-    	cursor:pointer;
-    }
-
-    #panelChart {
-		position: absolute;
-    	bottom: 0;
-        left: 0;
-        right: 0;
-        width: auto;
-        padding-left: 14px;
-    	padding-right: 14px;
-    }
-
-    /*TEST STYLESHEETS FOR MAP OVERLAY LEGEND*/
-    #mapviewlegend {
-    	position: absolute;
-    	left: 26vw;
-    	top: 1rem;
-    	/*background-color: red;*/
-    	z-index: 3;
-    }
-
-    #infomsg {
-    	display: none;
-    }
-
-    /*CHARTS*/
-    #clascatterplot, #expclascatterplot {
-        width: 100%;
-        position: relative;
-    }
-    #clascatterplot {
-        height: 250px;
-    }
-    #expclascatterplot {
-        height: 450px;
-    }
-
-    .tooltip {
-      position: absolute;
-      width: 200px;
-      height: 28px;
-      pointer-events: none;
-    }
-    
-    .posabs {
-      position: absolute;
-    }
-
-    svg.posabs {
-      pointer-events: none;
-    }
-
-
-    .hidden {
-      display: none;
-    }
-
+    @import url('/css/leaflet.css');
+    @import url('/css/semantic.css');
+    @import url('/css/vistheme.css');
+    @import url('/css/pages/home.css');
     </style>
 </head>
 
 <body class="ui loading segment">
     <div id="map">
-    	<svg id='mapviewlegend' width='220' height='20'></svg>
-
+        <!-- legends for map visualization approaches -->
+    	<svg id='mapviewlegend' width='1' height='1'></svg>
+        
+        <!-- classes heatmaps -->
     	<div class="heatmap">
 	        <div id="compclamatrixheatmap"></div>
 	    	<div id="clamatrixheatmap"></div>
@@ -174,25 +34,13 @@
             <div class="row">
                 <% include components/panelheader %>
                 
-                <h4>Discovery Approach</h4>
-                <div class="ui accordion">
-                    <div id="accordionmodeltitle" class="active title" data-tooltip="Data and model selection, feature decomposing works" data-position="right center" data-inverted="">
-                        <i class="dropdown icon"></i> Model training and clustering
-                    </div>
-                    <div id="accordionmodelcontent" class="active content">
-                        <% include components/model %>
-                    </div>
-                    
-                    <div id="accordionanatitle" class="title" data-tooltip="Visual analytics and comparison interaction works" data-position="right center" data-inverted="">
-                        <i class="dropdown icon"></i> Label and visual analytics
-                    </div>
-                    <div id="accordionanacontent" class="content">
-                        <% include components/analytics %>
-                    </div>
-                </div>
+                <h5>Discovery Approach<i class="right angle icon divider"></i>Model training and clustering</h5>
+                <% include components/model %>
+
+                <h5><i class="right angle icon divider"></i>Label and visual analytics</h5>
+                <% include components/analytics %>
 
                 <div class="ui divider"></div>
-
                 <% include components/model2 %>
                 
                 <% include components/panelfooter %>

@@ -1,0 +1,104 @@
+@charset "UTF-8";
+/**
+ * vistheme.css
+ * @authors Joe Jiang (hijiangtao@gmail.com)
+ * @date    2017-01-05 21:16:42
+ * @version $Id$
+ */
+
+/*REWRITE STYLESHEETS FOR SEMANTIC-UI*/
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+.ui.radio.checkbox label {
+    padding-left: 1.3rem;
+}
+
+.ui.form .inline.fields > label, .ui.form .inline.fields .field {
+	margin-right: .5rem;
+	padding-right: .3rem;
+}
+
+.ui.menu .item {
+	padding: 
+}
+
+.ui.mini.table {
+    font-size: 0.78571429rem;
+}
+
+.column>input {
+    width: 50%;
+}
+
+.column>label {
+    vertical-align: top;
+}
+
+.ui.grid > .wide.column {
+    padding-top: .2rem;
+    padding-bottom: .2rem;
+}
+
+.ui.form .fields .field .eps.ui.mini.input input {
+    width: 4.3em;
+}
+
+.ui.form .inline.fields {
+    margin-bottom: .2em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  line-height: 1.1em;
+  margin: calc(.7rem -  0.14285em ) 0em .3rem;
+}
+h5 {
+  font-size: .9rem;
+}
+
+.ui.menu .item {
+	padding: 0.78571429em 1em 0.78571429em;
+}
+
+.ui.menu {
+	min-height: 1em;
+}
+
+.ui.button, .ui.menu .item {
+	padding-right: 1em;
+	padding-left: 1em;
+}
+
+.ui.message {
+    padding: .5rem .8rem;
+}
+
+.ui.checkbox label {
+	font-size: .8rem;
+}
+
+.ui.message > .close.icon {
+	top: 0.38575em;
+}
+
+.ui.divider {
+	margin: .5rem 0rem;
+}
+/*REWRITE STYLESHEETS FOR SEMANTIC-UI*/
+
+/*CUSTOMIZE STYLESHEETS FOR VIS THEME*/
+.basic-margin {
+    margin: 1rem !important;
+}
+
+.no-padding {
+    padding: 0 !important;
+}
+/*CUSTOMIZE STYLESHEETS FOR VIS THEME*/
