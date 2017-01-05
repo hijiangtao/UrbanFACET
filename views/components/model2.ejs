@@ -1,20 +1,35 @@
 <div class="sixteen wide column">
-    <label>Target Time periods</label>
-    <div class="ui mini compact menu">
-        <div class="ui simple dropdown item">
-            <span>{{ selections.matimeVal }}</span>
-            <i class="dropdown icon"></i>
-            <div class="menu">
-                <div v-for='item in settings.madaytypes' class="item">
-                    <i class="dropdown icon"></i>
-                    <span>{{ item.name }}</span>
-                    <div class="menu">
-                        <div v-for="tpitem in settings.timeperiods" class="item" v-on:click='changecaTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <h4>Another Discovery Approach</h4>
+    <div class="ui form">
+        <div class="inline fields">
+        	<label>Target Time periods</label>
+        	<div class="field">
+        		<div class="ui mini compact menu">
+			        <div class="ui simple dropdown item">
+			            <span>{{ selections.matimeVal }}</span>
+			            <i class="dropdown icon"></i>
+			            <div class="menu">
+			                <div v-for='item in settings.madaytypes' class="item">
+			                    <i class="dropdown icon"></i>
+			                    <span>{{ item.name }}</span>
+			                    <div class="menu">
+			                        <div v-for="tpitem in settings.timeperiods" class="item" v-on:click='changecaTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
+			                    </div>
+			                </div>
+			            </div>
+			        </div>
+	        	</div>
+	        </div>
+	        <div class="field">
+	        	<button id="maDisplayBtn" class="ui tiny secondary button" :class="{ 'loading': states.madisplayquery }" v-on:click='maDisplayQuery'>Query</button>
+	        </div>
+	    </div>
     </div>
 
-    <button id="maDisplayBtn" class="ui tiny secondary button" :class="{ 'loading': states.madisplayquery }" v-on:click='maDisplayQuery'>Query</button>
+    <div class="ui info mini message transition">
+	  <i class="close icon"></i>
+	  <p>
+	    The legends in the map reflects hour of the location records, for example, 9 means 9:00.
+	  </p>
+	</div>
 </div>
