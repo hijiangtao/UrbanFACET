@@ -68,7 +68,7 @@ h5 {
 }
 
 .ui.menu {
-	min-height: 1em;
+	min-height: .8em;
 }
 
 .ui.button, .ui.menu .item {
@@ -82,6 +82,10 @@ h5 {
 
 .ui.checkbox label {
 	font-size: .8rem;
+}
+
+.ui.mini.compact.menu {
+	margin-right: .25em;
 }
 
 .ui.message > .close.icon {

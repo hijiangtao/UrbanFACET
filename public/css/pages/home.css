@@ -74,7 +74,7 @@
     position: relative;
 }
 #clascatterplot {
-    height: 250px;
+    height: 15vw;
 }
 #expclascatterplot {
     height: 450px;
@@ -97,4 +97,8 @@ svg.posabs {
 
 .hidden {
   display: none;
+}
+
+.numberinput {
+	width: 7rem !important;
 }

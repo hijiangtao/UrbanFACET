@@ -1,4 +1,3 @@
-<!-- v-show='states.themesdisplay' -->
 <div v-show='states.themesdisplay' class="ui sixteen wide column">
     <!-- <div class="ui form">
         <div class="inline fields">
@@ -66,7 +65,7 @@
     <button id="labelBtn" class="ui mini secondary button" :class="{ 'loading': states.labeltrain }" v-on:click='labelTrain'>Label</button> -->
 </div>
 
-<div v-show="states.anadisplay" class="sixteen wide column">
+<!-- <div v-show="states.anadisplay" class="sixteen wide column">
     <div class="ui form">
         <div class="inline fields">
             <label>Mode</label>
@@ -78,11 +77,10 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <!-- Visual Analytics Mode -->
-<div v-show="states.anadisplay" v-if='selections.vcqmodeVal === 0' class="sixteen wide column">
-    <!-- VC Class selection dropdown menu -->
+<!-- <div v-show="states.anadisplay" v-if='selections.vcqmodeVal === 0' class="sixteen wide column">
     <div class="ui mini compact menu">
         <div id="vcclaDropdown" class="ui simple disabled dropdown item">
             <span>{{ selections.vcclaName }}</span>
@@ -111,7 +109,6 @@
     <button id="claExpandBtn" class="ui mini secondary button" v-on:click='claExpandDisplay'>Expand</button>
     <button id="vcBtn" class="ui mini secondary button" :class="{ 'loading': states.vcquery }" v-on:click='vcQuery'>Query</button>
 </div>
-<!-- Visual Comparison Mode -->
 <div v-show="states.anadisplay" v-else-if='selections.vcqmodeVal === 1' class="sixteen wide column">
     <div class="vcPanelRow row">
         <div class="ui mini compact menu">
@@ -171,6 +168,7 @@
                 </div>
             </div>
         </div>
+
         <div class="ui mini compact menu">
             <div class="ui simple dropdown item">
                 <span>{{ selections.compvctimeName }}</span>
@@ -201,32 +199,85 @@
         <button id="claExpandBtn" class="ui mini secondary button" v-on:click='claExpandDisplay'>ClusterExpand</button>
         <button id="vcBtn" class="ui mini secondary button" :class="{ 'loading': states.vcquery }" v-on:click='vcQuery'>Query</button>
     </div>
-</div>
-
-<!-- <div class="eight wide column">
-	<label>POI types</label>
-	<div class="ui form">
-		<div class="grouped fields">
-			<div v-for='item in settings.poitypes' class="field">
-				<div class="ui checkbox">
-					<input type="checkbox" name="poitypes" :value="item.val">
-					<label>{{ item.name }}</label>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="eight wide column">
-	<label>Time periods</label>
-	<div class="ui form">
-		<div class="grouped fields">
-			<div v-for='item in settings.timeperiods' class="field">
-				<div class="ui checkbox">
-					<input type="checkbox" name="timeperiods" :value="item.val">
-					<label>{{ item.name }}</label>
-				</div>
-			</div>
-		</div>
-	</div>
 </div> -->
+<!-- Visual Analytics Mode -->
+
+<!-- NEW VISUAL ANALYTICS LOGIC -->
+<div v-show="states.anadisplay || true" class="sixteen wide column">
+    <div class="ui form">
+        <div class="inline fields">
+            <button id="claExpandBtn" class="ui mini secondary button" v-on:click='claExpandDisplay'>Expand</button>
+
+            <div class="ui mini compact menu">
+                <div id="vcclaDropdown" class="ui simple dropdown item">
+                    <span>{{ selections.vcclaName }}</span>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div v-for='item in settings.classes' class="item" v-on:click='changeSelectCla(item)'>{{ item }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui mini compact menu">
+                <div class="ui simple dropdown item">
+                    <span>{{ selections.vctimeName }}</span>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div v-for='item in settings.daytypes' class="item">
+                            <i class="dropdown icon"></i>
+                            <span>{{ item.name }}</span>
+                            <div class="menu">
+                                <div v-for="tpitem in item.timeperiods" class="item" v-on:click='changevcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+            <button id="vcBtn" class="ui mini secondary button" :class="{ 'loading': states.vcquery }" v-on:click='vcQuery("basic")'>Display</button>
+        </div>
+    </div>
+</div>
+
+<div class="sixteen wide column">
+    <div class="ui form">
+        <div class="inline fields">
+            <!-- add ITEM into comparison mode -->
+            <div class="ui mini compact menu">
+                <div class="ui simple dropdown item">
+                    <span>{{ selections.vcqmodeName }}</span>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div v-for='item in settings.qmodes' class="item" v-on:click='changevcMode(item)'>{{item.name}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-show='selections.vcqmodeVal === 1' class="ui mini compact menu">
+                <div id="compvcclaDropdown" class="ui simple dropdown item">
+                    <span>{{ selections.compvcclaName }}</span>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div v-for='item in results.classlist' class="item" v-on:click='changeSelectCompCla(item)'>{{ item }}</div>
+                    </div>
+                </div>
+            </div>
+            <div v-show='selections.vcqmodeVal === 2' class="ui mini compact menu">
+                <div class="ui simple dropdown item">
+                    <span>{{ selections.compvctimeName }}</span>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div v-for='item in settings.daytypes' class="item">
+                            <i class="dropdown icon"></i>
+                            <span>{{ item.name }}</span>
+                            <div class="menu">
+                                <div v-for="tpitem in item.timeperiods" class="item" v-on:click='changecompvcTime(item.name, tpitem.name, item.val, tpitem.val)'>{{ tpitem.name }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button v-show='selections.vcqmodeVal > 0' class="ui mini secondary button" :class="{ 'loading': states.vccompquery }" v-on:click='vcQuery("comp")'>Display</button>
+        </div>
+    </div>
+</div>
+<!-- NEW VISUAL ANALYTICS LOGIC -->

@@ -365,18 +365,15 @@ let home = {
      */
     vcquery(req, res, next) {
         let params = req.body,
-            qmode = Number.parseInt(params['qmode']),
+            // qmode = Number.parseInt(params['qmode']),
             daytype = params['daytype'],
             timeperiod = params['timeperiod'],
-            cla = params['cla[]'],
-            compdaytype = params['compdaytype'],
-            comptimeperiod = params['comptimeperiod'],
-            compcla = Number.parseInt(params['compcla']),
+            cla = [ params['cla'] ],
+            // compdaytype = params['compdaytype'],
+            // comptimeperiod = params['comptimeperiod'],
+            // compcla = Number.parseInt(params['compcla']),
             clafilename = params['clafilename']
-
-        if (typeof cla === 'string') {
-        	cla = [cla]
-        }
+        
         if (lib.checkDirectory(clafilename)) {
             fs.readFile(clafilename, function(err, data) {
                 if (err) {
@@ -390,25 +387,26 @@ let home = {
                         'daytype': daytype
                     }]
 
-                if (qmode === 0) {
-                    // visual analytics on one object
-                    vcqueryCallback(data, cla, prop, res)
-                } else if (qmode === 1) {
-                    // visual comparison on two compared classes
-                    cla.push(compcla)
+                vcqueryCallback(data, cla, prop, res)
+                // if (qmode === 0) {
+                //     // visual analytics on one object
+                //     vcqueryCallback(data, cla, prop, res)
+                // } else if (qmode === 1) {
+                //     // visual comparison on two compared classes
+                //     cla.push(compcla)
 
-                    vcqueryCallback(data, cla, prop, res)
-                } else if (qmode === 2) {
-                	// visual comparison on two compared time periods
-                	let comptp = DATA.getValue(comptimeperiod, 'timeperiod')
-                	prop.push({
-                		'tpstr': `${compdaytype} ${comptp['name']}`,
-                		'tp': comptp,
-                		'daytype': compdaytype
-                	})
+                //     vcqueryCallback(data, cla, prop, res)
+                // } else if (qmode === 2) {
+                // 	// visual comparison on two compared time periods
+                // 	let comptp = DATA.getValue(comptimeperiod, 'timeperiod')
+                // 	prop.push({
+                // 		'tpstr': `${compdaytype} ${comptp['name']}`,
+                // 		'tp': comptp,
+                // 		'daytype': compdaytype
+                // 	})
 
-                	vcqueryCallback(data, cla, prop, res)
-                }
+                // 	vcqueryCallback(data, cla, prop, res)
+                // }
 
 
             });
@@ -596,80 +594,115 @@ let vcqueryCallback = function(data, clalist, prop, res) {
     }
 
     pool.getConnection(function(err, connection) {
-    	if (prop.length > 1) {
-    		// more than one time periods
-            let sql1, param1, sql2, param2
-            if (prop[0]['daytype'] === 'all') {
-                sql1 = $sql.spetpqueryrecords
-                param1 = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
+    	let sql, param
+        if (prop[0]['daytype'] === 'all') {
+            sql = $sql.spetpqueryrecords
+            param = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
+        } else {
+            if (prop[0]['tp']['name'] === 'night') {
+                sql = $sql.tpqueryrecordsNight
             } else {
-                if (prop[0]['tp']['name'] === 'night') {
-                    sql1 = $sql.tpqueryrecordsNight
-                } else {
-                    sql1 = $sql.tpqueryrecords
-                }
-                param1 = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
-            }
-
-            if (prop[1]['daytype'] === 'all') {
-                sql2 = $sql.spetpqueryrecords
-                param2 = [idlist, prop[1]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[1]['tp']['name']]]
-            } else {
-                if (prop[1]['tp']['name'] === 'night') {
-                    sql2 = $sql.tpqueryrecordsNight
-                } else {
-                    sql2 = $sql.tpqueryrecords
-                }
-                param2 = [idlist, prop[1]['daytype'], prop[1]['tp']['starthour'], prop[1]['tp']['endhour']]
-            }
-
-    		connection.query(sql1+sql2, param1.concat(param2), function(err, result) {
-    			if (err) throw err;
-
-	            for (let i = result[0].length - 1; i >= 0; i--) {
-	            	result[0][i]['group'] = prop[0]['tpstr']
-	            }
-	            for (let i = result[1].length - 1; i >= 0; i--) {
-	            	result[1][i]['group'] = prop[1]['tpstr']
-	            }
-
-	            // combine two arrays
-
-	            let data = GeoJSON.parse(result[0].concat(result[1]), { Point: ['lat', 'lng'] });
-
-	            res.json({ 'scode': 1, 'data': data, 'group': [prop[0]['tpstr'], prop[1]['tpstr']] });
-	            connection.release();
-    		})
-    	} else {
-    		// one time period
-            let sql, param
-            if (prop[0]['daytype'] === 'all') {
-                sql = $sql.spetpqueryrecords
-                param = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
-            } else {
-                if (prop[0]['tp']['name'] === 'night') {
-                    sql = $sql.tpqueryrecordsNight
-                } else {
-                    sql = $sql.tpqueryrecords
-                }
                 sql = $sql.tpqueryrecords
-                param = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
+            }
+            sql = $sql.tpqueryrecords
+            param = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
+        }
+
+        connection.query(sql, param, function(err, result) {
+            if (err) throw err;
+
+            for (let i = result.length - 1; i >= 0; i--) {
+                let tmpclastr = idclaRelation[ result[i]['id'].toString() ]
+                result[i]['cla'] = `Class ${tmpclastr}`
+                result[i]['tp'] = prop[0]['tpstr']
             }
 
-    		connection.query(sql, param, function(err, result) {
-	            if (err) throw err;
+            let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });
 
-	            for (let i = result.length - 1; i >= 0; i--) {
-	            	let tmpclastr = idclaRelation[ result[i]['id'].toString() ]
-	            	result[i]['group'] = `Class ${tmpclastr}`
-	            }
+            res.json({ 
+                'scode': 1, 
+                'data': data, 
+                'prop': {
+                    'cla': `Class ${clalist[0]}`,
+                    'tp': prop[0]['tpstr']
+                } 
+            });
+            connection.release();
+        });
+        // if (prop.length > 1) {
+    	// 	// more than one time periods
+     //        let sql1, param1, sql2, param2
+     //        if (prop[0]['daytype'] === 'all') {
+     //            sql1 = $sql.spetpqueryrecords
+     //            param1 = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
+     //        } else {
+     //            if (prop[0]['tp']['name'] === 'night') {
+     //                sql1 = $sql.tpqueryrecordsNight
+     //            } else {
+     //                sql1 = $sql.tpqueryrecords
+     //            }
+     //            param1 = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
+     //        }
 
-	            let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });
+     //        if (prop[1]['daytype'] === 'all') {
+     //            sql2 = $sql.spetpqueryrecords
+     //            param2 = [idlist, prop[1]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[1]['tp']['name']]]
+     //        } else {
+     //            if (prop[1]['tp']['name'] === 'night') {
+     //                sql2 = $sql.tpqueryrecordsNight
+     //            } else {
+     //                sql2 = $sql.tpqueryrecords
+     //            }
+     //            param2 = [idlist, prop[1]['daytype'], prop[1]['tp']['starthour'], prop[1]['tp']['endhour']]
+     //        }
 
-	            res.json({ 'scode': 1, 'data': data, 'group': clalist.map(function(d) {return `Class ${d}`}) });
-	            connection.release();
-	        });
-    	}
+    	// 	connection.query(sql1+sql2, param1.concat(param2), function(err, result) {
+    	// 		if (err) throw err;
+
+	    //         for (let i = result[0].length - 1; i >= 0; i--) {
+	    //         	result[0][i]['group'] = prop[0]['tpstr']
+	    //         }
+	    //         for (let i = result[1].length - 1; i >= 0; i--) {
+	    //         	result[1][i]['group'] = prop[1]['tpstr']
+	    //         }
+
+	    //         // combine two arrays
+
+	    //         let data = GeoJSON.parse(result[0].concat(result[1]), { Point: ['lat', 'lng'] });
+
+	    //         res.json({ 'scode': 1, 'data': data, 'group': [prop[0]['tpstr'], prop[1]['tpstr']] });
+	    //         connection.release();
+    	// 	})
+    	// } else {
+    	// 	// one time period
+     //        let sql, param
+     //        if (prop[0]['daytype'] === 'all') {
+     //            sql = $sql.spetpqueryrecords
+     //            param = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
+     //        } else {
+     //            if (prop[0]['tp']['name'] === 'night') {
+     //                sql = $sql.tpqueryrecordsNight
+     //            } else {
+     //                sql = $sql.tpqueryrecords
+     //            }
+     //            sql = $sql.tpqueryrecords
+     //            param = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
+     //        }
+
+    	// 	connection.query(sql, param, function(err, result) {
+	    //         if (err) throw err;
+
+	    //         for (let i = result.length - 1; i >= 0; i--) {
+	    //         	let tmpclastr = idclaRelation[ result[i]['id'].toString() ]
+	    //         	result[i]['group'] = `Class ${tmpclastr}`
+	    //         }
+
+	    //         let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });
+
+	    //         res.json({ 'scode': 1, 'data': data, 'group': clalist.map(function(d) {return `Class ${d}`}) });
+	    //         connection.release();
+	    //     });
+    	// }
     })
 }
 module.exports = home

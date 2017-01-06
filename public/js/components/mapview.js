@@ -40,10 +40,10 @@ class mapview {
 	 * @param  {[type]} idlist [description]
 	 * @return {[type]}        [description]
 	 */
-	pointmapDrawing(data, idlist) {
+	pointmapDrawing(data, idlist, legend) {
 		const LEDINTERVAL = 20,
 			  colorSchema = ['#F3E500', '#F7B20F', '#EE7D1D', '#E74A21', '#D9051B', '#A0077C', '#4F2577', '#172C85'],
-			  colorJudge = idlist.length < 8 && idlist > 2
+			  colorJudge = idlist.length < 8 && idlist.length > 2
 		let self = this
 		
 		d3.select('#F_SVG').remove();
@@ -59,7 +59,7 @@ class mapview {
 		let transform = d3.geoTransform({ point: projectPoint }),
 			path = d3.geoPath().projection(transform);
 
-		let color = d3.scaleOrdinal( colorJudge ? colorSchema:d3.schemeCategory10 ).domain(idlist)
+		let color = d3.scaleOrdinal( colorJudge ? colorSchema.slice(0, idlist.length):d3.schemeCategory10.slice(0, idlist.length) ).domain(idlist)
 		// d3.schemeCategory20
 		// ['#24AADD', 'rgb(250,150,30)']
 
@@ -106,14 +106,14 @@ class mapview {
 			.data(data.features)
 			.enter().append('path')
 			.attr('class', function(d) {
-				return `pointmapfeature ma_class_${d['properties']['group']}`
+				return `pointmapfeature ma_class_${d['properties'][legend]}`
 			})
 			.attr('stroke', function(d) {
-				return color(d['properties']['group'])
+				return color(d['properties'][legend])
 				// return 'rgb(250,150,30)';
 			})
 			.attr('fill', function(d) {
-				return color(d['properties']['group'])
+				return color(d['properties'][legend])
 				// return 'rgb(250,150,30)';
 			})
 			.attr('opacity', '1')

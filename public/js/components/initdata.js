@@ -9,6 +9,10 @@ import { genNumArr } from './lib'
 
 let indexvuedata = {
     'settings': {
+        'entropytypes': [
+            { 'name': 'temporal', 'val': 1 },
+            { 'name': 'spatio', 'val': 2 },
+        ],
         'regions': [
             { 'name': 'Beijing' },
             { 'name': 'Tianjin' },
@@ -121,12 +125,13 @@ let indexvuedata = {
         'classes': [],
         // 
         'qmodes': [
-        	{ 'name': 'VA', 'val': 0, 'tooltip': 'visual analytics on one (kind of) class' },
-        	{ 'name': 'VC (Classes)', 'val': 1, 'tooltip': 'visual comparison on two different classes' },
-        	{ 'name': 'VC (TimePeriods)', 'val': 2, 'tooltip': 'visual comparison on class with two different time periods' },
+        	{ 'name': 'Add Class', 'val': 1, 'tooltip': 'visual comparison on two different classes' },
+        	{ 'name': 'Add TimePeriod', 'val': 2, 'tooltip': 'visual comparison on class with two different time periods' },
         ]
     },
     'selections': {
+        'entropymodeName': 'Select Mode',
+        'entropymodeVal': '',
         'regionVal': 'Beijing',
         'featureName': 'Workday',
         'featureVal': 1,
@@ -148,19 +153,22 @@ let indexvuedata = {
         'sortorderVal': '',
         'modelParamRangeVal': 10,
         
-        'vctimeName': 'Time',
-        'compvctimeName': 'Compared time',
+        'vctimeName': 'TimePeriod',
+        'compvctimeName': 'ComparedTime',
         'vcdaytypeVal': '',
         'vctimeperiodVal': '',
         'compvcdaytypeVal': '',
         'compvctimeperiodVal': '',
         'vcclaName': 'Select Class',
         'compvcclaName': 'ComparedClass',
+        'vcqmodeName': 'Comparison',
         'vcqmodeVal': 0,
 
         'matimeVal': 'Select time',
         'madaytypeVal': '',
-        'matimeperiodVal': ''
+        'matimeperiodVal': '',
+
+        'entropyfilterVal': 0.5
     },
     'states': {
         'userid': '-1',
@@ -178,7 +186,12 @@ let indexvuedata = {
         'classlist': [],
         'clafilename': '',
         'decomposeimgurl': '',
-        'userpoints': []
+        'userpoints': [],
+        'mapresults': {
+            'data': ['',''],
+            'cla': ['',''],
+            'tp': ['','']
+        }
     }
 }
 

@@ -35,6 +35,10 @@ let userpanel = new Vue({
     el: '#userpanel',
     data: indexvuedata,
     methods: {
+        changeEntropyMode(item) {
+            this.selections.entropymodeVal = item.val
+            this.selections.entropymodeName = item.name
+        },
         changeRegion(val) {
             this.selections.regionVal = val
         },
@@ -52,6 +56,10 @@ let userpanel = new Vue({
             this.selections.vctimeName = `${dayname} - ${tpname}`
             this.selections.vcdaytypeVal = dayval
             this.selections.vctimeperiodVal = tpval
+        },
+        changevcMode(item) {
+            this.selections.vcqmodeVal = item.val
+            this.selections.vcqmodeName = item.name
         },
         changecaTime(dayname, tpname, dayval, tpval) {
             this.selections.matimeVal = `${dayname} - ${tpname}`
@@ -190,7 +198,12 @@ let userpanel = new Vue({
                 alert('All fields should be filled.')
             }
         },
-        vcQuery() {
+        /**
+         * [vcQuery description]
+         * @param  {[type]} string refers to the query mode, visual analytics mode ('basic') or visual comparison mode ('comp')
+         * @return {[type]}      [description]
+         */
+        vcQuery(type) {
             let self = this, 
                 daytype = this.selections.vcdaytypeVal, 
                 timeperiod = this.selections.vctimeperiodVal, 
@@ -201,50 +214,126 @@ let userpanel = new Vue({
                 clafilename = this.results.clafilename,
                 qmode = this.selections.vcqmodeVal
 
-            if (daytype !== '' && timeperiod !== '' && cla !== 'Select Class' && clafilename !== '') {
-                if (qmode === 1 && compcla === '') {
-                    alert('All fields should be filled.')
-                    return ;
-                }
-
-                if (qmode === 2 && (comptimeperiod === '' || compdaytype === '')) {
-                    alert('All fields should be filled.')
-                    return ;
-                }
-
-                self.states.vcquery = true
-                document.getElementsByTagName('body')[0].classList.add('loading');
-                // judge if class is ALL type
-                if (cla === 'ALL') {
-                    cla = self.results.classlist
+            // confirm class, daytype and timeperiod
+            let reqcla, reqdaytype, reqtp
+            if (type === 'basic') {
+                // VA MODE
+                if (daytype !== '' && timeperiod !== '' && cla !== 'Select Class') {
+                    reqcla = cla
+                    reqdaytype = daytype
+                    reqtp = timeperiod
                 } else {
-                    cla = [cla]
+                    alert('All fields should be filled.')
+                    return ;
                 }
-
-                let data = {
-                    'qmode': qmode,
-                    'daytype': daytype,
-                    'timeperiod': timeperiod,
-                    'cla': cla,
-                    'compdaytype': compdaytype,
-                    'comptimeperiod': comptimeperiod,
-                    'compcla': compcla,
-                    'clafilename': clafilename
-                }
-                $.post(`/home/v1/vcquery`, data, function(res, err) {
-                    if (res['scode'] === 1) {
-                        self.states.vcquery = false
-                        document.getElementsByTagName('body')[0].classList.remove('loading');
-
-                        mapins.pointmapDrawing(res['data'], res['group'])
-                        console.log('Color map', res['group'])
-                    } else {
-                        alert('server error.')
-                    }
-                })
             } else {
-                alert('All fields should be filled.')
+                // VC MODE
+                if (qmode === 1 && compcla !== 'ComparedClass') {
+                    reqcla = compcla
+                    reqdaytype = daytype
+                    reqtp = timeperiod
+                } else if (qmode === 2 && comptimeperiod !== '' && compdaytype !== '') {
+                    reqcla = cla
+                    reqdaytype = compdaytype
+                    reqtp = comptimeperiod
+                } else {
+                    alert('All fields should be filled.')
+                    return ;
+                }
             }
+
+            // loading effect
+            self.states.vcquery = true
+            document.getElementsByTagName('body')[0].classList.add('loading');
+
+            let data = {
+                'daytype': reqdaytype,
+                'timeperiod': reqtp,
+                'cla': reqcla,
+                'clafilename': clafilename
+            }
+            $.post(`/home/v1/vcquery`, data, function(res, err) {
+                if (res['scode'] === 1) {
+                    self.states.vcquery = false
+                    document.getElementsByTagName('body')[0].classList.remove('loading');
+
+                    // update data in results
+                    if (type === 'basic') {
+                        // VA
+                        self.results['mapresults']['data'][0] = res['data']
+                        self.results['mapresults']['cla'][0] = res['prop']['cla']
+                        self.results['mapresults']['tp'][0] = res['prop']['tp']
+                    } else {
+                        self.results['mapresults']['data'][1] = res['data']
+                        self.results['mapresults']['cla'][1] = res['prop']['cla']
+                        self.results['mapresults']['tp'][1] = res['prop']['tp']
+                    }
+                    
+                    // confirm the render data
+                    let resdata = self.results['mapresults']['data'][0], 
+                        reslist = [self.results['mapresults']['cla'][0]],
+                        resleg = 'cla'
+
+                    let extradata = self.results['mapresults']['data'][1]
+                    if (extradata !== '') {
+                        resdata['features'] = resdata['features'].concat(extradata['features'])
+                        if (qmode === 1) {
+                            reslist = reslist.concat(self.results['mapresults']['cla'][1])
+                        } else {
+                            reslist = self.results['mapresults']['tp']
+                            resleg = 'tp'
+                        }
+                    }
+                    mapins.pointmapDrawing(resdata, reslist, resleg)
+                } else {
+                    alert('server error.')
+                }
+            })
+
+            // if (daytype !== '' && timeperiod !== '' && cla !== 'Select Class' && clafilename !== '') {
+            //     if (qmode === 1 && compcla === '') {
+            //         alert('All fields should be filled.')
+            //         return ;
+            //     }
+
+            //     if (qmode === 2 && (comptimeperiod === '' || compdaytype === '')) {
+            //         alert('All fields should be filled.')
+            //         return ;
+            //     }
+
+            //     self.states.vcquery = true
+            //     document.getElementsByTagName('body')[0].classList.add('loading');
+            //     // judge if class is ALL type
+            //     if (cla === 'ALL') {
+            //         cla = self.results.classlist
+            //     } else {
+            //         cla = [cla]
+            //     }
+
+            //     let data = {
+            //         'qmode': qmode,
+            //         'daytype': daytype,
+            //         'timeperiod': timeperiod,
+            //         'cla': cla,
+            //         'compdaytype': compdaytype,
+            //         'comptimeperiod': comptimeperiod,
+            //         'compcla': compcla,
+            //         'clafilename': clafilename
+            //     }
+            //     $.post(`/home/v1/vcquery`, data, function(res, err) {
+            //         if (res['scode'] === 1) {
+            //             self.states.vcquery = false
+            //             document.getElementsByTagName('body')[0].classList.remove('loading');
+
+            //             mapins.pointmapDrawing(res['data'], res['group'])
+            //             console.log('Color map', res['group'])
+            //         } else {
+            //             alert('server error.')
+            //         }
+            //     })
+            // } else {
+            //     alert('All fields should be filled.')
+            // }
         },
         classplot() {
             let self = this,
@@ -299,7 +388,7 @@ let userpanel = new Vue({
                 $.get(`/home/v1/madisplay?daytype=${daytype}&timeperiod=${timeperiod}&id=${id}`, function(res, err) {
                     if (res['scode'] === 1) {
                         self.states.madisplayquery = false
-                        mapins.pointmapDrawing(res['data'], res['group'])
+                        mapins.pointmapDrawing(res['data'], res['group'], 'group')
 
                         if (self.states.userid !== res['id']) {
                             self.states.userid = res['id']
