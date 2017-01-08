@@ -12,7 +12,51 @@
 	<link href="/favicon.ico" rel="shortcut icon">
 	<style type="text/css" rel="stylesheet">
 	@import '/css/leaflet.css';
-	@import '/css/semantic.css'
+	@import '/css/semantic.css';
+
+	body {
+		margin: 0 !important;
+		padding: 0 !important;
+		border: none !important;
+	}
+
+	#map {
+		height: 100vh;
+	  	width: 100vw;
+	}
+
+	.basic-margin {
+		margin: 1rem !important;
+	}
+	.no-padding {
+		padding: 0 !important;
+	}
+	  
+
+	/*user panel background stylesheets*/
+	#userpanel {
+		top: 0;
+		width: 25vw;
+		position: absolute;
+		/*padding: 1rem;*/
+		margin: 0;
+		height: 100vh;
+	 	z-index: 999;
+	  	background-color: rgba(255,255,255,.7);
+	}
+
+	input[type=range] {
+		width: 100%;
+	}
+
+	.narrowbutton.mini.ui.black.basic.button {
+		padding: .5em .6em;
+		margin-bottom: .75em;
+	}
+
+	.ui.radio.checkbox label {
+	    padding-left: 1.25714em;
+	}
 	</style>
 </head>
 
@@ -139,51 +183,5 @@
 	
 	<script src="/dist/<%= name %>.js"></script>
 </body>
-
-<style type="text/css">
-	body {
-		margin: 0 !important;
-		padding: 0 !important;
-		border: none !important;
-	}
-
-	#map {
-		height: 100vh;
-	  	width: 100vw;
-	}
-
-	.basic-margin {
-		margin: 1rem !important;
-	}
-	.no-padding {
-		padding: 0 !important;
-	}
-	  
-
-	/*user panel background stylesheets*/
-	#userpanel {
-		top: 0;
-		width: 25vw;
-		position: absolute;
-		/*padding: 1rem;*/
-		margin: 0;
-		height: 100vh;
-	 	z-index: 999;
-	  	background-color: rgba(255,255,255,.7);
-	}
-
-	input[type=range] {
-		width: 100%;
-	}
-
-	.narrowbutton.mini.ui.black.basic.button {
-		padding: .5em .6em;
-		margin-bottom: .75em;
-	}
-
-	.ui.radio.checkbox label {
-	    padding-left: 1.25714em;
-	}
-</style>
 
 </html>

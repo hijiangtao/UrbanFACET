@@ -32,27 +32,19 @@
     <div id="userpanel" class="ui row segment">
         <div class="sixteen wide column">
             <div class="row">
-                <% include components/panelheader %>
+                <% include v-components/breadcrumb %>
                 
-                <h5>Spatio-temporal Entropy<i class="right angle icon divider"></i>Definition and filter</h5>
-                <% include components/entropy %>
+                <% include v-components/dataselection %>
+                <% include v-components/entropyselection %>
+                <% include v-components/clusterselection %>
+                <% include v-components/objectselection %>
                 <div class="ui divider"></div>
                 
-                <h5>Discovery Approach<i class="right angle icon divider"></i>Model training and clustering</h5>
-                <% include components/model %>
-
-                <h5><i class="right angle icon divider"></i>Label and visual analytics</h5>
-                <% include components/analytics %>
-
-                <div class="ui divider"></div>
-                <% include components/model2 %>
-                
-                <% include components/panelfooter %>
+                <% include v-components/calculationdisplay %>
             </div>
         </div>
-
-        <% include components/usageguidance %>
-        <% include components/claplot %>
+        
+        <% include v-components/classmodal %>
     </div>
     </div>
     <script src="/dist/<%= name %>.js"></script>

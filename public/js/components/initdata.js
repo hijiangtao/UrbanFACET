@@ -14,10 +14,10 @@ let indexvuedata = {
             { 'name': 'spatio', 'val': 2 },
         ],
         'regions': [
-            { 'name': 'Beijing' },
-            { 'name': 'Tianjin' },
-            { 'name': 'Zhangjiakou' },
-            { 'name': 'Tangshan' }
+            { 'name': 'Beijing', 'val': 'BJ' },
+            { 'name': 'Tianjin', 'val': 'TJ' },
+            { 'name': 'Zhangjiakou', 'val': 'ZJK' },
+            { 'name': 'Tangshan', 'val': 'TS' }
         ],
         'features': [
             { 'name': 'Workday', 'value': 1 },
@@ -132,6 +132,7 @@ let indexvuedata = {
     'selections': {
         'entropymodeName': 'Select Mode',
         'entropymodeVal': '',
+        'regionName': 'BJ',
         'regionVal': 'Beijing',
         'featureName': 'Workday',
         'featureVal': 1,
@@ -144,7 +145,7 @@ let indexvuedata = {
             { 'field': 'Weekday Occupation', 'min': 0, 'max': 100, 'pred': 40 },
             { 'field': 'Class time Occupation', 'min': 0, 'max': 100, 'pred': 40 }
         ],
-        'samplerateVal': '3',
+        'samplerateVal': '10',
         
         'dbscanminptsName': '40',
         'dbscaneps': '0.13',

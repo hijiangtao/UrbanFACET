@@ -1,0 +1,34 @@
+<div id="" class="sixteen wide column">
+    <h5><i class="right angle icon divider"></i>Entropy and Filter</h5>
+
+	<div class="ui form">
+        <div class="inline fields">
+            <label>Type</label>
+            <div class="field">
+                <div class="ui mini compact menu">
+                    <div class="ui simple dropdown item">
+                        <span>{{ selections.entropymodeName }}</span>
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <div v-for='item in settings.entropytypes' class="item" v-on:click='changeEntropyMode(item)'>{{ item.name }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <label>Filter</label>
+            <div class="field">
+                <input type="range" id="entropyfilterrange" value="90">
+                <label>{{ 90 }}</label>
+            </div>
+            <div class="field">
+                <div class="ui checkbox">
+                  <input type="checkbox" name="example">
+                  <label>reverse</label>
+                </div>
+            </div>
+            <div class="field">
+                <button id="clusterBtn" class="ui mini secondary button" :class="{ 'loading': states.clustertrain }" v-on:click='clusterTrain'>Filter</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -25,7 +25,7 @@ import matplotlib.patches as mpatches
 
 # 	return res
 
-def queryUserMatrix(dbname, collectname, queryrate, recordsthre = 0):
+def queryUserMatrix(dbname, collectname, queryrate, recordsthre = 0, entropytype = 'col', entropymin = 0, entropymax = 100):
 	"""Query user matrix from database and return it as a matrix
 	
 	Args:
@@ -37,12 +37,26 @@ def queryUserMatrix(dbname, collectname, queryrate, recordsthre = 0):
 		TYPE: Description
 	"""
 	conn, db = func.connectMongo(dbname)
+	entropyprop = 'entropy.%s' % entropytype
 
 	if recordsthre != 0:
 		# bug
-		qresult = list(db[collectname].find({ '$and': [ { '_id': { '$mod' : [queryrate, 0] } }, { 'totalNum': { '$gt': recordsthre } } ] }, {'pVec': 1, 'gt11sim': 1, 'whlsim': 1, 'totalNum': 1}).sort([ ("_id", 1) ]))
+		qresult = list(db[collectname].find({ '$and': [ 
+			{ '_id': { '$mod' : [queryrate, 0] } }, 
+			{ 'totalNum': { '$gt': recordsthre } }, 
+			{ entropyprop: { '$gt': float(entropymin), '$lt': float(entropymax) } } 
+		] }, 
+		{
+			'pVec': 1, 
+			'gt11sim': 1, 
+			'whlsim': 1, 
+			'totalNum': 1
+		}).sort([ ("_id", 1) ]))
 	else:
-		qresult = list(db[collectname].find({'_id': { '$mod' : [queryrate, 0] }}, {'pVec': 1, 'gt11sim': 1, 'whlsim': 1, 'totalNum': 1}).sort([ ("_id", 1) ]))
+		qresult = list(db[collectname].find( '$and': [
+			{'_id': { '$mod' : [queryrate, 0] }},
+			{ entropyprop: { '$gt': float(entropymin), '$lt': float(entropymax) } } 
+		], {'pVec': 1, 'gt11sim': 1, 'whlsim': 1, 'totalNum': 1}).sort([ ("_id", 1) ]))
 	
 	print "User query result: %s people." % str(len(qresult))
 	data = {
@@ -134,7 +148,7 @@ def drawFigure(data, featureDict, prop):
 		ncol=4,
 		fontsize=5)
 	img = plt.gcf()
-	img.savefig('%s/%s.png' % (prop['dic'], textRecNum), dpi=400)
+	img.savefig( '%s/%s.png' % (prop['imgdic'], textRecNum), dpi=400)
 	plt.close()
 	scatterTC.end()
 
@@ -155,7 +169,7 @@ def drawFigure(data, featureDict, prop):
 		fontsize=5)
 
 	img2 = plt.gcf()
-	img2.savefig('%s/%s.png' % (prop['dic'], textAveSim), dpi=400)
+	img2.savefig('%s/%s.png' % (prop['imgdic'], textAveSim), dpi=400)
 	plt.close()
 	scatterTC2.end()
 
@@ -298,7 +312,7 @@ def usage():
 
 def main(argv):
 	try:
-		opts, args = getopt.getopt(argv, "hc:d:ps:nt:qr:", ["help", "city=", "direcotry=", "plotsize=", "numthreshold=", "queryrate="])
+		opts, args = getopt.getopt(argv, "hc:d:ps:nt:qr:et:in:ax:tp:", ["help", "city=", "direcotry=", "plotsize=", "numthreshold=", "queryrate=", "entropytype=", "entropymin=", "entropymax=", "timeperiod="])
 	except getopt.GetoptError as err:
 		# print help information and exit:
 		print str(err)  # will print something like "option -a not recognized"
@@ -310,7 +324,9 @@ def main(argv):
 		'plotsize': 1,
 		'numthreshold': 0,
 		'queryrate': 10,
-		'dic': '/home/taojiang/git/socialgroupVisualComparison/result'
+		# 'dic': '/home/taojiang/git/socialgroupVisualComparison/result',
+		'dic': '/home/joe/Documents/git/living-modes-visual-comparison/server/data/decompose',
+		'imgdic': '/home/joe/Documents/git/living-modes-visual-comparison/public/img/decompose'
 	}
 	for opt, arg in opts:
 		if opt == '-h':
@@ -326,52 +342,65 @@ def main(argv):
 			prop['numthreshold'] = int(arg)
 		elif opt in ("-qr", "--queryrate"):
 			prop['queryrate'] = int(arg)
+		elif opt in ("-et", "--entropytype"):
+			prop['entropytype'] = str(arg)
+		elif opt in ("-in", "--entropymin"):
+			prop['entropymin'] = float(arg)
+		elif opt in ("-ax", "--entropymax"):
+			prop['entropymax'] = float(arg)
+		elif opt in ("-tp", "--timeperiod"):
+			prop['timeperiod'] = str(arg)
 
 	dbname = 'tdVC'
 	featurecolname = 'features_%s' % city
 
-	print "Inpuy your analysis mode. 1 stands for zero-vector statistics, 2 leads you to decomposing pipeline: "
-	amode = int(raw_input())
+	# for node.js calling runtime
+	feaData, attrDict = queryUserMatrix(dbname, featurecolname, prop['queryrate'], prop['numthreshold'], prop['entropytype'], prop['entropymin'], prop['entropymax'])
+	decompose(feaData, attrDict, prop['timeperiod'], [1], prop)
 
-	if amode == 1:
-		conn, db = func.connectMongo(featurecolname)
-		for x in xrange(0,12):
-			queryFeatureDistribution(db, featurecolname, x)
-		conn.close()
-	else:
-		print """--- Decomposing feature mode ---
-First choose time periods you want to include in your feature
-total: Total
-workday: workday
-weekend: weekend
-daytime: daytime
-evening: evening
-wodaytime: workdaydaytime
-woevening: workdayevening
-wedaytime: weekenddaytime
-weevening: weekendevening
-Multiple selections can be separated by comma, please enter your row selection strategy: """
-		arows = str(raw_input()).split(',')
+	# for local environment runtime
+# 	print "Inpuy your analysis mode. 1 stands for zero-vector statistics, 2 leads you to decomposing pipeline: "
+# 	amode = int(raw_input())
+
+# 	if amode == 1:
+# 		conn, db = func.connectMongo(featurecolname)
+# 		for x in xrange(0,12):
+# 			queryFeatureDistribution(db, featurecolname, x)
+# 		conn.close()
+# 	else:
+# 		print """--- Decomposing feature mode ---
+# First choose time periods you want to include in your feature
+# total: Total
+# workday: workday
+# weekend: weekend
+# daytime: daytime
+# evening: evening
+# wodaytime: workdaydaytime
+# woevening: workdayevening
+# wedaytime: weekenddaytime
+# weevening: weekendevening
+# Multiple selections can be separated by comma, please enter your row selection strategy: """
+# 		arows = str(raw_input()).split(',')
 
 
-		print """
-All 11 POI types are included in our feature selection strategy by default.
-Please choose the decomposing approaches
-1: t-SNE
-2: PCA (Not include Kernel PCA)
-3: MDS
-Multiple selections can be separated by comma, please enter your column selection strategy: """
-		acols = str(raw_input()).split(',')
+# 		print """
+# All 11 POI types are included in our feature selection strategy by default.
+# Please choose the decomposing approaches
+# 1: t-SNE
+# 2: PCA (Not include Kernel PCA)
+# 3: MDS
+# Multiple selections can be separated by comma, please enter your column selection strategy: """
+# 		acols = str(raw_input()).split(',')
 
-		print "Current queryrate is %s, you can input a new value or just leave it blank: " % prop['queryrate']
-		aqrate = str(raw_input())
-		if aqrate != '':
-			prop['queryrate'] = int(aqrate)
+# 		print "Current queryrate is %s, you can input a new value or just leave it blank: " % prop['queryrate']
+# 		aqrate = str(raw_input())
+# 		if aqrate != '':
+# 			prop['queryrate'] = int(aqrate)
 
-		feaData, attrDict = queryUserMatrix(dbname, featurecolname, prop['queryrate'], prop['numthreshold'])
-		for each in arows:
-			decompose(feaData, attrDict, each, acols, prop)
-			gc.collect()
+# 		feaData, attrDict = queryUserMatrix(dbname, featurecolname, prop['queryrate'], prop['numthreshold'])
+# 		for each in arows:
+# 			decompose(feaData, attrDict, each, acols, prop)
+# 			gc.collect()
 			
 
 if __name__ == '__main__':

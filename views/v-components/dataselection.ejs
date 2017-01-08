@@ -1,0 +1,48 @@
+<div id="" class="sixteen wide column">
+	<h5><i class="right angle icon divider"></i>Data and Model</h5>
+	<div class="ui form">
+		<div class="inline fields">
+			<label>Region</label>
+			<div class="field">
+				<div class="ui mini compact menu">
+					<div class="ui simple dropdown item">
+						<span>{{ selections.regionName }}</span>
+						<i class="dropdown icon"></i>
+						<div class="menu">
+							<div v-for='item in settings.regions' class="item" :class="{'disabled': item.name != 'Beijing'}" v-on:click='changeRegion(item)'>{{ item.val }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<label>Feature</label>
+			<div class="field">
+				<div class="ui mini compact menu">
+					<div class="ui simple dropdown item">
+						<span>{{ selections.featureName }}</span>
+						<i class="dropdown icon"></i>
+						<div class="menu">
+							<div v-for='item in settings.features' class="item" v-on:click='changeFeature(item.name, item.value)'>{{ item.name }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<label>Rate</label>
+            <div class="field" data-tooltip="Sampling rate based on whole data" data-position="top left" data-inverted="">
+                <div class="ui mini radio checkbox">
+                    <input type="radio" name="selectrate" value="3" v-model="selections.samplerateVal">
+                    <label>1/3</label>
+                </div>
+            </div>
+            <div class="field" data-tooltip="Sampling rate based on whole data" data-position="top left" data-inverted="">
+                <div class="ui mini radio checkbox">
+                    <input type="radio" name="selectrate" value="10" v-model="selections.samplerateVal">
+                    <label>1/10</label>
+                </div>
+            </div>
+            <div class="field" data-tooltip="Decompose approach" data-position="top left" data-inverted="">
+                <button id="tsneBtn" class="ui mini secondary button" :class="{ 'loading': states.tsnetrain }" v-on:click='tsneTrain'>Sample</button>
+            </div>
+		</div>
+	</div>
+</div>

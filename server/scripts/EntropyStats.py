@@ -43,8 +43,8 @@ def calUsersEntropy(dbName, collectionName):
 
 			bulk.find({'_id': int(item['_id'])}).update({'$set': {
 				'entropy' : {
-					'col': -1,
-					'row': -1
+					'col': colEntropy,
+					'row': rowEntropy
 				}  
 			}})
 	
