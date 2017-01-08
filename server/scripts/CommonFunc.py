@@ -133,8 +133,29 @@ def frange(x, y, jump):
 		yield x
 		x += jump
 
-def timeDisQuery(prop):
-	pass
+def getMatrixSumbyDim(data, mode):
+	"""Sum results by given dimension name
+	
+	Args:
+	    data (MATRIX): Description
+	    mode (STRING): Description
+	
+	Returns:
+	    TYPE: Sum array
+	"""
+	inputData = np.matrix(data)
+	pVecSum = inputData.sum(dtype='float')
+	arrayList = []
+	if pVecSum == 0.0:
+		return -1
+
+	if mode == 'row':
+		arrayList = inputData.sum(axis=1, dtype='float')[0]
+	elif mode == 'column':
+		arrayList = inputData.sum(axis=0, dtype='float')[0]
+		# print pVecSum
+		
+	return np.asarray([each/pVecSum for each in np.nditer(arrayList)])
 
 def getCityLocs(city):
 	# 城市边界信息列表
