@@ -348,6 +348,67 @@ class mapview {
 			})
 		}
 	}
+
+	mapgridDrawing(data, legends, containerid) {
+		if(data.features.length === 0) {
+			alert('No records found!')
+			return ;
+		}
+
+		d3.select('#F_SVG').remove();
+		d3.select('GRID_SVG').remove();
+
+		let self = this,
+			svg = d3.select(self.map.getPanes().overlayPane).append('svg').attr('id', 'GRID_SVG'),
+			g = svg.append('g').attr('class', 'leaflet-zoom-hide').attr('id', 'GRID_G');
+
+		let transform = d3.geoTransform({ point: projectPoint }),
+			path = d3.geoPath().projection(transform);
+
+		let color = d3.scaleLinear().domain([0, Math.log(12)]).range(['yellow', 'red'])
+
+		let feature = g.selectAll('path')
+				.data(data.features)
+				.enter().append("path")
+				.attr('fill', function(d) {
+					return color(d['properties']['entropy'])
+				});
+
+		self.map.on('moveend', reset);
+		reset();
+
+		function reset() {
+			let bounds = path.bounds(data),
+				topLeft = bounds[0],
+				bottomRight = bounds[1];
+
+			svg.attr('width', bottomRight[0] - topLeft[0] + 10)
+				.attr('height', bottomRight[1] - topLeft[1] + 10)
+				.style('left', (topLeft[0] - 5) + 'px')
+				.style('top', (topLeft[1] - 5) + 'px');
+
+			g.attr('transform', 'translate(' + -topLeft[0] + ',' + -topLeft[1] + ')');
+
+			feature.attr('d', path)
+				.attr('transform', 'translate(5, 5)')
+				.style('fill-opacity', 0.7)
+				.attr('fill', function(d) {
+					return color(d['properties']['entropy'])
+				});
+		};
+
+		/**
+		 * Use Leaflet to implement a D3 geometric transformation.
+		 * @param  {[type]} x [description]
+		 * @param  {[type]} y [description]
+		 * @return {[type]}   [description]
+		 */
+		function projectPoint(x, y) {
+			let point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
+			this.stream.point(point.x, point.y);
+		}
+		
+	}
 }
 
 export default mapview
