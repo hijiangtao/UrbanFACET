@@ -30,6 +30,7 @@ node_modules
 
 public/data/*
 public/img/cluster/*
+public/img/decompose/*
 
 semantic/*
 
