@@ -112,7 +112,7 @@ let userpanel = new Vue({
 
                         self.states.tsnetrain = false
                         self.states.clusterdisplay = true
-                        self.results.decomposeimgurl = `/img/decompose/2D-ScatterData_1-in-${srate}_tsne-${featureTypes[featureVal-1]}(byRecNum).png`
+                        self.results.decomposeimgurl = `/img/init/decompose/2D-ScatterData_1-in-${srate}_tsne-${featureTypes[featureVal-1]}(byRecNum).png`
                     } else {
                         alert('server error')
                     }

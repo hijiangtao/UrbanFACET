@@ -231,6 +231,56 @@ let recomdCal = function(dir, file, idstr, res) {
 	}
 }
 
+// 
+let generateGridJSON = function(values, res) {
+	let idEntropy = values[0],
+		records = values[1],
+		grids = values[2]
+
+	let identropyrelation = {}
+	for (let i = idEntropy.length - 1; i >= 0; i--) {
+		identropyrelation[ idEntropy[i]['_id'].toString() ] = parseFloat(idEntropy[i]['entropy']['row'])
+	}
+
+	let recordslen = records.length
+
+	for(let i = 0; i < recordslen; i++) {
+		let id = records[i]['id'].toString(),
+			lat = records[i]['geometry']['coordinates'][1],
+			lng = records[i]['geometry']['coordinates'][0],
+			lngind = parseInt((parseFloat(lng) - 115.64) / 0.01),
+			latind = parseInt((parseFloat(lat) - 39.39) / 0.01),
+			uid = lngind + latind * 152,
+			entropy = identropyrelation[id]
+
+		let currentEntropy = grids[uid]['properties']['entropy']['row'],
+			currentNumber = grids[uid]['properties']['recordnum']
+
+		grids[uid]['properties']['entropy']['row']=(currentEntropy * currentNumber + entropy) / (currentNumber + 1)
+		grids[uid]['properties']['recordnum'] += 1
+	}
+
+	let parsedGeoJSON = { 
+		"type": "FeatureCollection",
+	    "features": []
+	}
+
+	for (let i = grids.length - 1; i >= 0; i--) {
+		parsedGeoJSON['features'].push({
+		  "type": "Feature",
+		  "geometry": grids[i]['geometry'],
+		  "properties": {
+			"uid": grids[i]['properties']['uid'],
+			"entropy": grids[i]['properties']['entropy']['row'],
+			"number": grids[i]['properties']['recordnum'],
+		  }
+		})
+	}
+
+	res.json({ 'scode': 1, 'id': id, 'data': parsedGeoJSON })
+	return ;
+}
+
 let demo = {
 	/**
 	 * [tsnetrain description]
@@ -244,6 +294,7 @@ let demo = {
 			region = params.region,
 			feature = params.feature,
 			srate = params.srate,
+			entropytype = params.et,
 			id = params.id === '-1'? Date.parse(new Date()):params.id;
 
 		// t-sne in all data 
@@ -254,71 +305,17 @@ let demo = {
 			oupimgfile = `2D-ScatterData_1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}(byRecNum).png`
 
 		if (lib.checkDirectory(path.join(scatterdir, oupscatterfile)) && lib.checkDirectory(path.join(imgdir, oupimgfile))) {
-			// get ID list with condition
-			 
-
 			Promise.all([EP.readIdlistFile(scatterdir, oupscatterfile), EP.connectMongo()]).then(function(objs) {
 				console.log('idlist and db are available now.')
-				return EP.mongoQueries(objs[0], objs[1])
+				return EP.mongoQueries(objs[0], objs[1], { 'entropytype': entropytype })
 			}).catch(function(error) {
 				console.log(error);
 			}).then(function(values) {
 				console.log('Three asyncs examples got!')
-				generateGridJSON(values);
+				generateGridJSON(values, res);
 			}).catch(function(error) {
 				console.log(error);
-			})
-
-			function generateGridJSON(values) {
-				let idEntropy = values[0],
-					records = values[1],
-					grids = values[2]
-
-				let identropyrelation = {}
-				for (let i = idEntropy.length - 1; i >= 0; i--) {
-					identropyrelation[ idEntropy[i]['_id'].toString() ] = parseFloat(idEntropy[i]['entropy']['row'])
-				}
-
-				let recordslen = records.length
-
-				for(let i = 0; i < recordslen; i++) {
-					let id = records[i]['id'].toString(),
-						lat = records[i]['geometry']['coordinates'][1],
-						lng = records[i]['geometry']['coordinates'][0],
-						lngind = parseInt((parseFloat(lng) - 115.64) / 0.01),
-						latind = parseInt((parseFloat(lat) - 39.39) / 0.01),
-						uid = lngind + latind * 152,
-						entropy = identropyrelation[id]
-
-					let currentEntropy = grids[uid]['properties']['entropy']['row'],
-						currentNumber = grids[uid]['properties']['recordnum']
-
-					grids[uid]['properties']['entropy']['row']=(currentEntropy * currentNumber + entropy) / (currentNumber + 1)
-					grids[uid]['properties']['recordnum'] += 1
-				}
-
-				let parsedGeoJSON = { 
-					"type": "FeatureCollection",
-				    "features": []
-				}
-
-				for (let i = grids.length - 1; i >= 0; i--) {
-					parsedGeoJSON['features'].push({
-					  "type": "Feature",
-					  "geometry": grids[i]['geometry'],
-					  "properties": {
-						"uid": grids[i]['properties']['uid'],
-						"entropy": grids[i]['properties']['entropy']['row'],
-						"number": grids[i]['properties']['recordnum'],
-					  }
-					})
-				}
-
-				// let result = GeoJSON.parse(grids, { GeoJSON: 'geometry', include: ['properties.uid', 'properties.entropy', 'properties.number'] });
-
-				res.json({ 'scode': 1, 'id': id, 'data': parsedGeoJSON })
-
-			}
+			});
 		} else {
 			res.json({ 'scode': 0 })
 		}
@@ -348,11 +345,22 @@ let demo = {
 
 		console.log('all params loaded:', params)
 
-		shell.exec(`cd ${scriptdir} && python ./DecomposeFeature.py -qr 5 -et ${entropytype} -in ${entropymin} -ax ${entropymax} -tp ${DATA.getValue(feature, 'feature')}`).stdout
+		shell.exec(`cd ${scriptdir} && python ./DecomposeFeature.py -q ${srate} -e ${entropytype} -i ${entropymin} -a ${entropymax} -t ${DATA.getValue(feature, 'feature')}`).stdout
 
-		console.log('script running complete.')
 		if (lib.checkDirectory(path.join(scatterdir, oupscatterfile)) && lib.checkDirectory(path.join(imgdir, oupimgfile))) {
-			recomdCal(path.join(scatterdir, '../tmp'), oupscatterfile, id, res)
+			Promise.all([EP.readIdlistFile(scatterdir, oupscatterfile), EP.connectMongo()]).then(function(objs) {
+				console.log('idlist and db are available now.')
+				return EP.mongoQueries(objs[0], objs[1], { 'entropytype': entropytype })
+			}).catch(function(error) {
+				console.log(error);
+			}).then(function(values) {
+				console.log('Three asyncs examples got!')
+				generateGridJSON(values, res);
+			}).catch(function(error) {
+				console.log(error);
+			});
+
+			
 		} else {
 			res.json({ 'scode': 0 })
 		}

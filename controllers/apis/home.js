@@ -247,7 +247,7 @@ let home = {
 
         let file = `2D-ScatterData_1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}.csv`
             // console.log(path.join(__dirname, '../../server/data', file))
-        if (lib.checkDirectory(path.join(__dirname, '../../server/data', file))) {
+        if (lib.checkDirectory(path.join(__dirname, '../../server/data/init', file))) {
             res.json({ 'scode': 1, 'id': id })
         } else {
             res.json({ 'scode': 0 })
@@ -274,11 +274,11 @@ let home = {
             inpfile = `1-in-${srate}_tsne-${ftypestr}`,
             oupfile = `DBScanCluster-1-in-${srate}_tsne-${ftypestr}(eps=${eps},minpts=${minpts}).csv`,
             scriptdir = path.join(__dirname, '../../server/scripts/'),
-            datadir = path.join(__dirname, '../../server/data')
+            datadir = path.join(__dirname, '../../server/data/init')
 
         let clsrun;
 
-        if (lib.checkDirectory(path.join(datadir + '/tmp', oupfile))) {
+        if (lib.checkDirectory(path.join(datadir + '../tmp', oupfile))) {
             recomdCal(datadir + '/tmp', oupfile, id, res)
                 // if (params.id === '-1') {
                 // 	recomdCal(datadir + '/tmp', oupfile, id, res)
@@ -288,7 +288,7 @@ let home = {
 
         } else {
             clsrun = shell.exec(`cd ${scriptdir} && python ./ClusterUser.py -d ${datadir} -f ${inpfile} -x ${eps} -y ${minpts}`).stdout;
-            if (lib.checkDirectory(path.join(datadir, '/tmp', oupfile))) {
+            if (lib.checkDirectory(path.join(datadir, '../tmp', oupfile))) {
                 recomdCal(datadir + '/tmp', oupfile, id, res)
             } else {
                 res.json({ 'scode': 0 })

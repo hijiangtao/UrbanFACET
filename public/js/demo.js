@@ -27,7 +27,6 @@ import {indexvuedata} from './components/initdata'
 let mapins = new mapview('map'),
     anains = new analysistools('', 'clamatrixheatmap')
 
-
 let featureTypes = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'weevening']
 
 // index page vue instance
@@ -108,7 +107,7 @@ let userpanel = new Vue({
                 $.get(`/demo/v1/tsnetrain?region=${regionVal}&feature=${featureVal}&srate=${srate}&id=${id}`, function(res, err) {
                     if (res['scode']) {
                         // alert('success');
-                        mapins.mapgridDrawing(res['data'], [])
+                        mapins.mapgridDrawing(res['data'], self.settings.entropyfilterrange)
 
                         if (self.states.userid !== res['id']) {
                             self.states.userid = res['id']
@@ -116,7 +115,7 @@ let userpanel = new Vue({
 
                         self.states.tsnetrain = false
                         self.states.clusterdisplay = true
-                        self.results.decomposeimgurl = `/img/decompose/2D-ScatterData_1-in-${srate}_tsne-${featureTypes[featureVal-1]}(byRecNum).png`
+                        self.results.decomposeimgurl = `/img/init/2D-ScatterData_1-in-${srate}_tsne-${featureTypes[featureVal-1]}(byRecNum).png`
                     } else {
                         alert('server error')
                     }
@@ -142,7 +141,7 @@ let userpanel = new Vue({
                 $.get(`/demo/v1/entropyfilter?region=${regionVal}&feature=${featureVal}&srate=${srate}&id=${id}&et=${entropytype}&emin=${entropymin}&emax=${entropymax}`, function(res, err) {
                     if (res['scode']) {
                         // alert('success');
-                        mapins.mapgridDrawing(res['data'], [])
+                        mapins.mapgridDrawing(res['data'], self.settings.entropyfilterrange)
 
                         if (self.states.userid !== res['id']) {
                             self.states.userid = res['id']

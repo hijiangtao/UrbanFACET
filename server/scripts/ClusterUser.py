@@ -219,7 +219,7 @@ def main(argv):
 		'featurecolname': 'features_%s' % city,
 
 		# 'baseurl': '/home/taojiang/datasets/tdVC/decomp-data/Feature-Decompose-in-2D',
-		'baseurl': '/home/joe/Documents/git/living-modes-visual-comparison/server/data/',
+		'baseurl': '/home/joe/Documents/git/living-modes-visual-comparison/server/data/init',
 		'plotsize': 1.0,
 		'queryrate': 3
 	}

@@ -47,6 +47,7 @@ class mapview {
 		let self = this
 		
 		d3.select('#F_SVG').remove();
+		d3.select('#GRID_SVG').remove();
 
 		if(data.features.length === 0) {
 			alert('No records found!')
@@ -349,14 +350,14 @@ class mapview {
 		}
 	}
 
-	mapgridDrawing(data, legends) {
+	mapgridDrawing(data, maxVal) {
 		if(data.features.length === 0) {
 			alert('No records found!')
 			return ;
 		}
 
 		d3.select('#F_SVG').remove();
-		d3.select('GRID_SVG').remove();
+		d3.select('#GRID_SVG').remove();
 
 		let self = this,
 			svg = d3.select(self.map.getPanes().overlayPane).append('svg').attr('id', 'GRID_SVG'),
@@ -365,7 +366,7 @@ class mapview {
 		let transform = d3.geoTransform({ point: projectPoint }),
 			path = d3.geoPath().projection(transform);
 
-		let color = d3.scaleLinear().domain([0, Math.log(12)*0.5, Math.log(12)*0.8, Math.log(12)]).range(['#00A08A', '#00CC00', 'yellow', 'red'])
+		let color = d3.scaleLinear().domain([0, maxVal*0.4, maxVal*0.6, maxVal]).range(['#00A08A', '#00CC00', 'yellow', 'red'])
 
 		let feature = g.selectAll('path')
 				.data(data.features)

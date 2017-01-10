@@ -56,16 +56,17 @@ function connectMongo() {
 	 return promise
 }
 
-function mongoQueries(idlist, db) {
+function mongoQueries(idlist, db, prop) {
 	let collectionFeature = db.collection('features_beijing'),
 		collectionUser = db.collection('users_beijing'),
-		collectionGrid = db.collection('templategrids_beijing')
+		collectionGrid = db.collection('templategrids_beijing'),
+		entropytype = prop['entropytype']
 
 	let q1 = new Promise(function(resolve, reject) {
 		collectionFeature.find({
 			'_id': { '$in': idlist }
 		}, {
-			'entropy.row': 1
+			'entropy.col': 1
 		}).toArray(function(err, data) {
 			if (err) {
 				reject(err)
@@ -81,7 +82,7 @@ function mongoQueries(idlist, db) {
 			'geometry': 1, 
 			'id': 1, 
 			// ???
-			'entropy.row': 1 
+			'entropy.col': 1 
 		}).toArray(function(err, data) {
 			if (err) {
 				reject(err)
