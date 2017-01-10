@@ -181,7 +181,7 @@ def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans')
 
 	img = plt.gcf()
 	filesrc = os.path.join(os.getcwd(), '../../public/img/cluster', '%s.png' % txtCluster)
-	print 'getcwd', os.getcwd(), 'filesrc', filesrc
+	# print 'getcwd', os.getcwd(), 'filesrc', filesrc
 	img.savefig( filesrc, dpi=400)
 	plt.close()
 
@@ -190,7 +190,7 @@ def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans')
 	result = []
 	for x in xrange(0, len(rawdata)):
 		result.append( np.append( rawdata[x], labels[x] ) )
-	func.matrixtofile(result, '%s/tmp/%s.csv' % (baseurl, txtCluster))
+	func.matrixtofile(result, os.path.join(baseurl, '../tmp', txtCluster) )
 
 	return  '%s.csv' % txtCluster
 

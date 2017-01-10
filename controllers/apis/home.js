@@ -278,8 +278,8 @@ let home = {
 
         let clsrun;
 
-        if (lib.checkDirectory(path.join(datadir + '../tmp', oupfile))) {
-            recomdCal(datadir + '/tmp', oupfile, id, res)
+        if (lib.checkDirectory(path.join(datadir, '../tmp', oupfile))) {
+            recomdCal(path.join(datadir, '../tmp'), oupfile, id, res)
                 // if (params.id === '-1') {
                 // 	recomdCal(datadir + '/tmp', oupfile, id, res)
                 // } else {
@@ -289,7 +289,7 @@ let home = {
         } else {
             clsrun = shell.exec(`cd ${scriptdir} && python ./ClusterUser.py -d ${datadir} -f ${inpfile} -x ${eps} -y ${minpts}`).stdout;
             if (lib.checkDirectory(path.join(datadir, '../tmp', oupfile))) {
-                recomdCal(datadir + '/tmp', oupfile, id, res)
+                recomdCal(path.join(datadir, '../tmp'), oupfile, id, res)
             } else {
                 res.json({ 'scode': 0 })
             }
