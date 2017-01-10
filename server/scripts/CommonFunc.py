@@ -150,9 +150,11 @@ def getMatrixSumbyDim(data, mode):
 		return -1
 
 	if mode == 'row':
-		arrayList = inputData.sum(axis=1, dtype='float')[0]
+		arrayList = np.sum(inputData, axis=1) 
+		# inputData.sum(axis=1, dtype='float')[0]
 	elif mode == 'column':
-		arrayList = inputData.sum(axis=0, dtype='float')[0]
+		arrayList = np.sum(inputData, axis=0)  
+		# inputData.sum(axis=0, dtype='float')[0]
 		# print pVecSum
 		
 	return np.asarray([each/pVecSum for each in np.nditer(arrayList)])

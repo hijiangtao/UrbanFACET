@@ -23,7 +23,7 @@ class CityGrid(object):
 			'url': '192.168.1.42',
 			'port': 27017,
 			'dbname': 'tdVC',
-			'gridcolname': 'grids_%s' % city,
+			'gridcolname': 'templategrids_%s' % city,
 			'POIcolname': 'pois_%s' % city
 		}
 
@@ -60,6 +60,7 @@ class CityGrid(object):
 
 		count = 100000
 		tmparray = []
+		# split = round(split, 2)
 		latnum = int((locs['north'] - locs['south']) / split + 1)
 		lngnum = int((locs['east'] - locs['west']) / split + 1)
 
@@ -69,15 +70,17 @@ class CityGrid(object):
 
 		for latind in xrange(0, latnum):
 			for lngind in xrange(0, lngnum):
-				lat = locs['south'] + latind * split
-				lng = locs['west'] + lngind * split
+				lat = round(locs['south'] + latind * split, 2)
+				lng = round(locs['west'] + lngind * split, 2)
+				lnginc = round(lng+split, 2)
+				latinc = round(lat+split, 2)
 				# 一个正方形 geojson 对象，代表当前方块对应的地理边界
-				coordsarr = [ [lng, lat], [lng + 0.001, lat], [lng + 0.001, lat + 0.001], [lng, lat + 0.001], [lng, lat] ]
+				coordsarr = [ [lng, lat], [lnginc, lat], [lnginc, latinc], [lng, latinc], [lng, lat] ]
 
 				featurelistarray = [0]*11
 				typevalid = False
 
-				# query all the POIs less than maxQRadius
+				query all the POIs less than maxQRadius
 				nearPOIList = list(POIs.find({
 					"properties.center": {
 						'$near': {
@@ -120,9 +123,14 @@ class CityGrid(object):
 						"id": "%s-%s-%s" % (self.city, str(lat), str(lng)),
 						"type": "Polygon",
 						"typevalid": typevalid,
-						"center": {"type": "Point", "coordinates": [lng + 0.0005, lat + 0.0005]},
+						"center": {"type": "Point", "coordinates": [lng + split/2, lat + split/2]},
 						"uid": int(lngind + latind * lngnum),
 						"vec": featurelistarray
+						'entropy': {
+							'row': -1,
+							'col': -1
+						},
+						'recordnum': 0
 					},
 					"geometry": {
 						"type": "Polygon",
@@ -153,7 +161,7 @@ def main(argv):
 		usage()
 		sys.exit(2)
 
-	city, dic, r, split = 'beijing', '/home/taojiang/tools', 10, 0.001
+	city, dic, r, split = 'beijing', '/home/taojiang/tools', 10, 0.01
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
@@ -172,7 +180,7 @@ def main(argv):
 
 	cityGrid = CityGrid(city, citylocs, dic, r)
 	midLat, midLng = round((citylocs['south'] +citylocs['north']) / 2.0, 3), round((citylocs['west'] + citylocs['east']) / 2.0, 3)
-	sepcitylocs = sep4Citylocs(citylocs, midLat, midLng, split)
+	# sepcitylocs = sep4Citylocs(citylocs, midLat, midLng, split)
 
 	# ppservers = ()
 	# job_server = pp.Server(ppservers=ppservers)

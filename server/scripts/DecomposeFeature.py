@@ -44,7 +44,7 @@ def queryUserMatrix(dbname, collectname, queryrate, recordsthre = 0, entropytype
 		qresult = list(db[collectname].find({ '$and': [ 
 			{ '_id': { '$mod' : [queryrate, 0] } }, 
 			{ 'totalNum': { '$gt': recordsthre } }, 
-			{ entropyprop: { '$gt': float(entropymin), '$lt': float(entropymax) } } 
+			{ entropyprop: { '$gte': float(entropymin), '$lte': float(entropymax) } } 
 		] }, 
 		{
 			'pVec': 1, 
@@ -53,10 +53,16 @@ def queryUserMatrix(dbname, collectname, queryrate, recordsthre = 0, entropytype
 			'totalNum': 1
 		}).sort([ ("_id", 1) ]))
 	else:
-		qresult = list(db[collectname].find( '$and': [
+		qresult = list(db[collectname].find({ '$and': [
 			{'_id': { '$mod' : [queryrate, 0] }},
-			{ entropyprop: { '$gt': float(entropymin), '$lt': float(entropymax) } } 
-		], {'pVec': 1, 'gt11sim': 1, 'whlsim': 1, 'totalNum': 1}).sort([ ("_id", 1) ]))
+			{ entropyprop: { '$gte': float(entropymin), '$lte': float(entropymax) } } 
+		]}, 
+		{
+			'pVec': 1, 
+			'gt11sim': 1, 
+			'whlsim': 1, 
+			'totalNum': 1
+		}).sort([ ("_id", 1) ]))
 	
 	print "User query result: %s people." % str(len(qresult))
 	data = {
@@ -312,7 +318,7 @@ def usage():
 
 def main(argv):
 	try:
-		opts, args = getopt.getopt(argv, "hc:d:ps:nt:qr:et:in:ax:tp:", ["help", "city=", "direcotry=", "plotsize=", "numthreshold=", "queryrate=", "entropytype=", "entropymin=", "entropymax=", "timeperiod="])
+		opts, args = getopt.getopt(argv, "hc:d:ps:nt:q:e:i:a:t:", ["help", "city=", "direcotry=", "plotsize=", "numthreshold=", "queryrate=", "entropytype=", "entropymin=", "entropymax=", "timeperiod="])
 	except getopt.GetoptError as err:
 		# print help information and exit:
 		print str(err)  # will print something like "option -a not recognized"
@@ -324,10 +330,16 @@ def main(argv):
 		'plotsize': 1,
 		'numthreshold': 0,
 		'queryrate': 10,
+		'entropytype': 'row',
+		'entropymin': 0,
+		'entropymax': 100,
+		'timeperiod': 'workday',
 		# 'dic': '/home/taojiang/git/socialgroupVisualComparison/result',
 		'dic': '/home/joe/Documents/git/living-modes-visual-comparison/server/data/decompose',
 		'imgdic': '/home/joe/Documents/git/living-modes-visual-comparison/public/img/decompose'
 	}
+	print opts
+
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
@@ -340,15 +352,15 @@ def main(argv):
 			prop['plotsize'] = float(arg)
 		elif opt in ("-nt", "--numthreshold"):
 			prop['numthreshold'] = int(arg)
-		elif opt in ("-qr", "--queryrate"):
+		elif opt in ("-q", "--queryrate"):
 			prop['queryrate'] = int(arg)
-		elif opt in ("-et", "--entropytype"):
+		elif opt in ("-e", "--entropytype"):
 			prop['entropytype'] = str(arg)
-		elif opt in ("-in", "--entropymin"):
+		elif opt in ("-i", "--entropymin"):
 			prop['entropymin'] = float(arg)
-		elif opt in ("-ax", "--entropymax"):
+		elif opt in ("-a", "--entropymax"):
 			prop['entropymax'] = float(arg)
-		elif opt in ("-tp", "--timeperiod"):
+		elif opt in ("-t", "--timeperiod"):
 			prop['timeperiod'] = str(arg)
 
 	dbname = 'tdVC'
@@ -356,7 +368,7 @@ def main(argv):
 
 	# for node.js calling runtime
 	feaData, attrDict = queryUserMatrix(dbname, featurecolname, prop['queryrate'], prop['numthreshold'], prop['entropytype'], prop['entropymin'], prop['entropymax'])
-	decompose(feaData, attrDict, prop['timeperiod'], [1], prop)
+	decompose(feaData, attrDict, prop['timeperiod'], ['1'], prop)
 
 	# for local environment runtime
 # 	print "Inpuy your analysis mode. 1 stands for zero-vector statistics, 2 leads you to decomposing pipeline: "

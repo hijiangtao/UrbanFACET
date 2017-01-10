@@ -36,6 +36,8 @@ def calUsersEntropy(dbName, collectionName):
 		# pVecSum = np.matrix(pVec).sum(dtype='float')
 		pVecColSum, pVecRowSum = getMatrixSumbyDim(pVec, 'column'), getMatrixSumbyDim(pVec, 'row')
 
+		
+
 		if type(pVecColSum) is not int:
 			# Calculates entropy results by temporal or spatial mode
 			colEntropy = sc.entropy(pVecColSum)
@@ -45,6 +47,13 @@ def calUsersEntropy(dbName, collectionName):
 				'entropy' : {
 					'col': colEntropy,
 					'row': rowEntropy
+				}  
+			}})
+		else:
+			bulk.find({'_id': int(item['_id'])}).update({'$set': {
+				'entropy' : {
+					'col': -1,
+					'row': -1
 				}  
 			}})
 	

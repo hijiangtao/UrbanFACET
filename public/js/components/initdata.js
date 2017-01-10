@@ -10,8 +10,8 @@ import { genNumArr } from './lib'
 let indexvuedata = {
     'settings': {
         'entropytypes': [
-            { 'name': 'temporal', 'val': 1 },
-            { 'name': 'spatio', 'val': 2 },
+            { 'name': 'temporal', 'val': 'row' },
+            { 'name': 'spatio', 'val': 'col' },
         ],
         'regions': [
             { 'name': 'Beijing', 'val': 'BJ' },
@@ -127,11 +127,12 @@ let indexvuedata = {
         'qmodes': [
         	{ 'name': 'Add Class', 'val': 1, 'tooltip': 'visual comparison on two different classes' },
         	{ 'name': 'Add TimePeriod', 'val': 2, 'tooltip': 'visual comparison on class with two different time periods' },
-        ]
+        ],
+        'entropyfilterrange': Math.log(12)
     },
     'selections': {
-        'entropymodeName': 'Select Mode',
-        'entropymodeVal': '',
+        'entropymodeName': 'temporal',
+        'entropymodeVal': 'row',
         'regionName': 'BJ',
         'regionVal': 'Beijing',
         'featureName': 'Workday',
@@ -169,11 +170,13 @@ let indexvuedata = {
         'madaytypeVal': '',
         'matimeperiodVal': '',
 
-        'entropyfilterVal': 0.5
+        'entropyfilterVal': 0.3,
+        'entropyfilterreverse': false
     },
     'states': {
         'userid': '-1',
         'tsnetrain': false,
+        'entropyfilter': false,
         'clustertrain': false,
         'labeltrain': false,
         'vcquery': false,

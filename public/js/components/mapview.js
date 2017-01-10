@@ -349,7 +349,7 @@ class mapview {
 		}
 	}
 
-	mapgridDrawing(data, legends, containerid) {
+	mapgridDrawing(data, legends) {
 		if(data.features.length === 0) {
 			alert('No records found!')
 			return ;
@@ -365,7 +365,7 @@ class mapview {
 		let transform = d3.geoTransform({ point: projectPoint }),
 			path = d3.geoPath().projection(transform);
 
-		let color = d3.scaleLinear().domain([0, Math.log(12)]).range(['yellow', 'red'])
+		let color = d3.scaleLinear().domain([0, Math.log(12)*0.5, Math.log(12)*0.8, Math.log(12)]).range(['#00A08A', '#00CC00', 'yellow', 'red'])
 
 		let feature = g.selectAll('path')
 				.data(data.features)
@@ -392,8 +392,14 @@ class mapview {
 			feature.attr('d', path)
 				.attr('transform', 'translate(5, 5)')
 				.style('fill-opacity', 0.7)
+				.attr('stroke', 'white')
+				.attr('stroke-width', '0.5')
 				.attr('fill', function(d) {
-					return color(d['properties']['entropy'])
+					let entropy = d['properties']['entropy']
+					if (entropy < 0) {
+						return 'rgba(0,0,0,0)'
+					}
+					return color(entropy)
 				});
 		};
 

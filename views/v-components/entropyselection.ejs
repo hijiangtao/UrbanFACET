@@ -17,17 +17,17 @@
             </div>
             <label>Filter</label>
             <div class="field">
-                <input type="range" id="entropyfilterrange" value="90">
-                <label>{{ 90 }}</label>
+                <input type="range" id="entropyfilterrange" v-model="selections.entropyfilterVal" step='0.01' :max="settings.entropyfilterrange">
+                <label>{{ selections.entropyfilterVal }}</label>
             </div>
             <div class="field">
                 <div class="ui checkbox">
-                  <input type="checkbox" name="example">
+                  <input type="checkbox" name="entropyfilterreverse" v-model='selections.entropyfilterreverse'>
                   <label>reverse</label>
                 </div>
             </div>
             <div class="field">
-                <button id="clusterBtn" class="ui mini secondary button" :class="{ 'loading': states.clustertrain }" v-on:click='clusterTrain'>Filter</button>
+                <button id="clusterBtn" class="ui mini secondary button" :class="{ 'loading': states.entropyfilter }" v-on:click='entropyFilter'>Filter</button>
             </div>
         </div>
     </div>

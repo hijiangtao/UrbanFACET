@@ -38,6 +38,8 @@ let userpanel = new Vue({
         changeEntropyMode(item) {
             this.selections.entropymodeVal = item.val
             this.selections.entropymodeName = item.name
+            this.settings.entropyfilterrange = Math.log(this.selections.entropymodeVal === 'row'? 12:10)
+            this.selections.entropyfilterVal = 0.3
         },
         changeRegion(item) {
             this.selections.regionVal = item.name
@@ -101,11 +103,12 @@ let userpanel = new Vue({
                 id = this.states.userid,
                 srate = this.selections.samplerateVal
 
-            if (regionVal !== 'Select Region' && featureVal !== 0) {
+            if (featureVal !== 0) {
                 self.states.tsnetrain = true
-                $.get(`/demo/v1/tsnetrain?region=${this.selections.regionVal}&feature=${this.selections.featureVal}&srate=${srate}&id=${id}`, function(res, err) {
+                $.get(`/demo/v1/tsnetrain?region=${regionVal}&feature=${featureVal}&srate=${srate}&id=${id}`, function(res, err) {
                     if (res['scode']) {
-                        alert('success');
+                        // alert('success');
+                        mapins.mapgridDrawing(res['data'], [])
 
                         if (self.states.userid !== res['id']) {
                             self.states.userid = res['id']
@@ -121,6 +124,39 @@ let userpanel = new Vue({
             } else {
                 alert('Both region and feature rule should be selected before the t-SNE program runs!');
             }          
+        },
+        entropyFilter() {
+            let self = this, 
+                regionVal = this.selections.regionVal, 
+                featureVal = this.selections.featureVal, 
+                id = this.states.userid,
+                srate = this.selections.samplerateVal,
+                entropytype = this.selections.entropymodeVal,
+                entropyfilterVal = this.selections.entropyfilterVal,
+                revVal = this.selections.entropyfilterreverse
+
+            if (featureVal !== 0) {
+                self.states.entropyfilter = true
+                let entropymin = revVal? entropyfilterVal:0,
+                    entropymax = revVal? this.settings.entropyfilterrange:entropyfilterVal
+                $.get(`/demo/v1/entropyfilter?region=${regionVal}&feature=${featureVal}&srate=${srate}&id=${id}&et=${entropytype}&emin=${entropymin}&emax=${entropymax}`, function(res, err) {
+                    if (res['scode']) {
+                        // alert('success');
+                        mapins.mapgridDrawing(res['data'], [])
+
+                        if (self.states.userid !== res['id']) {
+                            self.states.userid = res['id']
+                        }
+
+                        self.states.entropyfilter = false
+                        self.results.decomposeimgurl = `/img/decompose/2D-ScatterData_1-in-${srate}_tsne-${featureTypes[featureVal-1]}(byRecNum).png`
+                    } else {
+                        alert('server error')
+                    }
+                })
+            } else {
+                alert('Both region and feature rule should be selected before the t-SNE program runs!');
+            } 
         },
         clusterTrain() {
             let self = this, 
