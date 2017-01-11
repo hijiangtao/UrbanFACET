@@ -217,9 +217,7 @@ def main(argv):
 	prop = {
 		'dbname': 'tdVC',
 		'featurecolname': 'features_%s' % city,
-
-		# 'baseurl': '/home/taojiang/datasets/tdVC/decomp-data/Feature-Decompose-in-2D',
-		'baseurl': '/home/joe/Documents/git/living-modes-visual-comparison/server/data/init',
+		'baseurl': os.path.join(os.getcwd(), '../data/init'),
 		'plotsize': 1.0,
 		'queryrate': 3
 	}
@@ -279,4 +277,4 @@ db: DBScan"""
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-clusteruser.log', level=logging.DEBUG)
 	result = main(sys.argv[1:])
-	# print result
+	# print os.getcwd()

@@ -28,10 +28,17 @@ node_modules
 
 *.pyc
 
+# Ignore public img and csv
 public/data/*
 public/img/cluster/*
 public/img/decompose/*
+public/img/tmp/*
 
+# semantic UI dist
 semantic/*
 
-server/data/*
+# Ignore server data
+server/data/cluster/*
+server/data/decompose/*
+server/data/label/*
+server/data/tmp/*

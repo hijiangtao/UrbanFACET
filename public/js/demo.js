@@ -18,7 +18,7 @@ require('../../semantic/dist/components/modal')
 require('../../semantic/dist/components/dimmer')
 require('../../semantic/dist/components/transition')
 
-import {indexvuedata} from './components/initdata'
+import {indexvuedata, featureTypes} from './components/initdata'
 
 /**
  * LMap instance: hold map view instance and its' related operating approaches
@@ -26,8 +26,6 @@ import {indexvuedata} from './components/initdata'
  */
 let mapins = new mapview('map'),
     anains = new analysistools('', 'clamatrixheatmap')
-
-let featureTypes = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'weevening']
 
 // index page vue instance
 let userpanel = new Vue({
@@ -325,51 +323,6 @@ let userpanel = new Vue({
                     alert('server error.')
                 }
             })
-
-            // if (daytype !== '' && timeperiod !== '' && cla !== 'Select Class' && clafilename !== '') {
-            //     if (qmode === 1 && compcla === '') {
-            //         alert('All fields should be filled.')
-            //         return ;
-            //     }
-
-            //     if (qmode === 2 && (comptimeperiod === '' || compdaytype === '')) {
-            //         alert('All fields should be filled.')
-            //         return ;
-            //     }
-
-            //     self.states.vcquery = true
-            //     document.getElementsByTagName('body')[0].classList.add('loading');
-            //     // judge if class is ALL type
-            //     if (cla === 'ALL') {
-            //         cla = self.results.classlist
-            //     } else {
-            //         cla = [cla]
-            //     }
-
-            //     let data = {
-            //         'qmode': qmode,
-            //         'daytype': daytype,
-            //         'timeperiod': timeperiod,
-            //         'cla': cla,
-            //         'compdaytype': compdaytype,
-            //         'comptimeperiod': comptimeperiod,
-            //         'compcla': compcla,
-            //         'clafilename': clafilename
-            //     }
-            //     $.post(`/demo/v1/vcquery`, data, function(res, err) {
-            //         if (res['scode'] === 1) {
-            //             self.states.vcquery = false
-            //             document.getElementsByTagName('body')[0].classList.remove('loading');
-
-            //             mapins.pointmapDrawing(res['data'], res['group'])
-            //             console.log('Color map', res['group'])
-            //         } else {
-            //             alert('server error.')
-            //         }
-            //     })
-            // } else {
-            //     alert('All fields should be filled.')
-            // }
         },
         classplot() {
             let self = this,
@@ -436,7 +389,6 @@ let userpanel = new Vue({
             } else {
                 alert('Please fill in all the fields.')
             }
-            
         }
     },
     computed: {
@@ -494,13 +446,10 @@ let userpanel = new Vue({
         $('.ui.small.modal').modal()
       })
       console.log('The vue isntance has mounted.')
-
-      // mapins.map.invalidateSize()
     }
 })
 
 // remove loading effect
 document.addEventListener("DOMContentLoaded", function(event) { 
-  document.getElementsByTagName('body')[0].classList.remove('loading');
-;
+    document.getElementsByTagName('body')[0].classList.remove('loading');
 });

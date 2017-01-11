@@ -259,8 +259,10 @@ let labvuedata = {
 	tpsel: []
 }
 
+let featureTypes = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'weevening']
 
 export {
 	indexvuedata,
-	labvuedata
+	labvuedata,
+    featureTypes
 }
