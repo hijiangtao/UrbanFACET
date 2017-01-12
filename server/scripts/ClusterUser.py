@@ -190,7 +190,7 @@ def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans')
 	result = []
 	for x in xrange(0, len(rawdata)):
 		result.append( np.append( rawdata[x], labels[x] ) )
-	func.matrixtofile(result, os.path.join(baseurl, '../tmp', txtCluster) )
+	func.matrixtofile(result, os.path.join(baseurl, '../tmp', txtCluster+'.csv') )
 
 	return  '%s.csv' % txtCluster
 

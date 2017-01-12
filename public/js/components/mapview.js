@@ -375,6 +375,7 @@ class mapview {
 
 		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
 
+		d3.select('#mapviewlegend').empty()
 		let ledsvg = d3.select('#mapviewlegend')
 				.attr('width', 200)
 				.attr('height', 50)

@@ -312,7 +312,6 @@ let home = {
         let poi = DATA.getValue(theme, 'theme')
         console.log('Params', params)
 
-        console.time("Label query from mongo")
         MongoClient.connect(url, function(err, db) {
             if (err) {
                 console.log('Unable to connect to the mongoDB server. Error:', err);
@@ -324,7 +323,8 @@ let home = {
                     sortstr = `POI-${poi}-t${paramval-1}`;
 
                 console.log('sort property: ', sortstr)
-
+                console.time("Label query from mongo")
+                
                 collection.find({ 'userid': id }).sort({ sortstr: -1 }).toArray(function(err, result) {
                     if (err) {
                         console.log(err)
