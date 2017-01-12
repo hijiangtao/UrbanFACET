@@ -375,7 +375,7 @@ class mapview {
 
 		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
 
-		d3.select('#mapviewlegend').empty()
+		d3.select('#mapviewlegend').selectAll("*").remove();
 		let ledsvg = d3.select('#mapviewlegend')
 				.attr('width', 200)
 				.attr('height', 50)
@@ -402,14 +402,14 @@ class mapview {
             .attr("x",5)
             .attr("y",20)
             .attr("dy",0)
-            .text(Math.round(minVal, 2));
+            .text(minVal.toFixed(2));
         ledsvg.append("text")
             .attr("class","legendText")
             .attr("text-anchor", "middle")
             .attr("x",130)
             .attr("y",20)
             .attr("dy",0)
-            .text(Math.round(maxVal, 2));
+            .text(maxVal.toFixed(2));
 
         let theData = []
         for (let i = 0; i < colordomain.length; i++) {
