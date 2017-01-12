@@ -350,7 +350,7 @@ class mapview {
 		}
 	}
 
-	mapgridDrawing(data, maxVal) {
+	mapgridDrawing(data, prop) {
 		if(data.features.length === 0) {
 			alert('No records found!')
 			return ;
@@ -360,13 +360,74 @@ class mapview {
 		d3.select('#GRID_SVG').remove();
 
 		let self = this,
+			panelwidth = document.getElementById('userpanel').getBoundingClientRect().width,
 			svg = d3.select(self.map.getPanes().overlayPane).append('svg').attr('id', 'GRID_SVG'),
 			g = svg.append('g').attr('class', 'leaflet-zoom-hide').attr('id', 'GRID_G');
 
 		let transform = d3.geoTransform({ point: projectPoint }),
 			path = d3.geoPath().projection(transform);
 
-		let color = d3.scaleLinear().domain([0, maxVal*0.4, maxVal*0.6, maxVal]).range(['#00A08A', '#00CC00', 'yellow', 'red'])
+		let minVal = Number.parseFloat(prop['minVal']),
+			maxVal = Number.parseFloat(prop['maxVal']),
+			interval = maxVal - minVal,
+			colordomain = [minVal, minVal + interval*0.4, minVal + interval*0.6, maxVal],
+			colorrange = ['#00A08A', '#00CC00', '#ff0', '#C00']
+
+		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
+
+		let ledsvg = d3.select('#mapviewlegend')
+				.attr('width', 200)
+				.attr('height', 50)
+		let svgForLegendStuff = ledsvg.append('g')
+				.append('defs')
+	            .append('linearGradient')
+	            .attr('id', 'legendGradient')
+	            .attr('x1', '0%') // bottom
+	            .attr('y1', '0%')
+	            .attr('x2', '100%') // to top
+	            .attr('y2', '0%')
+
+		// append gradient bar
+        let legend = ledsvg.append('rect')
+        		.attr('fill', 'url(#legendGradient)')
+        		.attr("x",20)
+                .attr("y",10)
+                .attr("width",100)
+                .attr("height",10)
+
+        ledsvg.append("text")
+            .attr("class","legendText")
+            .attr("text-anchor", "middle")
+            .attr("x",5)
+            .attr("y",20)
+            .attr("dy",0)
+            .text(Math.round(minVal, 2));
+        ledsvg.append("text")
+            .attr("class","legendText")
+            .attr("text-anchor", "middle")
+            .attr("x",130)
+            .attr("y",20)
+            .attr("dy",0)
+            .text(Math.round(maxVal, 2));
+
+        let theData = []
+        for (let i = 0; i < colordomain.length; i++) {
+        	theData.push({
+        		'rgb': colorrange[i],
+        		'percent': (colordomain[i]-minVal)/interval
+        	})
+        }
+        console.log(theData)
+        let stops = d3.select('#legendGradient').selectAll('stop')
+            .data(theData)
+            .enter().append('stop')
+            .attr('offset',function(d) {
+			    return d.percent;
+			})
+			.attr('stop-color',function(d) {
+			    return d.rgb;
+			})
+			.attr('stop-opacity', 1)
 
 		let feature = g.selectAll('path')
 				.data(data.features)

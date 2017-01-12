@@ -232,14 +232,18 @@ let recomdCal = function(dir, file, idstr, res) {
 }
 
 // 
-let generateGridJSON = function(values, res) {
+let generateGridJSON = function(values, res, prop) {
 	let idEntropy = values[0],
 		records = values[1],
-		grids = values[2]
+		grids = values[2],
+		entropytype = prop['entropytype']
+
+	// console.log(idEntropy)
 
 	let identropyrelation = {}
 	for (let i = idEntropy.length - 1; i >= 0; i--) {
-		identropyrelation[ idEntropy[i]['_id'].toString() ] = parseFloat(idEntropy[i]['entropy']['row'])
+		// console.log(idEntropy[i])
+		identropyrelation[ idEntropy[i]['_id'].toString() ] = parseFloat(idEntropy[i]['entropy'][entropytype])
 	}
 
 	let recordslen = records.length
@@ -253,10 +257,10 @@ let generateGridJSON = function(values, res) {
 			uid = lngind + latind * 152,
 			entropy = identropyrelation[id]
 
-		let currentEntropy = grids[uid]['properties']['entropy']['row'],
+		let currentEntropy = grids[uid]['properties']['entropy'][entropytype],
 			currentNumber = grids[uid]['properties']['recordnum']
 
-		grids[uid]['properties']['entropy']['row']=(currentEntropy * currentNumber + entropy) / (currentNumber + 1)
+		grids[uid]['properties']['entropy'][entropytype]=(currentEntropy * currentNumber + entropy) / (currentNumber + 1)
 		grids[uid]['properties']['recordnum'] += 1
 	}
 
@@ -271,13 +275,13 @@ let generateGridJSON = function(values, res) {
 		  "geometry": grids[i]['geometry'],
 		  "properties": {
 			"uid": grids[i]['properties']['uid'],
-			"entropy": grids[i]['properties']['entropy']['row'],
+			"entropy": grids[i]['properties']['entropy'][entropytype],
 			"number": grids[i]['properties']['recordnum'],
 		  }
 		})
 	}
 
-	res.json({ 'scode': 1, 'id': id, 'data': parsedGeoJSON })
+	res.json({ 'scode': 1, 'id': prop['id'], 'data': parsedGeoJSON })
 	return ;
 }
 
@@ -305,6 +309,7 @@ let demo = {
 			oupimgfile = `2D-ScatterData_1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}(byRecNum).png`
 
 		if (lib.checkDirectory(path.join(scatterdir, oupscatterfile)) && lib.checkDirectory(path.join(imgdir, oupimgfile))) {
+			// Read idlist from file
 			Promise.all([EP.readIdlistFile(scatterdir, oupscatterfile), EP.connectMongo()]).then(function(objs) {
 				console.log('idlist and db are available now.')
 				return EP.mongoQueries(objs[0], objs[1], { 'entropytype': entropytype })
@@ -312,7 +317,10 @@ let demo = {
 				console.log(error);
 			}).then(function(values) {
 				console.log('Three asyncs examples got!')
-				generateGridJSON(values, res);
+				generateGridJSON(values, res, { 
+					'entropytype': entropytype,
+					'id': id
+				});
 			}).catch(function(error) {
 				console.log(error);
 			});
@@ -337,33 +345,57 @@ let demo = {
 			entropymin = params.emin,
 			entropymax = params.emax
 
-		scriptdir = path.join(__dirname, '../../server/scripts/')
-		scatterdir = path.join(__dirname, '../../server/data/decompose')
-		imgdir = path.join(__dirname, '../../public/img/decompose')
-		oupscatterfile = `2D-ScatterData_1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}.csv`
-		oupimgfile = `2D-ScatterData_1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}(byRecNum).png`
+		// scriptdir = path.join(__dirname, '../../server/scripts/')
+		// scatterdir = path.join(__dirname, '../../server/data/decompose')
+		// imgdir = path.join(__dirname, '../../public/img/decompose')
+		// oupscatterfile = `2D-ScatterData_1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}.csv`
+		// oupimgfile = `2D-ScatterData_1-in-${srate}_tsne-${DATA.getValue(feature, 'feature')}(byRecNum).png`
 
 		console.log('all params loaded:', params)
 
-		shell.exec(`cd ${scriptdir} && python ./DecomposeFeature.py -q ${srate} -e ${entropytype} -i ${entropymin} -a ${entropymax} -t ${DATA.getValue(feature, 'feature')}`).stdout
+		// Read idlist from executed script results
+		// shell.exec(`cd ${scriptdir} && python ./DecomposeFeature.py -q ${srate} -e ${entropytype} -i ${entropymin} -a ${entropymax} -t ${DATA.getValue(feature, 'feature')}`).stdout
 
-		if (lib.checkDirectory(path.join(scatterdir, oupscatterfile)) && lib.checkDirectory(path.join(imgdir, oupimgfile))) {
-			Promise.all([EP.readIdlistFile(scatterdir, oupscatterfile), EP.connectMongo()]).then(function(objs) {
-				console.log('idlist and db are available now.')
-				return EP.mongoQueries(objs[0], objs[1], { 'entropytype': entropytype })
-			}).catch(function(error) {
-				console.log(error);
-			}).then(function(values) {
-				console.log('Three asyncs examples got!')
-				generateGridJSON(values, res);
-			}).catch(function(error) {
-				console.log(error);
-			});
+		// if (lib.checkDirectory(path.join(scatterdir, oupscatterfile)) && lib.checkDirectory(path.join(imgdir, oupimgfile))) {
+		// 	Promise.all([EP.readIdlistFile(scatterdir, oupscatterfile), EP.connectMongo()]).then(function(objs) {
+		// 		console.log('idlist and db are available now.')
+		// 		return EP.mongoQueries(objs[0], objs[1], { 'entropytype': entropytype })
+		// 	}).catch(function(error) {
+		// 		console.log(error);
+		// 		res.json({ 'scode': 0 })
+		// 	}).then(function(values) {
+		// 		console.log('Three asyncs examples got!')
+		// 		generateGridJSON(values, res, { 
+				// 	'entropytype': entropytype,
+				// 	'id': id
+				// });
+		// 	}).catch(function(error) {
+		// 		console.log(error);
+		// 		res.json({ 'scode': 0 })
+		// 	});
 
 			
-		} else {
+		// } else {
+		// 	res.json({ 'scode': 0 })
+		// }
+
+		// Read idlist from mongo with condition value sets
+		Promise.all([EP.readIdlistMongo('features_beijing', srate, entropymin, entropymax, { 'entropytype': entropytype })]).then(function(objs) {
+			console.log('idlist and db are available now.')
+			return EP.mongoQueries(objs[0][0], objs[0][1], { 'entropytype': entropytype })
+		}).catch(function(error) {
+			console.log(error);
 			res.json({ 'scode': 0 })
-		}
+		}).then(function(values) {
+			console.log('Three asyncs examples got!')
+			generateGridJSON(values, res, { 
+				'entropytype': entropytype,
+				'id': id
+			});
+		}).catch(function(error) {
+			console.log(error);
+			res.json({ 'scode': 0 })
+		});
 
 	},
 	clustertrain(req, res, next) {
@@ -384,22 +416,22 @@ let demo = {
 
 		let clsrun;
 
-		if (lib.checkDirectory(path.join(datadir + '/tmp', oupfile))) {
-			recomdCal(datadir + '/tmp', oupfile, id, res)
-				// if (params.id === '-1') {
-				// 	recomdCal(datadir + '/tmp', oupfile, id, res)
-				// } else {
-				// 	res.json({ 'scode': 1, 'clafilename': `${datadir}/tmp/${oupfile}`, 'id': params.id, 'recomdData': [] })
-				// }
+		if (lib.checkDirectory(path.join(datadir, '../tmp', oupfile))) {
+            recomdCal(path.join(datadir, '../tmp'), oupfile, id, res)
+                // if (params.id === '-1') {
+                // 	recomdCal(datadir + '/tmp', oupfile, id, res)
+                // } else {
+                // 	res.json({ 'scode': 1, 'clafilename': `${datadir}/tmp/${oupfile}`, 'id': params.id, 'recomdData': [] })
+                // }
 
-		} else {
-			clsrun = shell.exec(`cd ${scriptdir} && python ./ClusterUser.py -d ${datadir} -f ${inpfile} -x ${eps} -y ${minpts}`).stdout;
-			if (lib.checkDirectory(path.join(datadir, '/tmp', oupfile))) {
-				recomdCal(datadir + '/tmp', oupfile, id, res)
-			} else {
-				res.json({ 'scode': 0 })
-			}
-		}
+        } else {
+            clsrun = shell.exec(`cd ${scriptdir} && python ./ClusterUser.py -d ${datadir} -f ${inpfile} -x ${eps} -y ${minpts}`).stdout;
+            if (lib.checkDirectory(path.join(datadir, '../tmp', oupfile))) {
+                recomdCal(path.join(datadir, '../tmp'), oupfile, id, res)
+            } else {
+                res.json({ 'scode': 0 })
+            }
+        }
 	},
 	/**
 	 * [labeltrain description]
@@ -647,11 +679,6 @@ let demo = {
 						'latitude': Number.parseFloat(result[i]['lat'])
 					}
 				}
-
-				// console.time('DBSCAN')
-				// let dbscanner = jDBSCAN().eps(0.005).minPts(30).distance('HAVERSINE').data(result),
-				//     point_assignment_result = dbscanner();
-				// console.timeEnd('DBSCAN')
 
 				let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });
 

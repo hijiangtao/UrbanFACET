@@ -98,14 +98,18 @@ let userpanel = new Vue({
                 regionVal = this.selections.regionVal, 
                 featureVal = this.selections.featureVal, 
                 id = this.states.userid,
-                srate = this.selections.samplerateVal
+                srate = this.selections.samplerateVal,
+                et = this.selections.entropymodeVal
 
             if (featureVal !== 0) {
                 self.states.tsnetrain = true
-                $.get(`/demo/v1/tsnetrain?region=${regionVal}&feature=${featureVal}&srate=${srate}&id=${id}`, function(res, err) {
+                $.get(`/demo/v1/tsnetrain?region=${regionVal}&feature=${featureVal}&srate=${srate}&id=${id}&et=${et}`, function(res, err) {
                     if (res['scode']) {
-                        // alert('success');
-                        mapins.mapgridDrawing(res['data'], self.settings.entropyfilterrange)
+                        let prop = {
+                            'minVal': 0,
+                            'maxVal': self.settings.entropyfilterrange
+                        }
+                        mapins.mapgridDrawing(res['data'], prop)
 
                         if (self.states.userid !== res['id']) {
                             self.states.userid = res['id']
@@ -135,11 +139,15 @@ let userpanel = new Vue({
             if (featureVal !== 0) {
                 self.states.entropyfilter = true
                 let entropymin = revVal? entropyfilterVal:0,
-                    entropymax = revVal? this.settings.entropyfilterrange:entropyfilterVal
+                    entropymax = revVal? this.settings.entropyfilterrange:entropyfilterVal,
+                    prop = {
+                        'minVal': entropymin,
+                        'maxVal': entropymax
+                    }
                 $.get(`/demo/v1/entropyfilter?region=${regionVal}&feature=${featureVal}&srate=${srate}&id=${id}&et=${entropytype}&emin=${entropymin}&emax=${entropymax}`, function(res, err) {
                     if (res['scode']) {
                         // alert('success');
-                        mapins.mapgridDrawing(res['data'], self.settings.entropyfilterrange)
+                        mapins.mapgridDrawing(res['data'], prop)
 
                         if (self.states.userid !== res['id']) {
                             self.states.userid = res['id']

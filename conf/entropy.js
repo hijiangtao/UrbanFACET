@@ -14,6 +14,41 @@ let url = 'mongodb://192.168.1.42:27017/tdVC';
 let fs = require('fs');
 let path = require('path');
 
+function readIdlistMongo(dbname, queryrate, minVal, maxVal, prop) {
+	let promise = new Promise(function(resolve, reject) {
+		MongoClient.connect(url, function(err, db) {
+			if (err) {
+				reject(err)
+			} else {
+				let entropycondition = {};
+				entropycondition[`entropy.${prop['entropytype']}`] = { 
+					'$gte': Number.parseFloat(minVal), 
+					'$lte': Number.parseFloat(maxVal) 
+				} 
+
+				db.collection(dbname).find({ '$and': [
+					{'_id': { '$mod' : [Number.parseInt(queryrate), 0] }},
+					entropycondition 
+				]}, {
+					'_id': 1
+				}).toArray(function(err, data) {
+					if (err) {
+						reject(err)
+					} else {
+						let idlist = []
+						for (let i = data.length - 1; i >= 0; i--) {
+							idlist.push(data[i]['_id'])
+						}
+						resolve([idlist, db])
+					}
+				})
+			}
+		})
+	})
+
+	return promise
+}
+
 function readIdlistFile(dir, file) {
 	 let promise = new Promise(function(resolve, reject) {
 		 fs.readFile(path.join(dir, file), function(err, data) {
@@ -25,7 +60,7 @@ function readIdlistFile(dir, file) {
 					datalen = rawdata.length
 
 				console.log('File Row: ', datalen)
-				// ??? too many lines
+				
 				for (let i = 0; i < datalen; i++) {
 					let tmparr = rawdata[i].split(','),
 						id = Number.parseInt(tmparr[0]);
@@ -47,7 +82,6 @@ function connectMongo() {
 			if (err) {
 				reject(err)
 			} else {
-				// console.log(db)
 				resolve(db)
 			}
 		})
@@ -60,17 +94,21 @@ function mongoQueries(idlist, db, prop) {
 	let collectionFeature = db.collection('features_beijing'),
 		collectionUser = db.collection('users_beijing'),
 		collectionGrid = db.collection('templategrids_beijing'),
-		entropytype = prop['entropytype']
+		entropytype = prop['entropytype'],
+		eprop = "entropy." + entropytype
+
+	let q1filter = {}
+	q1filter[eprop] = 1
+	// console.log(eprop)
 
 	let q1 = new Promise(function(resolve, reject) {
 		collectionFeature.find({
 			'_id': { '$in': idlist }
-		}, {
-			'entropy.col': 1
-		}).toArray(function(err, data) {
+		}, q1filter).toArray(function(err, data) {
 			if (err) {
 				reject(err)
 			} else {
+				// console.log(data)
 				resolve(data)
 			}
 		})
@@ -80,9 +118,7 @@ function mongoQueries(idlist, db, prop) {
 			'id': { '$in': idlist }
 		}, {
 			'geometry': 1, 
-			'id': 1, 
-			// ???
-			'entropy.col': 1 
+			'id': 1
 		}).toArray(function(err, data) {
 			if (err) {
 				reject(err)
@@ -107,6 +143,7 @@ function mongoQueries(idlist, db, prop) {
 }
 
 module.exports = {
+	readIdlistMongo: readIdlistMongo,
 	readIdlistFile: readIdlistFile,
 	connectMongo: connectMongo,
 	mongoQueries: mongoQueries

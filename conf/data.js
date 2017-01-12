@@ -6,6 +6,13 @@
  */
 
 'use strict'
+// MongoDB Settings
+let mongodb = require('mongodb');
+let MongoClient = mongodb.MongoClient;
+let url = 'mongodb://192.168.1.42:27017/tdVC';
+
+// MySQL Settings
+let pool = require('./db');
 
 let getValue = function(key, type) {
 	let features = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'weevening'],
@@ -85,6 +92,36 @@ let getValue = function(key, type) {
 	return ''
 }
 
+let connectMongo = function() {
+	let promise = new Promise(function(resolve, reject) {
+		MongoClient.connect(url, function(err, db) {
+			if (err) {
+				reject(err)
+			} else {
+				resolve(db)
+			}
+		})
+	})
+
+	return promise
+}
+
+let connectMySQL = function(argument) {
+	let promise = new Promise(function(resolve, reject) {
+		pool.getConnection(function(err, connection) {
+			if (err) {
+				reject(err)
+			} else {
+				resolve(connection)
+			}
+		})
+	})
+
+	return promise
+}
+
 module.exports = {
-	getValue: getValue
+	getValue: getValue,
+	connectMongo: connectMongo,
+	connectMySQL: connectMySQL
 }
