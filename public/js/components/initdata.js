@@ -261,6 +261,16 @@ let labvuedata = {
 
 let featureTypes = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'weevening']
 
+let regionsList = [{
+    'name': '回龙观',
+    'coordinates': []
+}, {
+    'name': '天通苑',
+    'coordinates': []
+}， {
+    'name': ''
+}]
+
 export {
 	indexvuedata,
 	labvuedata,
