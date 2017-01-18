@@ -128,7 +128,14 @@ let indexvuedata = {
         	{ 'name': 'Add Class', 'val': 1, 'tooltip': 'visual comparison on two different classes' },
         	{ 'name': 'Add TimePeriod', 'val': 2, 'tooltip': 'visual comparison on class with two different time periods' },
         ],
-        'entropyfilterrange': Math.log(12)
+        'entropyfilterrange': Math.log(12),
+        'hotareas': [
+            { 'name': '回龙观', 'val': 'hlg' },
+            { 'name': '天通苑', 'val': 'tty' },
+            { 'name': '北航', 'val': 'bh' },
+            { 'name': '西直门', 'val': 'xzm' },
+            { 'name': '北京西站', 'val': 'bjxz' }
+        ]
     },
     'selections': {
         'entropymodeName': 'temporal',
@@ -171,7 +178,10 @@ let indexvuedata = {
         'matimeperiodVal': '',
 
         'entropyfilterVal': 0.3,
-        'entropyfilterreverse': false
+        'entropyfilterreverse': false,
+
+        'areaName': 'Select Area',
+        'areaVal': ''
     },
     'states': {
         'userid': '-1',
@@ -261,13 +271,25 @@ let labvuedata = {
 
 let featureTypes = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'weevening']
 
+let areaCenter = {
+    'BJhlg': {
+
+    },
+    'BJtty': {
+        
+    },
+    'BJbh': {
+
+    }
+}
+
 let regionsList = [{
     'name': '回龙观',
     'coordinates': []
 }, {
     'name': '天通苑',
     'coordinates': []
-}， {
+}, {
     'name': ''
 }]
 

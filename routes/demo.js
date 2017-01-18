@@ -32,5 +32,12 @@ router.get('/v1/classplot', function(req, res, next) {
 router.get('/v1/madisplay', function(req, res, next) {
 	demo.madisplayquery(req, res, next);
 })
+router.get('/v1/areaentropy', function(req, res, next) {
+	demo.areaentropyquery(req, res, next);
+})
+router.get('/v1/areatprecords', function(req, res, next) {
+	demo.areatprecordsquery(req, res, next);
+})
+
 
 module.exports = router;

@@ -1,5 +1,25 @@
 // mysql backup
 
+// huilongguan
+// Query OK, 4957 rows affected (14.13 sec)
+// Query OK, 124985 rows affected (14.16 sec)
+
+// tiantongyuan
+// Query OK, 2467 rows affected (9.06 sec)
+// Query OK, 51228 rows affected (9.13 sec)
+
+// beihang
+// Query OK, 887 rows affected (10.09 sec)
+// Query OK, 9224 rows affected (8.24 sec)
+
+// xizhimen
+// Query OK, 7306 rows affected (4 min 59.70 sec)
+// Query OK, 87186 rows affected (2.94 sec)
+
+// bjxizhan
+// Query OK, 1457 rows affected (6.34 sec)
+// Query OK, 4179 rows affected (5.47 sec)
+
 // get idlist and records for specific regions 
 huilongguan_idlist: "SELECT DISTINCT(tdid) from cbeijing WHERE lat >40.0581 AND lat<40.0933 AND lng >116.2917 AND lng <116.3694 INTO OUTFILE '/tmp/huilongguan-idlist.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
 huilongguan_records: "SELECT * from cbeijing WHERE lat >40.0581 AND lat<40.0933 AND lng >116.2917 AND lng <116.3694 INTO OUTFILE '/tmp/huilongguan-records.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",

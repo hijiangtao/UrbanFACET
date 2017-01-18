@@ -22,6 +22,7 @@ let pool = require('../../conf/db');
 const lib = require('../../conf/lib');
 const DATA = require('../../conf/data');
 let EP = require('../../conf/entropy');
+let RECORDS = require('../../conf/records');
 
 const shell = require('shelljs');
 const ZERO = 0.00000001
@@ -232,58 +233,58 @@ let recomdCal = function(dir, file, idstr, res) {
 }
 
 // 
-let generateGridJSON = function(values, res, prop) {
-	let idEntropy = values[0],
-		records = values[1],
-		grids = values[2],
-		entropytype = prop['entropytype']
+// let generateGridJSON = function(values, res, prop) {
+// 	let idEntropy = values[0],
+// 		records = values[1],
+// 		grids = values[2],
+// 		entropytype = prop['entropytype']
 
-	// console.log(idEntropy)
+// 	// console.log(idEntropy)
 
-	let identropyrelation = {}
-	for (let i = idEntropy.length - 1; i >= 0; i--) {
-		// console.log(idEntropy[i])
-		identropyrelation[ idEntropy[i]['_id'].toString() ] = parseFloat(idEntropy[i]['entropy'][entropytype])
-	}
+// 	let identropyrelation = {}
+// 	for (let i = idEntropy.length - 1; i >= 0; i--) {
+// 		// console.log(idEntropy[i])
+// 		identropyrelation[ idEntropy[i]['_id'].toString() ] = parseFloat(idEntropy[i]['entropy'][entropytype])
+// 	}
 
-	let recordslen = records.length
+// 	let recordslen = records.length
 
-	for(let i = 0; i < recordslen; i++) {
-		let id = records[i]['id'].toString(),
-			lat = records[i]['geometry']['coordinates'][1],
-			lng = records[i]['geometry']['coordinates'][0],
-			lngind = parseInt((parseFloat(lng) - 115.64) / 0.01),
-			latind = parseInt((parseFloat(lat) - 39.39) / 0.01),
-			uid = lngind + latind * 152,
-			entropy = identropyrelation[id]
+// 	for(let i = 0; i < recordslen; i++) {
+// 		let id = records[i]['id'].toString(),
+// 			lat = records[i]['geometry']['coordinates'][1],
+// 			lng = records[i]['geometry']['coordinates'][0],
+// 			lngind = parseInt((parseFloat(lng) - 115.64) / 0.01),
+// 			latind = parseInt((parseFloat(lat) - 39.39) / 0.01),
+// 			uid = lngind + latind * 152,
+// 			entropy = identropyrelation[id]
 
-		let currentEntropy = grids[uid]['properties']['entropy'][entropytype],
-			currentNumber = grids[uid]['properties']['recordnum']
+// 		let currentEntropy = grids[uid]['properties']['entropy'][entropytype],
+// 			currentNumber = grids[uid]['properties']['recordnum']
 
-		grids[uid]['properties']['entropy'][entropytype]=(currentEntropy * currentNumber + entropy) / (currentNumber + 1)
-		grids[uid]['properties']['recordnum'] += 1
-	}
+// 		grids[uid]['properties']['entropy'][entropytype]=(currentEntropy * currentNumber + entropy) / (currentNumber + 1)
+// 		grids[uid]['properties']['recordnum'] += 1
+// 	}
 
-	let parsedGeoJSON = { 
-		"type": "FeatureCollection",
-	    "features": []
-	}
+// 	let parsedGeoJSON = { 
+// 		"type": "FeatureCollection",
+// 	    "features": []
+// 	}
 
-	for (let i = grids.length - 1; i >= 0; i--) {
-		parsedGeoJSON['features'].push({
-		  "type": "Feature",
-		  "geometry": grids[i]['geometry'],
-		  "properties": {
-			"uid": grids[i]['properties']['uid'],
-			"entropy": grids[i]['properties']['entropy'][entropytype],
-			"number": grids[i]['properties']['recordnum'],
-		  }
-		})
-	}
+// 	for (let i = grids.length - 1; i >= 0; i--) {
+// 		parsedGeoJSON['features'].push({
+// 		  "type": "Feature",
+// 		  "geometry": grids[i]['geometry'],
+// 		  "properties": {
+// 			"uid": grids[i]['properties']['uid'],
+// 			"entropy": grids[i]['properties']['entropy'][entropytype],
+// 			"number": grids[i]['properties']['recordnum'],
+// 		  }
+// 		})
+// 	}
 
-	res.json({ 'scode': 1, 'id': prop['id'], 'data': parsedGeoJSON })
-	return ;
-}
+// 	res.json({ 'scode': 1, 'id': prop['id'], 'data': parsedGeoJSON })
+// 	return ;
+// }
 
 let demo = {
 	/**
@@ -317,12 +318,18 @@ let demo = {
 				console.log(error);
 			}).then(function(values) {
 				console.log('Three asyncs examples got!')
-				generateGridJSON(values, res, { 
+				let result = RECORDS.generateGridJSON(values, {
 					'entropytype': entropytype,
 					'id': id
-				});
-			}).catch(function(error) {
-				console.log(error);
+				})
+
+				res.json({ 
+					'scode': 1, 
+					'id': result[0], 
+					'data': result[1] 
+				})
+			}).catch(function(err) {
+				console.log(err);
 			});
 		} else {
 			res.json({ 'scode': 0 })
@@ -388,10 +395,16 @@ let demo = {
 			res.json({ 'scode': 0 })
 		}).then(function(values) {
 			console.log('Three asyncs examples got!')
-			generateGridJSON(values, res, { 
+			let result = RECORDS.generateGridJSON(values, { 
 				'entropytype': entropytype,
 				'id': id
 			});
+
+			res.json({ 
+				'scode': 1, 
+				'id': result[0], 
+				'data': result[1] 
+			})
 		}).catch(function(error) {
 			console.log(error);
 			res.json({ 'scode': 0 })
@@ -503,31 +516,41 @@ let demo = {
 	 */
 	vcquery(req, res, next) {
 		let params = req.body,
-			// qmode = Number.parseInt(params['qmode']),
 			daytype = params['daytype'],
 			timeperiod = params['timeperiod'],
 			cla = [ params['cla'] ],
-			// compdaytype = params['compdaytype'],
-			// comptimeperiod = params['comptimeperiod'],
-			// compcla = Number.parseInt(params['compcla']),
-			clafilename = params['clafilename']
+			clafilename = params['clafilename'],
+			tp = DATA.getValue(timeperiod, 'timeperiod'),
+			prop = [{
+				'tpstr': `${daytype} ${tp['name']}`,
+				'tp': tp,
+				'daytype': daytype
+			}]
 		
+
 		if (lib.checkDirectory(clafilename)) {
-			fs.readFile(clafilename, function(err, data) {
-				if (err) {
-					return console.error(err);
-				}
+			Promise.all([lib.connectMySQL(), lib.getDatafromFile(clafilename)]).then(function(values) {
+				return RECORDS.getOneTypeSeriesData(values[0], values[1], cla, prop)
+			}).catch(function(err) {
+				console.log(err)
+			}).then(function(data, prop) {
+				res.json({
+					'scode': 1,
+					'data': data,
+					'prop': prop
+				})
+			}).catch(function(err) {
+				console.log(err)
+			})
 
-				let tp = DATA.getValue(timeperiod, 'timeperiod'),
-					prop = [{
-						'tpstr': `${daytype} ${tp['name']}`,
-						'tp': tp,
-						'daytype': daytype
-					}]
+			// fs.readFile(clafilename, function(err, data) {
+			// 	if (err) {
+			// 		return console.error(err);
+			// 	}
 
-				vcqueryCallback(data, cla, prop, res)
+			// 	vcqueryCallback(data, cla, prop, res)
 
-			});
+			// });
 		} else {
 			res.json({ 'scode': 0 })
 		}
@@ -685,63 +708,116 @@ let demo = {
 				res.json({ 'scode': 1, 'data': data, 'group': prop[0]['tp']['hourlist'], 'id': id, 'other': [] });
 			})
 		})
-	}
-}
+	},
+	/**
+	 * [areaentropyquery description]
+	 * @param  {[type]}   req  [description]
+	 * @param  {[type]}   res  [description]
+	 * @param  {Function} next [description]
+	 * @return {[type]}        [description]
+	 */
+	areaentropyquery(req, res, next) {
+		let params = req.query,
+			region = params.region,
+			area = params.area,
+			id = params.id,
+			entropytype = params.entropytype,
+			table = `${region.toLowerCase()}_${area}_idlist`
 
-let vcqueryCallback = function(data, clalist, prop, res) {
-	let rawdata = data.toString().split('\n'),
-		idlist = [],
-		idclaRelation = {}
-
-	console.log('File Row: ', rawdata.length, 'clalist', clalist)
-
-	for (let i = 0; i < rawdata.length; i++) {
-		let tmparr = rawdata[i].split(','),
-			cla = Number.parseInt(tmparr[6]).toString(),
-			id = Number.parseInt(tmparr[0]);
-
-		if (lib.ArrayContains(clalist, cla)) {
-			idlist.push(id);
-			idclaRelation[ id.toString() ] = cla;
-		}
-	}
-
-	pool.getConnection(function(err, connection) {
-		let sql, param
-		if (prop[0]['daytype'] === 'all') {
-			sql = $sql.spetpqueryrecords
-			param = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
-		} else {
-			if (prop[0]['tp']['name'] === 'night') {
-				sql = $sql.tpqueryrecordsNight
-			} else {
-				sql = $sql.tpqueryrecords
-			}
-			sql = $sql.tpqueryrecords
-			param = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
-		}
-
-		connection.query(sql, param, function(err, result) {
-			if (err) throw err;
-
-			for (let i = result.length - 1; i >= 0; i--) {
-				let tmpclastr = idclaRelation[ result[i]['id'].toString() ]
-				result[i]['cla'] = `Class ${tmpclastr}`
-				result[i]['tp'] = prop[0]['tpstr']
-			}
-
-			let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });
+		lib.connectMySQL().then(function(conn) {
+			return Promise.all([lib.readIdlistMySQL(conn, table), lib.connectMongo()])
+		}).catch(function(error) {
+			console.log(error)
+		}).then(function(values) {
+			// console.log(values[0])
+			return EP.mongoQueries(values[0], values[1], { 'entropytype': entropytype })
+		}).catch(function(error) {
+			console.log(error);
+		}).then(function(values) {
+			console.log('Three asyncs examplest got!')
+			let result = RECORDS.generateGridJSON(values, {
+				'entropytype': entropytype,
+				'id': id
+			})
 
 			res.json({ 
 				'scode': 1, 
-				'data': data, 
-				'prop': {
-					'cla': `Class ${clalist[0]}`,
-					'tp': prop[0]['tpstr']
-				} 
-			});
-			connection.release();
+				'id': result[0], 
+				'data': result[1] 
+			})
+		}).catch(function(error) {
+			console.log(error);
 		});
-	})
+	},
+	areatprecordsquery(req, res, next) {
+		let params = req.query
+
+		lib.connectMySQL().then(function(conn) {
+			return RECORDS.getAreaRecords(conn, params)
+		}).catch(function(error) {
+			console.log(error)
+		}).then(function(values) {
+			res.json({ 'scode':1, 'data':values })
+		}).catch(function(error) {
+			console.log(error);
+		})
+	}
 }
+
+// let vcqueryCallback = function(data, clalist, prop, res) {
+// 	let rawdata = data.toString().split('\n'),
+// 		idlist = [],
+// 		idclaRelation = {}
+
+// 	console.log('File Row: ', rawdata.length, 'clalist', clalist)
+
+// 	for (let i = 0; i < rawdata.length; i++) {
+// 		let tmparr = rawdata[i].split(','),
+// 			cla = Number.parseInt(tmparr[6]).toString(),
+// 			id = Number.parseInt(tmparr[0]);
+
+// 		if (lib.ArrayContains(clalist, cla)) {
+// 			idlist.push(id);
+// 			idclaRelation[ id.toString() ] = cla;
+// 		}
+// 	}
+
+// 	pool.getConnection(function(err, connection) {
+// 		let sql, param
+// 		if (prop[0]['daytype'] === 'all') {
+// 			sql = $sql.spetpqueryrecords
+// 			param = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
+// 		} else {
+// 			if (prop[0]['tp']['name'] === 'night') {
+// 				sql = $sql.tpqueryrecordsNight
+// 			} else {
+// 				sql = $sql.tpqueryrecords
+// 			}
+// 			sql = $sql.tpqueryrecords
+// 			param = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
+// 		}
+
+// 		connection.query(sql, param, function(err, result) {
+// 			if (err) throw err;
+
+// 			for (let i = result.length - 1; i >= 0; i--) {
+// 				let tmpclastr = idclaRelation[ result[i]['id'].toString() ]
+// 				result[i]['cla'] = `Class ${tmpclastr}`
+// 				result[i]['tp'] = prop[0]['tpstr']
+// 			}
+
+// 			let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });
+
+// 			res.json({ 
+// 				'scode': 1, 
+// 				'data': data, 
+// 				'prop': {
+// 					'cla': `Class ${clalist[0]}`,
+// 					'tp': prop[0]['tpstr']
+// 				} 
+// 			});
+// 			connection.release();
+// 		});
+// 	})
+// }
 module.exports = demo

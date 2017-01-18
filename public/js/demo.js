@@ -93,6 +93,27 @@ let userpanel = new Vue({
         usageguidanceShow() {
             $('.ui.fullscreen.modal').modal('show')
         },
+        changeAnaArea(item) {
+            this.selections.areaName = item.name
+            this.selections.areaVal = item.val
+
+            let self = this,
+                region = this.selections.regionVal,
+                id = this.states.userid,
+                area = this.selections.areaVal,
+                entropytype = this.selections.entropymodeVal
+
+            mapins.setView();
+            $.get(`/demo/v1/areaentropy?region=${region}&area=${area}&id=${id}&entropytype=${entropytype}`, function(res, err) {
+                if (res['scode']) {
+                    let prop = {
+                        'minVal': 0,
+                        'maxVal': self.settings.entropyfilterrange
+                    }
+                    mapins.mapgridDrawing(res['data'], prop)
+                }
+            })
+        },
         tsneTrain() {
             let self = this, 
                 regionVal = this.selections.regionVal, 
@@ -397,6 +418,22 @@ let userpanel = new Vue({
             } else {
                 alert('Please fill in all the fields.')
             }
+        },
+        areaQuery() {
+            let self = this,
+                region = this.selections.regionVal,
+                id = this.states.userid,
+                area = this.selections.areaVal,
+                daytype = this.selections.vcdaytypeVal,
+                tp = this.selections.vctimeperiodVal
+
+                $.get(`/demo/v1/areatprecords?region=${region}&area=${area}&id=${id}&daytype=${daytype}&tp=${tp}`, function(res, err) {
+                    if (res['scode']) {
+                        
+                    } else {
+                        
+                    }
+                })
         }
     },
     computed: {

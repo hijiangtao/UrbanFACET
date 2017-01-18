@@ -108,7 +108,7 @@ function mongoQueries(idlist, db, prop) {
 			if (err) {
 				reject(err)
 			} else {
-				// console.log(data)
+				console.log('Idlist length:', data.length)
 				resolve(data)
 			}
 		})
@@ -123,6 +123,7 @@ function mongoQueries(idlist, db, prop) {
 			if (err) {
 				reject(err)
 			} else {
+				console.log('Records length:', data.length)
 				resolve(data)
 			}
 		})
@@ -134,6 +135,7 @@ function mongoQueries(idlist, db, prop) {
 			if (err) {
 				reject(err)
 			} else {
+				console.log('Grid length:', data.length)
 				resolve(data)
 			}
 		})

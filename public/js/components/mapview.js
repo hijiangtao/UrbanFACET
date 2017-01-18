@@ -27,8 +27,8 @@ class mapview {
 		  accessToken: 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'
 		})
 	  this.map = new L.map(self.id, {
-		center: L.latLng(39.914,116.396),
-		zoom: 12,
+		center: L.latLng(39.914,116.39),
+		zoom: 11,
 		layers: self.baseLayer
 	  })
 	  this.map.zoomControl.setPosition('topright');
@@ -476,7 +476,14 @@ class mapview {
 			let point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
 			this.stream.point(point.x, point.y);
 		}
-		
+	}
+
+	panTo(lat, lng) {
+		this.map.panTo(L.LatLng(lat, lng))
+	}
+
+	setView(lat=39.914,lng=116.39,zoom=11) {
+		this.map.setView(L.latLng(lat,lng), zoom)
 	}
 }
 
