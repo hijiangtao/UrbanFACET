@@ -22,15 +22,20 @@
 
 // get idlist and records for specific regions 
 huilongguan_idlist: "SELECT DISTINCT(tdid) from cbeijing WHERE lat >40.0581 AND lat<40.0933 AND lng >116.2917 AND lng <116.3694 INTO OUTFILE '/tmp/huilongguan-idlist.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
-huilongguan_records: "SELECT * from cbeijing WHERE lat >40.0581 AND lat<40.0933 AND lng >116.2917 AND lng <116.3694 INTO OUTFILE '/tmp/huilongguan-records.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
+huilongguan_records: "SELECT * from cbeijing WHERE tdid in (SELECT DISTINCT(tdid) from cbeijing WHERE lat >40.0581 AND lat<40.0933 AND lng >116.2917 AND lng <116.3694) INTO OUTFILE '/tmp/huilongguan-records.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
+
 tiantongyuan_idlist: "SELECT DISTINCT(tdid) from cbeijing WHERE lat >40.0565 AND lat<40.0782 AND lng >116.3991 AND lng <116.4360 INTO OUTFILE '/tmp/tiantongyuan-idlist.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
-tiantongyuan_records: "SELECT * from cbeijing WHERE lat >40.0565 AND lat<40.0782 AND lng >116.3991 AND lng <116.4360 INTO OUTFILE '/tmp/tiantongyuan-records.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
+tiantongyuan_records: "SELECT * from cbeijing WHERE tdid in (SELECT DISTINCT(tdid) from cbeijing WHERE lat >40.0565 AND lat<40.0782 AND lng >116.3991 AND lng <116.4360) INTO OUTFILE '/tmp/tiantongyuan-records.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
+
 beihang_idlist: "SELECT DISTINCT(tdid) from cbeijing WHERE lat >39.9759 AND lat<39.9848 AND lng >116.3353 AND lng <116.3474 INTO OUTFILE '/tmp/beihang-idlist.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
-beihang_records: "SELECT * from cbeijing WHERE lat >39.9759 AND lat<39.9848 AND lng >116.3353 AND lng <116.3474 INTO OUTFILE '/tmp/beihang-records.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
+beihang_records: "SELECT * from cbeijing WHERE tdid in (SELECT DISTINCT(tdid) from cbeijing WHERE lat >39.9759 AND lat<39.9848 AND lng >116.3353 AND lng <116.3474) as temp INTO OUTFILE '/tmp/beihang-records.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
+
 xizhimen_idlist: "SELECT DISTINCT(tdid) from cbeijing WHERE lat >39.9272 AND lat<39.9555 AND lng >116.3198 AND lng <116.3604 INTO OUTFILE '/tmp/xizhimen-idlist.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
-xizhimen_records: "SELECT * from cbeijing WHERE lat >39.9272 AND lat<39.9555 AND lng >116.3198 AND lng <116.3604 INTO OUTFILE '/tmp/xizhimen-records.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
+xizhimen_records: "SELECT * from cbeijing WHERE tdid in (SELECT DISTINCT(tdid) from cbeijing WHERE lat >39.9272 AND lat<39.9555 AND lng >116.3198 AND lng <116.3604) INTO OUTFILE '/tmp/xizhimen-records.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
+
 bjxizhan_idlist: "SELECT DISTINCT(tdid) from cbeijing WHERE lat >39.8924 AND lat<39.8958 AND lng >116.3103 AND lng <116.3199 INTO OUTFILE '/tmp/bjxizhan-idlist.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
-bjxizhan_records: "SELECT * from cbeijing WHERE lat >39.8924 AND lat<39.8958 AND lng >116.3103 AND lng <116.3199 INTO OUTFILE '/tmp/bjxizhan-records.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
+bjxizhan_records: "SELECT * from cbeijing WHERE tdid in (SELECT DISTINCT(tdid) from cbeijing WHERE lat >39.8924 AND lat<39.8958 AND lng >116.3103 AND lng <116.3199) INTO OUTFILE '/tmp/bjxizhan-records.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';",
+
 gugong_idlist: "SELECT DISTINCT(tdid) from cbeijing WHERE lat >39.9119 AND lat<39.9215 AND lng >116.3858 AND lng <116.3958 INTO OUTFILE '/tmp/gugong-idlist.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';"
 
 // huilongguan

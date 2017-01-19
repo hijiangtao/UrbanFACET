@@ -720,16 +720,17 @@ let demo = {
 		let params = req.query,
 			region = params.region,
 			area = params.area,
-			id = params.id,
+			id = params.id === '-1'? Date.parse(new Date()):params.id,
 			entropytype = params.entropytype,
 			table = `${region.toLowerCase()}_${area}_idlist`
 
+		console.log('Start promise')
 		lib.connectMySQL().then(function(conn) {
 			return Promise.all([lib.readIdlistMySQL(conn, table), lib.connectMongo()])
 		}).catch(function(error) {
 			console.log(error)
 		}).then(function(values) {
-			// console.log(values[0])
+			console.log('Begin to query entropy')
 			return EP.mongoQueries(values[0], values[1], { 'entropytype': entropytype })
 		}).catch(function(error) {
 			console.log(error);
@@ -757,7 +758,12 @@ let demo = {
 		}).catch(function(error) {
 			console.log(error)
 		}).then(function(values) {
-			res.json({ 'scode':1, 'data':values })
+			res.json({ 
+				'scode':1, 
+				'data':values,
+				'group': [params.tp],
+				'id': params.id
+			})
 		}).catch(function(error) {
 			console.log(error);
 		})

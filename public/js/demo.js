@@ -429,7 +429,7 @@ let userpanel = new Vue({
 
                 $.get(`/demo/v1/areatprecords?region=${region}&area=${area}&id=${id}&daytype=${daytype}&tp=${tp}`, function(res, err) {
                     if (res['scode']) {
-                        
+                        mapins.pointmapDrawing(res['data'], res['group'], 'group')
                     } else {
                         
                     }

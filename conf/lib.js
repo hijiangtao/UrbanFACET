@@ -107,7 +107,7 @@ let readIdlistMySQL = function(conn, table) {
                 reject(err)
             } else {
                 let idlist = []
-                console.log(res[0])
+                console.log('get idlist result')
                 for (let i = res.length - 1; i >= 0; i--) {
                     idlist.push( Number.parseInt(res[i]['id']) )
                 }

@@ -9,7 +9,7 @@ let GeoJSON = require('geojson');
 let $sql = require('../controllers/apis/mysqlMapping');
 
 let getAreaRecords = function(conn, params) {
-	let region = params.region,
+	let region = params.region.toLowerCase(),
 		area = params.area,
 		id = params.id,
 		tp = params.tp,
@@ -17,13 +17,16 @@ let getAreaRecords = function(conn, params) {
 		tpspecific = DATA.getValue(tp, 'timeperiod')
 
 	let sql = $sql.arearecordsquery,
-		param = [`beijing_hlg_records`, tpspecific['starthour'], tpspecific['endhour'], daytype ]
+		param = [`${region}_${area}_records`, tpspecific['starthour'], tpspecific['endhour'], daytype ]
 
 	let promise = new Promise(function(resolve, reject) {
 		conn.query(sql, param, function(err, result) {
 			if (err) {
 				reject(err)
 			} else {
+				for (let i = result.length - 1; i >= 0; i--) {
+					result[i]['group'] = tp
+				}
 				resolve( GeoJSON.parse(result, {Point: ['lat', 'lng']}) )
 			}
 		})

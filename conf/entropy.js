@@ -61,7 +61,7 @@ function readIdlistFile(dir, file) {
 
 				console.log('File Row: ', datalen)
 				
-				for (let i = 0; i < datalen; i++) {
+				for (let i = 0; i < datalen / 10; i++) {
 					let tmparr = rawdata[i].split(','),
 						id = Number.parseInt(tmparr[0]);
 
