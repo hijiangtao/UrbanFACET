@@ -15,7 +15,7 @@ let mapping = {
 	madisplayqueryNight: "SELECT tdid AS id, timeSegID div 10 AS 'group', lat, lng from cbeijing WHERE dayType = ? AND (timeSegID >= ? OR timeSegID < ?) LIMIT 20000;",
 
 	areaidlistquery: "SELECT id from ??;",
-	arearecordsquery: "SELECT lat, lng from ?? WHERE timeSegID >= ? AND timeSegID < ? AND dayType = ?",
+	arearecordsquery: "SELECT lat, lng from ?? WHERE timeSegID >= ? AND timeSegID < ? AND dayType = ? LIMIT 10000",
 	arearecordsquerynight: "SELECT lat, lng from ?? WHERE (timeSegID >= ? OR timeSegID < ?) AND dayType = ?"
 };
  

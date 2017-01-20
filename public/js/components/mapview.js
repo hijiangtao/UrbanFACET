@@ -156,6 +156,80 @@ class mapview {
 		}
 	}
 
+	pointmapCDrawing(data, idlist, legend) {
+		const LEDINTERVAL = 20,
+			  RADIUS = 1,
+			  colorSchema = ['#F3E500', '#F7B20F', '#EE7D1D', '#E74A21', '#D9051B', '#A0077C', '#4F2577', '#172C85'],
+			  colorJudge = idlist.length < 8 && idlist.length > 2
+		let self = this
+		
+		d3.select('#F_SVG').remove();
+		d3.select('#GRID_SVG').remove();
+
+		if(data.features.length === 0) {
+			alert('No records found!')
+			return ;
+		}
+
+		let width = Math.max(960, window.innerWidth),
+			height = Math.max(500, window.innerHeight)
+			// prefix = prefixMatch(["webkit", "ms", "Moz", "O"]);
+
+		// let tile = d3.geo.tile()
+  //   		.size([width, height]);
+
+    	var projection = d3.geoMercator()
+			.scale((1 << 24) / 2 / Math.PI)
+			.translate([-width / 2, -height / 2]);
+
+    	// let zoom = d3.zoom()
+		   //  .scale(projection.scale() * 2 * Math.PI)
+		   //  .scaleExtent([1 << 9, 1 << 25])
+		   //  .translate(projection([-73.975536, 40.691674]).map(function(x) { return -x; }))
+		   //  .on("zoom", zoomed);
+
+    	let canvas = d3.select(self.map.getPanes().overlayPane).append("canvas")
+		    .attr("width", width)
+		    .attr("height", height)
+		    .attr('class', 'layer')
+		    .attr('id', 'F_SVG')
+
+		let context = canvas.node().getContext("2d");
+
+		self.map.on('moveend', zoomed);
+		zoomed()
+		
+		function drawCanvas() {
+			data['features'].forEach(function(element) {
+				let node = projectPoint(element['geometry']['coordinates'][0], element['geometry']['coordinates'][1])
+			    context.beginPath();
+			    context.arc(node[0], node[1], RADIUS, 0, 2 * Math.PI )
+			    context.fillStyle = "#ff0000"
+			    context.fill()
+			    context.closePath()
+			});
+		}
+
+		function reDraw() {
+			context.clearRect(0, 0, width, height);
+			drawCanvas();
+		}
+
+		function zoomed() {
+			// let tiles = tile
+		 //      .scale(zoom.scale())
+		 //      .translate(zoom.translate())
+		 //      ();
+
+		    reDraw();
+		}
+
+		function projectPoint(x, y) {
+			let point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
+			return [point.x, point.y];
+		}
+	}
+
 	scatterplotDrawing(data, idlist, containerid, vueins) {
 		let margin = {top: 5, right: 50, bottom: 20, left: 20},
 			containerbound = document.getElementById(containerid).getBoundingClientRect(),

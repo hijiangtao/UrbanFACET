@@ -24,6 +24,7 @@ let getAreaRecords = function(conn, params) {
 			if (err) {
 				reject(err)
 			} else {
+				console.log('RESULT LENGTH: ', result.length)
 				for (let i = result.length - 1; i >= 0; i--) {
 					result[i]['group'] = tp
 				}

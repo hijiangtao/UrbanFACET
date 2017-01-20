@@ -104,15 +104,15 @@ let userpanel = new Vue({
                 entropytype = this.selections.entropymodeVal
 
             mapins.setView();
-            $.get(`/demo/v1/areaentropy?region=${region}&area=${area}&id=${id}&entropytype=${entropytype}`, function(res, err) {
-                if (res['scode']) {
-                    let prop = {
-                        'minVal': 0,
-                        'maxVal': self.settings.entropyfilterrange
-                    }
-                    mapins.mapgridDrawing(res['data'], prop)
-                }
-            })
+            // $.get(`/demo/v1/areaentropy?region=${region}&area=${area}&id=${id}&entropytype=${entropytype}`, function(res, err) {
+            //     if (res['scode']) {
+            //         let prop = {
+            //             'minVal': 0,
+            //             'maxVal': self.settings.entropyfilterrange
+            //         }
+            //         mapins.mapgridDrawing(res['data'], prop)
+            //     }
+            // })
         },
         tsneTrain() {
             let self = this, 
@@ -429,7 +429,7 @@ let userpanel = new Vue({
 
                 $.get(`/demo/v1/areatprecords?region=${region}&area=${area}&id=${id}&daytype=${daytype}&tp=${tp}`, function(res, err) {
                     if (res['scode']) {
-                        mapins.pointmapDrawing(res['data'], res['group'], 'group')
+                        mapins.pointmapCDrawing(res['data'], res['group'], 'group')
                     } else {
                         
                     }
