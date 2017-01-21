@@ -8,7 +8,8 @@
 'use strict'
 
 import L from './map'
-// L = require('leaflet')
+import heatmap from 'heatmap.js'
+import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js'
 import * as d3 from 'd3'
 
 class mapview {
@@ -563,8 +564,6 @@ class mapview {
         let drawingOnCanvas = function(canvasOverlay, params) {
 			let ctx = params.canvas.getContext('2d');
             ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
-            // ctx.fillStyle = "rgba(255,116,0, 0.2)";
-            // ctx.beginPath();
 
             let len = data.features.length
             for (let i = 0; i < len; i++) {
@@ -582,12 +581,54 @@ class mapview {
                     ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
                 }
             }
-            // ctx.closePath();
 		}
 
 		L.canvasOverlay()
             .drawing(drawingOnCanvas)
             .addTo(self.map);
+	}
+
+	heatmapDrawing(data, prop) {
+		let len = data.features.length,
+			hdata = {
+				max: 0,
+				data: []
+			}
+
+		for (let i = len - 1; i >= 0; i--) {
+			let center = data.features[i]['properties']['center']['coordinates'],
+				entropy = data.features[i]['properties']['entropy']
+
+			if (hdata.max < entropy) {
+				hdata.max = entropy
+			}
+
+			hdata.data.push({'lat': center[1], 'lng': center[0], 'count': entropy})
+		}
+
+		let cfg = {
+		  // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+		  // if scaleRadius is false it will be the constant radius used in pixels
+		  "radius": .012,
+		  "maxOpacity": .8, 
+		  // scales the radius based on map zoom
+		  "scaleRadius": true, 
+		  // if set to false the heatmap uses the global maximum for colorization
+		  // if activated: uses the data maximum within the current map boundaries 
+		  //   (there will always be a red spot with useLocalExtremas true)
+		  "useLocalExtrema": false,
+		  // which field name in your data represents the latitude - default "lat"
+		  latField: 'lat',
+		  // which field name in your data represents the longitude - default "lng"
+		  lngField: 'lng',
+		  // which field name in your data represents the data value - default "value"
+		  valueField: 'count'
+		};
+		let heatmapLayer = new HeatmapOverlay(cfg);
+
+		this.map.addLayer(heatmapLayer);
+		heatmapLayer.setData(hdata)
+
 	}
 
 	panTo(lat, lng) {

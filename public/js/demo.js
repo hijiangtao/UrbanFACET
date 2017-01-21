@@ -111,7 +111,7 @@ let userpanel = new Vue({
                         'minVal': 0,
                         'maxVal': self.settings.entropyfilterrange
                     }
-                    mapins.mapgridCDrawing(res['data'], prop)
+                    mapins.heatmapDrawing(res['data'], prop)
                 }
             })
         },
@@ -131,7 +131,7 @@ let userpanel = new Vue({
                             'minVal': 0,
                             'maxVal': self.settings.entropyfilterrange
                         }
-                        mapins.mapgridCDrawing(res['data'], prop)
+                        mapins.mapgridDrawing(res['data'], prop)
 
                         if (self.states.userid !== res['id']) {
                             self.states.userid = res['id']
