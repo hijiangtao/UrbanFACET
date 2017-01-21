@@ -103,16 +103,17 @@ let userpanel = new Vue({
                 area = this.selections.areaVal,
                 entropytype = this.selections.entropymodeVal
 
-            mapins.setView();
-            // $.get(`/demo/v1/areaentropy?region=${region}&area=${area}&id=${id}&entropytype=${entropytype}`, function(res, err) {
-            //     if (res['scode']) {
-            //         let prop = {
-            //             'minVal': 0,
-            //             'maxVal': self.settings.entropyfilterrange
-            //         }
-            //         mapins.mapgridDrawing(res['data'], prop)
-            //     }
-            // })
+            // mapins.setView();
+            $.get(`/demo/v1/areaentropy?region=${region}&area=${area}&id=${id}&entropytype=${entropytype}`, function(res, err) {
+                console.log('Going to draw canvas gridmap.')
+                if (res['scode']) {
+                    let prop = {
+                        'minVal': 0,
+                        'maxVal': self.settings.entropyfilterrange
+                    }
+                    mapins.mapgridCDrawing(res['data'], prop)
+                }
+            })
         },
         tsneTrain() {
             let self = this, 
@@ -130,7 +131,7 @@ let userpanel = new Vue({
                             'minVal': 0,
                             'maxVal': self.settings.entropyfilterrange
                         }
-                        mapins.mapgridDrawing(res['data'], prop)
+                        mapins.mapgridCDrawing(res['data'], prop)
 
                         if (self.states.userid !== res['id']) {
                             self.states.userid = res['id']

@@ -7,7 +7,7 @@
 
 'use strict'
 
-import L from 'leaflet'
+import L from './map'
 // L = require('leaflet')
 import * as d3 from 'd3'
 
@@ -174,9 +174,6 @@ class mapview {
 		let width = Math.max(960, window.innerWidth),
 			height = Math.max(500, window.innerHeight)
 			// prefix = prefixMatch(["webkit", "ms", "Moz", "O"]);
-
-		// let tile = d3.geo.tile()
-  //   		.size([width, height]);
 
     	var projection = d3.geoMercator()
 			.scale((1 << 24) / 2 / Math.PI)
@@ -550,6 +547,47 @@ class mapview {
 			let point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
 			this.stream.point(point.x, point.y);
 		}
+	}
+
+	mapgridCDrawing(data, prop) {
+		let self = this
+
+		let minVal = Number.parseFloat(prop['minVal']),
+			maxVal = Number.parseFloat(prop['maxVal']),
+			interval = maxVal - minVal,
+			colordomain = [minVal, minVal + interval*0.4, minVal + interval*0.6, maxVal],
+			colorrange = ['#00A08A', '#00CC00', '#ff0', '#C00']
+
+		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
+
+        let drawingOnCanvas = function(canvasOverlay, params) {
+			let ctx = params.canvas.getContext('2d');
+            ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
+            // ctx.fillStyle = "rgba(255,116,0, 0.2)";
+            // ctx.beginPath();
+
+            let len = data.features.length
+            for (let i = 0; i < len; i++) {
+            	let feature = data.features[i],
+            		d = feature.properties.center.coordinates,
+            		poly = feature.geometry.coordinates[0]
+
+                if (params.bounds.contains([d[1], d[0]])) {
+                    let dot = canvasOverlay._map.latLngToContainerPoint([d[1], d[0]]);
+                    
+                    let nw = canvasOverlay._map.latLngToContainerPoint([poly[3][1], poly[3][0]]),
+                    	se = canvasOverlay._map.latLngToContainerPoint([poly[1][1], poly[1][0]]),
+                    	entropy = data.features[i]['properties']['entropy']
+                    ctx.fillStyle = entropy<0 ? 'rgba(0,0,0,0)':color(entropy)
+                    ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
+                }
+            }
+            // ctx.closePath();
+		}
+
+		L.canvasOverlay()
+            .drawing(drawingOnCanvas)
+            .addTo(self.map);
 	}
 
 	panTo(lat, lng) {

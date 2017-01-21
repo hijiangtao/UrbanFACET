@@ -138,6 +138,7 @@ let generateGridJSON = function(values, prop) {
 			"uid": grids[i]['properties']['uid'],
 			"entropy": grids[i]['properties']['entropy'][entropytype],
 			"number": grids[i]['properties']['recordnum'],
+			"center": grids[i]['properties']['center']
 		  }
 		})
 	}

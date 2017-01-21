@@ -19,6 +19,7 @@
     "express-session": "^1.14.2",
     "fast-csv": "^2.3.0",
     "geojson": "^0.4.0",
+    "heatmap.js": "^2.0.5",
     "jquery": "^3.1.1",
     "leaflet": "0.7.7",
     "morgan": "~1.7.0",
