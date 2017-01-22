@@ -8,9 +8,14 @@
 'use strict'
 
 import L from './map'
-import heatmap from 'heatmap.js'
+// import heatmap from 'heatmap.js'
 import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js'
 import * as d3 from 'd3'
+
+// 临时变量 
+import $ from "jquery"
+window.jQuery = $
+// 临时变量
 
 class mapview {
 	/**
@@ -49,6 +54,7 @@ class mapview {
 		
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
+		this.removeheatmap()
 
 		if(data.features.length === 0) {
 			alert('No records found!')
@@ -166,6 +172,7 @@ class mapview {
 		
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
+		this.removeheatmap()
 
 		if(data.features.length === 0) {
 			alert('No records found!')
@@ -430,6 +437,7 @@ class mapview {
 
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
+		this.removeheatmap()
 
 		let self = this,
 			panelwidth = document.getElementById('userpanel').getBoundingClientRect().width,
@@ -561,6 +569,10 @@ class mapview {
 
 		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
 
+		d3.select('#F_SVG').remove();
+		d3.select('#GRID_SVG').remove();
+		this.removeheatmap()
+
         let drawingOnCanvas = function(canvasOverlay, params) {
 			let ctx = params.canvas.getContext('2d');
             ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
@@ -594,6 +606,10 @@ class mapview {
 				max: 0,
 				data: []
 			}
+
+		d3.select('#F_SVG').remove();
+		d3.select('#GRID_SVG').remove();
+		this.removeheatmap()
 
 		for (let i = len - 1; i >= 0; i--) {
 			let center = data.features[i]['properties']['center']['coordinates'],
@@ -637,6 +653,20 @@ class mapview {
 
 	setView(lat=39.914,lng=116.39,zoom=11) {
 		this.map.setView(L.latLng(lat,lng), zoom)
+	}
+
+	removeheatmap() {
+		// let canvas = document.getElementsByClassName('heatmap-canvas')[0]
+		// if (canvas) {
+		// 	canvas.parentNode.removeChild(canvas)
+		// }
+		// 
+		
+		
+		let obj = $('.leaflet-overlay-pane .leaflet-zoom-hide')
+		if (obj) {
+			obj.remove();
+		} 
 	}
 }
 

@@ -138,8 +138,8 @@ let indexvuedata = {
         ]
     },
     'selections': {
-        'entropymodeName': 'temporal',
-        'entropymodeVal': 'row',
+        'entropymodeName': 'spatio',
+        'entropymodeVal': 'col',
         'regionName': 'BJ',
         'regionVal': 'Beijing',
         'featureName': 'Workday',
@@ -194,7 +194,8 @@ let indexvuedata = {
         'clusterdisplay': false,
         'anadisplay': false,
         'clusterscatterdisplay': false,
-        'madisplayquery': false
+        'madisplayquery': false,
+        'areaquery': false
     },
     'results': {
         'classlist': [],

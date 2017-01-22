@@ -28,7 +28,7 @@
                 </div>
             </div>
 
-            <button v-on:click="areaQuery()">Display</button>
+            <button v-on:click="areaQuery()" class="ui mini secondary button" :class="{ 'loading': states.areaquery }">Display Records</button>
     	</div>
     	
     </div>

@@ -103,10 +103,11 @@ let userpanel = new Vue({
                 area = this.selections.areaVal,
                 entropytype = this.selections.entropymodeVal
 
-            // mapins.setView();
+            document.getElementsByTagName('body')[0].classList.add('loading');
             $.get(`/demo/v1/areaentropy?region=${region}&area=${area}&id=${id}&entropytype=${entropytype}`, function(res, err) {
                 console.log('Going to draw canvas gridmap.')
                 if (res['scode']) {
+                    document.getElementsByTagName('body')[0].classList.remove('loading');
                     let prop = {
                         'minVal': 0,
                         'maxVal': self.settings.entropyfilterrange
@@ -428,13 +429,15 @@ let userpanel = new Vue({
                 daytype = this.selections.vcdaytypeVal,
                 tp = this.selections.vctimeperiodVal
 
-                $.get(`/demo/v1/areatprecords?region=${region}&area=${area}&id=${id}&daytype=${daytype}&tp=${tp}`, function(res, err) {
-                    if (res['scode']) {
-                        mapins.pointmapCDrawing(res['data'], res['group'], 'group')
-                    } else {
-                        
-                    }
-                })
+            self.states.areaquery = true
+            $.get(`/demo/v1/areatprecords?region=${region}&area=${area}&id=${id}&daytype=${daytype}&tp=${tp}`, function(res, err) {
+                if (res['scode']) {
+                    self.states.areaquery = false
+                    mapins.pointmapDrawing(res['data'], res['group'], 'group')
+                } else {
+                    
+                }
+            })
         }
     },
     computed: {

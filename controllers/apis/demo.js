@@ -232,60 +232,6 @@ let recomdCal = function(dir, file, idstr, res) {
 	}
 }
 
-// 
-// let generateGridJSON = function(values, res, prop) {
-// 	let idEntropy = values[0],
-// 		records = values[1],
-// 		grids = values[2],
-// 		entropytype = prop['entropytype']
-
-// 	// console.log(idEntropy)
-
-// 	let identropyrelation = {}
-// 	for (let i = idEntropy.length - 1; i >= 0; i--) {
-// 		// console.log(idEntropy[i])
-// 		identropyrelation[ idEntropy[i]['_id'].toString() ] = parseFloat(idEntropy[i]['entropy'][entropytype])
-// 	}
-
-// 	let recordslen = records.length
-
-// 	for(let i = 0; i < recordslen; i++) {
-// 		let id = records[i]['id'].toString(),
-// 			lat = records[i]['geometry']['coordinates'][1],
-// 			lng = records[i]['geometry']['coordinates'][0],
-// 			lngind = parseInt((parseFloat(lng) - 115.64) / 0.01),
-// 			latind = parseInt((parseFloat(lat) - 39.39) / 0.01),
-// 			uid = lngind + latind * 152,
-// 			entropy = identropyrelation[id]
-
-// 		let currentEntropy = grids[uid]['properties']['entropy'][entropytype],
-// 			currentNumber = grids[uid]['properties']['recordnum']
-
-// 		grids[uid]['properties']['entropy'][entropytype]=(currentEntropy * currentNumber + entropy) / (currentNumber + 1)
-// 		grids[uid]['properties']['recordnum'] += 1
-// 	}
-
-// 	let parsedGeoJSON = { 
-// 		"type": "FeatureCollection",
-// 	    "features": []
-// 	}
-
-// 	for (let i = grids.length - 1; i >= 0; i--) {
-// 		parsedGeoJSON['features'].push({
-// 		  "type": "Feature",
-// 		  "geometry": grids[i]['geometry'],
-// 		  "properties": {
-// 			"uid": grids[i]['properties']['uid'],
-// 			"entropy": grids[i]['properties']['entropy'][entropytype],
-// 			"number": grids[i]['properties']['recordnum'],
-// 		  }
-// 		})
-// 	}
-
-// 	res.json({ 'scode': 1, 'id': prop['id'], 'data': parsedGeoJSON })
-// 	return ;
-// }
-
 let demo = {
 	/**
 	 * [tsnetrain description]
@@ -431,12 +377,6 @@ let demo = {
 
 		if (lib.checkDirectory(path.join(datadir, '../tmp', oupfile))) {
             recomdCal(path.join(datadir, '../tmp'), oupfile, id, res)
-                // if (params.id === '-1') {
-                // 	recomdCal(datadir + '/tmp', oupfile, id, res)
-                // } else {
-                // 	res.json({ 'scode': 1, 'clafilename': `${datadir}/tmp/${oupfile}`, 'id': params.id, 'recomdData': [] })
-                // }
-
         } else {
             clsrun = shell.exec(`cd ${scriptdir} && python ./ClusterUser.py -d ${datadir} -f ${inpfile} -x ${eps} -y ${minpts}`).stdout;
             if (lib.checkDirectory(path.join(datadir, '../tmp', oupfile))) {
@@ -542,15 +482,6 @@ let demo = {
 			}).catch(function(err) {
 				console.log(err)
 			})
-
-			// fs.readFile(clafilename, function(err, data) {
-			// 	if (err) {
-			// 		return console.error(err);
-			// 	}
-
-			// 	vcqueryCallback(data, cla, prop, res)
-
-			// });
 		} else {
 			res.json({ 'scode': 0 })
 		}
@@ -770,60 +701,4 @@ let demo = {
 	}
 }
 
-// let vcqueryCallback = function(data, clalist, prop, res) {
-// 	let rawdata = data.toString().split('\n'),
-// 		idlist = [],
-// 		idclaRelation = {}
-
-// 	console.log('File Row: ', rawdata.length, 'clalist', clalist)
-
-// 	for (let i = 0; i < rawdata.length; i++) {
-// 		let tmparr = rawdata[i].split(','),
-// 			cla = Number.parseInt(tmparr[6]).toString(),
-// 			id = Number.parseInt(tmparr[0]);
-
-// 		if (lib.ArrayContains(clalist, cla)) {
-// 			idlist.push(id);
-// 			idclaRelation[ id.toString() ] = cla;
-// 		}
-// 	}
-
-// 	pool.getConnection(function(err, connection) {
-// 		let sql, param
-// 		if (prop[0]['daytype'] === 'all') {
-// 			sql = $sql.spetpqueryrecords
-// 			param = [idlist, prop[0]['tp']['name'] === 'all'? ['workday', 'holiday']:[prop[0]['tp']['name']]]
-// 		} else {
-// 			if (prop[0]['tp']['name'] === 'night') {
-// 				sql = $sql.tpqueryrecordsNight
-// 			} else {
-// 				sql = $sql.tpqueryrecords
-// 			}
-// 			sql = $sql.tpqueryrecords
-// 			param = [idlist, prop[0]['daytype'], prop[0]['tp']['starthour'], prop[0]['tp']['endhour']]
-// 		}
-
-// 		connection.query(sql, param, function(err, result) {
-// 			if (err) throw err;
-
-// 			for (let i = result.length - 1; i >= 0; i--) {
-// 				let tmpclastr = idclaRelation[ result[i]['id'].toString() ]
-// 				result[i]['cla'] = `Class ${tmpclastr}`
-// 				result[i]['tp'] = prop[0]['tpstr']
-// 			}
-
-// 			let data = GeoJSON.parse(result, { Point: ['lat', 'lng'] });
-
-// 			res.json({ 
-// 				'scode': 1, 
-// 				'data': data, 
-// 				'prop': {
-// 					'cla': `Class ${clalist[0]}`,
-// 					'tp': prop[0]['tpstr']
-// 				} 
-// 			});
-// 			connection.release();
-// 		});
-// 	})
-// }
 module.exports = demo
