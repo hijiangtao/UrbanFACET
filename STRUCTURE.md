@@ -1,5 +1,6 @@
 ## Current Progress
 ### HTML (FE part)
+#### EJS templates
 * components: 用于 home 页面的展示组件，按照页面拆分分类
 * v-components: 用于 demo 页面的展示组件，按照功能拆分分类
 * demo.ejs: 现有跟进的开发页面，用于实现最新的想法以及相关系统原型
@@ -7,6 +8,12 @@
 * home.ejs: 原有保留的尽可能多的功能展示页面
 * lab.ejs: Cluster Results Analysis of Decomposed User Features, 数据统计与 matrix 分析页面
 * ui.ejs: 纯展示 UI 设计页面，已废弃
+
+#### img/data
+* cluster
+* decompose
+* init
+* tmp
 
 ### JS (FE part)
 * components/
@@ -36,8 +43,41 @@
 * demo/labeltrain: 根据用户选择的主题 （education/entertainment, ...）对类别进行筛选，按照用户给定比例将 TOP-N 类别取出返回前端
 * demo/vcquery: 根据用户提供的日期类型与时间段参数，对指定类别的用户定位记录进行查询，并组织成 GeoJSON 返回前端
 * demo/classplot: 计算当前聚类结果后的 scatter plot 并返回相应数据以及 matrixlist
-* demo/madisplayquery: 
+* demo/madisplayquery: 对具体时间段数据选择进行查询分析，返回所有符合要求的定位记录
+* demo/areaentropyquery: 基于现有选择的 area 筛选用户，并用筛选后的结果计算 city entropy，返回用户 city entropy distribution 数据用于做图
+* demo/areatprecordsquery: 对用户定位记录进行查询，筛选出符合选择区域的指定时间段数据，并返回 GeoJSON 格式数据用于画图
 
 ### conf (backend)
 
+* data.js: 储存关键的一些 key-value 描述词-对应查询词，通过 getValue 函数传参的形式获取 value 并返回
+* db.js: MySQL 配置设置
+* entropy.js: entropy 计算相关函数
+	* readIdlistMongo:从 Mongodb 读取 idlist
+    * readIdlistFile: 从文件读取 idlist
+	* connectMongo: 连接 Mongodb 
+	* mongoQueries: Mongodb 用户 idlist/records 三段联合查询
+* lib.js: 通用函数
+* records.js: 定位记录处理相关函数
+* mysql.backup: area 相关数据表建立与插入等信息
+
 ### scripts (backend/server)
+
+#### python scripts
+* ClusterUser.py
+* CommonCla.py
+* CommonFunc.py
+* DBScan.py
+* DataImplement.py
+* DecomposeFeature.py
+* EntropyStats.py
+* FeatureConstruction.py
+* GridConstruction.py
+* LatLngCal.py
+* POIExtraction.py
+
+#### data
+* cluster
+* decompose
+* init
+* label
+* tmp
