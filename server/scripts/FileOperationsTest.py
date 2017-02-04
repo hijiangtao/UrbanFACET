@@ -14,36 +14,42 @@ def multiLinesReadfromFile(file):
 	# File: readline-example-3.py
 	starttime = datetime.datetime.now()
 
+	linesNumber = 0
 	file = open(file, 'rb')
 	while 1:
 		lines = file.readlines(100000)
 		if not lines:
 			break
 		for line in lines:
+			linesNumber += 1
 			line = line.split(',')
 			gridID = (float(line[4]) + float(line[5]) * 10) / 3
 
 	endtime = datetime.datetime.now()
-	return str( (endtime - starttime).seconds )
+	return str( linesNumber ), str( (endtime - starttime).seconds )
 
 def linebyLineReadfromFile(file):
 
 	starttime = datetime.datetime.now()
 
-	with open(filename, 'rb') as target:
+	linesNumber = 0
+	with open(file, 'rb') as target:
 		for each in target:
+			linesNumber += 1
 			line = each.split(',')
 			gridID = (float(line[4]) + float(line[5]) * 10) / 3
 
 	target.close()
 	endtime = datetime.datetime.now()
-	return str( (endtime - starttime).seconds )
+	return str( linesNumber ), str( (endtime - starttime).seconds )
 
 def main():
 	file='/home/taojiang/datasets/beijingTop.txt'
-	print 'Multilines read time: %s' % multiLinesReadfromFile(file)
-	print 'LinebyLine read time: %s' % linebyLineReadfromFile(file)
+	lines, times = multiLinesReadfromFile(file)
+	print 'Multilines read time: %s seconds' % (lines, times)
 	gc.collect()
+	lines, times = linebyLineReadfromFile(file)
+	print 'LinebyLine read time: %s seconds' % (lines, times)
 
 
 if __name__ == '__main__':
