@@ -15,18 +15,20 @@ def multiLinesReadfromFile(file):
 	starttime = datetime.datetime.now()
 
 	linesNumber = 0
-	file = open(file, 'rb')
-	while 1:
-		lines = file.readlines(100000)
-		if not lines:
-			break
-		for line in lines:
-			linesNumber += 1
-			line = line.split(',')
-			gridID = (float(line[4]) + float(line[5]) * 10) / 3
+	with open(file, 'rb') as file:
+		while 1:
+			lines = file.readlines(100000)
+			if not lines:
+				break
+			for line in lines:
+				linesNumber += 1
+				# if linesNumber % 2000000 == 0:
+				# 	print 'multiLinesReadfromFile %s LINES\' reading consuming %s' % (str(linesNumber), str( datetime.datetime.now()-starttime ))
+				line = line.split(',')
+				gridID = (float(line[2]) + float(line[3]) * 10) / 3
 
 	endtime = datetime.datetime.now()
-	return str( linesNumber ), str( (endtime - starttime).seconds )
+	return str( linesNumber ), str( (endtime - starttime) )
 
 def linebyLineReadfromFile(file):
 
@@ -36,21 +38,36 @@ def linebyLineReadfromFile(file):
 	with open(file, 'rb') as target:
 		for each in target:
 			linesNumber += 1
+			# if linesNumber % 2000000 == 0:
+			# 	print 'linebyLineReadfromFile %s LINES\' reading consuming %s' % (str(linesNumber), str( datetime.datetime.now()-starttime ))
 			line = each.split(',')
-			gridID = (float(line[4]) + float(line[5]) * 10) / 3
+			gridID = (float(line[2]) + float(line[3]) * 10) / 3
 
 	target.close()
 	endtime = datetime.datetime.now()
-	return str( linesNumber ), str( (endtime - starttime).seconds )
+	return str( linesNumber ), str( (endtime - starttime) )
 
 def main():
-	file='/home/taojiang/datasets/beijingTop.txt'
-	lines, times = multiLinesReadfromFile(file)
-	print 'Multilines read time: %s seconds' % (lines, times)
-	gc.collect()
-	lines, times = linebyLineReadfromFile(file)
-	print 'LinebyLine read time: %s seconds' % (lines, times)
+	# file = '/home/joe/Downloads/ninetyFive.txt' # '/home/taojiang/datasets/beijingTop.txt'
+	
+	starttime = datetime.datetime.now()
+	for x in xrange(0,1):
+		file = '/media/tao/LaCie/TalkingData/Jingjinji/Tianjin-FilterRecords/test-000%s' % str(x).zfill(2)	
+		lines, times = multiLinesReadfromFile(file)
+		print 'File %s\nLinebyLine read time: %s lines / %s seconds' % (file, lines, times)
 
+	endtime = datetime.datetime.now()
+	print 'multiLinesReadfromFile all: %s seconds' % str(endtime-starttime)
+
+	gc.collect()
+	
+	starttime = datetime.datetime.now()
+	for x in xrange(0,1):
+		file = '/media/tao/LaCie/TalkingData/Jingjinji/Tianjin-FilterRecords/test-000%s' % str(x).zfill(2)
+		lines, times = linebyLineReadfromFile(file)
+		print 'File %s\nLinebyLine read time: %s lines / %s seconds' % (file, lines, times)
+	endtime = datetime.datetime.now()
+	print 'multiLinesReadfromFile all: %s seconds' % str(endtime-starttime)
 
 if __name__ == '__main__':
 	main()
