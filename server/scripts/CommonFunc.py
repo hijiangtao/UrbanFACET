@@ -163,19 +163,28 @@ def getCityLocs(city):
 	# 城市边界信息列表
 	citylocslist = {
 		'beijing': {
-			'north': 40.412,
-			'south': 39.390,
-			'west': 115.642,
-			'east': 117.153
+			'north': 40.7348,
+			'south': 39.5337,
+			'west': 115.5597,
+			'east': 117.2159
 		},
 		'tianjin': {
-
+			'north': 39.8718,
+			'south': 38.6104,
+			'west': 116.7929,
+			'east': 117.9767
 		},
 		'zhangjiakou': {
-
+			'north': 41.4551,
+			'south': 40.0991,
+			'west': 114.1534,
+			'east': 115.7959
 		},
 		'tangshan': {
-
+			'north': 40.466,
+			'south': 38.964,
+			'west': 117.603,
+			'east': 119.185
 		}
 	}
 
@@ -218,7 +227,7 @@ def calFeatureType(data):
 		elif featurekey in amen_financial:
 			return 6
 		else:
-			return 11
+			return 12
 	elif "building" in datakeyset:
 		featurekey = data["building"]
 		if featurekey in build_accommodation:
@@ -232,7 +241,7 @@ def calFeatureType(data):
 		elif featurekey in build_civic_hc:
 			return 5
 		else:
-			return 11
+			return 12
 	elif "emergency" in datakeyset:
 		return 5
 	elif "office" in datakeyset:
@@ -246,7 +255,6 @@ def calFeatureType(data):
 	elif "historic" in datakeyset:
 		return 11
 	
-
 	return 12
 
 def gaussian2D(source, target, sigma):

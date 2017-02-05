@@ -28,11 +28,11 @@ class POICollection(object):
 		self.citylocs = citylocs
 		self.type = datatype
 		self.baseurl = baseurl
+		self.defaultarea = math.pi * 100
 		self.db = {
 			'url': '192.168.1.42',
 			'port': 27017,
-			'dbname': 'tdVC',
-			'gridcolname': 'grids_%s' % city
+			'dbname': 'tdnormal'
 		}
 		
 	def readFiletoJson(self, name):
@@ -52,14 +52,11 @@ class POICollection(object):
 
 			data = json.load(f)
 			if data["type"] == "FeatureCollection":
-				notnulldata = {
-					"type": "FeatureCollection",
-					"features": list()
-				}
+				feaColObj = list()
 				for each in data["features"]:
 					# if name is not null and geometry type is not Way
 					if "id" in each.keys() and "name" in each["properties"].keys() and each["geometry"]["type"] != "LineString":
-						notnulldata["features"].append(each)
+						feaColObj.append(each)
 
 						# count type
 						poitype = each["geometry"]["type"]
@@ -70,16 +67,16 @@ class POICollection(object):
 							count[poitype] = 1
 
 						# Statistics landuse POI's number in total
-						if "landuse" in each["properties"]:
-							landusecount += 1
+						# if "landuse" in each["properties"]:
+						# 	landusecount += 1
 
-				logging.info("POI list has been constructed, contains %d objects from file: %s" % (len(notnulldata["features"]), name))
+				logging.info("POI list has been constructed, contains %d objects from file: %s" % (len(feaColObj), name))
 				for key, value in count.items():
 					logging.info("POI type: %s, number: %d" % (key, value))
 
-				logging.info("Landuse Feature Number: %d" % landusecount)
+				# logging.info("Landuse Feature Number: %d" % landusecount)
 
-				return notnulldata
+				return feaColObj
 			else:
 				return {}
 
@@ -153,13 +150,12 @@ class POICollection(object):
 			Object: POI Collection Object with attributes' appended into each of single POI
 		"""
 		logging.info("Atrributes appending starting...")
-		result = {"type": "FeatureCollection", "features": []}
+		result = []
 
-		features = data["features"]
-		featurelen = len(features)
+		featurelen = len(data)
 		for i in xrange(featurelen):
 			# 当前 POI 对象
-			currentObj = data["features"][i]
+			currentObj = data[i]
 			# 当前 POI 类型
 			geotype = currentObj['geometry']['type']
 			# 当前 POI 对应面积与半径
@@ -178,12 +174,13 @@ class POICollection(object):
 				elif geotype == 'Polygon':
 					currentObj["properties"]["center"] = centroid( currentObj["geometry"] )
 				else:
-					currentObj['properties']['center'] = { "type": "Point", "coordinates": [0,0] }
+					continue
+					# currentObj['properties']['center'] = { "type": "Point", "coordinates": [0,0] }
 
-				result["features"].append(currentObj)
+				result.append(currentObj)
 			
 		logging.info("Atrributes appending complete!")
-		return result['features']
+		return result
 
 	def calArea(self, data):
 		"""Calculate feature area and return it
@@ -195,8 +192,8 @@ class POICollection(object):
 			Float: area value
 		"""
 		areaval = area(data)
-		if areaval < 0:
-			return 0
+		if areaval <= 0.00000001:
+			return self.defaultarea
 
 		return areaval
 
@@ -231,7 +228,7 @@ def main(argv):
 		usage()
 		sys.exit(2)
 
-	city, dic = 'beijing', '/home/taojiang/tools'
+	city, dic = 'beijing', '/home/taojiang/datasets/pois/beijing'
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
@@ -239,13 +236,13 @@ def main(argv):
 		elif opt in ("-c", "--city"):
 			city = arg
 		elif opt in ("-d", "--direcotry"):
-			dic = arg
+			dic = arg + '/' + city
 
 	cityins = POICollection(city, getCityLocs(city), 'POI', dic)
 	# 建立 POI 列表
-	pois = cityins.readFiletoJson("%s_china_fPOI.geojson" % city)
+	pois = cityins.readFiletoJson("%s.fPOI.geojson" % city)
 	# 向 POI 完善附加信息并存入文件
-	cityins.writeFile(cityins.appendAttr(pois), "%s_china_POIExtraction.geojson" % city)
+	cityins.writeFile(cityins.appendAttr(pois), "%s.aPOI.geojson" % city)
 
 if __name__ == "__main__":
 	logging.basicConfig(filename='logger-poiextraction.log', level=logging.DEBUG)
