@@ -81,7 +81,7 @@ class CityGrid(object):
 				featurelistarray = [0]*11
 				typevalid = False
 
-				query all the POIs less than maxQRadius
+				# query all the POIs less than maxQRadius
 				nearPOIList = list(POIs.find({
 					"properties.center": {
 						'$near': {
@@ -93,7 +93,7 @@ class CityGrid(object):
 				}))
 				
 				# construct vector with POIs types info
-				featurelistsum = 1
+				# featurelistsum = 1
 				if len(nearPOIList) != 0:
 					typevalid = True
 					featurelistsum = 0
@@ -111,6 +111,9 @@ class CityGrid(object):
 						curPInd = each["properties"]["ftype"] - 1
 						featurelistarray[ curPInd ] += P
 
+					# update feature vector
+					featurelistarray = [each/featurelistsum for each in featurelistarray]
+					
 				# single feature format
 				# uid: to locate grid index according to it's lat and lng
 				# vec: feature type
@@ -124,7 +127,7 @@ class CityGrid(object):
 						"typevalid": typevalid,
 						"center": {"type": "Point", "coordinates": [lngcen, latcen]},
 						"uid": int(lngind + latind * lngnum),
-						"vec": [each/featurelistsum for each in featurelistarray] 
+						"vec": featurelistarray,
 						'entropy': {
 							'row': -1,
 							'col': -1
