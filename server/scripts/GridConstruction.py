@@ -12,18 +12,17 @@ from geopy.distance import great_circle
 
 class CityGrid(object):
 	"""docstring for CityGrid"""
-	def __init__(self, city, citylocs, baseurl, defaultRadius):
+	def __init__(self, city, citylocs, defaultRadius):
 		super(CityGrid, self).__init__()
 		self.city = city
 		self.citylocs = citylocs
-		self.defaultRadius = defaultRadius
+		self.defaultRadius = defaultRadius * 2
 		self.maxQRadius = 500
-		self.baseurl = baseurl
 		self.db = {
 			'url': '192.168.1.42',
 			'port': 27017,
-			'dbname': 'tdVC',
-			'gridcolname': 'templategrids_%s' % city,
+			'dbname': 'tdnormal',
+			'gridcolname': 'grids_%s' % city,
 			'POIcolname': 'pois_%s' % city
 		}
 
@@ -60,7 +59,7 @@ class CityGrid(object):
 
 		count = 100000
 		tmparray = []
-		# split = round(split, 2)
+		centerincrement = round(split / 2.0, 4)
 		latnum = int((locs['north'] - locs['south']) / split + 1)
 		lngnum = int((locs['east'] - locs['west']) / split + 1)
 
@@ -70,10 +69,12 @@ class CityGrid(object):
 
 		for latind in xrange(0, latnum):
 			for lngind in xrange(0, lngnum):
-				lat = round(locs['south'] + latind * split, 2)
-				lng = round(locs['west'] + lngind * split, 2)
-				lnginc = round(lng+split, 2)
-				latinc = round(lat+split, 2)
+				lat = round(locs['south'] + latind * split, 3)
+				lng = round(locs['west'] + lngind * split, 3)
+				lnginc = round(lng+split, 3)
+				latinc = round(lat+split, 3)
+				lngcen = round(lng+centerincrement, 4)
+				latcen = round(lat+centerincrement, 4)
 				# 一个正方形 geojson 对象，代表当前方块对应的地理边界
 				coordsarr = [ [lng, lat], [lnginc, lat], [lnginc, latinc], [lng, latinc], [lng, lat] ]
 
@@ -84,7 +85,7 @@ class CityGrid(object):
 				nearPOIList = list(POIs.find({
 					"properties.center": {
 						'$near': {
-							'$geometry': { 'type': "Point", 'coordinates': [ lng+0.0005, lat+0.0005 ] },
+							'$geometry': { 'type': "Point", 'coordinates': [ lngcen, latcen ] },
 							'$minDistance': 0,
 							'$maxDistance': self.maxQRadius
 						}
@@ -92,25 +93,23 @@ class CityGrid(object):
 				}))
 				
 				# construct vector with POIs types info
+				featurelistsum = 1
 				if len(nearPOIList) != 0:
 					typevalid = True
+					featurelistsum = 0
 
 					# POI list is not null
 					for each in nearPOIList:
 						cpoint = each["properties"]["center"]["coordinates"]
 						radius = each["properties"]["radius"]
-						sigma = self.defaultRadius * 2
+						sigma = self.defaultRadius
 						if radius > 0:
-							sigma = radius * 2
-						P = gaussian2D([lng+0.0005, lat+0.0005], cpoint, float(sigma) )
+							sigma = radius * 2.0
+						P = gaussian2D([lngcen, latcen], cpoint, sigma )
+						featurelistsum += P
 						
 						curPInd = each["properties"]["ftype"] - 1
-						abbP = featurelistarray[ curPInd ] + P
-
-						if abbP > 1:
-							featurelistarray[ curPInd ] = 1
-						else:
-							featurelistarray[ curPInd ] = abbP
+						featurelistarray[ curPInd ] += P
 
 				# single feature format
 				# uid: to locate grid index according to it's lat and lng
@@ -123,9 +122,9 @@ class CityGrid(object):
 						"id": "%s-%s-%s" % (self.city, str(lat), str(lng)),
 						"type": "Polygon",
 						"typevalid": typevalid,
-						"center": {"type": "Point", "coordinates": [lng + split/2, lat + split/2]},
+						"center": {"type": "Point", "coordinates": [lngcen, latcen]},
 						"uid": int(lngind + latind * lngnum),
-						"vec": featurelistarray
+						"vec": [each/featurelistsum for each in featurelistarray] 
 						'entropy': {
 							'row': -1,
 							'col': -1
@@ -150,26 +149,24 @@ class CityGrid(object):
 		conn.close()
 
 def usage():
-	print 'python GridCOnstruction.py -c <city> -d <work direcotry> -r <default radius> -s <split length>'
+	print 'python GridCOnstruction.py -c <city> -r <default radius> -s <split length>'
 
 def main(argv):
 	try:
-		opts, args = getopt.getopt(argv, "hc:d:r:s:", ["help", "city=", "direcotry=", "radius=", "split="])
+		opts, args = getopt.getopt(argv, "hc:r:s:", ["help", "city=", "radius=", "split="])
 	except getopt.GetoptError as err:
 		# print help information and exit:
 		print str(err)  # will print something like "option -a not recognized"
 		usage()
 		sys.exit(2)
 
-	city, dic, r, split = 'beijing', '/home/taojiang/tools', 10, 0.01
+	city, r, split = 'beijing', 10, 0.001
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
 			sys.exit()
 		elif opt in ("-c", "--city"):
 			city = arg
-		elif opt in ("-d", "--direcotry"):
-			dic = arg
 		elif opt in ("-r", "--radius"):
 			r = arg
 		elif opt in ("-s", "--split"):
@@ -178,7 +175,7 @@ def main(argv):
 	start_time = time.time()
 	citylocs = getCityLocs(city)
 
-	cityGrid = CityGrid(city, citylocs, dic, r)
+	cityGrid = CityGrid(city, citylocs, r)
 	midLat, midLng = round((citylocs['south'] +citylocs['north']) / 2.0, 3), round((citylocs['west'] + citylocs['east']) / 2.0, 3)
 	# sepcitylocs = sep4Citylocs(citylocs, midLat, midLng, split)
 

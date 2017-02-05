@@ -1,4 +1,7 @@
 #
 
-cd /home/taojiang/git/socialgroupVisualComparison/server/scripts
-python ./GridConstruction.py -c beijing -r 10 -s 0.001 
+cd /home/taojiang/git/living-modes-visual-comparison/server/scripts
+python ./GridConstruction.py -c tangshan
+# python ./GridConstruction.py -c tianjin
+# python ./GridConstruction.py -c beijing
+# python ./GridConstruction.py -c zhangjiakou 
