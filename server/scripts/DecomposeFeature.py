@@ -5,7 +5,14 @@
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
 
-import math, heatmap, gc, pp, time, logging, sys, getopt
+import math
+import heatmap
+import gc
+import pp
+import sys
+import getopt
+import logging
+import time
 from sklearn.manifold import TSNE, MDS
 from sklearn.feature_selection import VarianceThreshold
 import matplotlib.pyplot as plt

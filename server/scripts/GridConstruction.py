@@ -5,7 +5,15 @@
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
 
-import os, math, sys, getopt, logging, time, pp, pymongo
+import os
+import math
+import sys
+import getopt
+import logging
+import time
+import pp 
+import pymongo
+import gc
 import numpy as np
 from CommonFunc import connectMongo, getCityLocs, gaussian2D, sep4Citylocs
 from geopy.distance import great_circle
@@ -93,8 +101,8 @@ class CityGrid(object):
 				}))
 				
 				# construct vector with POIs types info
-				# featurelistsum = 1
-				if len(nearPOIList) != 0:
+				poilen = len(nearPOIList)
+				if poilen != 0:
 					typevalid = True
 					featurelistsum = 0
 
@@ -113,7 +121,7 @@ class CityGrid(object):
 
 					# update feature vector
 					featurelistarray = [each/featurelistsum for each in featurelistarray]
-					
+
 				# single feature format
 				# uid: to locate grid index according to it's lat and lng
 				# vec: feature type
@@ -124,15 +132,11 @@ class CityGrid(object):
 					"properties": {
 						"id": "%s-%s-%s" % (self.city, str(lat), str(lng)),
 						"type": "Polygon",
-						"typevalid": typevalid,
+						"vecvalid": typevalid,
 						"center": {"type": "Point", "coordinates": [lngcen, latcen]},
 						"uid": int(lngind + latind * lngnum),
 						"vec": featurelistarray,
-						'entropy': {
-							'row': -1,
-							'col': -1
-						},
-						'recordnum': 0
+						'poinum': poilen
 					},
 					"geometry": {
 						"type": "Polygon",
@@ -143,6 +147,7 @@ class CityGrid(object):
 				if len( tmparray ) == 100000:
 					grid.insert( tmparray )
 					tmparray = []
+					gc.collect()
 					logging.debug("100000 features has been inserted into mongoDB.")
 
 		if len( tmparray ) != 0:
