@@ -120,7 +120,10 @@ class CityGrid(object):
 						featurelistarray[ curPInd ] += P
 
 					# update feature vector
-					featurelistarray = [each/featurelistsum for each in featurelistarray]
+					if featurelistsum:
+						featurelistarray = [each/featurelistsum for each in featurelistarray]
+					else:
+						print featurelistsum
 
 				# single feature format
 				# uid: to locate grid index according to it's lat and lng
