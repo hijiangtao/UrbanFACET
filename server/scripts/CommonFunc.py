@@ -445,7 +445,7 @@ def getAdminNumber(admin):
 	if admin in districts:
 		return str( districts[admin] )
 	else:
-		print len(admin)
+		print districts[admin]
 		# print 'Unrecognized admin areas %s' % admin
 		return '-1'
 
