@@ -92,7 +92,7 @@ class augmentRawData (threading.Thread):
 				break
 
 			logging.info('TASK %d - FILE part-%05d operating...' % (self.INDEX, number))
-			augment(os.path.join(rawdatadir, self.CITY, 'part-%05d' % number), os.path.join(idcoldir, self.CITY), self.CITY, 1000)
+			self.augment(os.path.join(rawdatadir, self.CITY, 'part-%05d' % number), os.path.join(idcoldir, self.CITY), self.CITY, 1000)
 
 def usage():
 	pass
