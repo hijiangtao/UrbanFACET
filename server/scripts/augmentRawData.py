@@ -5,6 +5,7 @@
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
 
+import threading
 import os
 import time
 import pp
@@ -13,7 +14,6 @@ import sys
 import getopt
 import gc
 import thread
-import threading
 from CommonFunc import getTimePeriod, getCityLocs
 from CommonFunc import getAdminNumber as formatAdmin
 
