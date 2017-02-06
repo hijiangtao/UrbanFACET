@@ -39,7 +39,7 @@ class augmentRawData (threading.Thread):
 		for i in range(FILENUM):
 			threading.Lock().acquire()
 			
-			with open('%s/%05d' % (outputfile, i), 'ab') as res:
+			with open('%s/res-%05d' % (outputfile, i), 'ab') as res:
 				res.write( reslist[i] )
 			res.close()
 
@@ -120,10 +120,14 @@ def main(argv):
 			number = int(arg)
 
 	threads = []
+	start = time.time()
 	# 多线程运行程序
 	for x in xrange(0,1):
 		threads.append( augmentRawData(x, city, number, directory) )
 		threads[x].start()
+
+	end = time.time()
+	print end - start
 
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-augmentrawdata.log', level=logging.DEBUG)
