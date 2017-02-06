@@ -124,7 +124,7 @@ def main(argv):
 	threads = []
 	start = time.time()
 	# 多线程运行程序
-	for x in xrange(0,1):
+	for x in xrange(0,20):
 		threads.append( augmentRawData(x, city, number, directory) )
 		threads[x].start()
 		threads[x].join()
