@@ -90,8 +90,8 @@ def formatGridID(locs, point):
 	SPLIT = 0.001
 	# LATNUM = int((locs['north'] - locs['south']) / SPLIT + 1)
 	LNGNUM = int((locs['east'] - locs['west']) / SPLIT + 1)
-	lngind = ( (float(point[0]) - locs['west']) / SPLIT )
-	latind = ( (float(point[1]) - locs['south']) / SPLIT )
+	lngind = int( (float(point[0]) - locs['west']) / SPLIT )
+	latind = int( (float(point[1]) - locs['south']) / SPLIT )
 
 	return str(lngind + latind * LNGNUM)
 
