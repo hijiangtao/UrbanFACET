@@ -33,7 +33,8 @@ class augmentRawData (threading.Thread):
 				index = int(linelist[0]) % FILENUM
 
 				# formatAdmin(linelist[5].strip())
-				reslist[ index ] += linelist[0] + ',' + formatTime(linelist[1]) + ',' + linelist[5] + ',' + formatGridID(getCityLocs(CITY), [linelist[3], linelist[2]]) + '\n'
+				# linelist[5]
+				reslist[ index ] += linelist[0] + ',' + formatTime(linelist[1]) + ',' + formatAdmin(linelist[5]) + ',' + formatGridID(getCityLocs(CITY), [linelist[3], linelist[2]]) + '\n'
 		stream.close()
 		gc.collect()
 
