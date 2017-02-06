@@ -25,42 +25,6 @@ class augmentRawData (threading.Thread):
 		self.FILENUM = FILENUM
 		self.DIRECTORY = DIRECTORY
 
-	def formatTime(self, timestr):
-		"""Summary
-		
-		Args:
-			timestr (TYPE): Description
-		
-		Returns:
-			TYPE: Description
-		"""
-		dateObj = time.localtime( int(timestr)/1000.0 )
-		
-		date = time.strftime("%m-%d", dateObj)
-		time = time.strftime("%H:%M", dateObj)
-		day = time.strftime("%w", dateObj)
-		period = getTimePeriod( time.strftime("%H", dateObj) )
-
-		return date + ',' + time + ',' + day + ',' + period
-
-	def formatGridID(self, locs, point):
-		"""Summary
-		
-		Args:
-			locs (TYPE): Description
-			point (TYPE): [lng, lat]
-		
-		Returns:
-			TYPE: Description
-		"""
-		SPLIT = 0.001
-		# LATNUM = int((locs['north'] - locs['south']) / SPLIT + 1)
-		LNGNUM = int((locs['east'] - locs['west']) / SPLIT + 1)
-		lngind = ( (float(point[0]) - locs['west']) / SPLIT )
-		latind = ( (float(point[1]) - locs['south']) / SPLIT )
-
-		return str(lngind + latind * LNGNUM)
-
 	def augment(self, inputfile, outputfile, CITY, FILENUM = 1000):
 		reslist = ['' for i in range(FILENUM)]
 		with open(inputfile, 'rb') as stream:
@@ -68,7 +32,7 @@ class augmentRawData (threading.Thread):
 				linelist = line.split(',')
 				index = int(linelist[0]) % FILENUM
 
-				reslist[ index ] += linelist[0] + ',' + self.formatTime(linelist[1]) + ',' + formatAdmin(linelist[5]) + ',' + self.formatGridID(getCityLocs(CITY), [linelist[3], linelist[2]]) + '\n'
+				reslist[ index ] += linelist[0] + ',' + formatTime(linelist[1]) + ',' + formatAdmin(linelist[5]) + ',' + formatGridID(getCityLocs(CITY), [linelist[3], linelist[2]]) + '\n'
 		stream.close()
 		gc.collect()
 
@@ -93,6 +57,42 @@ class augmentRawData (threading.Thread):
 
 			logging.info('TASK %d - FILE part-%05d operating...' % (self.INDEX, number))
 			self.augment(os.path.join(rawdatadir, self.CITY, 'part-%05d' % number), os.path.join(idcoldir, self.CITY), self.CITY, 1000)
+
+def formatTime(timestr):
+	"""Summary
+	
+	Args:
+		timestr (TYPE): Description
+	
+	Returns:
+		TYPE: Description
+	"""
+	dateObj = time.localtime( int(timestr)/1000.0 )
+	
+	date = time.strftime("%m-%d", dateObj)
+	time = time.strftime("%H:%M", dateObj)
+	day = time.strftime("%w", dateObj)
+	period = getTimePeriod( time.strftime("%H", dateObj) )
+
+	return date + ',' + time + ',' + day + ',' + period
+
+def formatGridID(locs, point):
+	"""Summary
+	
+	Args:
+		locs (TYPE): Description
+		point (TYPE): [lng, lat]
+	
+	Returns:
+		TYPE: Description
+	"""
+	SPLIT = 0.001
+	# LATNUM = int((locs['north'] - locs['south']) / SPLIT + 1)
+	LNGNUM = int((locs['east'] - locs['west']) / SPLIT + 1)
+	lngind = ( (float(point[0]) - locs['west']) / SPLIT )
+	latind = ( (float(point[1]) - locs['south']) / SPLIT )
+
+	return str(lngind + latind * LNGNUM)
 
 def usage():
 	pass
