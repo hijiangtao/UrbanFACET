@@ -421,7 +421,7 @@ def getTimePeriod(time):
 
 	return 6
 
-def getAdminNumber(admin):
+def getAdminNumber(admin, ttt):
 	"""计算当前行政区划所属编号
 	
 	Args:
@@ -443,7 +443,7 @@ def getAdminNumber(admin):
 	if admin in districts:
 		return str( districts[admin] )
 	else:
-		print str(admin)
+		print str(ttt)
 		# print 'Unrecognized admin areas %s' % admin
 		return '-1'
 
