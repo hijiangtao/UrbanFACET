@@ -71,7 +71,7 @@ def formatTime(timestr):
 	date = time.strftime("%m-%d", dateObj)
 	hourmin = time.strftime("%H:%M", dateObj)
 	day = time.strftime("%w", dateObj)
-	period = getTimePeriod( time.strftime("%H", dateObj) )
+	period = str( getTimePeriod( time.strftime("%H", dateObj) ) )
 
 	return date + ',' + hourmin + ',' + day + ',' + period
 
