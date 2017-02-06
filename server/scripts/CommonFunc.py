@@ -5,7 +5,7 @@
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
 
-import os, pymongo, math, MySQLdb, sys, logging
+import os, pymongo, math, sys, logging
 import numpy as np
 # from scipy import stats
 # import geopy.distance  # https://pypi.python.org/pypi/geopy/1.11.0
