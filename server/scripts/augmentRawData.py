@@ -15,6 +15,7 @@ import getopt
 import gc
 from CommonFunc import getTimePeriod, getCityLocs
 from CommonFunc import getAdminNumber as formatAdmin
+tLock = threading.Lock()
 
 class augmentRawData (threading.Thread):
 	def __init__(self, INDEX, CITY, FILENUM, DIRECTORY ):
@@ -37,14 +38,14 @@ class augmentRawData (threading.Thread):
 		gc.collect()
 
 		for i in range(FILENUM):
-			threading.Lock().acquire()
+			tLock.acquire()
 			
 			with open('%s/res-%05d' % (outputfile, i), 'ab') as res:
 				res.write( reslist[i] )
 			res.close()
 
 			# 释放锁
-			threading.Lock().release()
+			tLock.release()
 
 	def run(self):
 		logging.info('TASK %d running...' % self.INDEX)
@@ -125,6 +126,7 @@ def main(argv):
 	for x in xrange(0,1):
 		threads.append( augmentRawData(x, city, number, directory) )
 		threads[x].start()
+		threads[x].join()
 
 	end = time.time()
 	print end - start
