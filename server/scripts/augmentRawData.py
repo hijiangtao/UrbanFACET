@@ -60,6 +60,9 @@ class augmentRawData (threading.Thread):
 			logging.info('TASK %d - FILE part-%05d operating...' % (self.INDEX, number))
 			self.augment(os.path.join(rawdatadir, self.CITY, 'part-%05d' % number), os.path.join(idcoldir, self.CITY), self.CITY, 1000)
 
+		print "Task %s finished time:" % str(self.INDEX)
+		print time.time()
+
 def formatTime(timestr):
 	"""Summary
 	
@@ -122,15 +125,11 @@ def main(argv):
 			number = int(arg)
 
 	threads = []
-	start = time.time()
+	print time.time()
 	# 多线程运行程序
 	for x in xrange(0,20):
 		threads.append( augmentRawData(x, city, number, directory) )
 		threads[x].start()
-		threads[x].join()
-
-	end = time.time()
-	print end - start
 
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-augmentrawdata.log', level=logging.DEBUG)
