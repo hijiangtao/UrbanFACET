@@ -441,11 +441,11 @@ def getAdminNumber(admin):
 	}
 
 	admin = admin.decode('utf-8')
-	
+
 	if admin in districts:
 		return str( districts[admin] )
 	else:
-		print districts[admin]
+		print admin
 		# print 'Unrecognized admin areas %s' % admin
 		return '-1'
 
