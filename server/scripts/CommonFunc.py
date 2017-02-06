@@ -443,8 +443,8 @@ def getAdminNumber(admin):
 	if admin in districts:
 		return str( districts[admin] )
 	else:
-		# print admin
-		print 'Unrecognized admin areas %s' % admin
+		print admin.decode('utf8')
+		# print 'Unrecognized admin areas %s' % admin
 		return '-1'
 
 
