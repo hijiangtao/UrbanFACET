@@ -13,7 +13,6 @@ import logging
 import sys
 import getopt
 import gc
-import thread
 from CommonFunc import getTimePeriod, getCityLocs
 from CommonFunc import getAdminNumber as formatAdmin
 
@@ -70,11 +69,11 @@ def formatTime(timestr):
 	dateObj = time.localtime( int(timestr)/1000.0 )
 	
 	date = time.strftime("%m-%d", dateObj)
-	time = time.strftime("%H:%M", dateObj)
+	hourmin = time.strftime("%H:%M", dateObj)
 	day = time.strftime("%w", dateObj)
 	period = getTimePeriod( time.strftime("%H", dateObj) )
 
-	return date + ',' + time + ',' + day + ',' + period
+	return date + ',' + hourmin + ',' + day + ',' + period
 
 def formatGridID(locs, point):
 	"""Summary
