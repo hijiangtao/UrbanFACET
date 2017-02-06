@@ -440,8 +440,8 @@ def getAdminNumber(admin):
 		u"路南区":49,u"路北区":50,u"古冶区":51,u"开平区":52,u"丰南区":53,u"丰润区":54,u"曹妃甸区":55,u"滦县":56,u"滦南县":57,u"乐亭县":58,u"迁西县":59,u"玉田县":60
 	}
 
-	# admin = admin.decode('utf-8').encode('utf-8')
-
+	admin = admin.decode('utf-8')
+	
 	if admin in districts:
 		return str( districts[admin] )
 	else:
