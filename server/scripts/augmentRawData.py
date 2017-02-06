@@ -28,10 +28,10 @@ class augmentRawData (threading.Thread):
 		reslist = ['' for i in range(FILENUM)]
 		with open(inputfile, 'rb') as stream:
 			for line in stream:
-				linelist = line.split(',')
+				linelist = line.strip('\n').split(',')
 				index = int(linelist[0]) % FILENUM
 
-				reslist[ index ] += linelist[0] + ',' + formatTime(linelist[1]) + ',' + formatAdmin(linelist[5].strip('\n'), line) + ',' + formatGridID(getCityLocs(CITY), [linelist[3], linelist[2]]) + '\n'
+				reslist[ index ] += linelist[0] + ',' + formatTime(linelist[1]) + ',' + formatAdmin(linelist[5].strip()) + ',' + formatGridID(getCityLocs(CITY), [linelist[3], linelist[2]]) + '\n'
 		stream.close()
 		gc.collect()
 
