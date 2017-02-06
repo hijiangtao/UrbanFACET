@@ -18,21 +18,21 @@ from CommonFunc import getTimePeriod, getCityLocs
 from CommonFunc import getAdminNumber as formatAdmin
 
 class augmentRawData (threading.Thread):
-    def __init__(self, INDEX, CITY, FILENUM, DIRECTORY ):
-        threading.Thread.__init__(self)
-        self.INDEX = INDEX
-        self.CITY= CITY
-        self.FILENUM = FILENUM
-        self.DIRECTORY = DIRECTORY
+	def __init__(self, INDEX, CITY, FILENUM, DIRECTORY ):
+		threading.Thread.__init__(self)
+		self.INDEX = INDEX
+		self.CITY= CITY
+		self.FILENUM = FILENUM
+		self.DIRECTORY = DIRECTORY
 
 	def formatTime(self, timestr):
 		"""Summary
 		
 		Args:
-		    timestr (TYPE): Description
+			timestr (TYPE): Description
 		
 		Returns:
-		    TYPE: Description
+			TYPE: Description
 		"""
 		dateObj = time.localtime( int(timestr)/1000.0 )
 		
@@ -47,11 +47,11 @@ class augmentRawData (threading.Thread):
 		"""Summary
 		
 		Args:
-		    locs (TYPE): Description
-		    point (TYPE): [lng, lat]
+			locs (TYPE): Description
+			point (TYPE): [lng, lat]
 		
 		Returns:
-		    TYPE: Description
+			TYPE: Description
 		"""
 		SPLIT = 0.001
 		# LATNUM = int((locs['north'] - locs['south']) / SPLIT + 1)
@@ -68,30 +68,30 @@ class augmentRawData (threading.Thread):
 				linelist = line.split(',')
 				index = int(linelist[0]) % FILENUM
 
-				reslist[ index ] += linelist[0] + ',' 
-					+ self.formatTime(linelist[1]) + ',' 
-					+ formatAdmin(linelist[5]) + ',' 
-					+ self.formatGridID(getCityLocs(CITY), [linelist[3], linelist[2]]) + '\n'
+				reslist[ index ] += linelist[0] + ',' + self.formatTime(linelist[1]) + ',' + formatAdmin(linelist[5]) + ',' + self.formatGridID(getCityLocs(CITY), [linelist[3], linelist[2]]) + '\n'
 		stream.close()
 		gc.collect()
 
 		for i in range(FILENUM):
 			threading.Lock().acquire()
-	        
+			
 			with open('%s/%05d' % (outputfile, i), 'ab') as res:
 				res.write( reslist[i] )
 			res.close()
 
 			# 释放锁
-	        threading.Lock().release()
+			threading.Lock().release()
 
 	def run(self):
+		logging.info('TASK %d running...' % self.INDEX)
 		rawdatadir = os.path.join(self.DIRECTORY, 'rawdata' )
 		idcoldir = os.path.join(self.DIRECTORY, 'idcollection' )
 		for x in xrange(0, 10000000):
 			number = self.INDEX + 20 * x
 			if number > self.FILENUM:
 				break
+
+			logging.info('TASK %d - FILE part-%05d operating...' % (self.INDEX, number))
 			augment(os.path.join(rawdatadir, self.CITY, 'part-%05d' % number), os.path.join(idcoldir, self.CITY), self.CITY, 1000)
 
 def usage():
