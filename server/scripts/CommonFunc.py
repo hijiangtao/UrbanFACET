@@ -441,10 +441,10 @@ def getAdminNumber(admin):
 	}
 
 	if admin in districts:
-		return districts[admin]
+		return str( districts[admin] )
 	else:
 		print 'Unrecognized admin areas %s' % admin
-		return -1
+		return '-1'
 
 
 def calColorbyNum(num):
