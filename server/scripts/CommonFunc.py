@@ -396,6 +396,57 @@ def judFeatureTP(daytype, timesegid):
 
 	return vecInd
 
+def getTimePeriod(time):
+	"""计算当小时所属时间段
+	
+	Args:
+	    time (TYPE): String
+	
+	Returns:
+	    TYPE: Int
+	"""
+	time = int(time)
+	if time >= 6 and time < 9:
+		return 0
+	elif time >= 9 and time < 12:
+		return 1
+	elif time >= 12 and time < 14:
+		return 2
+	elif time >= 14 and time < 17:
+		return 3
+	elif time >= 17 and time < 21:
+		return 4
+	elif time >= 21:
+		return 5
+
+	return 6
+
+def getAdminNumber(admin):
+	"""计算当前行政区划所属编号
+	
+	Args:
+	    admin (TYPE): String
+	
+	Returns:
+	    TYPE: Int
+	"""
+	districts = {
+		"东城区": 1,"西城区":2,"朝阳区":3,"丰台区":4,"石景山区":5,"海淀区":6,"门头沟区":7,"房山区":8,"通州区":9,"顺义区":10,"昌平区":11,"大兴区":12,"怀柔区":13,"平谷区":14,"密云区":15,"延庆区":16,
+
+		"和平区":17,"河东区":18,"河西区":19,"南开区":20,"河北区":21,"红桥区":22,"东丽区":23,"西青区":24,"津南区":25,"北辰区":26,"武清区":27,"宝坻区":28,"滨海新区":29,"宁河区":30,"静海区":31,"蓟县":32,
+
+		"桥东区":33,"桥西区":34,"宣化区":35,"下花园区":36,"万全区":37,"崇礼区":38,"张北县":39,"康保县":40,"沽源县":41,"尚义县":42,"蔚县":43,"阳原县":44,"怀安县":45,"怀来县":46,"涿鹿县":47,"赤城县":48,
+
+		"路南区":49,"路北区":50,"古冶区":51,"开平区":52,"丰南区":53,"丰润区":54,"曹妃甸区":55,"滦县":56,"滦南县":57,"乐亭县":58,"迁西县":59,"玉田县":60
+	}
+
+	if admin in districts:
+		return districts[admin]
+	else:
+		print 'Unrecognized admin areas %s' % admin
+		return -1
+
+
 def calColorbyNum(num):
 	numcolormap = [{
 		'value': 5,

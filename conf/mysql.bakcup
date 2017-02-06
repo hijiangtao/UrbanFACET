@@ -112,3 +112,9 @@ LOAD DATA LOCAL INFILE '/home/taojiang/git/living-modes-visual-comparison/server
 INTO TABLE beijing_bjxz_idlist
 FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n'
 (@col1) set id=@col1;
+
+
+zhangjiakou: 1392236
+tianjin: 8011128
+tangshan: 2786668
+beijing: 

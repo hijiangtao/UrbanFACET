@@ -28,3 +28,10 @@ def readDisPolyFile(path, filename):
 				]
 			}
 			result.append( obj )
+
+
+if __name__ == '__main__':
+	for i in range(10):
+		with open('/home/joe/Documents/git/living-modes-visual-comparison/test-'+str(i), 'ab') as res:
+			res.write( '中国' + 'we\n' )
+		res.close()
