@@ -118,10 +118,11 @@ def main(argv):
 		elif opt in ('-n', '--number'):
 			number = int(arg)
 
+	threads = []
 	# 多线程运行程序
 	for x in xrange(0,20):
-		thread = augmentRawData(x, city, number, directory)
-		thread.start()
+		threads.append( augmentRawData(x, city, number, directory) )
+		threads[x].start()
 
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-augmentrawdata.log', level=logging.DEBUG)
