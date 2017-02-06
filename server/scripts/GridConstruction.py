@@ -121,9 +121,9 @@ class CityGrid(object):
 
 					# update feature vector
 					if featurelistsum:
-						typevalid = False
 						featurelistarray = [each/featurelistsum for each in featurelistarray]
 					else:
+						typevalid = False
 						print featurelistsum
 
 				# single feature format
