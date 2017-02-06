@@ -440,12 +440,12 @@ def getAdminNumber(admin):
 		"路南区":49,"路北区":50,"古冶区":51,"开平区":52,"丰南区":53,"丰润区":54,"曹妃甸区":55,"滦县":56,"滦南县":57,"乐亭县":58,"迁西县":59,"玉田县":60
 	}
 
-	admin = admin.decode('utf-8').encode('utf-8')
+	# admin = admin.decode('utf-8').encode('utf-8')
 
 	if admin in districts:
 		return str( districts[admin] )
 	else:
-		print r'%s' % admin
+		print len(admin)
 		# print 'Unrecognized admin areas %s' % admin
 		return '-1'
 
