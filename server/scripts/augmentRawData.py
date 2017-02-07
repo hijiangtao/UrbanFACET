@@ -8,6 +8,7 @@
 import threading
 import os
 import time
+import datetime
 import pp
 import logging
 import sys
@@ -27,7 +28,9 @@ class augmentRawData (threading.Thread):
 
 	def augment(self, inputfile, outputfile, CITY, FILENUM = 1000):
 		reslist = ['' for i in range(FILENUM)]
+		print "Begin read file at %s" % time.time()
 		with open(inputfile, 'rb') as stream:
+			print "Finished read file at %s" % time.time()
 			for line in stream:
 				linelist = line.strip('\n').split(',')
 				index = int(linelist[0]) % FILENUM
@@ -38,6 +41,7 @@ class augmentRawData (threading.Thread):
 		stream.close()
 		gc.collect()
 
+		print "Begin write file at %s" % time.time()
 		for i in range(FILENUM):
 			tLock.acquire()
 			
@@ -47,9 +51,11 @@ class augmentRawData (threading.Thread):
 
 			# 释放锁
 			tLock.release()
+		print "Finished write file at %s" % time.time()
 
 	def run(self):
 		logging.info('TASK %d running...' % self.INDEX)
+
 		rawdatadir = os.path.join(self.DIRECTORY, 'rawdata' )
 		idcoldir = os.path.join(self.DIRECTORY, 'idcollection' )
 		for x in xrange(0, 10000000):
@@ -125,9 +131,9 @@ def main(argv):
 			number = int(arg)
 
 	threads = []
-	print time.time()
+	print "Start approach at %s" % time.time()
 	# 多线程运行程序
-	for x in xrange(0,20):
+	for x in xrange(0,1):
 		threads.append( augmentRawData(x, city, number, directory) )
 		threads[x].start()
 
