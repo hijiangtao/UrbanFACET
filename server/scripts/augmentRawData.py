@@ -16,7 +16,10 @@ import getopt
 import gc
 from CommonFunc import getTimePeriod, getCityLocs
 from CommonFunc import getAdminNumber as formatAdmin
+from multiprocessing import Process, Manager, Value, Array, Lock
+from ctypes import c_wchar_p
 tLock = threading.Lock()
+pLock = Lock()
 
 class augmentRawData (threading.Thread):
 	def __init__(self, INDEX, CITY, FILENUM, DIRECTORY ):
@@ -28,9 +31,9 @@ class augmentRawData (threading.Thread):
 
 	def augment(self, inputfile, outputfile, CITY, FILENUM = 1000):
 		reslist = ['' for i in range(FILENUM)]
-		print "Begin read file at %s" % time.time()
+		# print "Begin read file at %s" % time.time()
 		with open(inputfile, 'rb') as stream:
-			print "Finished read file at %s" % time.time()
+			# print "Finished read file at %s" % time.time()
 			for line in stream:
 				linelist = line.strip('\n').split(',')
 				index = int(linelist[0]) % FILENUM
@@ -41,7 +44,7 @@ class augmentRawData (threading.Thread):
 		stream.close()
 		gc.collect()
 
-		print "Begin write file at %s" % time.time()
+		# print "Begin write file at %s" % time.time()
 		for i in range(FILENUM):
 			tLock.acquire()
 			
@@ -51,7 +54,51 @@ class augmentRawData (threading.Thread):
 
 			# 释放锁
 			tLock.release()
-		print "Finished write file at %s" % time.time()
+		# print "Finished write file at %s" % time.time()
+
+	def run(self):
+		logging.info('TASK %d running...' % self.INDEX)
+
+		rawdatadir = os.path.join(self.DIRECTORY, 'rawdata' )
+		idcoldir = os.path.join(self.DIRECTORY, 'idcollection' )
+		for x in xrange(0, 10000000):
+			number = self.INDEX + 20 * x
+			if number > self.FILENUM:
+				break
+
+			logging.info('TASK %d - FILE part-%05d operating...' % (self.INDEX, number))
+			self.augment(os.path.join(rawdatadir, self.CITY, 'part-%05d' % number), os.path.join(idcoldir, self.CITY), self.CITY, 1000)
+
+		print "Task %s finished time:" % str(self.INDEX)
+		print time.time()
+
+class augmentRawDatainMultiProcess():
+	def __init__(self, INDEX, CITY, FILENUM, DIRECTORY ):
+		self.INDEX = INDEX
+		self.CITY= CITY
+		self.FILENUM = FILENUM
+		self.DIRECTORY = DIRECTORY
+
+	def augment(self, inputfile, outputfile, CITY, FILENUM = 1000):
+		reslist = ['' for i in range(FILENUM)]
+
+		with open(inputfile, 'rb') as stream:
+			for line in stream:
+				linelist = line.strip('\n').split(',')
+				index = int(linelist[0]) % FILENUM
+
+				reslist[ index ] += linelist[0] + ',' + formatTime(linelist[1]) + ',' + formatAdmin(linelist[5]) + ',' + formatGridID(getCityLocs(CITY), [linelist[3], linelist[2]]) + '\n'
+		stream.close()
+		gc.collect()
+
+		# print "Begin write file at %s" % time.time()
+		for i in range(FILENUM):
+			
+			with open('%s/res-%05d' % (outputfile, i), 'ab') as res:
+				res.write( reslist[i] )
+			res.close()
+
+		# print "Finished write file at %s" % time.time()
 
 	def run(self):
 		logging.info('TASK %d running...' % self.INDEX)
@@ -133,10 +180,16 @@ def main(argv):
 	threads = []
 	print "Start approach at %s" % time.time()
 	# 多线程运行程序
-	for x in xrange(0,1):
+	for x in xrange(0,20):
 		threads.append( augmentRawData(x, city, number, directory) )
 		threads[x].start()
 
+	# 等待所有进程结束
+	for job in jobs:
+	    job.join()
+
+	# 处理剩余数据进文件
+	
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-augmentrawdata.log', level=logging.DEBUG)
 	main(sys.argv[1:])
