@@ -220,7 +220,7 @@ def main(argv):
 		taskdata.append( manager.Value(c_wchar_p, "") )
 
 	for x in xrange(0,20):
-		# time.sleep(random.random())
+		time.sleep(random.random()*2)
 		jobs.append( Process(target=processTask, args=(STARTTIME, x, city, number, directory, taskdata, listcount)) )
 		jobs[x].start()
 
