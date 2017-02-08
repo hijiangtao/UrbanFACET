@@ -95,19 +95,18 @@ class augmentRawDatainMultiProcess():
 
 				reslist[ index ] += linelist[0] + ',' + formatTime(linelist[1]) + ',' + formatAdmin(linelist[5]) + ',' + formatGridID(getCityLocs(CITY), [linelist[3], linelist[2]]) + '\n'
 		stream.close()
-		gc.collect()
-
+		
 		global pLock
 		# localFileStream = []
 
 		with pLock:
-			print "Current count value %d in time %s" % (self.listCount.value, str(time.time()-self.STARTTIME))
+			print "Current count value %d in time %s" % (self.listCount.value, str(time.time()-self.STARTTIME.value))
 
 			self.listCount.value += resnumber
 
 			if self.listCount.value > self.MAXRECORDS:
-				print "PROCESS ID-%d has one write operation at %s." % (self.INDEX, str(time.time()-self.STARTTIME))
-				self.STARTTIME = time.time()
+				print "PROCESS ID-%d has one write operation at %s." % (self.INDEX, str(time.time()-self.STARTTIME.value))
+				self.STARTTIME.value = time.time()
 
 				for x in xrange(0, FILENUM):
 					with open('%s/res-%05d' % (outputfile, x), 'ab') as res:
@@ -206,7 +205,7 @@ def main(argv):
 		elif opt in ('-n', '--number'):
 			number = int(arg)
 
-	STARTTIME = time.time()
+	STARTTIME = Value('%d', time.time())
 	print "Start approach at %s" % STARTTIME
 
 	# @多进程运行程序 START
@@ -220,7 +219,7 @@ def main(argv):
 		taskdata.append( manager.Value(c_wchar_p, "") )
 
 	for x in xrange(0,20):
-		time.sleep(random.random()*2)
+		# time.sleep(random.random()*2)
 		jobs.append( Process(target=processTask, args=(STARTTIME, x, city, number, directory, taskdata, listcount)) )
 		jobs[x].start()
 
