@@ -14,6 +14,7 @@ import logging
 import sys
 import getopt
 import gc
+import random
 from CommonFunc import getTimePeriod, getCityLocs
 from CommonFunc import getAdminNumber as formatAdmin
 from multiprocessing import Process, Manager, Value, Array, Lock
@@ -209,9 +210,9 @@ def main(argv):
 		taskdata[x].append( manager.Value(c_wchar_p, "") )
 
 	for x in xrange(0,20):
+		# time.sleep(random.random())
 		jobs.append( Process(target=processTask, args=(x, city, number, directory, taskdata, listcount)) )
 		jobs[x].start()
-
 
 	# 等待所有进程结束
 	for job in jobs:
