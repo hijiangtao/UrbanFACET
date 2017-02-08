@@ -236,8 +236,6 @@ def main(argv):
 			res.close()
 
 	# @多进程运行程序 END
-	
-	
 
 	# @多线程运行程序
 	# threads = []
