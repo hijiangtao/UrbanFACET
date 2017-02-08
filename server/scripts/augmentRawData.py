@@ -102,7 +102,7 @@ class augmentRawDatainMultiProcess():
 
 		with pLock:
 			print "Current count value %d in time %s" % (self.listCount.value, str(time.time()-self.STARTTIME))
-			
+
 			self.listCount.value += resnumber
 
 			if self.listCount.value > self.MAXRECORDS:
@@ -231,7 +231,7 @@ def main(argv):
 	# 处理剩余数据进文件
 	for x in xrange(0, FILENUM):
 		if taskdata[x].value != '':
-			with open('%s/res-%05d' % (os.path.join(directory, 'idcollection', city ), i), 'ab') as res:
+			with open('%s/res-%05d' % (os.path.join(directory, 'idcollection', city ), x), 'ab') as res:
 				res.write( taskdata[x].value )
 			res.close()
 
