@@ -73,17 +73,21 @@ class augmentRawData (threading.Thread):
 		print time.time()
 
 class augmentRawDatainMultiProcess():
-	def __init__(self, INDEX, CITY, FILENUM, DIRECTORY ):
+	def __init__(self, INDEX, CITY, FILENUM, DIRECTORY, strData, listCount ):
 		self.INDEX = INDEX
 		self.CITY= CITY
 		self.FILENUM = FILENUM
 		self.DIRECTORY = DIRECTORY
+		self.strData = strData
+		self.listCount = listCount
+		self.MAXRECORDS = 100000000
 
 	def augment(self, inputfile, outputfile, CITY, FILENUM = 1000):
 		reslist = ['' for i in range(FILENUM)]
-
+		resnumber = 0
 		with open(inputfile, 'rb') as stream:
 			for line in stream:
+				resnumber += 1
 				linelist = line.strip('\n').split(',')
 				index = int(linelist[0]) % FILENUM
 
@@ -91,14 +95,26 @@ class augmentRawDatainMultiProcess():
 		stream.close()
 		gc.collect()
 
-		# print "Begin write file at %s" % time.time()
-		for i in range(FILENUM):
-			
-			with open('%s/res-%05d' % (outputfile, i), 'ab') as res:
-				res.write( reslist[i] )
-			res.close()
+		global pLock
+		# localFileStream = []
 
-		# print "Finished write file at %s" % time.time()
+		with pLock:
+			self.listCount += resnumber
+
+			if self.listCount > self.MAXRECORDS:
+				print "process %d has one write operation." % self.INDEX
+				for x in xrange(0, FILENUM):
+					with open('%s/res-%05d' % (outputfile, x), 'ab') as res:
+						res.write( self.strData[x].value + reslist[x] )
+					res.close()
+					# localFileStream.append( self.strData[x].value + reslist[x] )
+					self.strData[x].value = ''
+
+				# 计数器重置为 0
+				self.listCount = 0
+			else:
+				for x in xrange(0, FILENUM):
+					self.strData[x].value += reslist[x]
 
 	def run(self):
 		logging.info('TASK %d running...' % self.INDEX)
@@ -152,8 +168,13 @@ def formatGridID(locs, point):
 
 	return str(lngind + latind * LNGNUM)
 
+# 多进程情况下处理单个进程的启动
+def processTask(x, city, number, directory, strdata, countdata):
+	task = augmentRawDatainMultiProcess(x, city, number, directory, strdata, countdata)
+	task.run()
+
 def usage():
-	pass
+	print "Not Yet."
 
 def main(argv):
 	try:
@@ -177,19 +198,44 @@ def main(argv):
 		elif opt in ('-n', '--number'):
 			number = int(arg)
 
-	threads = []
-	print "Start approach at %s" % time.time()
-	# 多线程运行程序
+	# @多进程运行程序
+	manager = Manager()
+	jobs = []
+
+	listcount = Value('i', 0)
+	taskdata = []
+	# 初始化
+	for x in xrange(0,1000):
+		taskdata[x].append( manager.Value(c_wchar_p, "") )
+
 	for x in xrange(0,20):
-		threads.append( augmentRawData(x, city, number, directory) )
-		threads[x].start()
+		jobs.append( Process(target=processTask, args=(x, city, number, directory, taskdata, listcount)) )
+		jobs[x].start()
+
 
 	# 等待所有进程结束
 	for job in jobs:
 	    job.join()
 
 	# 处理剩余数据进文件
+	for x in xrange(0, FILENUM):
+		if taskdata[x].value != '':
+			with open('%s/res-%05d' % (os.path.join(directory, 'idcollection', city ), i), 'ab') as res:
+				res.write( taskdata[x].value )
+			res.close()
+
+	# @多进程运行程序
 	
+	
+
+	# @多线程运行程序
+	# threads = []
+	# print "Start approach at %s" % time.time()
+	# # 多线程运行程序
+	# for x in xrange(0,20):
+	# 	threads.append( augmentRawData(x, city, number, directory) )
+	# 	threads[x].start()
+
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-augmentrawdata.log', level=logging.DEBUG)
 	main(sys.argv[1:])
