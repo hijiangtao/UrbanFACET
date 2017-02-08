@@ -70,29 +70,36 @@ def foo1(tt):
 
 if __name__ == "__main__":
 	manager = Manager()
-	x = manager.Value('i', 0)
-	# y = Array(c_wchar_p, 10)
-	# z = Array(c_wchar_p, 10)
-	z = [] 
-	y = []
+	# x = manager.Value('i', 0)
+	# # y = Array(c_wchar_p, 10)
+	# # z = Array(c_wchar_p, 10)
+	# z = [] 
+	# y = []
 
-	print getsizeof(z)
-	for i in xrange(0,10):
-		y.append( Value(c_wchar_p, ""))
-		z.append( manager.Value(c_wchar_p, "") )
-
-	for i in range(500):
-		# Process(target=foo, args=(x, 'x')).start()
-		# Process(target=foo, args=(y, 'y')).start()
-		Process(target=foo1, args=(z,)).start()
-
-	# print 'Before waiting: '
-	# print 'x = {0}'.format(x.value)
-	# print 'y = {0}'.format(y.value)
-
-	time.sleep(5.0)
-	# print 'After waiting: '
-	# print 'x = {0}'.format(x.value)
-	# print 'y = {0}'.format(y.value)
-	print z[0].value
 	# print getsizeof(z)
+	# for i in xrange(0,10):
+	# 	y.append( Value(c_wchar_p, ""))
+	# 	z.append( manager.Value(c_wchar_p, "") )
+
+	# for i in range(500):
+	# 	# Process(target=foo, args=(x, 'x')).start()
+	# 	# Process(target=foo, args=(y, 'y')).start()
+	# 	Process(target=foo1, args=(z,)).start()
+
+	# # print 'Before waiting: '
+	# # print 'x = {0}'.format(x.value)
+	# # print 'y = {0}'.format(y.value)
+
+	# time.sleep(5.0)
+	# # print 'After waiting: '
+	# # print 'x = {0}'.format(x.value)
+	# # print 'y = {0}'.format(y.value)
+	# print z[0].value
+	# # print getsizeof(z)
+	
+	t = Value('i', 0)
+
+	print t.value
+	t.value+=2017
+
+	print t.value

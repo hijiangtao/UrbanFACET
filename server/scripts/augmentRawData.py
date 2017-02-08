@@ -100,9 +100,9 @@ class augmentRawDatainMultiProcess():
 		# localFileStream = []
 
 		with pLock:
-			self.listCount += resnumber
+			self.listCount.value += resnumber
 
-			if self.listCount > self.MAXRECORDS:
+			if self.listCount.value > self.MAXRECORDS:
 				print "process %d has one write operation." % self.INDEX
 				for x in xrange(0, FILENUM):
 					with open('%s/res-%05d' % (outputfile, x), 'ab') as res:
@@ -112,7 +112,7 @@ class augmentRawDatainMultiProcess():
 					self.strData[x].value = ''
 
 				# 计数器重置为 0
-				self.listCount = 0
+				self.listCount.value = 0
 			else:
 				for x in xrange(0, FILENUM):
 					self.strData[x].value += reslist[x]
