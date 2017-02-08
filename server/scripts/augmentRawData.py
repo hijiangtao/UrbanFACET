@@ -100,7 +100,7 @@ class augmentRawDatainMultiProcess():
 		# localFileStream = []
 
 		with pLock:
-			print "Current count value %d" % self.listCount.value
+			print "Current count value %d in time %s" % (self.listCount.value, time.time())
 			self.listCount.value += resnumber
 
 			if self.listCount.value > self.MAXRECORDS:
