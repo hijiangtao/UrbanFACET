@@ -74,7 +74,7 @@ class augmentRawData (threading.Thread):
 		print time.time()
 
 class augmentRawDatainMultiProcess():
-	def __init__(self, INDEX, CITY, FILENUM, DIRECTORY, strData, listCount ):
+	def __init__(self, STARTTIME, INDEX, CITY, FILENUM, DIRECTORY, strData, listCount ):
 		self.INDEX = INDEX
 		self.CITY= CITY
 		self.FILENUM = FILENUM
@@ -82,6 +82,7 @@ class augmentRawDatainMultiProcess():
 		self.strData = strData
 		self.listCount = listCount
 		self.MAXRECORDS = 100000000
+		self.STARTTIME = STARTTIME
 
 	def augment(self, inputfile, outputfile, CITY, FILENUM = 1000):
 		reslist = ['' for i in range(FILENUM)]
@@ -100,11 +101,14 @@ class augmentRawDatainMultiProcess():
 		# localFileStream = []
 
 		with pLock:
-			print "Current count value %d in time %s" % (self.listCount.value, time.time())
+			print "Current count value %d in time %s" % (self.listCount.value, str(time.time()-self.STARTTIME))
+			
 			self.listCount.value += resnumber
 
 			if self.listCount.value > self.MAXRECORDS:
-				print "process %d has one write operation at %s." % (self.INDEX, time.time())
+				print "PROCESS ID-%d has one write operation at %s." % (self.INDEX, str(time.time()-self.STARTTIME))
+				self.STARTTIME = time.time()
+
 				for x in xrange(0, FILENUM):
 					with open('%s/res-%05d' % (outputfile, x), 'ab') as res:
 						res.write( self.strData[x].value + reslist[x] )
@@ -172,8 +176,8 @@ def formatGridID(locs, point):
 	return str(lngind + latind * LNGNUM)
 
 # 多进程情况下处理单个进程的启动
-def processTask(x, city, number, directory, strdata, countdata):
-	task = augmentRawDatainMultiProcess(x, city, number, directory, strdata, countdata)
+def processTask(STARTTIME, x, city, number, directory, strdata, countdata):
+	task = augmentRawDatainMultiProcess(STARTTIME, x, city, number, directory, strdata, countdata)
 	task.run()
 
 def usage():
@@ -202,7 +206,8 @@ def main(argv):
 		elif opt in ('-n', '--number'):
 			number = int(arg)
 
-	print "Start approach at %s" % time.time()
+	STARTTIME = time.time()
+	print "Start approach at %s" % STARTTIME
 
 	# @多进程运行程序 START
 	manager = Manager()
@@ -216,7 +221,7 @@ def main(argv):
 
 	for x in xrange(0,20):
 		# time.sleep(random.random())
-		jobs.append( Process(target=processTask, args=(x, city, number, directory, taskdata, listcount)) )
+		jobs.append( Process(target=processTask, args=(STARTTIME, x, city, number, directory, taskdata, listcount)) )
 		jobs[x].start()
 
 	# 等待所有进程结束
