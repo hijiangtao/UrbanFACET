@@ -100,10 +100,11 @@ class augmentRawDatainMultiProcess():
 		# localFileStream = []
 
 		with pLock:
+			print "Current count value %d" % self.listCount.value
 			self.listCount.value += resnumber
 
 			if self.listCount.value > self.MAXRECORDS:
-				print "process %d has one write operation." % self.INDEX
+				print "process %d has one write operation at %s." % (self.INDEX, time.time())
 				for x in xrange(0, FILENUM):
 					with open('%s/res-%05d' % (outputfile, x), 'ab') as res:
 						res.write( self.strData[x].value + reslist[x] )
@@ -113,6 +114,7 @@ class augmentRawDatainMultiProcess():
 
 				# 计数器重置为 0
 				self.listCount.value = 0
+				gc.collect()
 			else:
 				for x in xrange(0, FILENUM):
 					self.strData[x].value += reslist[x]
@@ -200,7 +202,9 @@ def main(argv):
 		elif opt in ('-n', '--number'):
 			number = int(arg)
 
-	# @多进程运行程序
+	print "Start approach at %s" % time.time()
+
+	# @多进程运行程序 START
 	manager = Manager()
 	jobs = []
 
@@ -226,18 +230,19 @@ def main(argv):
 				res.write( taskdata[x].value )
 			res.close()
 
-	# @多进程运行程序
+	# @多进程运行程序 END
 	
 	
 
 	# @多线程运行程序
 	# threads = []
-	# print "Start approach at %s" % time.time()
 	# # 多线程运行程序
 	# for x in xrange(0,20):
 	# 	threads.append( augmentRawData(x, city, number, directory) )
 	# 	threads[x].start()
 
+
+	print "Goodbye %s" % time.time()
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-augmentrawdata.log', level=logging.DEBUG)
 	main(sys.argv[1:])
