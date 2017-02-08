@@ -178,6 +178,7 @@ def usage():
 	print "Not Yet."
 
 def main(argv):
+	FILENUM = 1000
 	try:
 		opts, args = getopt.getopt(argv, "hc:d:n:", ["help", "city=", 'directory=', 'number='])
 	except getopt.GetoptError as err:
@@ -206,8 +207,8 @@ def main(argv):
 	listcount = Value('i', 0)
 	taskdata = []
 	# 初始化
-	for x in xrange(0,1000):
-		taskdata[x].append( manager.Value(c_wchar_p, "") )
+	for x in xrange(0,FILENUM):
+		taskdata.append( manager.Value(c_wchar_p, "") )
 
 	for x in xrange(0,20):
 		# time.sleep(random.random())
