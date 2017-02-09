@@ -48,7 +48,12 @@ class EntropyMatrixModule(object):
 		with open(inputfile, 'rb') as stream:
 			for line in stream:
 				dictlist = line.strip('\n').split(',')
+				# 处理 POI 熵
 				
+				# 处理 TimePeriod 熵
+				# 
+				# 处理 行政区划 熵
+		
 		stream.close()
 
 
