@@ -100,13 +100,12 @@ class augmentRawDatainMultiProcess():
 		# localFileStream = []
 
 		with pLock:
-			print "Current count value %d in time %s" % (self.listCount.value, str(time.time()-self.STARTTIME.value))
+			print "CountVal %d at time %s" % (self.listCount.value, str(time.time()-self.STARTTIME))
 
 			self.listCount.value += resnumber
 
 			if self.listCount.value > self.MAXRECORDS:
-				print "PROCESS ID-%d has one write operation at %s." % (self.INDEX, str(time.time()-self.STARTTIME.value))
-				self.STARTTIME.value = time.time()
+				print "PROCESS ID-%d has one write operation at %s." % (self.INDEX, str(time.time()-self.STARTTIME))
 
 				for x in xrange(0, FILENUM):
 					with open('%s/res-%05d' % (outputfile, x), 'ab') as res:
@@ -205,7 +204,7 @@ def main(argv):
 		elif opt in ('-n', '--number'):
 			number = int(arg)
 
-	STARTTIME = Value('%d', time.time())
+	STARTTIME = time.time()
 	print "Start approach at %s" % STARTTIME
 
 	# @多进程运行程序 START
