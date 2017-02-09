@@ -97,9 +97,10 @@ if __name__ == "__main__":
 	# print z[0].value
 	# # print getsizeof(z)
 	
-	t = Value('i', 0)
+	t = [Array('d', [x, 0, -1, -1, -1]) for x in xrange(0, 2)] # 2500000
 
-	print t.value
-	t.value+=2017
+	print t[0][1]
+	t[0][1]+=2017
 
-	print t.value
+	for each in t[0]:
+		print each
