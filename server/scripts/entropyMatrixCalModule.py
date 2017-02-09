@@ -48,8 +48,18 @@ class EntropyMatrixModule(object):
 		with open(inputfile, 'rb') as stream:
 			for line in stream:
 				dictlist = line.strip('\n').split(',')
+				devid = dictlist[0]
+				devday = dictlist[3]
+				devperiod = dictlist[4]
+				devdis = dictlist[5]
+				devStrGID = dictlist[6]
+				devIntGID = int( devStrGID )
+
 				# 处理 POI 熵
-				
+				if devGID not in self.validIDs:
+					self.EMATRIX[ devIntGID ][1] += 1
+				else:
+					# gridID vecvaild = true
 				# 处理 TimePeriod 熵
 				# 
 				# 处理 行政区划 熵
