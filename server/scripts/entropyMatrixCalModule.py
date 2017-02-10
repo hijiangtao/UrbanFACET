@@ -53,7 +53,7 @@ class EntropyMatrixModule(object):
 			logging.info('TASK-%d operates file %s' % (self.INDEX, ifilename))
 			self.calculate(os.path.join(idcoldir, ifilename), os.path.join(self.DIRECTORY, 'entropy/distribution', self.CITY, ofilename))
 
-		# 处理完数据，将　EMATRIX 信息写入文件
+		# 处理完数据，将 EMATRIX 信息写入文件
 		with open(entropyfile, 'ab') as res:
 			res.write(ematrixToStr)
 		res.close()
@@ -62,7 +62,7 @@ class EntropyMatrixModule(object):
 		print "Task-%s finished at %s" % (str(self.INDEX), time.time())
 
 	def calculate(self, inputfile, outputfile):
-		"""计算当前文件各个设备的　Entropy　信息并更新至　EMATRIX, 同时将该设备的档案信息存入　outputfile
+		"""计算当前文件各个设备的 Entropy 信息并更新至 EMATRIX, 同时将该设备的档案信息存入 outputfile
 		
 		Args:
 		    inputfile (TYPE): Description
@@ -73,10 +73,10 @@ class EntropyMatrixModule(object):
 		"""
 		# 读取文件，遍历每行，获得包含 id 和 grid ID 编号的数组 records、存储每个 id entropy 信息的对象集合 eobjs、设备列表 idlist
 		records, eobjs, idlist = [], {}, []
-		# 临时　GRIDLIST records number 存放数组
+		# 临时 GRIDLIST records number 存放数组
 		enumlist = [0 for x in xrange(0, self.GRIDSNUM)]
 		
-		# 每个文件存取一次的简要版　IDList 档案
+		# 每个文件存取一次的简要版 IDList 档案
 		idInfoStr = ''
 
 		# 文件读取
@@ -120,14 +120,14 @@ class EntropyMatrixModule(object):
 
 		# P 列表的归一化处理, EOBJ 的更新计算, 熵计算与更新
 		for each in idlist:
-			eobjs[ each ][ 't1' ][ 'psum' ]　= np.sum(eobjs[ each ][ 't1' ][ 'plist' ])
+			eobjs[ each ][ 't1' ][ 'psum' ] = np.sum(eobjs[ each ][ 't1' ][ 'plist' ])
 			if eobjs[ each ][ 't1' ][ 'psum' ] != 0.0:
-				eobjs[ each ][ 't1' ][ 'plist' ]　= np.divide(eobjs[ each ][ 't1' ][ 'plist' ], eobjs[ each ][ 't1' ][ 'psum' ])
+				eobjs[ each ][ 't1' ][ 'plist' ] = np.divide(eobjs[ each ][ 't1' ][ 'plist' ], eobjs[ each ][ 't1' ][ 'psum' ])
 
 			eobjs[ each ][ 't2' ][ 'nsum' ] = np.sum(eobjs[ each ][ 't2' ][ 'nlist' ])
-			eobjs[ each ][ 't2' ][ 'nlist' ]　= np.divide(eobjs[ each ][ 't2' ][ 'nlist' ], float(eobjs[ each ][ 't2' ][ 'nsum' ]))
+			eobjs[ each ][ 't2' ][ 'nlist' ] = np.divide(eobjs[ each ][ 't2' ][ 'nlist' ], float(eobjs[ each ][ 't2' ][ 'nsum' ]))
 
-			eobjs[ each ][ 't3' ][ 'nlist' ]　= np.divide(eobjs[ each ][ 't3' ][ 'nlist' ], float(eobjs[ each ][ 't2' ][ 'nsum' ]))
+			eobjs[ each ][ 't3' ][ 'nlist' ] = np.divide(eobjs[ each ][ 't3' ][ 'nlist' ], float(eobjs[ each ][ 't2' ][ 'nsum' ]))
 
 			# POI
 			if eobjs[ each ][ 't1' ][ 'psum' ] != 0.0:
@@ -142,8 +142,8 @@ class EntropyMatrixModule(object):
 
 		recordslen = len(records)
 		for x in xrange(0, recordslen):
-			# 遍历　record
-			# 维护本进程最大的　entropy-matrix 熵值更新
+			# 遍历 record
+			# 维护本进程最大的 entropy-matrix 熵值更新
 			devid, devIntGID = records[x][0], records[x][1]
 			self.EMATRIX[ devIntGID ][2] += eobjs[ devid ]['t1']['val']
 			self.EMATRIX[ devIntGID ][3] += eobjs[ devid ]['t2']['val']
@@ -153,7 +153,7 @@ class EntropyMatrixModule(object):
 		for x in xrange(0, self.GRIDSNUM):
 			self.EMATRIX[x][1] += enumlist[x]
 
-		# 写入　idInfoStr
+		# 写入 idInfoStr
 		with open(outputfile, 'ab') as res:
 			res.write( idInfoStr )
 		res.close()
@@ -171,7 +171,7 @@ class EntropyMatrixModule(object):
 
 		return '\n'.join(resStr)
 
-	# 生成存放单个　ID 档案的对象
+	# 生成存放单个 ID 档案的对象
 	def genSingleEntropyObj(self):
 		return {
 			't1': {
