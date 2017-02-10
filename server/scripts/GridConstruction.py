@@ -16,7 +16,7 @@ import pymongo
 import gc
 import numpy as np
 from CommonFunc import connectMongo, getCityLocs, gaussian2D, sep4Citylocs
-from geopy.distance import great_circle
+# from geopy.distance import great_circle
 
 class CityGrid(object):
 	"""docstring for CityGrid"""

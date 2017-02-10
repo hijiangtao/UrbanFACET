@@ -7,8 +7,8 @@
 
 import os, pymongo, math, sys, logging
 import numpy as np
-# from scipy import stats
-# import geopy.distance  # https://pypi.python.org/pypi/geopy/1.11.0
+from scipy import stats
+from geopy.distance import great_circle  # https://pypi.python.org/pypi/geopy/1.11.0
 
 def connectMongo(dbname):
 	"""Connect MongoDB
@@ -268,8 +268,8 @@ def gaussian2D(source, target, sigma):
 	Returns:
 	    float: Distance between two points
 	"""
-	from scipy import stats
-	from geopy.distance import great_circle
+	# from scipy import stats
+	# from geopy.distance import great_circle
 	d = great_circle(source, target).meters
 	X = stats.norm(loc=0, scale=sigma**2)
 	
