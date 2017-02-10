@@ -7,8 +7,8 @@
 
 import os, pymongo, math, sys, logging
 import numpy as np
-# from scipy import stats
-# import geopy.distance  # https://pypi.python.org/pypi/geopy/1.11.0
+from scipy import stats
+from geopy.distance import great_circle  # https://pypi.python.org/pypi/geopy/1.11.0
 
 def connectMongo(dbname):
 	"""Connect MongoDB
@@ -17,7 +17,7 @@ def connectMongo(dbname):
 		TYPE: Client, database
 	"""
 	try:
-		conn = pymongo.MongoClient('192.168.1.42', 27017)
+		conn = pymongo.MongoClient('localhost', 27017) # 192.168.1.42
 		mdb = conn[dbname]
 		print "Connected successfully!!!"
 	except pymongo.errors.ConnectionFailure, e:
@@ -163,22 +163,22 @@ def getCityLocs(city):
 	# 城市边界信息列表
 	citylocslist = {
 		'beijing': {
-			'north': 40.7348,
-			'south': 39.5337,
-			'west': 115.5597,
-			'east': 117.2159
+			'north': 40.734,
+			'south': 39.533,
+			'west': 115.559,
+			'east': 117.215
 		},
 		'tianjin': {
-			'north': 39.8718,
-			'south': 38.6104,
-			'west': 116.7929,
-			'east': 117.9767
+			'north': 39.871,
+			'south': 38.610,
+			'west': 116.792,
+			'east': 117.976
 		},
 		'zhangjiakou': {
-			'north': 41.4551,
-			'south': 40.0991,
-			'west': 114.1534,
-			'east': 115.7959
+			'north': 41.455,
+			'south': 40.099,
+			'west': 114.153,
+			'east': 115.795
 		},
 		'tangshan': {
 			'north': 40.466,
@@ -268,8 +268,8 @@ def gaussian2D(source, target, sigma):
 	Returns:
 	    float: Distance between two points
 	"""
-	from scipy import stats
-	from geopy.distance import great_circle
+	# from scipy import stats
+	# from geopy.distance import great_circle
 	d = great_circle(source, target).meters
 	X = stats.norm(loc=0, scale=sigma**2)
 	
