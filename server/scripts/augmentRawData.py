@@ -165,7 +165,7 @@ def formatGridID(locs, point):
 	Returns:
 		TYPE: Description
 	"""
-	SPLIT = 0.001
+	SPLIT = 0.003
 	# LATNUM = int((locs['north'] - locs['south']) / SPLIT + 1)
 	LNGNUM = int((locs['east'] - locs['west']) / SPLIT + 1)
 	lngind = int( (float(point[0]) - locs['west']) / SPLIT )

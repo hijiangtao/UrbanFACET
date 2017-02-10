@@ -28,7 +28,7 @@ class EntropyMatrixModule(object):
 		self.validIDs = DATA['validIDs']
 		
 		# self.EMATRIX = DATA['EMATRIX']
-		self.EMATRIX = 
+		self.EMATRIX = [[str(x), 0, -1, -1, -1] for x in xrange(0, PROP['GRIDSNUM'])]
 
 	def run(self):
 		logging.info('TASK-%d running...' % self.INDEX)
@@ -59,6 +59,7 @@ class EntropyMatrixModule(object):
 
 				# Update entropy matrix prop - records number
 				self.EMATRIX[ devIntGID ][1] += 1
+				records.append([devid, devIntGID])
 
 				if devid not in idlist:
 					# initial customer entropy calculating model object

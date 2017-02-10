@@ -5,3 +5,4 @@ python ./augmentRawData.py -c tangshan -d /home/tao.jiang/datasets/JingJinJi/rec
 
 # zhangjiakou 264
 # tangshan 723
+# tianjin 999
