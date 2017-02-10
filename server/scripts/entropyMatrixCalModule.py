@@ -162,7 +162,7 @@ class EntropyMatrixModule(object):
 		res.close()
 
 	def aggregate(self, id, obj):
-		valStr = id + ',' + obj['t1']['val'] + ',' + obj['t2']['val'] + ',' + obj['t3']['val']
+		valStr = id + ',' + str(obj['t1']['val']) + ',' + str(obj['t2']['val']) + ',' + str(obj['t3']['val'])
 		tArrStr = ','.join([str(each) for each in obj['t1']['plist']]) + ',' + ','.join([str(each) for each in obj['t2']['nlist']]) + ',' + ','.join([str(each) for each in obj['t3']['nlist']])
 		return valStr + ',' + tArrStr + '\n'
 
