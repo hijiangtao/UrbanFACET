@@ -251,7 +251,7 @@ def main(argv):
 	manager = Manager()
 	jobs = []
 
-	for x in xrange(0,20):
+	for x in xrange(0,1):
 		# time.sleep(random.random()*2)
 		PROP = {
 			'INDEX': x,
@@ -259,7 +259,8 @@ def main(argv):
 			'GRIDSNUM': GRIDSNUM,
 			'CITY': city,
 			'CITYDISIND': CITYDISIND,
-			'CITYDISNUM': CITYDISNUM
+			'CITYDISNUM': CITYDISNUM,
+			'FILENUM': FILENUM
 		}
 
 		DATA = {
