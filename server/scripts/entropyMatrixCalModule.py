@@ -90,7 +90,8 @@ class EntropyMatrixModule(object):
 				devStrGID = dictlist[6]
 				devIntGID = int( devStrGID )
 
-				print 'ID %d' % devIntGID
+				if devIntGID < 0 or devIntGID >= self.GRIDSNUM:
+					continue
 
 				# Update entropy matrix prop - records number
 				enumlist[ devIntGID ] += 1
