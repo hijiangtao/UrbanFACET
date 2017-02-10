@@ -148,6 +148,7 @@ class EntropyMatrixModule(object):
 			# 遍历 record
 			# 维护本进程最大的 entropy-matrix 熵值更新
 			devid, devIntGID = records[x][0], records[x][1]
+			print self.EMATRIX[ devIntGID ], eobjs[ devid ]['t1']
 			self.EMATRIX[ devIntGID ][2] += eobjs[ devid ]['t1']['val']
 			self.EMATRIX[ devIntGID ][3] += eobjs[ devid ]['t2']['val']
 			self.EMATRIX[ devIntGID ][4] += eobjs[ devid ]['t3']['val']
