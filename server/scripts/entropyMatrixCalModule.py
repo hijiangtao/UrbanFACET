@@ -26,7 +26,9 @@ class EntropyMatrixModule(object):
 		self.DIRECTORY = PROP['DIRECTORY']
 		self.gridsData = DATA['gridsData']
 		self.validIDs = DATA['validIDs']
-		self.EMATRIX = DATA['EMATRIX']
+		
+		# self.EMATRIX = DATA['EMATRIX']
+		self.EMATRIX = 
 
 	def run(self):
 		logging.info('TASK-%d running...' % self.INDEX)
