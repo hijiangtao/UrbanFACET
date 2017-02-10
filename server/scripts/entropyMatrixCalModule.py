@@ -55,11 +55,21 @@ class EntropyMatrixModule(object):
 				devStrGID = dictlist[6]
 				devIntGID = int( devStrGID )
 
+				# Update entropy matrix prop - records number
+				self.EMATRIX[ devIntGID ][1] += 1
+
+				if devid not in idlist:
+					# initial customer entropy calculating model object
+					# type1: POI Types
+					# type2: Time Periods
+					# type3: Administrative Dimensions
+					eobjs[ devid ] = self.genSingleEntropyObj()
+					idlist.append( devid )
+
 				# 处理 POI 熵
-				if devGID not in self.validIDs:
-					self.EMATRIX[ devIntGID ][1] += 1
-				else:
-					# gridID vecvaild = true
+				if devGID in self.validIDs:
+					eobjs[ devStrGID ][ 'plist' ] = addTwoArray()
+					
 				# 处理 TimePeriod 熵
 				# 
 				# 处理 行政区划 熵
@@ -69,6 +79,20 @@ class EntropyMatrixModule(object):
 
 	def aggregate():
 		pass
+
+	def genSingleEntropyObj():
+		return {
+			't1': {
+				'val': -1,
+				'plist': [0 for x in xrange(0,11)]
+			},
+			't2': {
+
+			},
+			't3': {
+
+			}
+		}
 
 def processTask(file, number):
 	task = EntropyMatrixModule(file)
