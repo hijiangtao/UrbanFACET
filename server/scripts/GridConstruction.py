@@ -20,14 +20,14 @@ from geopy.distance import great_circle
 
 class CityGrid(object):
 	"""docstring for CityGrid"""
-	def __init__(self, city, citylocs, defaultRadius):
+	def __init__(self, city, citylocs, defaultRadius, IP):
 		super(CityGrid, self).__init__()
 		self.city = city
 		self.citylocs = citylocs
 		self.defaultRadius = defaultRadius * 2
 		self.maxQRadius = 500
 		self.db = {
-			'url': '192.168.1.42',
+			'url': IP,
 			'port': 27017,
 			'dbname': 'tdnormal',
 			'gridcolname': 'grids_%s' % city,
@@ -67,7 +67,7 @@ class CityGrid(object):
 
 		count = 100000
 		tmparray = []
-		centerincrement = round(split / 2.0, 4)
+		centerincrement = 0.0015 # round(split / 2.0, 4)
 		latnum = int((locs['north'] - locs['south']) / split + 1)
 		lngnum = int((locs['east'] - locs['west']) / split + 1)
 
@@ -172,7 +172,7 @@ def main(argv):
 		usage()
 		sys.exit(2)
 
-	city, r, split = 'beijing', 10, 0.001
+	city, r, split, IP = 'beijing', 10, 0.003, 'localhost' # another IP in ISCAS should be '192.168.1.42'
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
@@ -187,8 +187,8 @@ def main(argv):
 	start_time = time.time()
 	citylocs = getCityLocs(city)
 
-	cityGrid = CityGrid(city, citylocs, r)
-	midLat, midLng = round((citylocs['south'] +citylocs['north']) / 2.0, 3), round((citylocs['west'] + citylocs['east']) / 2.0, 3)
+	cityGrid = CityGrid(city, citylocs, r, IP)
+	# midLat, midLng = round((citylocs['south'] +citylocs['north']) / 2.0, 3), round((citylocs['west'] + citylocs['east']) / 2.0, 3)
 	# sepcitylocs = sep4Citylocs(citylocs, midLat, midLng, split)
 
 	# ppservers = ()

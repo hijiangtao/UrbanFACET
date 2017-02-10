@@ -163,22 +163,22 @@ def getCityLocs(city):
 	# 城市边界信息列表
 	citylocslist = {
 		'beijing': {
-			'north': 40.7348,
-			'south': 39.5337,
-			'west': 115.5597,
-			'east': 117.2159
+			'north': 40.734,
+			'south': 39.533,
+			'west': 115.559,
+			'east': 117.215
 		},
 		'tianjin': {
-			'north': 39.8718,
-			'south': 38.6104,
-			'west': 116.7929,
-			'east': 117.9767
+			'north': 39.871,
+			'south': 38.610,
+			'west': 116.792,
+			'east': 117.976
 		},
 		'zhangjiakou': {
-			'north': 41.4551,
-			'south': 40.0991,
-			'west': 114.1534,
-			'east': 115.7959
+			'north': 41.455,
+			'south': 40.099,
+			'west': 114.153,
+			'east': 115.795
 		},
 		'tangshan': {
 			'north': 40.466,
