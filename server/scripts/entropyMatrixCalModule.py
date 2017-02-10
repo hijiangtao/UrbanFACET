@@ -111,11 +111,11 @@ class EntropyMatrixModule(object):
 				dayIndex = 0
 				if devday == '0' or devday == '6':
 					dayIndex = 7
-				eobjs[ devStrGID ][ 't2' ][ 'nlist' ][ dayIndex+devperiod ] += 1
-				eobjs[ devStrGID ][ 't2' ][ 'nsum' ] += 1
+				eobjs[ devid ][ 't2' ][ 'nlist' ][ dayIndex+devperiod ] += 1
+				eobjs[ devid ][ 't2' ][ 'nsum' ] += 1
 
 				# 处理 行政区划 熵
-				eobjs[ devStrGID ][ 't3' ][ 'nlist' ][ devdis-self.CITYDISIND ] += 1
+				eobjs[ devid ][ 't3' ][ 'nlist' ][ devdis-self.CITYDISIND ] += 1
 		stream.close()
 
 		# P 列表的归一化处理, EOBJ 的更新计算, 熵计算与更新
