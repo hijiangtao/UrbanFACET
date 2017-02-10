@@ -40,7 +40,7 @@ class EntropyMatrixModule(object):
 
 	def run(self):
 		logging.info('TASK-%d running...' % self.INDEX)
-		ofilename = 'res-%03d'　% self.INDEX
+		ofilename = 'res-%03d' % self.INDEX
 
 		idcoldir = os.path.join(self.DIRECTORY, 'records/idcollection', self.CITY )
 		entropyfile = os.path.join(self.DIRECTORY, 'entropy/matrix', self.CITY, ofilename)
