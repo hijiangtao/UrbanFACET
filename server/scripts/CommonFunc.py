@@ -481,3 +481,32 @@ def calColorbyNum(num):
 	for x in xrange(0, len(numcolormap)):
 		if num < numcolormap[x]['value']:
 			return numcolormap[x]['color']
+
+
+def addTwoArray(a, b):
+	"""Add two array and return array result, and sum result of two arrays' elements
+	
+	Args:
+	    a (TYPE): Description
+	    b (TYPE): Description
+	
+	Returns:
+	    TYPE: Description
+	"""
+	arraylen = len(a)
+	arraysum = 0
+	for x in xrange(0, arraylen):
+		a[x] += b[x]
+		arraysum += a[x] + b[x]
+
+	return a, arraysum
+
+def getCityDisInfo(city):
+	if city == 'beijing':
+		return [1, 16]
+	elif city == 'tianjin':
+		return [17, 16]
+	elif city == 'tangshan':
+		return [49, 15]
+	elif city == 'zhangjiakou':
+		return [33, 16]
