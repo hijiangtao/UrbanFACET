@@ -40,16 +40,18 @@ class EntropyMatrixModule(object):
 
 	def run(self):
 		logging.info('TASK-%d running...' % self.INDEX)
+		ofilename = 'res-%03d'　% self.INDEX
 
 		idcoldir = os.path.join(self.DIRECTORY, 'records/idcollection', self.CITY )
-		entropyfile = os.path.join(self.DIRECTORY, 'entropy/matrix', self.CITY, 'res-%03d'　% self.INDEX)
+		entropyfile = os.path.join(self.DIRECTORY, 'entropy/matrix', self.CITY, ofilename)
 		for x in xrange(0, 10000):
 			number = self.INDEX + 20 * x
 			if number > self.FILENUM:
 				break
 
-			logging.info('TASK-%d operates file res-%05d' % (self.INDEX, number))
-			self.calculate(os.path.join(idcoldir, 'res-%05d' % number), os.path.join(self.DIRECTORY, 'entropy/distribution', self.CITY, 'res-%03d'　% self.INDEX))
+			ifilename = 'res-%05d' % number
+			logging.info('TASK-%d operates file %s' % (self.INDEX, ifilename))
+			self.calculate(os.path.join(idcoldir, ifilename), os.path.join(self.DIRECTORY, 'entropy/distribution', self.CITY, ofilename))
 
 		# 处理完数据，将　EMATRIX 信息写入文件
 		with open(entropyfile, 'ab') as res:
