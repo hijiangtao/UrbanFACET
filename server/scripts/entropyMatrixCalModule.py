@@ -90,6 +90,8 @@ class EntropyMatrixModule(object):
 				devStrGID = dictlist[6]
 				devIntGID = int( devStrGID )
 
+				print 'ID %d' % devIntGID
+
 				# Update entropy matrix prop - records number
 				enumlist[ devIntGID ] += 1
 				records.append([devid, devIntGID])
@@ -241,7 +243,7 @@ def main(argv):
 	print "Start approach at %s" % STARTTIME
 
 	conn, db = connectMongo('tdnormal')
-	GRIDSNUM = db['grids_%s' % city].find().count()
+	GRIDSNUM = db['grids_%s' % city].count()
 	gridsData, validIDs = getGridsFromMongo(city, db)
 	conn.close()
 
