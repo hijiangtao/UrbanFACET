@@ -226,7 +226,6 @@ def help():
 	print "Not Yet."
 
 def main(argv):
-	FILENUM = 1000
 	# 输入参数对照列表
 	try:
 		opts, args = getopt.getopt(argv, "hc:d:n:", ["help", "city=", 'directory=', 'number='])
@@ -271,7 +270,7 @@ def main(argv):
 			'CITY': city,
 			'CITYDISIND': CITYDISIND,
 			'CITYDISNUM': CITYDISNUM,
-			'FILENUM': FILENUM
+			'FILENUM': number
 		}
 
 		DATA = {
