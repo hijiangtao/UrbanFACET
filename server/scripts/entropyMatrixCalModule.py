@@ -38,7 +38,7 @@ class EntropyMatrixModule(object):
 		
 		# self.EMATRIX = DATA['EMATRIX']
 		# all string in EMATRIX
-		self.EMATRIX = np.array([np.array([x, 0, -1, -1, -1]) for x in xrange(0, PROP['GRIDSNUM'])])
+		self.EMATRIX = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0]) for x in xrange(0, PROP['GRIDSNUM'])])
 
 	def run(self):
 		logging.info('TASK-%d running in %s' % (self.INDEX, (time.time()-self.starttime)))
@@ -79,6 +79,7 @@ class EntropyMatrixModule(object):
 		records, eobjs, idlist = [], {}, []
 		# 临时 GRIDLIST records number 存放数组
 		enumlist = [0 for x in xrange(0, self.GRIDSNUM)]
+		einvalidnumlist = [0 for x in xrange(0, self.GRIDSNUM)]
 		
 		# 每个文件存取一次的简要版 IDList 档案
 		idInfoStr = ''
@@ -151,14 +152,20 @@ class EntropyMatrixModule(object):
 			# 遍历 record
 			# 维护本进程最大的 entropy-matrix 熵值更新
 			devid, devIntGID = records[x][0], records[x][1]
-			# print self.EMATRIX[ devIntGID ], eobjs[ devid ]['t1']
-			self.EMATRIX[ devIntGID ][2] += eobjs[ devid ]['t1']['val']
-			self.EMATRIX[ devIntGID ][3] += eobjs[ devid ]['t2']['val']
-			self.EMATRIX[ devIntGID ][4] += eobjs[ devid ]['t3']['val']
+			
+			# 检查 POI 熵是否有必要算入当前 EMATRIX 的更新逻辑
+			t1Val = eobjs[ devid ]['t1']['val']
+			if t1Val == -1:
+				einvalidnumlist[ devIntGID ] += 1
+			else:
+				self.EMATRIX[ devIntGID ][3] += eobjs[ devid ]['t1']['val']
+			self.EMATRIX[ devIntGID ][4] += eobjs[ devid ]['t2']['val']
+			self.EMATRIX[ devIntGID ][5] += eobjs[ devid ]['t3']['val']
 
 		# entropy-matrix 记录数更新
 		for x in xrange(0, self.GRIDSNUM):
 			self.EMATRIX[x][1] += enumlist[x]
+			self.EMATRIX[x][2] += enumlist[x]-einvalidnumlist[x]
 		print 'Finished EMATRIX update in %s' % (time.time()-self.starttime)
 
 		# 写入 idInfoStr
@@ -175,7 +182,7 @@ class EntropyMatrixModule(object):
 		datalen = self.GRIDSNUM
 		resStr = []
 		for x in xrange(0, datalen):
-			resStr.append( ','.join(str(e) for e in data[x]) )
+			resStr.append( ','.join(str(int(data[x][e])) for e in xrange(0,3)) + ',' + ','.join(str(data[x][e]) for e in xrange(3,6)) )
 
 		return '\n'.join(resStr)
 
@@ -184,7 +191,7 @@ class EntropyMatrixModule(object):
 		return {
 			't1': {
 				'val': -1,
-				'plist': np.array([0 for x in xrange(0,11)]),
+				'plist': np.array([0.0 for x in xrange(0,11)]),
 				'psum': 0
 			},
 			't2': {
