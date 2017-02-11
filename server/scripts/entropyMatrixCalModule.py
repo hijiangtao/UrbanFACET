@@ -94,13 +94,6 @@ class EntropyMatrixModule(object):
 				devStrGID = dictlist[6]
 				devIntGID = int( devStrGID )
 
-				if devIntGID < 0 or devIntGID >= self.GRIDSNUM:
-					continue
-
-				# Update entropy matrix prop - records number
-				enumlist[ devIntGID ] += 1
-				records.append([devid, devIntGID])
-
 				if devid not in idlist:
 					# initial customer entropy calculating model object
 					# type1: POI Types
@@ -109,10 +102,14 @@ class EntropyMatrixModule(object):
 					eobjs[ devid ] = self.genSingleEntropyObj()
 					idlist.append( devid )
 
-				# 处理 POI 熵
-				if devStrGID in self.validIDs:
-					eobjs[ devStrGID ][ 't1' ][ 'plist' ] = np.add(eobjs[ devStrGID ][ 'plist' ], self.gridsData[ devStrGID ]) 
-					# eobjs[ devStrGID ][ 't1' ][ 'psum' ]
+				if devIntGID >= 0 and devIntGID < self.GRIDSNUM:
+					# Update entropy matrix prop - records number
+					enumlist[ devIntGID ] += 1
+					records.append([devid, devIntGID])
+
+					# 处理 POI 熵
+					if devStrGID in self.validIDs:
+						eobjs[ devid ][ 't1' ][ 'plist' ] = np.add(eobjs[ devid ][ 'plist' ], self.gridsData[ devStrGID ]) 
 					
 				# 处理 TimePeriod 熵
 				dayIndex = 0
