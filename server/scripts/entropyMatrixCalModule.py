@@ -219,8 +219,8 @@ def getGridsFromMongo(city, db):
 	gridsData, validIDs = {}, []
 	reslen = len(res)
 	for x in xrange(0, reslen):
-		id = res[x]['properties']['uid']
-		vec = np.array(res[x]['properties']['vec'])
+		id = str(res[x]['properties']['uid'])
+		vec = np.array(res[x]['properties']['vec'], dtype='f')
 		gridsData[ id ] = vec
 		validIDs.append(id)
 
