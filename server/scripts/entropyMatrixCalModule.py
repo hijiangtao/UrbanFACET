@@ -226,6 +226,62 @@ def getGridsFromMongo(city, db):
 
 	return gridsData, validIDs
 
+def mergeDistributionFiles(city):
+	baseurl = '/home/tao.jiang/datasets/JingJinJi/entropy/distribution'
+	file = os.path.join(baseurl, city, 'res-xxx')
+	number = 0
+
+	with open(file, 'ab') as res:
+		for x in xrange(0,20):
+			# 
+			onefile = []
+			with open(os.path.join(baseurl, city, 'res-%03d' % x), 'rb') as stream:
+				for each in stream:
+					onefile.append(each + '\n')
+			stream.close()
+			res.write(''.join(onefile))
+			number += len(onefile)
+	res.close()
+
+	print "%d lines into distribution res-xxx file" % (number)
+
+def mergeDistributionFiles(city, GRIDSNUM):
+	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
+	baseurl = os.path.join('/home/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
+
+	for x in xrange(0,20):
+		with open(os.path.join(baseurl, 'res-%03d' % x), 'rb') as stream:
+			for each in stream:
+				line = np.array(each.split(','), dtype='f')
+				id = int(line[0])
+				line[0] = 0
+				ematrix[ id ] = np.add(line, ematrix[id])
+		stream.close()
+
+	resString = ''
+	for x in xrange(0,GRIDSNUM):
+		if ematrix[1] == 0:
+			ematrix[4] = -1
+			ematrix[5] = -1
+		else:
+			ematrix[4] /= ematrix[1]
+			ematrix[5] /= ematrix[1]
+
+		if ematrix[2] == 0.0:
+			ematrix[3] = -1
+		else:
+			ematrix[3] /= ematrix[2]
+
+		linestr = ','.join([str(int(ematrix[x][e])) for e in xrange(0,3)]) + ',' + ','.join([str(ematrix[x][e]) for e in xrange(3,6)]) + '\n'
+		resString += linestr
+
+
+	with open(os.path.join(baseurl, 'res-xxx'), 'ab') as res:
+		res.write(resString)
+	res.close()
+
+	print "%d lines into matrix res-xxx file" % GRIDSNUM
+
 def help():
 	print "Not Yet."
 
@@ -259,38 +315,42 @@ def main(argv):
 	gridsData, validIDs = getGridsFromMongo(city, db)
 	conn.close()
 
-	CITYDISIND, CITYDISNUM = getCityDisInfo(city)
+	# CITYDISIND, CITYDISNUM = getCityDisInfo(city)
 
-	# @多进程运行程序 START
-	manager = Manager()
-	jobs = []
+	# # @多进程运行程序 START
+	# manager = Manager()
+	# jobs = []
 
-	for x in xrange(0,20):
-		# time.sleep(random.random()*2)
-		PROP = {
-			'INDEX': x,
-			'DIRECTORY': directory,
-			'GRIDSNUM': GRIDSNUM,
-			'CITY': city,
-			'CITYDISIND': CITYDISIND,
-			'CITYDISNUM': CITYDISNUM,
-			'FILENUM': number
-		}
+	# for x in xrange(0,20):
+	# 	# time.sleep(random.random()*2)
+	# 	PROP = {
+	# 		'INDEX': x,
+	# 		'DIRECTORY': directory,
+	# 		'GRIDSNUM': GRIDSNUM,
+	# 		'CITY': city,
+	# 		'CITYDISIND': CITYDISIND,
+	# 		'CITYDISNUM': CITYDISNUM,
+	# 		'FILENUM': number
+	# 	}
 
-		DATA = {
-			'gridsData': gridsData,
-			'validIDs': validIDs
-		}
+	# 	DATA = {
+	# 		'gridsData': gridsData,
+	# 		'validIDs': validIDs
+	# 	}
 
-		jobs.append( Process(target=processTask, args=(PROP, DATA)) )
-		jobs[x].start()
+	# 	jobs.append( Process(target=processTask, args=(PROP, DATA)) )
+	# 	jobs[x].start()
 
-	# 等待所有进程结束
-	for job in jobs:
-	    job.join()
+	# # 等待所有进程结束
+	# for job in jobs:
+	#     job.join()
+
+	# Start to merge result files
+	mergeMatrixFiles(city)
+	mergeDistributionFiles(city, GRIDSNUM)
 
 	ENDTIME = time.time()
-	print "Start approach at %s" % ENDTIME
+	print "End approach at %s" % ENDTIME
 
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-entropymatrixcalmodule.log', level=logging.DEBUG)
