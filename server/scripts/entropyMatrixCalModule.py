@@ -315,39 +315,42 @@ def main(argv):
 	gridsData, validIDs = getGridsFromMongo(city, db)
 	conn.close()
 
-	# CITYDISIND, CITYDISNUM = getCityDisInfo(city)
+	CITYDISIND, CITYDISNUM = getCityDisInfo(city)
 
-	# # @多进程运行程序 START
-	# manager = Manager()
-	# jobs = []
+	# @多进程运行程序 START
+	manager = Manager()
+	jobs = []
 
-	# for x in xrange(0,20):
-	# 	# time.sleep(random.random()*2)
-	# 	PROP = {
-	# 		'INDEX': x,
-	# 		'DIRECTORY': directory,
-	# 		'GRIDSNUM': GRIDSNUM,
-	# 		'CITY': city,
-	# 		'CITYDISIND': CITYDISIND,
-	# 		'CITYDISNUM': CITYDISNUM,
-	# 		'FILENUM': number
-	# 	}
+	for x in xrange(0,20):
+		# time.sleep(random.random()*2)
+		PROP = {
+			'INDEX': x,
+			'DIRECTORY': directory,
+			'GRIDSNUM': GRIDSNUM,
+			'CITY': city,
+			'CITYDISIND': CITYDISIND,
+			'CITYDISNUM': CITYDISNUM,
+			'FILENUM': number
+		}
 
-	# 	DATA = {
-	# 		'gridsData': gridsData,
-	# 		'validIDs': validIDs
-	# 	}
+		DATA = {
+			'gridsData': gridsData,
+			'validIDs': validIDs
+		}
 
-	# 	jobs.append( Process(target=processTask, args=(PROP, DATA)) )
-	# 	jobs[x].start()
+		jobs.append( Process(target=processTask, args=(PROP, DATA)) )
+		jobs[x].start()
 
-	# # 等待所有进程结束
-	# for job in jobs:
-	#     job.join()
+	# 等待所有进程结束
+	for job in jobs:
+	    job.join()
 
 	# Start to merge result files
+	MERGE = time.time()
+	print "Start merge at %s" % MERGE
 	mergeMatrixFiles(city, GRIDSNUM)
 	mergeDistributionFiles(city)
+	print "End merge in %s" % str(time.time() - MERGE)
 
 	ENDTIME = time.time()
 	print "End approach at %s" % ENDTIME
