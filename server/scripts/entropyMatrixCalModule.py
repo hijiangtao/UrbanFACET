@@ -260,17 +260,17 @@ def mergeMatrixFiles(city, GRIDSNUM):
 
 	resString = ''
 	for x in xrange(0,GRIDSNUM):
-		if ematrix[1] == 0:
-			ematrix[4] = -1
-			ematrix[5] = -1
+		if ematrix[x][1] == 0:
+			ematrix[x][4] = -1
+			ematrix[x][5] = -1
 		else:
-			ematrix[4] /= ematrix[1]
-			ematrix[5] /= ematrix[1]
+			ematrix[x][4] /= ematrix[x][1]
+			ematrix[x][5] /= ematrix[x][1]
 
-		if ematrix[2] == 0.0:
-			ematrix[3] = -1
+		if ematrix[x][2] == 0.0:
+			ematrix[x][3] = -1
 		else:
-			ematrix[3] /= ematrix[2]
+			ematrix[x][3] /= ematrix[x][2]
 
 		linestr = ','.join([str(int(ematrix[x][e])) for e in xrange(0,3)]) + ',' + ','.join([str(ematrix[x][e]) for e in xrange(3,6)]) + '\n'
 		resString += linestr
