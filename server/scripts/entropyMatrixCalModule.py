@@ -36,7 +36,8 @@ class EntropyMatrixModule(object):
 		self.CITYDISIND = PROP['CITYDISIND']
 		
 		# self.EMATRIX = DATA['EMATRIX']
-		self.EMATRIX = np.array([np.array([str(x), 0, -1, -1, -1]) for x in xrange(0, PROP['GRIDSNUM'])])
+		# all string in EMATRIX
+		self.EMATRIX = np.array([np.array([x, 0, -1, -1, -1]) for x in xrange(0, PROP['GRIDSNUM'])])
 
 	def run(self):
 		logging.info('TASK-%d running...' % self.INDEX)
@@ -55,7 +56,7 @@ class EntropyMatrixModule(object):
 
 		# 处理完数据，将 EMATRIX 信息写入文件
 		with open(entropyfile, 'ab') as res:
-			res.write(ematrixToStr)
+			res.write(self.ematrixToStr(self.EMATRIX))
 		res.close()
 
 		# 打印任务处理结束信息
@@ -171,7 +172,7 @@ class EntropyMatrixModule(object):
 		datalen = self.GRIDSNUM
 		resStr = []
 		for x in xrange(0, datalen):
-			resStr.append( data[x][0] + ',' + str(data[x][1]) + ',' + str(data[x][2]) + ',' + str(data[x][3]) + ',' + str(data[x][4]) )
+			resStr.append( ','.join(str(e) for e in data[x]) )
 
 		return '\n'.join(resStr)
 
