@@ -110,7 +110,7 @@ class EntropyMatrixModule(object):
 
 					# 处理 POI 熵
 					if devStrGID in self.validIDs:
-						eobjs[ devid ][ 't1' ][ 'plist' ] = np.add(eobjs[ devid ][ 'plist' ], self.gridsData[ devStrGID ]) 
+						eobjs[ devid ][ 't1' ][ 'plist' ] = np.add(eobjs[ devid ][ 't1' ][ 'plist' ], self.gridsData[ devStrGID ]) 
 					
 				# 处理 TimePeriod 熵
 				dayIndex = 0
@@ -165,7 +165,7 @@ class EntropyMatrixModule(object):
 		# entropy-matrix 记录数更新
 		for x in xrange(0, self.GRIDSNUM):
 			self.EMATRIX[x][1] += enumlist[x]
-			self.EMATRIX[x][2] += enumlist[x]-einvalidnumlist[x]
+			self.EMATRIX[x][2] += (enumlist[x]-einvalidnumlist[x])
 		print 'Finished EMATRIX update in %s' % (time.time()-self.starttime)
 
 		# 写入 idInfoStr
