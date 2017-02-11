@@ -245,7 +245,7 @@ def mergeDistributionFiles(city):
 
 	print "%d lines into distribution res-xxx file" % (number)
 
-def mergeDistributionFiles(city, GRIDSNUM):
+def mergeMatrixFiles(city, GRIDSNUM):
 	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
 	baseurl = os.path.join('/home/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
 
@@ -346,8 +346,8 @@ def main(argv):
 	#     job.join()
 
 	# Start to merge result files
-	mergeMatrixFiles(city)
-	mergeDistributionFiles(city, GRIDSNUM)
+	mergeMatrixFiles(city, GRIDSNUM)
+	mergeDistributionFiles(city)
 
 	ENDTIME = time.time()
 	print "End approach at %s" % ENDTIME
