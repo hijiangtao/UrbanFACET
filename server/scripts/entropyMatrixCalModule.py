@@ -34,13 +34,15 @@ class EntropyMatrixModule(object):
 		self.CITY = PROP['CITY']
 		self.CITYDISNUM = PROP['CITYDISNUM']
 		self.CITYDISIND = PROP['CITYDISIND']
+		self.starttime = time.time()
 		
 		# self.EMATRIX = DATA['EMATRIX']
 		# all string in EMATRIX
 		self.EMATRIX = np.array([np.array([x, 0, -1, -1, -1]) for x in xrange(0, PROP['GRIDSNUM'])])
 
 	def run(self):
-		logging.info('TASK-%d running...' % self.INDEX)
+		logging.info('TASK-%d running at %s' % (self.INDEX, time.time()-self.starttime))
+		print 'TASK-%d running at %s' % (self.INDEX, time.time()-self.starttime)
 		ofilename = 'res-%03d' % self.INDEX
 
 		idcoldir = os.path.join(self.DIRECTORY, 'records/idcollection', self.CITY )
@@ -54,6 +56,7 @@ class EntropyMatrixModule(object):
 			logging.info('TASK-%d operates file %s' % (self.INDEX, ifilename))
 			self.calculate(os.path.join(idcoldir, ifilename), os.path.join(self.DIRECTORY, 'entropy/distribution', self.CITY, ofilename))
 
+		print 'Finished calculate function at %s' % (time.time()-self.starttime)
 		# 处理完数据，将 EMATRIX 信息写入文件
 		with open(entropyfile, 'ab') as res:
 			res.write(self.ematrixToStr(self.EMATRIX))
@@ -121,6 +124,7 @@ class EntropyMatrixModule(object):
 				# 处理 行政区划 熵
 				eobjs[ devid ][ 't3' ][ 'nlist' ][ devdis-self.CITYDISIND ] += 1
 		stream.close()
+		print 'Finished file reading line by line at %s' % time.time()-self.starttime
 
 		# P 列表的归一化处理, EOBJ 的更新计算, 熵计算与更新
 		for each in idlist:
@@ -145,6 +149,7 @@ class EntropyMatrixModule(object):
 			idInfoStr += self.aggregate(each, eobjs[each])
 
 		recordslen = len(records)
+		print "%d lines data and entropy are aggregated at time %s" % (recordslen, time.time()-self.starttime)
 		for x in xrange(0, recordslen):
 			# 遍历 record
 			# 维护本进程最大的 entropy-matrix 熵值更新
@@ -157,6 +162,7 @@ class EntropyMatrixModule(object):
 		# entropy-matrix 记录数更新
 		for x in xrange(0, self.GRIDSNUM):
 			self.EMATRIX[x][1] += enumlist[x]
+		print 'Finished EMATRIX update at %s' % time.time()-self.starttime
 
 		# 写入 idInfoStr
 		with open(outputfile, 'ab') as res:
