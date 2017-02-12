@@ -295,7 +295,7 @@ def main(argv):
 		sys.exit(2)
 
 	# 处理输入参数
-	city, directory, number = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 1000
+	city, directory, number = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 999
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
