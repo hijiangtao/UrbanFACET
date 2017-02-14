@@ -1,7 +1,7 @@
 /**
- * mapview.js
+ * xmap-view.js
  * @authors Joe Jiang (hijiangtao@gmail.com)
- * @date    2016-12-07 15:31:51
+ * @date    2017-02-13 21:40:37
  * @version $Id$
  */
 
@@ -294,30 +294,6 @@ class mapview {
 	      .attr('stroke-width', '2px')
 	      .classed("hidden", true);
 
-		// svg.selectAll('dot')
-		// 	.data(data)
-		// 	.enter().append('circle')
-		// 	.attr('r', 1)
-		// 	.attr('cx', function(d) {
-		// 		return x(d.x);
-		// 	}).
-		// 	attr('cy', function(d) {
-		// 		return y(d.y);
-		// 	})
-		// 	.on("mouseover", function(d) {
-		// 	  tooltip.transition()
-		// 	       .duration(200)
-		// 	       .style("opacity", .9);
-		// 	  tooltip.html(`CLASS: ${d['cla']}<br>ID: ${d['id']}, NUM: ${d['num']}`)
-		// 	       .style("left", (d3.event.pageX + 5) + "px")
-		// 	       .style("top", (d3.event.pageY - 28) + "px");
-		// 	})
-		// 	.on("mouseout", function(d) {
-		// 	  tooltip.transition()
-		// 	       .duration(500)
-		// 	       .style("opacity", 0)
-		//    	});
-
 		// Add the X Axis
 		let xg = svg.append("g")
 		  .attr("transform", "translate(0," + height + ")")
@@ -436,7 +412,7 @@ class mapview {
 	 * @return {[type]}      [description]
 	 */
 	mapgridDrawing(data, prop) {
-		if(data.features.length === 0) {
+		if(data.length === 0) {
 			alert('No records found!')
 			return ;
 		}
@@ -517,17 +493,20 @@ class mapview {
 			.attr('stop-opacity', 1)
 
 		let feature = g.selectAll('path')
-				.data(data.features)
+				.data(data)
 				.enter().append("path")
 				.attr('fill', function(d) {
-					return color(d['properties']['entropy'])
+					return color(d['properties']['val'])
 				});
 
 		self.map.on('moveend', reset);
 		reset();
 
 		function reset() {
-			let bounds = path.bounds(data),
+			let bounds = path.bounds({
+				"type": "FeatureCollection",
+	    		"features": data
+			}),
 				topLeft = bounds[0],
 				bottomRight = bounds[1];
 
@@ -544,7 +523,7 @@ class mapview {
 				.attr('stroke', 'white')
 				.attr('stroke-width', '0.5')
 				.attr('fill', function(d) {
-					let entropy = d['properties']['entropy']
+					let entropy = d['properties']['val']
 					if (entropy < 0) {
 						return 'rgba(0,0,0,0)'
 					}
@@ -589,9 +568,9 @@ class mapview {
 			let ctx = params.canvas.getContext('2d');
             ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
 
-            let len = data.features.length
+            let len = data.length
             for (let i = 0; i < len; i++) {
-            	let feature = data.features[i],
+            	let feature = data[i],
             		d = feature.properties.center.coordinates,
             		poly = feature.geometry.coordinates[0]
 
@@ -600,7 +579,7 @@ class mapview {
                     
                     let nw = canvasOverlay._map.latLngToContainerPoint([poly[3][1], poly[3][0]]),
                     	se = canvasOverlay._map.latLngToContainerPoint([poly[1][1], poly[1][0]]),
-                    	entropy = data.features[i]['properties']['entropy']
+                    	entropy = data[i]['properties']['val']
                     ctx.fillStyle = entropy<0 ? 'rgba(0,0,0,0)':color(entropy)
                     ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
                 }

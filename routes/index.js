@@ -9,6 +9,10 @@ router.get('/', function(req, res, next) {
 router.get('/demo', function(req, res, next) {
   res.render('demo', { title: 'DEMO', name: 'demo' });
 });
+/* GET comparison page. */
+router.get('/comp', function(req, res, next) {
+  res.render('comp', { title: 'JingJinJi Region Visual Comparsion', name: 'comp' });
+});
 
 /* GET stats page. */
 router.get('/lab', function(req, res, next) {

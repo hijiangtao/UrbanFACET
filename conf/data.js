@@ -130,8 +130,40 @@ let connectMySQL = function(argument) {
 	return promise
 }
 
+let regionRecords = function(city) {
+    let citylocslist = {
+		'bj': {
+			'north': 40.734,
+			'south': 39.533,
+			'west': 115.559,
+			'east': 117.215
+		},
+		'tj': {
+			'north': 39.871,
+			'south': 38.610,
+			'west': 116.792,
+			'east': 117.976
+		},
+		'zjk': {
+			'north': 41.455,
+			'south': 40.099,
+			'west': 114.153,
+			'east': 115.795
+		},
+		'ts': {
+			'north': 40.466,
+			'south': 38.964,
+			'west': 117.603,
+			'east': 119.185
+		}
+	}
+
+	return citylocslist[city]
+}
+
 module.exports = {
 	getValue: getValue,
 	connectMongo: connectMongo,
-	connectMySQL: connectMySQL
+	connectMySQL: connectMySQL,
+	getRegionBound: regionRecords
 }

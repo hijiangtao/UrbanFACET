@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>
+        <%= title %> | ISCAS-VIS
+    </title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="/favicon.ico" rel="shortcut icon">
+    <style type="text/css" rel="stylesheet">
+    @import url('/css/leaflet.css');
+    @import url('/css/semantic.css');
+    @import url('/css/pages/<%= name %>.css');
+    </style>
+</head>
+
+<body class="ui segment">
+    <div id="map">
+        
+    </div>
+    <div id="userpanel" class="ui row segment">
+        <div class="sixteen wide column">
+            <div class="row">
+                <% include vis-x/region %>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="/dist/<%= name %>.js"></script>
+</body>
+
+</html>

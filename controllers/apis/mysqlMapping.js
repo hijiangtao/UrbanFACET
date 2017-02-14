@@ -16,7 +16,9 @@ let mapping = {
 
 	areaidlistquery: "SELECT id from ??;",
 	arearecordsquery: "SELECT lat, lng from ?? WHERE timeSegID >= ? AND timeSegID < ? AND dayType = ? LIMIT 10000",
-	arearecordsquerynight: "SELECT lat, lng from ?? WHERE (timeSegID >= ? OR timeSegID < ?) AND dayType = ?"
+	arearecordsquerynight: "SELECT lat, lng from ?? WHERE (timeSegID >= ? OR timeSegID < ?) AND dayType = ?",
+
+	getOverviewEntropy: "SELECT id, ppval AS 'val' FROM zjkEmatrix ORDER BY zjkEmatrix.id ASC;"
 };
  
 module.exports = mapping;

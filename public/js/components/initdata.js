@@ -294,8 +294,24 @@ let regionsList = [{
     'name': ''
 }]
 
+let regionRecords = {
+    'bj': {
+        'center': [39.9120, 116.3907]
+    },
+    'tj': {
+        'center': [39.1311, 117.1857]
+    },
+    'ts': {
+        'center': [39.6512, 118.1648]
+    },
+    'zjk': {
+        'center': [40.7915, 114.8875]
+    }
+}
+
 export {
 	indexvuedata,
 	labvuedata,
-    featureTypes
+    featureTypes,
+    regionRecords
 }

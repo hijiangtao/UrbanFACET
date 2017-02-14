@@ -4,10 +4,10 @@
 var mysql = require('mysql');
 
 var mysqlpool = mysql.createPool({
-	host    : '192.168.1.42', 
+	host    : 'localhost', 
 	user    : 'root',
-	password: 'vis_2014',
-	database: 'tsu_explore',
+	password: 'iscas',
+	database: 'tdnormal',
 	port    : 3306,
 	timezone: 'GMT',
 	debug	: false,

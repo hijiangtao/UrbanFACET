@@ -1,0 +1,38 @@
+@charset "UTF-8";
+/**
+ * comp.css
+ * @authors Joe Jiang (hijiangtao@gmail.com)
+ * @date    2017-02-13 15:19:17
+ * @version $Id$
+ */
+
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+#map {
+    height: 100vh;
+    width: 100vw;
+}
+
+/*user panel background stylesheets*/
+#userpanel {
+    top: 0;
+    width: 30vw;
+    position: absolute;
+    padding: .5rem;
+    margin: 0;
+    height: 100vh;
+    z-index: 9;
+    background-color: rgba(255, 255, 255, .8);
+}
+
+.vtitle {
+	color: orange;
+}
+
+.inline.fields .field .ui.tiny.image {
+	/*margin-right: .5rem;*/
+}

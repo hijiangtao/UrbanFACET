@@ -1,0 +1,21 @@
+<div id="" class="sixteen wide column">
+	<h5 class="vtitle"><i class="right angle icon divider"></i>Data and Model</h5>
+	<div class="ui form">
+		<div class="inline fields">
+			<label>Region</label>
+			<div v-for='item in params.regions' class="field">
+				<div class="ui tiny image">
+				  <img :src="regionImgUrl(item.val)" v-on:click="getEntropyOverview(item.val)">
+				</div>
+			</div>
+		</div>
+		<div class="ui divider"></div>
+		<div class="inline fields">
+			<button>1</button>
+			<button>2</button>
+			<button>3</button>
+			<button>4</button>
+		</div>
+		<div class="ui divider"></div>
+	</div>
+</div>

@@ -19,7 +19,8 @@ var devConfig = {
         home: ['./public/js/home.js', hotMiddlewareScript],
         lab: ['./public/js/lab.js', hotMiddlewareScript],
         ui: ['./public/js/ui.js', hotMiddlewareScript],
-        demo: ['./public/js/demo.js', hotMiddlewareScript]
+        demo: ['./public/js/demo.js', hotMiddlewareScript],
+        comp: ['./public/js/comp.js', hotMiddlewareScript]
     },
     output: {
         filename: '[name].js',
