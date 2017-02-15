@@ -77,7 +77,9 @@ const userpanel = new Vue({
 				let self = this
 				
     			mapins.panTo( regionRecords[city]['center'] )
+                document.getElementsByTagName('body')[0].classList.add('loading');
     			getEntropy(city, self.selections.etype, self.selections.eVal).then(function(res) {
+                    document.getElementsByTagName('body')[0].classList.remove('loading');
     				self.params.range.max = Number.parseFloat(res['prop']['maxVal'])
     				
     				let valRange = commonFunc.getValRange(self.params.range, self.selections.eVal)
@@ -97,7 +99,9 @@ const userpanel = new Vue({
 				
     			mapins.panTo( regionRecords[city]['center'] )
 
+                document.getElementsByTagName('body')[0].classList.add('loading');
     			getDensity(city, self.selections.etype, self.selections.eVal).then(function(res) {
+                    document.getElementsByTagName('body')[0].classList.remove('loading');
     				self.params.range.max = Number.parseFloat(res['prop']['maxVal'])
 
     				let valRange = commonFunc.getValRange(self.params.range, self.selections.eVal)
