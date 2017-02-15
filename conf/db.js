@@ -3,7 +3,7 @@
 // MySQL数据库联接配置
 var mysql = require('mysql');
 
-var mysqlpool = mysql.createPool({
+var localhost = mysql.createPool({
 	host    : 'localhost', 
 	user    : 'root',
 	password: 'iscas',
@@ -14,4 +14,15 @@ var mysqlpool = mysql.createPool({
 	multipleStatements: true 
 })
 
-module.exports = mysqlpool;
+var server = mysql.createPool({
+	host    : 'localhost', 
+	user    : 'root',
+	password: 'vis_2014',
+	database: 'tdnormal',
+	port    : 3306,
+	timezone: 'GMT',
+	debug	: false,
+	multipleStatements: true 
+})
+
+module.exports = server;
