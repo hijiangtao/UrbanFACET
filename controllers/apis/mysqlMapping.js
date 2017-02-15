@@ -18,7 +18,8 @@ let mapping = {
 	arearecordsquery: "SELECT lat, lng from ?? WHERE timeSegID >= ? AND timeSegID < ? AND dayType = ? LIMIT 10000",
 	arearecordsquerynight: "SELECT lat, lng from ?? WHERE (timeSegID >= ? OR timeSegID < ?) AND dayType = ?",
 
-	getOverviewEntropy: "SELECT id, ppval AS 'val' FROM zjkEmatrix ORDER BY zjkEmatrix.id ASC;"
+	getEntropyScale: "SELECT MAX(??) AS 'val' FROM ??;",
+	getOverviewEntropy: "SELECT id, ?? AS 'val' FROM ?? WHERE ??>=? ORDER BY ??.id ASC;"
 };
  
 module.exports = mapping;

@@ -5,17 +5,32 @@
 			<label>Region</label>
 			<div v-for='item in params.regions' class="field">
 				<div class="ui tiny image">
-				  <img :src="regionImgUrl(item.val)" v-on:click="getEntropyOverview(item.val)">
+				  <img :src="regionImgUrl(item.val)" v-on:click="updateCity(item.val)">
 				</div>
 			</div>
 		</div>
 		<div class="ui divider"></div>
 		<div class="inline fields">
-			<button>1</button>
-			<button>2</button>
-			<button>3</button>
-			<button>4</button>
+			<label>CType</label>
+			<span v-for="item in params.ctypes" >
+			<input type="radio" name="calculationtype" :value="item.val" v-model="selections.ctype">{{item.name}} 
+			</span>
 		</div>
 		<div class="ui divider"></div>
+		<div class="inline fields">
+			<label>EType</label>
+			<span v-for="item in params.etypes" >
+			<input type="radio" name="entropytype" :value="item.val" v-model="selections.etype">{{item.name}} 
+			</span>
+		</div>
+		<div class="ui divider"></div>
+		<div class="inline fields">
+			Min <input id="eMinValInput" type ="range" min ="0" :max="1" v-model="selections.eVal.min" step="0.01"/> {{selections.eVal.min*100}}%
+			Max <input id="eMaxValInput" type ="range" min ="0" max="1" v-model="selections.eVal.max" step="0.01"/> {{selections.eVal.max*100}}%
+		</div>
+		<div class="ui divider"></div>
+		<div class="inline fields">
+			<button v-on:click="getEntropyOverview">Update</button>
+		</div>
 	</div>
 </div>

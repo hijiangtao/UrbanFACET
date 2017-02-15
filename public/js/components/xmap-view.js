@@ -412,10 +412,16 @@ class mapview {
 	 * @return {[type]}      [description]
 	 */
 	mapgridDrawing(data, prop) {
-		if(data.length === 0) {
+		if(data.features.length === 0) {
 			alert('No records found!')
 			return ;
 		}
+
+		let resprop = data['prop'],
+			resminVal = Number.parseFloat(resprop['minVal']),
+			resmaxVal = Number.parseFloat(resprop['maxVal']),
+			usrminVal = Number.parseFloat(prop['min']),
+			usrmaxVal = Number.parseFloat(prop['max'])
 
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
@@ -429,8 +435,8 @@ class mapview {
 		let transform = d3.geoTransform({ point: projectPoint }),
 			path = d3.geoPath().projection(transform);
 
-		let minVal = Number.parseFloat(prop['minVal']),
-			maxVal = Number.parseFloat(prop['maxVal']),
+		let minVal = resminVal>usrminVal? resminVal:usrminVal,
+			maxVal = resmaxVal<usrmaxVal? resmaxVal:usrmaxVal,
 			interval = maxVal - minVal,
 			colordomain = [minVal, minVal + interval*0.4, minVal + interval*0.6, maxVal],
 			colorrange = ['#00A08A', '#00CC00', '#ff0', '#C00']
@@ -493,7 +499,7 @@ class mapview {
 			.attr('stop-opacity', 1)
 
 		let feature = g.selectAll('path')
-				.data(data)
+				.data(data.features)
 				.enter().append("path")
 				.attr('fill', function(d) {
 					return color(d['properties']['val'])
@@ -503,10 +509,7 @@ class mapview {
 		reset();
 
 		function reset() {
-			let bounds = path.bounds({
-				"type": "FeatureCollection",
-	    		"features": data
-			}),
+			let bounds = path.bounds(data),
 				topLeft = bounds[0],
 				bottomRight = bounds[1];
 
@@ -520,8 +523,8 @@ class mapview {
 			feature.attr('d', path)
 				.attr('transform', 'translate(5, 5)')
 				.style('fill-opacity', 0.7)
-				.attr('stroke', 'white')
-				.attr('stroke-width', '0.5')
+				// .attr('stroke', 'white')
+				// .attr('stroke-width', '0.5')
 				.attr('fill', function(d) {
 					let entropy = d['properties']['val']
 					if (entropy < 0) {
@@ -551,35 +554,48 @@ class mapview {
 	 */
 	mapgridCDrawing(data, prop) {
 		let self = this
+		if(data.features.length === 0) {
+			alert('No records found!')
+			return ;
+		}
 
-		let minVal = Number.parseFloat(prop['minVal']),
-			maxVal = Number.parseFloat(prop['maxVal']),
-			interval = maxVal - minVal,
-			colordomain = [minVal, minVal + interval*0.4, minVal + interval*0.6, maxVal],
-			colorrange = ['#00A08A', '#00CC00', '#ff0', '#C00']
+		let resprop = data['prop'],
+			resminVal = Number.parseFloat(resprop['minVal']),
+			resmaxVal = Number.parseFloat(resprop['maxVal']),
+			usrminVal = Number.parseFloat(prop['min']),
+			usrmaxVal = Number.parseFloat(prop['max'])
+
+		// updated color scale
+		let minVal = resminVal>usrminVal? resminVal:usrminVal,
+			maxBVal = resmaxVal<usrmaxVal? resmaxVal:usrmaxVal,
+			maxEVal = resmaxVal<usrmaxVal? usrmaxVal:resmaxVal,
+			interval = maxBVal - minVal,
+			colordomain = [minVal, maxBVal, maxEVal],
+			colorrange = ['#FFF', '#C00', '#C00']
 
 		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
 
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
 		this.removeheatmap()
+		this.removecanvas()
 
         let drawingOnCanvas = function(canvasOverlay, params) {
 			let ctx = params.canvas.getContext('2d');
             ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
 
-            let len = data.length
+            let len = data.features.length
             for (let i = 0; i < len; i++) {
-            	let feature = data[i],
-            		d = feature.properties.center.coordinates,
+            	let feature = data.features[i],
+            		// d = feature.properties.center.coordinates,
             		poly = feature.geometry.coordinates[0]
 
-                if (params.bounds.contains([d[1], d[0]])) {
-                    let dot = canvasOverlay._map.latLngToContainerPoint([d[1], d[0]]);
+                if (params.bounds.contains([poly[0][1], poly[0][0]])) {
+                    // let dot = canvasOverlay._map.latLngToContainerPoint([d[1], d[0]]);
                     
                     let nw = canvasOverlay._map.latLngToContainerPoint([poly[3][1], poly[3][0]]),
                     	se = canvasOverlay._map.latLngToContainerPoint([poly[1][1], poly[1][0]]),
-                    	entropy = data[i]['properties']['val']
+                    	entropy = data.features[i]['properties']['val']
                     ctx.fillStyle = entropy<0 ? 'rgba(0,0,0,0)':color(entropy)
                     ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
                 }
@@ -607,6 +623,7 @@ class mapview {
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
 		this.removeheatmap()
+		this.removecanvas()
 
 		for (let i = len - 1; i >= 0; i--) {
 			let center = data.features[i]['properties']['center']['coordinates'],
@@ -668,6 +685,10 @@ class mapview {
 		if (obj) {
 			obj.remove();
 		} 
+	}
+
+	removecanvas() {
+		$('canvas.leaflet-heatmap-layer.leaflet-zoom-animated').remove()
 	}
 }
 

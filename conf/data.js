@@ -161,9 +161,20 @@ let regionRecords = function(city) {
 	return citylocslist[city]
 }
 
+let getEntropyType = function(type) {
+	let strlist = {
+		'poi': 'p',
+		'admin': 'a',
+		'timeperiod': 't'
+	}
+
+	return strlist[type]
+}
+
 module.exports = {
 	getValue: getValue,
 	connectMongo: connectMongo,
 	connectMySQL: connectMySQL,
-	getRegionBound: regionRecords
+	getRegionBound: regionRecords,
+	getEntropyType: getEntropyType
 }

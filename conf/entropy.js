@@ -146,28 +146,40 @@ function mongoQueries(idlist, db, prop) {
 	return Promise.all([q1, q2, q3])
 }
 
-function getEntropy(conn, city, type) {
+function getEntropy(conn, prop) {
+	let city = prop['city'], 
+		eattr = `${prop['type']+prop['calculation']}val`,
+		etable = `${city}Ematrix`,
+		emin = Number.parseFloat(prop['emin']),
+		emax = Number.parseFloat(prop['emax'])
+
 	let p = new Promise(function(resolve, reject) {
-		let sql = $sql.getOverviewEntropy,
-			param = []
+		let sql = $sql.getEntropyScale + $sql.getOverviewEntropy,
+			param = [eattr, etable, eattr, etable, eattr, emin, etable]
 
 		conn.query(sql, param, function(err, result) {
             if (err) {
             	reject(err)
             } else {
-            	// numberID
+            	// result[0]: Max value of entropy 
+            	// result[1]: Entropy list
             	
-            	let DATA = []
-
-            	let SPLIT = 0.003,
+            	let DATA = [], 
+            		maxVal = result[0]['val'],
+            		SPLIT = 0.003,
             		centerincrement = 0.0015,//.toFixed(4),
             		locs = data.getRegionBound(city),
-            		reslen = result.length
+            		elist = result[1],
+            		reslen = elist.length
 
-            	for (let i = result.length - 1; i >= 0; i--) {
-            		let LNGNUM = parseInt((locs['east'] - locs['west']) / SPLIT + 1),
-		            	latind = parseInt(i/LNGNUM),
-		            	lngind = i-latind*LNGNUM,
+            	for (let i = elist.length - 1; i >= 0; i--) {
+            		if (elist[i]['val'] == -1) {
+            			continue
+            		}
+            		let id = Number.parseInt(elist[i]['id']),
+            			LNGNUM = parseInt((locs['east'] - locs['west']) / SPLIT + 1),
+		            	latind = parseInt(id/LNGNUM),
+		            	lngind = id-latind*LNGNUM,
 		            	lat = (locs['south'] + latind * SPLIT),//.toFixed(3),
 		            	lng = (locs['west'] + lngind * SPLIT),//.toFixed(3),
 		            	lnginc = (lng+SPLIT),//.toFixed(3),
@@ -186,19 +198,42 @@ function getEntropy(conn, city, type) {
 		            		"coordinates" : [ coordsarr ] 
 		            	}, 
 		            	"type" : "Feature", 
-		            	"id" : i, 
+		            	"id" : id, 
 		            	"properties" : {
-		            		'val': parseFloat(result[i]['val'])
+		            		'val': parseFloat(elist[i]['val'])
 		            	}
 		            }) 
             	}
 	            
-            	resolve(DATA)
+            	resolve({
+            		'scode': 1,
+            		'data': { 
+						"type": "FeatureCollection",
+					    "features": DATA,
+					    "prop": {
+					    	'maxVal': maxVal,
+					    	'minVal': 0
+					    }
+					}
+            	})
             }
         })
 	})
 
 	return p
+}
+
+function generateGridsJson(locs, obj) {
+	fs.exists('myjsonfile.json', function(exists){
+	    if(exists){
+	        console.log("yes file exists");
+	    } else {
+	        console.log("file not exists");
+	        
+	        var json = JSON.stringify(obj);
+	        fs.writeFile('myjsonfile.json', json);
+	    }
+	});
 }
 
 module.exports = {
