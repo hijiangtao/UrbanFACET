@@ -33,3 +33,12 @@ body {
 	color: orange;
 }
 
+.selectedregion {
+	border: solid red .2em;
+}
+
+/*REWRITE SEMANTIC-UI*/
+.ui.tiny.image {
+	width: 70px;
+}
+/*REWRITE SEMANTIC-UI*/

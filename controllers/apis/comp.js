@@ -11,7 +11,7 @@ const DATA = require('../../conf/data');
 let EP = require('../../conf/entropy');
 
 let apis = {
-	'overviewQuery': function(req, res, next) {
+	'overviewEQuery': function(req, res, next) {
 		let params = req.query,
 			type = params.etype,
 			emin = params.emin,
@@ -29,6 +29,30 @@ let apis = {
 
 		lib.connectMySQL().then(function(conn) {
 			return EP.getEntropy(conn, prop)
+		}, function(err) {
+			console.error('error: ', err)
+		}).catch(function(error) {
+			console.log(error);
+		}).then(function(result) {
+			res.json(result)
+		})
+	},
+	'overviewDQuery': function(req, res, next) {
+		let params = req.query,
+			emin = params.emin,
+			emax = params.emax,
+			city = params.city,
+			type = params.type
+
+		let prop = {
+			'city': city,
+			'emin': emin,
+			'emax': emax,
+			'type': type
+		}
+
+		lib.connectMySQL().then(function(conn) {
+			return EP.getDensity(conn, prop)
 		}, function(err) {
 			console.error('error: ', err)
 		}).catch(function(error) {

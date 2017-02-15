@@ -571,7 +571,7 @@ class mapview {
 			maxEVal = resmaxVal<usrmaxVal? usrmaxVal:resmaxVal,
 			interval = maxBVal - minVal,
 			colordomain = [minVal, maxBVal, maxEVal],
-			colorrange = ['#FFF', '#C00', '#C00']
+			colorrange = ['rgba(255,255,255,0.5)', 'rgba(255,0,0,1)', 'rgba(255,0,0,1)']
 
 		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
 
