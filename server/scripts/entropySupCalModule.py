@@ -88,10 +88,10 @@ class entropySupCalModule(object):
 				if devIntGID >= 0 and devIntGID < self.GRIDSNUM:
 
 					# 处理 POI 熵
-					q = self.gridsData[devStrGID]
-					p = self.record[devid]['t1']
 					t1 = -1
 					if devid in self.validIDs:
+						q = self.gridsData[devStrGID]
+						p = self.record[devid]['t1']
 						validRecNumList[devid] += 1
 						t1 = sum([0.0 if p[x]==0.0 else -q[x]*np.log(p[x]) for x in xrange(0,11)])
 					 
