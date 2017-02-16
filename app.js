@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 // var lab = require('./routes/lab');
-var home = require('./routes/home');
+// var home = require('./routes/home');
 // var demo = require('./routes/demo');
 var comp = require('./routes/comp');
 
@@ -52,7 +52,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 // app.use('/lab', lab);
-app.use('/home', home);
+// app.use('/home', home);
 // app.use('/demo', demo);
 app.use('/comp', comp);
 

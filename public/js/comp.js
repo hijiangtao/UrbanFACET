@@ -11,23 +11,23 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import mapview from './components/xmap-view'
 import $ from "jquery"
-window.jQuery = $
+// window.jQuery = $
 import {regionRecords} from './components/initdata'
 
-Vue.use(Vuex)
+// Vue.use(Vuex)
 
 let mapins = new mapview('map')
 
-const store = new Vuex.Store({
-  state: {
-	'drawData': {}
-  },
-  mutations: {
-    updateCity (data) {
-      state.drawData = data
-    }
-  }
-})
+// const store = new Vuex.Store({
+//   state: {
+// 	'drawData': {}
+//   },
+//   mutations: {
+//     updateCity (data) {
+//       state.drawData = data
+//     }
+//   }
+// })
 
 const userpanel = new Vue({
 	el: '#userpanel',
@@ -74,13 +74,20 @@ const userpanel = new Vue({
     				return false;
     			}
 
-				let self = this
+				let self = this;
 				
     			mapins.panTo( regionRecords[city]['center'] )
                 document.getElementsByTagName('body')[0].classList.add('loading');
+                console.log('Begin to get data from server.');
+                console.time('SERVER');
+
+                // basicGetOverview(city, self);
+
     			getEntropy(city, self.selections.etype, self.selections.eVal).then(function(res) {
+    				console.log('Already got data from server.');
+    				console.timeEnd('SERVER');
                     document.getElementsByTagName('body')[0].classList.remove('loading');
-    				self.params.range.max = Number.parseFloat(res['prop']['maxVal'])
+    				self.params.range.max = Number.parseFloat(res['prop']['maxVal']);
     				
     				let valRange = commonFunc.getValRange(self.params.range, self.selections.eVal)
 
@@ -102,7 +109,8 @@ const userpanel = new Vue({
                 document.getElementsByTagName('body')[0].classList.add('loading');
     			getDensity(city, self.selections.etype, self.selections.eVal).then(function(res) {
                     document.getElementsByTagName('body')[0].classList.remove('loading');
-    				self.params.range.max = Number.parseFloat(res['prop']['maxVal'])
+    				self.params.range.max = Number.parseFloat(res['prop']['maxVal']);
+    				// self.results.drawData = res;
 
     				let valRange = commonFunc.getValRange(self.params.range, self.selections.eVal)
 				  	mapins.mapgridCDrawing(res, valRange)
@@ -116,15 +124,6 @@ const userpanel = new Vue({
     	'regionImgUrl': function(city) {
     		return `/assets/${city}-icon.png`
     	},
-    	// 'updateVals': function(props) {
-    	// 	this.params.range.max = props.maxVal
-    	// 	if (this.params.range.max < this.selections.eVal.min) {
-    	// 		this.selections.eVal.min = 0
-    	// 		this.selections.eVal.max = this.params.range.max
-    	// 	} else if (this.params.range.max < this.selections.eVal.max) {
-    	// 		this.selections.eVal.max = this.params.range.max
-    	// 	}
-    	// },
     	'updateCity': function(val) {
     		this.selections.city = val
     	},
@@ -201,6 +200,29 @@ let getEntropy = function(city, type, eprop) {
 	});
 
 	return p
+};
+
+let basicGetOverview = function(city, self) {
+	let type = self.selections.etype,
+		eprop = self.selections.eVal;
+
+	$.get(`/comp/overviewEQuery?city=${city}&etype=${type}&ctype=p&emin=${eprop['min']}&emax=${eprop['max']}`, function(res, err) {
+		if (res['scode']) {
+			res = res['data'];
+			console.log('Already got data from server.');
+			console.timeEnd('SERVER');
+		    document.getElementsByTagName('body')[0].classList.remove('loading');
+			self.params.range.max = Number.parseFloat(res['prop']['maxVal']);
+			// self.results.drawData = res;
+			
+			let valRange = commonFunc.getValRange(self.params.range, self.selections.eVal)
+
+		  	mapins.mapgridCDrawing(res, valRange)
+		} else {
+			console.error("Failed!", err);
+		}
+	})
+	
 }
 
 let getDensity = function(city, type, eprop) {
@@ -220,4 +242,4 @@ let getDensity = function(city, type, eprop) {
 	});
 
 	return p
-}
+};

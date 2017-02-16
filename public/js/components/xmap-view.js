@@ -575,11 +575,12 @@ class mapview {
 
 		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
 
-		d3.select('#F_SVG').remove();
-		d3.select('#GRID_SVG').remove();
-		this.removeheatmap()
+		// d3.select('#F_SVG').remove();
+		// d3.select('#GRID_SVG').remove();
+		// this.removeheatmap()
 		this.removecanvas()
-
+		console.log('Begin to draw gridmap based on received data.');
+		console.time('DRAWING');
         let drawingOnCanvas = function(canvasOverlay, params) {
 			let ctx = params.canvas.getContext('2d');
             ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
@@ -588,20 +589,22 @@ class mapview {
             for (let i = 0; i < len; i++) {
             	let feature = data.features[i],
             		// d = feature.properties.center.coordinates,
-            		poly = feature.geometry.coordinates[0]
+            		poly = feature.geometry.coordinates[0],
+            		entropy = data.features[i]['properties']['val']
 
-                if (params.bounds.contains([poly[0][1], poly[0][0]])) {
+                if (params.bounds.contains([poly[0][1], poly[0][0]]) && entropy >= minVal) {
                     // let dot = canvasOverlay._map.latLngToContainerPoint([d[1], d[0]]);
                     
                     let nw = canvasOverlay._map.latLngToContainerPoint([poly[3][1], poly[3][0]]),
-                    	se = canvasOverlay._map.latLngToContainerPoint([poly[1][1], poly[1][0]]),
-                    	entropy = data.features[i]['properties']['val']
-                    ctx.fillStyle = entropy<0 ? 'rgba(0,0,0,0)':color(entropy)
+                    	se = canvasOverlay._map.latLngToContainerPoint([poly[1][1], poly[1][0]]);
+                    ctx.fillStyle = color(entropy),
                     ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
                 }
             }
 		}
 
+		console.log('Finished gridmap drawing.');
+		console.timeEnd('DRAWING');
 		L.canvasOverlay()
             .drawing(drawingOnCanvas)
             .addTo(self.map);

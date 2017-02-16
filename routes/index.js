@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('home', { title: 'VC Homepage', name: 'home' });
-});
+// router.get('/', function(req, res, next) {
+//   res.render('home', { title: 'VC Homepage', name: 'home' });
+// });
 /* GET demo page. */
 // router.get('/demo', function(req, res, next) {
 //   res.render('demo', { title: 'DEMO', name: 'demo' });
@@ -19,8 +19,8 @@ router.get('/comp', function(req, res, next) {
 //   res.render('lab', { title: 'Lab Stats', name: 'lab' });
 // });
 /* GET ui page. */
-router.get('/ui', function(req, res, next) {
-  res.render('ui', { title: 'UI Template', name: 'ui' });
-});
+// router.get('/ui', function(req, res, next) {
+//   res.render('ui', { title: 'UI Template', name: 'ui' });
+// });
 
 module.exports = router;
