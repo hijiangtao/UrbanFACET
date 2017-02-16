@@ -25,4 +25,4 @@ var server = mysql.createPool({
 	multipleStatements: true 
 })
 
-module.exports = server;
+module.exports = localhost;

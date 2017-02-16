@@ -14,11 +14,11 @@ import gc
 import numpy as np
 import scipy.stats as sc
 from CommonFunc import getTimePeriod, getCityLocs
-from CommonFunc import addTwoArray
 from CommonFunc import getCityDisInfo
 from CommonFunc import connectMongo
 from multiprocessing import Process, Manager, Value, Array, Lock
 from ctypes import c_wchar_p
+# from entropy.grids import getGridsFromMongo
 pLock = Lock()
 
 class EntropyMatrixModule(object):
@@ -96,7 +96,7 @@ class EntropyMatrixModule(object):
 				devIntGID = int( devStrGID )
 
 				if devid not in idlist:
-					# initial customer entropy calculating model object
+					# 初始化但设备的熵计算对象
 					# type1: POI Types
 					# type2: Time Periods
 					# type3: Administrative Dimensions
