@@ -135,11 +135,12 @@ class entropySupCalModule(object):
 		datalen = self.GRIDSNUM
 		resStr = []
 		for x in xrange(0, datalen):
-			t1 = -1
+			t1, t2, t3 = -1, -1, -1
 			if data[x][2] != 0.0:
 				t1 = data[x][3]/data[x][2]
-			t2 = data[x][4]/data[x][1]
-			t3 = data[x][5]/data[x][1]
+			if data[x][1] != 0.0:
+				t2 = data[x][4]/data[x][1]
+				t3 = data[x][5]/data[x][1]
 
 			resStr.append( ','.join(str(int(data[x][e])) for e in xrange(0,3)) + ',' + str(t1) + ',' + str(t2) + ',' + str(t3) )
 
