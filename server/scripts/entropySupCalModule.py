@@ -102,14 +102,14 @@ class entropySupCalModule(object):
 						dayIndex = 7
 					pji = p[ dayIndex+devperiod ]
 					t2 = 0.0
-					if pji !== 0.0:
+					if pji != 0.0:
 						t2 = -np.log(pji)
 					
 					# 处理 行政区划 熵
 					p = self.record[devid]['t3']
 					t3 = 0.0
 					pji = p[ devdis-self.CITYDISIND ]
-					if pji !== 0.0:
+					if pji != 0.0:
 						t3 = -np.log(pji)
 
 					entropyList.append([devid,devIntGID,t1,t2,t3])
@@ -125,7 +125,7 @@ class entropySupCalModule(object):
 			t3 = entropyList[x][4]
 
 			self.EMATRIX[ devIntGID ][1] += 1
-			if t1 !== -1:
+			if t1 != -1:
 				self.EMATRIX[ devIntGID ][2] += 1
 				self.EMATRIX[ devIntGID ][3] += t1 / validRecNumList[devid]
 			self.EMATRIX[ devIntGID ][4] += t2 / recNumList[devid]
@@ -136,7 +136,7 @@ class entropySupCalModule(object):
 		resStr = []
 		for x in xrange(0, datalen):
 			t1 = -1
-			if data[x][2] !== 0.0:
+			if data[x][2] != 0.0:
 				t1 = data[x][3]/data[x][2]
 			t2 = data[x][4]/data[x][1]
 			t3 = data[x][5]/data[x][1]
