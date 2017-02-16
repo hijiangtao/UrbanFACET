@@ -89,7 +89,7 @@ class entropySupCalModule(object):
 
 					# 处理 POI 熵
 					t1 = -1
-					if devid in self.validIDs:
+					if devStrGID in self.validIDs:
 						q = self.gridsData[devStrGID]
 						p = self.record[devid]['t1']
 						validRecNumList[devid] += 1
