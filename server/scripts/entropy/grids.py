@@ -21,13 +21,13 @@ def getGridsFromMongo(city, db):
 	return gridsData, validIDs
 
 def getPeopleEntropyFromFile(file, disnum):
-	res, disEndInd = {}, 28 + disnum
+	res, disEndInd = {}, 29 + disnum
 	with open(file, 'rb') as stream:
 		for each in stream:
 			line = each.split(',')
 			res[ line[0] ] = {
-				't1': np.array([float(line[x]) for x in xrange(4,14)]),
-				't2': np.array([float(line[x]) for x in xrange(15,28)]),
+				't1': np.array([float(line[x]) for x in xrange(4,15)]),
+				't2': np.array([float(line[x]) for x in xrange(15,29)]),
 				't3': np.array([float(line[x]) for x in xrange(29, disEndInd)])
 			}
 	stream.close()
