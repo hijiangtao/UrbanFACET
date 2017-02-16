@@ -146,8 +146,8 @@ class entropySupCalModule(object):
 		return '\n'.join(resStr)
 def processTask(PROP, DATA):
 	file = os.path.join(PROP['DIRECTORY'], 'entropy/distribution', PROP['CITY'], 'res-%03d' % PROP['INDEX'])
-	disArrayNum = getCityDisInfo(PROP['CITY'])
-	DATA['record'] = getPeopleEntropyFromFile(file, disArrayNum)
+	# disArrayNum = getCityDisInfo(PROP['CITY'])
+	DATA['record'] = getPeopleEntropyFromFile(file, DATA['CITYDISNUM'])
 
 	task = entropySupCalModule(PROP, DATA)
 	task.run()
