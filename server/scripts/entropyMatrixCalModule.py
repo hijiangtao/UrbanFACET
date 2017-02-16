@@ -18,7 +18,7 @@ from CommonFunc import getCityDisInfo
 from CommonFunc import connectMongo
 from multiprocessing import Process, Manager, Value, Array, Lock
 from ctypes import c_wchar_p
-# from entropy.grids import getGridsFromMongo
+from entropy.grids import getGridsFromMongo
 pLock = Lock()
 
 class EntropyMatrixModule(object):
@@ -96,7 +96,7 @@ class EntropyMatrixModule(object):
 				devIntGID = int( devStrGID )
 
 				if devid not in idlist:
-					# 初始化但设备的熵计算对象
+					# 初始化设备的熵计算对象
 					# type1: POI Types
 					# type2: Time Periods
 					# type3: Administrative Dimensions
@@ -214,17 +214,17 @@ def processTask(PROP, DATA):
 	task = EntropyMatrixModule(PROP, DATA)
 	task.run()
 
-def getGridsFromMongo(city, db):
-	res = list( db['grids_%s' % city].find({"properties.vecvalid": True }, {"properties.uid": 1, "properties.vec": 1}) )
-	gridsData, validIDs = {}, []
-	reslen = len(res)
-	for x in xrange(0, reslen):
-		id = str(res[x]['properties']['uid'])
-		vec = np.array(res[x]['properties']['vec'], dtype='f')
-		gridsData[ id ] = vec
-		validIDs.append(id)
+# def getGridsFromMongo(city, db):
+# 	res = list( db['grids_%s' % city].find({"properties.vecvalid": True }, {"properties.uid": 1, "properties.vec": 1}) )
+# 	gridsData, validIDs = {}, []
+# 	reslen = len(res)
+# 	for x in xrange(0, reslen):
+# 		id = str(res[x]['properties']['uid'])
+# 		vec = np.array(res[x]['properties']['vec'], dtype='f')
+# 		gridsData[ id ] = vec
+# 		validIDs.append(id)
 
-	return gridsData, validIDs
+# 	return gridsData, validIDs
 
 def mergeDistributionFiles(city):
 	baseurl = '/home/tao.jiang/datasets/JingJinJi/entropy/distribution'

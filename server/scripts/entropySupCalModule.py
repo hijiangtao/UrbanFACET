@@ -91,7 +91,7 @@ class entropySupCalModule(object):
 					q = self.gridsData[devid]
 					p = self.record[devid]['t1']
 					t1 = -1
-					if devid in validIDs:
+					if devid in self.validIDs:
 						validRecNumList[devid] += 1
 						t1 = sum([0.0 if p[x]==0.0 else -q[x]*np.log(p[x]) for x in xrange(0,11)])
 					 
