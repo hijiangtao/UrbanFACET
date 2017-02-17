@@ -155,6 +155,53 @@ def processTask(PROP, DATA):
 	task = entropySupCalModule(PROP, DATA)
 	task.run()
 
+def mergeMatrixFiles(city, GRIDSNUM, filename):
+	"""Summary
+	
+	Args:
+	    city (TYPE): Description
+	    GRIDSNUM (TYPE): Description
+	    filename (TYPE): recres
+	
+	Returns:
+	    TYPE: Description
+	"""
+	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
+	baseurl = os.path.join('/home/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
+
+	for x in xrange(0,20):
+		with open(os.path.join(baseurl, '%s-%03d' % (filename, x)), 'rb') as stream:
+			for each in stream:
+				line = np.array(each.split(','), dtype='f')
+				id = int(line[0])
+				line[0] = 0
+				ematrix[ id ] = np.add(line, ematrix[id])
+		stream.close()
+
+	resString = ''
+	for x in xrange(0,GRIDSNUM):
+		if ematrix[x][1] == 0:
+			ematrix[x][4] = -1
+			ematrix[x][5] = -1
+		else:
+			ematrix[x][4] /= ematrix[x][1]
+			ematrix[x][5] /= ematrix[x][1]
+
+		if ematrix[x][2] == 0.0:
+			ematrix[x][3] = -1
+		else:
+			ematrix[x][3] /= ematrix[x][2]
+
+		linestr = ','.join([str(int(ematrix[x][e])) for e in xrange(0,3)]) + ',' + ','.join([str(ematrix[x][e]) for e in xrange(3,6)]) + '\n'
+		resString += linestr
+
+
+	with open(os.path.join(baseurl, '%s-xxx' % filename), 'ab') as res:
+		res.write(resString)
+	res.close()
+
+	print "%d lines into matrix %s-xxx file" % (filename, GRIDSNUM)
+
 def main(argv):
 	try:
 		opts, args = getopt.getopt(argv, "hc:d:n:", ["help", "city=", 'directory=', 'number='])
@@ -214,6 +261,15 @@ def main(argv):
 	# 等待所有进程结束
 	for job in jobs:
 	    job.join()
+
+	# Start to merge result files
+	MERGE = time.time()
+	print "Start merge at %s" % MERGE
+	mergeMatrixFiles(city, GRIDSNUM)
+	print "End merge in %s" % str(time.time() - MERGE)
+
+	ENDTIME = time.time()
+	print "End approach at %s" % ENDTIME
 
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-entropysupcalmodule.log', level=logging.DEBUG)
