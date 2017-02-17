@@ -155,7 +155,7 @@ def processTask(PROP, DATA):
 	task = entropySupCalModule(PROP, DATA)
 	task.run()
 
-def mergeMatrixFiles(city, GRIDSNUM, filename):
+def mergeMatrixFiles(city, GRIDSNUM, filename='recres'):
 	"""Summary
 	
 	Args:
@@ -238,29 +238,29 @@ def main(argv):
 	manager = Manager()
 	jobs = []
 
-	for x in xrange(0,20):
-		# time.sleep(random.random()*2)
-		PROP = {
-			'INDEX': x,
-			'DIRECTORY': directory,
-			'GRIDSNUM': GRIDSNUM,
-			'CITY': city,
-			'CITYDISIND': CITYDISIND,
-			'CITYDISNUM': CITYDISNUM,
-			'FILENUM': number
-		}
+	# for x in xrange(0,20):
+	# 	# time.sleep(random.random()*2)
+	# 	PROP = {
+	# 		'INDEX': x,
+	# 		'DIRECTORY': directory,
+	# 		'GRIDSNUM': GRIDSNUM,
+	# 		'CITY': city,
+	# 		'CITYDISIND': CITYDISIND,
+	# 		'CITYDISNUM': CITYDISNUM,
+	# 		'FILENUM': number
+	# 	}
 
-		DATA = {
-			'gridsData': gridsData,
-			'validIDs': validIDs
-		}
+	# 	DATA = {
+	# 		'gridsData': gridsData,
+	# 		'validIDs': validIDs
+	# 	}
 
-		jobs.append( Process(target=processTask, args=(PROP, DATA)) )
-		jobs[x].start()
+	# 	jobs.append( Process(target=processTask, args=(PROP, DATA)) )
+	# 	jobs[x].start()
 
-	# 等待所有进程结束
-	for job in jobs:
-	    job.join()
+	# # 等待所有进程结束
+	# for job in jobs:
+	#     job.join()
 
 	# Start to merge result files
 	MERGE = time.time()
