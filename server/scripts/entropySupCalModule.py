@@ -225,18 +225,18 @@ def main(argv):
 		elif opt in ('-m', '--mode'):
 			mode = arg
 
+	# cunchu
+	STARTTIME = time.time()
+	print "Start approach at %s" % STARTTIME
+
+	conn, db = connectMongo('tdnormal')
+	GRIDSNUM = db['grids_%s' % city].count()
+	gridsData, validIDs = getGridsFromMongo(city, db)
+	conn.close()
+
+	CITYDISIND, CITYDISNUM = getCityDisInfo(city)
+		
 	if mode == 'all':
-		# cunchu
-		STARTTIME = time.time()
-		print "Start approach at %s" % STARTTIME
-
-		conn, db = connectMongo('tdnormal')
-		GRIDSNUM = db['grids_%s' % city].count()
-		gridsData, validIDs = getGridsFromMongo(city, db)
-		conn.close()
-
-		CITYDISIND, CITYDISNUM = getCityDisInfo(city)
-
 		# @多进程运行程序 START
 		manager = Manager()
 		jobs = []
