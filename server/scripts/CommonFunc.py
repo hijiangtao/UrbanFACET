@@ -188,7 +188,34 @@ def getCityLocs(city):
 		}
 	}
 
-	return citylocslist[city]
+	newCitylocslist = {
+		'beijing': {
+			'north': 41.055,
+			'south': 39.445,
+			'west': 115.422,
+			'east': 117.515
+		},
+		'tianjin': {
+			'north': 40.254,
+			'south': 38.537,
+			'west': 116.691,
+			'east': 118.087
+		},
+		'zhangjiakou': {
+			'north': 42.139,
+			'south': 39.546,
+			'west': 113.807,
+			'east': 116.400
+		},
+		'tangshan': {
+			'north': 40.457,
+			'south': 38.908,
+			'west': 117.488,
+			'east': 119.306
+		}
+	}
+
+	return newCitylocslist[city]
 
 def calFeatureType(data):
 	"""Calculate feature type and return it's represented index number, 1-11 is available features, 12 is the abandoned type

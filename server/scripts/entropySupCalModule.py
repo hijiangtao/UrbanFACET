@@ -180,7 +180,7 @@ def mergeMatrixFiles(city, GRIDSNUM, filename='recres'):
 
 	resString = ''
 	for x in xrange(0,GRIDSNUM):
-		if ematrix[x][1] == 0:
+		if ematrix[x][1] == 0.0:
 			ematrix[x][4] = -1
 			ematrix[x][5] = -1
 		else:
@@ -235,7 +235,7 @@ def main(argv):
 	conn.close()
 
 	CITYDISIND, CITYDISNUM = getCityDisInfo(city)
-		
+
 	if mode == 'all':
 		# @多进程运行程序 START
 		manager = Manager()

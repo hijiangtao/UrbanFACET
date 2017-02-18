@@ -148,7 +148,7 @@ function mongoQueries(idlist, db, prop) {
 
 function getEntropy(conn, prop) {
 	let city = prop['city'], 
-		eattr = `${prop['type']+prop['calculation']}val`,
+		eattr = `${prop['etype']+prop['ctype']}val`,
 		etable = `${city}Ematrix`
 
 	let p = new Promise(function(resolve, reject) {
@@ -229,7 +229,7 @@ function getEntropy(conn, prop) {
 
 function getDensity(conn, prop) {
 	let city = prop['city'], 
-		eattr = `${prop['type']}number`,
+		eattr = `${prop['etype']}${prop['ctype']}number`,
 		etable = `${city}Ematrix`
 
 	let p = new Promise(function(resolve, reject) {
@@ -242,7 +242,7 @@ function getDensity(conn, prop) {
             } else {
             	// result[0]: Max value of entropy 
             	// result[1]: Entropy list
-            	console.log('result[0]', result[0])
+            	// console.log('result[0]', result[0])
 
             	let DATA = [], 
             		minVal = 0.0,

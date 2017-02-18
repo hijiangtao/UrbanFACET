@@ -13,16 +13,16 @@ let EP = require('../../conf/entropy');
 let apis = {
 	'overviewEQuery': function(req, res, next) {
 		let params = req.query,
-			type = params.etype,
+			etype = params.etype,
 			emin = params.emin,
 			emax = params.emax,
-			calculation = 'p',
+			ctype = params.ctype,
 			city = params.city
 
 		let prop = {
 			'city': city,
-			'calculation': calculation,
-			'type': DATA.getEntropyType(type),
+			'ctype': ctype,
+			'etype': DATA.getEntropyType(etype),
 			'emin': emin,
 			'emax': emax
 		}
@@ -39,20 +39,14 @@ let apis = {
 	},
 	'overviewDQuery': function(req, res, next) {
 		let params = req.query,
+			etype = params.etype,
 			emin = params.emin,
 			emax = params.emax,
-			city = params.city,
-			type = params.type
-
-		let prop = {
-			'city': city,
-			'emin': emin,
-			'emax': emax,
-			'type': type
-		}
+			ctype = params.ctype,
+			city = params.city
 
 		lib.connectMySQL().then(function(conn) {
-			return EP.getDensity(conn, prop)
+			return EP.getDensity(conn, params)
 		}, function(err) {
 			console.error('error: ', err)
 		}).catch(function(error) {

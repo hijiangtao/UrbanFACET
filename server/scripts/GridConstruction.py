@@ -30,7 +30,7 @@ class CityGrid(object):
 			'url': IP,
 			'port': 27017,
 			'dbname': 'tdnormal',
-			'gridcolname': 'grids_%s' % city,
+			'gridcolname': 'newgrids_%s' % city,
 			'POIcolname': 'pois_%s' % city
 		}
 

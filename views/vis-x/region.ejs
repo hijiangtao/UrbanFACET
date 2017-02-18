@@ -12,14 +12,14 @@
 		</div>
 		<div class="ui divider"></div>
 		<div class="inline fields">
-			<label>CalculationType</label>
+			<label>Calculation Type</label>
 			<span v-for="item in params.ctypes" >
 			<input type="radio" name="calculationtype" :value="item.val" v-model="selections.ctype">{{item.name}} 
 			</span>
 		</div>
 		<div class="ui divider"></div>
 		<div class="inline fields">
-			<label>EntropyType</label>
+			<label>Entropy Type</label>
 			<span v-for="item in params.etypes" >
 			<input type="radio" name="entropytype" :value="item.val" v-model="selections.etype">{{item.name}} 
 			</span>

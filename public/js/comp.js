@@ -45,8 +45,8 @@ const userpanel = new Vue({
     			{ 'name': 'Time Periods', 'val': 'timeperiod' }
     		],
     		'ctypes': [
-    			{ 'name': 'People Entropy', 'val': 'p' }
-    			// { 'name': 'Record Entropy', 'val': 'r' }
+    			{ 'name': 'People Entropy', 'val': 'p' },
+    			{ 'name': 'Record Entropy', 'val': 'r' }
     		],
     		'range': {
     			'min': 0,
@@ -69,7 +69,7 @@ const userpanel = new Vue({
     methods: {
     	'getEntropyOverview': function() {
     		let city = this.selections.city
-    		if (city !== 'bj') {
+    		if (city !== 'bj' && city !== 'ts') {
     			if (!this.isRangeValid()) {
     				return false;
     			}
@@ -83,7 +83,7 @@ const userpanel = new Vue({
 
                 // basicGetOverview(city, self);
 
-    			getEntropy(city, self.selections.etype, self.selections.eVal).then(function(res) {
+    			getEntropy(self.selections).then(function(res) {
     				console.log('Already got data from server.');
     				console.timeEnd('SERVER');
                     document.getElementsByTagName('body')[0].classList.remove('loading');
@@ -96,18 +96,18 @@ const userpanel = new Vue({
 				  	console.error("Failed!", err);
 				});
     		} else {
-    			alert('Beijing is not available now, please try another region and update again.')
+    			alert('Beijing and Tangshan are not available now, please try another region and update again.')
     		}
     	},
     	'getDensityOverview': function() {
     		let city = this.selections.city
-    		if (city !== 'bj') {
+    		if (city !== 'bj' && city !== 'ts') {
     			let self = this
 				
     			mapins.panTo( regionRecords[city]['center'] )
 
                 document.getElementsByTagName('body')[0].classList.add('loading');
-    			getDensity(city, self.selections.etype, self.selections.eVal).then(function(res) {
+    			getDensity(self.selections).then(function(res) {
                     document.getElementsByTagName('body')[0].classList.remove('loading');
     				self.params.range.max = Number.parseFloat(res['prop']['maxVal']);
     				// self.results.drawData = res;
@@ -118,7 +118,7 @@ const userpanel = new Vue({
 				  	console.error("Failed!", err);
 				});
     		} else {
-    			alert('Beijing is not available now, please try another region and update again.')
+    			alert('Beijing and Tangshan are not available now, please try another region and update again.')
     		}
     	},
     	'regionImgUrl': function(city) {
@@ -188,9 +188,15 @@ let commonFunc = (function() {
 	}
 })();
 
-let getEntropy = function(city, type, eprop) {
+let getEntropy = function(sels) {
+	let city = sels.city,
+		etype = sels.etype,
+		ctype = sels.ctype,
+		emin = sels.eVal.min,
+		emax = sels.eVal.max;
+
 	let p = new Promise(function(resolve, reject) {
-		$.get(`/comp/overviewEQuery?city=${city}&etype=${type}&ctype=p&emin=${eprop['min']}&emax=${eprop['max']}`, function(res, err) {
+		$.get(`/comp/overviewEQuery?city=${city}&etype=${etype}&ctype=${ctype}&emin=${emin}&emax=${emax}`, function(res, err) {
 			if (res['scode']) {
 				resolve(res['data'])
 			} else {
@@ -225,14 +231,20 @@ let basicGetOverview = function(city, self) {
 	
 }
 
-let getDensity = function(city, type, eprop) {
+let getDensity = function(sels) {
+	let city = sels.city,
+		etype = sels.etype,
+		ctype = sels.ctype,
+		emin = sels.eVal.min,
+		emax = sels.eVal.max;
+
 	let p = new Promise(function(resolve, reject) {
-		if (type === 'poi') {
-			type = 'v'
+		if (etype === 'poi') {
+			etype = 'v'
 		} else {
-			type = 'w'
+			etype = 'w'
 		}
-		$.get(`/comp/overviewDQuery?city=${city}&type=${type}&ctype=p&emin=${eprop['min']}&emax=${eprop['max']}`, function(res, err) {
+		$.get(`/comp/overviewDQuery?city=${city}&etype=${etype}&ctype=${ctype}&emin=${emin}&emax=${emax}`, function(res, err) {
 			if (res['scode']) {
 				resolve(res['data'])
 			} else {
