@@ -38,7 +38,7 @@ class EntropyMatrixModule(object):
 		
 		# self.EMATRIX = DATA['EMATRIX']
 		# all string in EMATRIX
-		self.EMATRIX = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0]) for x in xrange(0, PROP['GRIDSNUM'])])
+		self.EMATRIX = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, PROP['GRIDSNUM'])])
 
 	def run(self):
 		logging.info('TASK-%d running in %s' % (self.INDEX, (time.time()-self.starttime)))
@@ -111,6 +111,7 @@ class EntropyMatrixModule(object):
 					# 处理 POI 熵
 					if devStrGID in self.validIDs:
 						eobjs[ devid ][ 't1' ][ 'plist' ] = np.add(eobjs[ devid ][ 't1' ][ 'plist' ], self.gridsData[ devStrGID ]) 
+						eobjs[ devid ][ 't1' ][ 'vnum' ] += 1
 					
 				# 处理 TimePeriod 熵
 				dayIndex = 0
@@ -174,7 +175,7 @@ class EntropyMatrixModule(object):
 		res.close()
 
 	def aggregate(self, id, obj):
-		valStr = id + ',' + str(obj['t1']['val']) + ',' + str(obj['t2']['val']) + ',' + str(obj['t3']['val'])
+		valStr = id + ',' + str(obj['t1']['val']) + ',' + str(obj['t2']['val']) + ',' + str(obj['t3']['val']) + ',' + str(obj['t1']['vsum']) + ',' + str(obj['t2']['nsum'])
 		tArrStr = ','.join([str(each) for each in obj['t1']['plist']]) + ',' + ','.join([str(each) for each in obj['t2']['nlist']]) + ',' + ','.join([str(each) for each in obj['t3']['nlist']])
 		return valStr + ',' + tArrStr + '\n'
 
@@ -182,7 +183,7 @@ class EntropyMatrixModule(object):
 		datalen = self.GRIDSNUM
 		resStr = []
 		for x in xrange(0, datalen):
-			resStr.append( ','.join(str(int(data[x][e])) for e in xrange(0,3)) + ',' + ','.join(str(data[x][e]) for e in xrange(3,6)) )
+			resStr.append( ','.join(str(int(data[x][e])) for e in xrange(0,3)) + ',' + ','.join(str(data[x][e]) for e in xrange(3,9)) )
 
 		return '\n'.join(resStr)
 
@@ -190,21 +191,22 @@ class EntropyMatrixModule(object):
 	def genSingleEntropyObj(self):
 		return {
 			't1': {
-				'val': -1,
-				'plist': np.array([0.0 for x in xrange(0,11)]),
-				'psum': 0
+				'val': -1, # 熵
+				'plist': np.array([0.0 for x in xrange(0,11)]), # 存储 POI 下各类型分布概率
+				'psum': 0, # POI 概率分布总和
+				'vsum': 0 # 有效的记录数 (以 valid grid 为准)
 			},
 			't2': {
-				'val': -1,
+				'val': -1, # 熵
 				# 'plist': [0 for x in xrange(0,14)],
-				'nlist': np.array([0 for x in xrange(0,14)]),
+				'nlist': np.array([0 for x in xrange(0,14)]), #不同时间段的定位次数
 				# 'psum': 0,
-				'nsum': 0
+				'nsum': 0 # 总记录数
 			},
 			't3': {
-				'val': -1,
+				'val': -1, # 熵
 				# 'plist': [0 for x in xrange(0, self.CITYDISNUM)],
-				'nlist': np.array([0 for x in xrange(0, self.CITYDISNUM)]),
+				'nlist': np.array([0 for x in xrange(0, self.CITYDISNUM)]), # 不同区划的定位次数
 				# 'psum': 0,
 				# 'nsum': 0
 			}
@@ -227,6 +229,14 @@ def processTask(PROP, DATA):
 # 	return gridsData, validIDs
 
 def mergeDistributionFiles(city):
+	"""将不同 ID 的熵信息以及其他档案合并至一个文件,简单追加即并没有涉及复杂操作
+	
+	Args:
+	    city (TYPE): Description
+	
+	Returns:
+	    TYPE: Description
+	"""
 	baseurl = '/home/tao.jiang/datasets/JingJinJi/entropy/distribution'
 	file = os.path.join(baseurl, city, 'res-xxx')
 	number = 0
@@ -246,7 +256,16 @@ def mergeDistributionFiles(city):
 	print "%d lines into distribution res-xxx file" % (number)
 
 def mergeMatrixFiles(city, GRIDSNUM):
-	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
+	"""合并 CityGrids 信息,分别读取文件,最后需将叠加的信息处理存入一个合并的文件
+	
+	Args:
+	    city (TYPE): Description
+	    GRIDSNUM (TYPE): Description
+	
+	Returns:
+	    TYPE: Description
+	"""
+	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
 	baseurl = os.path.join('/home/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
 
 	for x in xrange(0,20):
@@ -263,16 +282,20 @@ def mergeMatrixFiles(city, GRIDSNUM):
 		if ematrix[x][1] == 0:
 			ematrix[x][4] = -1
 			ematrix[x][5] = -1
+			ematrix[x][7] = -1
+			ematrix[x][8] = -1
 		else:
-			ematrix[x][4] /= ematrix[x][1]
-			ematrix[x][5] /= ematrix[x][1]
+			ematrix[x][7] = ematrix[x][4] / ematrix[x][1]
+			ematrix[x][8] = ematrix[x][5] / ematrix[x][1]
 
+		# 处理 POI 熵
 		if ematrix[x][2] == 0.0:
 			ematrix[x][3] = -1
+			ematrix[x][6] = -1
 		else:
-			ematrix[x][3] /= ematrix[x][2]
+			ematrix[x][6] = ematrix[x][3] / ematrix[x][2]
 
-		linestr = ','.join([str(int(ematrix[x][e])) for e in xrange(0,3)]) + ',' + ','.join([str(ematrix[x][e]) for e in xrange(3,6)]) + '\n'
+		linestr = ','.join([str(int(ematrix[x][e])) for e in xrange(0,3)]) + ',' + ','.join([str(ematrix[x][e]) for e in xrange(3,9)]) + '\n'
 		resString += linestr
 
 
@@ -311,7 +334,7 @@ def main(argv):
 	print "Start approach at %s" % STARTTIME
 
 	conn, db = connectMongo('tdnormal')
-	GRIDSNUM = db['grids_%s' % city].count()
+	GRIDSNUM = db['newgrids_%s' % city].count()
 	gridsData, validIDs = getGridsFromMongo(city, db)
 	conn.close()
 
