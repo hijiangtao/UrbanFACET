@@ -9,7 +9,7 @@ import os
 import numpy as np
 
 def getGridsFromMongo(city, db):
-	res = list( db['grids_%s' % city].find({"properties.vecvalid": True }, {"properties.uid": 1, "properties.vec": 1}) )
+	res = list( db['newgrids_%s' % city].find({"properties.vecvalid": True }, {"properties.uid": 1, "properties.vec": 1}) )
 	gridsData, validIDs = {}, []
 	reslen = len(res)
 	for x in xrange(0, reslen):

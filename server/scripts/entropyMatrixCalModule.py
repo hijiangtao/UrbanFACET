@@ -43,7 +43,7 @@ class EntropyMatrixModule(object):
 	def run(self):
 		logging.info('TASK-%d running in %s' % (self.INDEX, (time.time()-self.starttime)))
 		# print 'TASK-%d running in %s' % (self.INDEX, (time.time()-self.starttime))
-		ofilename = 'res-%03d' % self.INDEX
+		ofilename = 'respeo-%03d' % self.INDEX
 
 		idcoldir = os.path.join(self.DIRECTORY, 'records/idcollection', self.CITY )
 		entropyfile = os.path.join(self.DIRECTORY, 'entropy/matrix', self.CITY, ofilename)
@@ -238,7 +238,7 @@ def mergeDistributionFiles(city):
 	    TYPE: Description
 	"""
 	baseurl = '/home/tao.jiang/datasets/JingJinJi/entropy/distribution'
-	file = os.path.join(baseurl, city, 'res-xxx')
+	file = os.path.join(baseurl, city, 'respeo-xxx')
 	number = 0
 
 	with open(file, 'ab') as res:
@@ -253,7 +253,7 @@ def mergeDistributionFiles(city):
 			number += len(onefile)
 	res.close()
 
-	print "%d lines into distribution res-xxx file" % (number)
+	print "%d lines into distribution respeo-xxx file" % (number)
 
 def mergeMatrixFiles(city, GRIDSNUM):
 	"""合并 CityGrids 信息,分别读取文件,最后需将叠加的信息处理存入一个合并的文件
@@ -269,7 +269,7 @@ def mergeMatrixFiles(city, GRIDSNUM):
 	baseurl = os.path.join('/home/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
 
 	for x in xrange(0,20):
-		with open(os.path.join(baseurl, 'res-%03d' % x), 'rb') as stream:
+		with open(os.path.join(baseurl, 'respeo-%03d' % x), 'rb') as stream:
 			for each in stream:
 				line = np.array(each.split(','), dtype='f')
 				id = int(line[0])
@@ -299,7 +299,7 @@ def mergeMatrixFiles(city, GRIDSNUM):
 		resString += linestr
 
 
-	with open(os.path.join(baseurl, 'res-xxx'), 'ab') as res:
+	with open(os.path.join(baseurl, 'respeo-xxx'), 'ab') as res:
 		res.write(resString)
 	res.close()
 
