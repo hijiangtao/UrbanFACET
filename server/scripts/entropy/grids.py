@@ -21,7 +21,7 @@ def getGridsFromMongo(city, db):
 	return gridsData, validIDs
 
 def getPeopleEntropyFromFile(file, disnum):
-	res, disEndInd = {}, 29 + disnum
+	res, disEndInd = {}, 31 + disnum
 	with open(file, 'rb') as stream:
 		for each in stream:
 			line = each.split(',')

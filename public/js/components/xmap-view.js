@@ -691,7 +691,7 @@ class mapview {
 	}
 
 	removecanvas() {
-		$('canvas.leaflet-heatmap-layer.leaflet-zoom-animated').remove()
+		$('canvas.leaflet-heatmap-layer.leaflet-zoom-animated').remove();
 	}
 }
 

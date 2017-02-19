@@ -22,7 +22,7 @@ let apis = {
 		let prop = {
 			'city': city,
 			'ctype': ctype,
-			'etype': DATA.getEntropyType(etype),
+			'etype': etype,
 			'emin': emin,
 			'emax': emax
 		}
@@ -38,19 +38,19 @@ let apis = {
 		})
 	},
 	'overviewDQuery': function(req, res, next) {
-		let params = req.query,
-			etype = params.etype,
-			emin = params.emin,
-			emax = params.emax,
-			ctype = params.ctype,
-			city = params.city
+		let params = req.query;
+			// etype = params.etype,
+			// emin = params.emin,
+			// emax = params.emax,
+			// ctype = params.ctype,
+			// city = params.city
 
 		lib.connectMySQL().then(function(conn) {
 			return EP.getDensity(conn, params)
 		}, function(err) {
-			console.error('error: ', err)
+			console.error('error occured in overviewDQuery: ', err)
 		}).catch(function(error) {
-			console.log(error);
+			console.error(error);
 		}).then(function(result) {
 			res.json(result)
 		})

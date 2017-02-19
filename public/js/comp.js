@@ -13,10 +13,11 @@ import mapview from './components/xmap-view'
 import $ from "jquery"
 // window.jQuery = $
 import {regionRecords} from './components/initdata'
+import {getEntropy, getDensity, getValRange} from './components/apis'
 
 // Vue.use(Vuex)
 
-let mapins = new mapview('map')
+let mapins = new mapview('map');
 
 // const store = new Vuex.Store({
 //   state: {
@@ -40,9 +41,9 @@ const userpanel = new Vue({
 	            { 'name': 'Tangshan', 'val': 'ts' }
     		],
     		'etypes': [
-    			{ 'name': 'POI', 'val': 'poi' },
-    			{ 'name': 'Admin Division', 'val': 'admin' },
-    			{ 'name': 'Time Periods', 'val': 'timeperiod' }
+    			{ 'name': 'POI', 'val': 'p' },
+    			{ 'name': 'Admin Division', 'val': 'a' },
+    			{ 'name': 'Time Periods', 'val': 't' }
     		],
     		'ctypes': [
     			{ 'name': 'People Entropy', 'val': 'p' },
@@ -55,7 +56,7 @@ const userpanel = new Vue({
     	},
     	'selections': {
     		'city': 'tj',
-    		'etype': 'poi',
+    		'etype': 'p',
     		'ctype': 'p',
     		'eVal': {
     			'min': 0,
@@ -89,7 +90,7 @@ const userpanel = new Vue({
                     document.getElementsByTagName('body')[0].classList.remove('loading');
     				self.params.range.max = Number.parseFloat(res['prop']['maxVal']);
     				
-    				let valRange = commonFunc.getValRange(self.params.range, self.selections.eVal)
+    				let valRange = getValRange(self.params.range, self.selections.eVal)
 
 				  	mapins.mapgridCDrawing(res, valRange)
 				}).catch(function(err) {
@@ -112,7 +113,7 @@ const userpanel = new Vue({
     				self.params.range.max = Number.parseFloat(res['prop']['maxVal']);
     				// self.results.drawData = res;
 
-    				let valRange = commonFunc.getValRange(self.params.range, self.selections.eVal)
+    				let valRange = getValRange(self.params.range, self.selections.eVal)
 				  	mapins.mapgridCDrawing(res, valRange)
 				}).catch(function(err) {
 				  	console.error("Failed!", err);
@@ -177,81 +178,58 @@ const userpanel = new Vue({
     }
 })
 
-let commonFunc = (function() {
-	return {
-		'getValRange': function(base, selections) {
-			return {
-				'min': base.min+selections.min * Number.parseFloat(base.max-base.min),
-				'max': base.min+selections.max * Number.parseFloat(base.max-base.min)
-			}
-		}
-	}
-})();
+// let commonFunc = (function() {
+// 	return {
+// 		'getValRange': function(base, selections) {
+// 			return {
+// 				'min': base.min+selections.min * Number.parseFloat(base.max-base.min),
+// 				'max': base.min+selections.max * Number.parseFloat(base.max-base.min)
+// 			}
+// 		}
+// 	}
+// })();
 
-let getEntropy = function(sels) {
-	let city = sels.city,
-		etype = sels.etype,
-		ctype = sels.ctype,
-		emin = sels.eVal.min,
-		emax = sels.eVal.max;
+// let getEntropy = function(sels) {
+// 	let city = sels.city,
+// 		etype = sels.etype,
+// 		ctype = sels.ctype,
+// 		emin = sels.eVal.min,
+// 		emax = sels.eVal.max;
 
-	let p = new Promise(function(resolve, reject) {
-		$.get(`/comp/overviewEQuery?city=${city}&etype=${etype}&ctype=${ctype}&emin=${emin}&emax=${emax}`, function(res, err) {
-			if (res['scode']) {
-				resolve(res['data'])
-			} else {
-				reject(err)
-			}
-		})
-	});
+// 	let p = new Promise(function(resolve, reject) {
+// 		$.get(`/comp/overviewEQuery?city=${city}&etype=${etype}&ctype=${ctype}&emin=${emin}&emax=${emax}`, function(res, err) {
+// 			if (res['scode']) {
+// 				resolve(res['data'])
+// 			} else {
+// 				reject(err)
+// 			}
+// 		})
+// 	});
 
-	return p
-};
+// 	return p
+// };
 
-let basicGetOverview = function(city, self) {
-	let type = self.selections.etype,
-		eprop = self.selections.eVal;
+// let getDensity = function(sels) {
+// 	let city = sels.city,
+// 		etype = sels.etype,
+// 		ctype = sels.ctype,
+// 		emin = sels.eVal.min,
+// 		emax = sels.eVal.max;
 
-	$.get(`/comp/overviewEQuery?city=${city}&etype=${type}&ctype=p&emin=${eprop['min']}&emax=${eprop['max']}`, function(res, err) {
-		if (res['scode']) {
-			res = res['data'];
-			console.log('Already got data from server.');
-			console.timeEnd('SERVER');
-		    document.getElementsByTagName('body')[0].classList.remove('loading');
-			self.params.range.max = Number.parseFloat(res['prop']['maxVal']);
-			// self.results.drawData = res;
-			
-			let valRange = commonFunc.getValRange(self.params.range, self.selections.eVal)
+// 	let p = new Promise(function(resolve, reject) {
+// 		if (etype === 'p') {
+// 			etype = 'v'
+// 		} else {
+// 			etype = 'w'
+// 		}
+// 		$.get(`/comp/overviewDQuery?city=${city}&etype=${etype}&ctype=${ctype}&emin=${emin}&emax=${emax}`, function(res, err) {
+// 			if (res['scode']) {
+// 				resolve(res['data'])
+// 			} else {
+// 				reject(err)
+// 			}
+// 		})
+// 	});
 
-		  	mapins.mapgridCDrawing(res, valRange)
-		} else {
-			console.error("Failed!", err);
-		}
-	})
-	
-}
-
-let getDensity = function(sels) {
-	let city = sels.city,
-		etype = sels.etype,
-		ctype = sels.ctype,
-		emin = sels.eVal.min,
-		emax = sels.eVal.max;
-
-	let p = new Promise(function(resolve, reject) {
-		if (etype === 'poi') {
-			etype = 'v'
-		} else {
-			etype = 'w'
-		}
-		$.get(`/comp/overviewDQuery?city=${city}&etype=${etype}&ctype=${ctype}&emin=${emin}&emax=${emax}`, function(res, err) {
-			if (res['scode']) {
-				resolve(res['data'])
-			} else {
-				reject(err)
-			}
-		})
-	});
-
-	return p
-};
+// 	return p
+// };
