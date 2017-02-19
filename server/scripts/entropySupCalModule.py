@@ -36,12 +36,12 @@ class entropySupCalModule(object):
 		self.CITYDISIND = PROP['CITYDISIND'] #行政区划起始索引编号
 		self.starttime = time.time()
 		
-		self.EMATRIX = np.array([np.array([x, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, PROP['GRIDSNUM'])]) #此进程始终维护的网格 entropy 数据
+		self.EMATRIX = np.array([np.array([x, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, PROP['GRIDSNUM'])]) #此进程始终维护的网格 entropy 数据
 
 	def run(self):
 		print 'TASK-%d running in %s' % (self.INDEX, (time.time()-self.starttime))
 
-		ofilename = 'recres-%03d' % self.INDEX
+		ofilename = 'resrec-%03d' % self.INDEX
 		idcoldir = os.path.join(self.DIRECTORY, 'records/idcollection', self.CITY )
 		entropyfile = os.path.join(self.DIRECTORY, 'entropy/matrix', self.CITY, ofilename)
 
@@ -52,7 +52,7 @@ class entropySupCalModule(object):
 
 			ifilename = 'res-%05d' % number
 			logging.info('TASK-%d operates file %s' % (self.INDEX, ifilename))
-			# 维护当前文件中 ID 的所有记录并更新至 EMATRIX
+			# 从 idcollection 中读取文件, 维护当前文件中 ID 的所有记录并更新至 EMATRIX
 			self.updateRecordEntropy(os.path.join(idcoldir, ifilename))
 
 		print 'Finished calculate function in %s' % (time.time()-self.starttime)
@@ -65,7 +65,8 @@ class entropySupCalModule(object):
 		print "Task-%s finished in %s" % (str(self.INDEX), time.time()-self.starttime)
 
 	def updateRecordEntropy(self, inputfile):
-		recNumList, validRecNumList = {}, {}
+		# recNumList 维护的是所有 ID 的定位次数, validRecNumList 维护的是所有 ID 对应 gridID 有效的定位次数, 如果该信息从 distribution 文件读取, 则不需要此变量去维护该信息
+		# recNumList, validRecNumList = {}, {}
 		entropyList = []
 		with open(inputfile, 'rb') as stream:
 			for line in stream:
@@ -78,11 +79,11 @@ class entropySupCalModule(object):
 				devIntGID = int( devStrGID )
 
 				# 
-				if devid in recNumList:
-					recNumList[devid] += 1
-				else:
-					recNumList[devid] = 1
-					validRecNumList[devid] = 0
+				# if devid in recNumList:
+				# 	recNumList[devid] += 1
+				# else:
+				# 	recNumList[devid] = 1
+				# 	validRecNumList[devid] = 0
 
 				# 如果 ID 在网格内则更新 valid 网格信息, 且加入熵数组
 				if devIntGID >= 0 and devIntGID < self.GRIDSNUM:
@@ -92,7 +93,7 @@ class entropySupCalModule(object):
 					if devStrGID in self.validIDs:
 						q = self.gridsData[devStrGID]
 						p = self.record[devid]['t1']
-						validRecNumList[devid] += 1
+						# validRecNumList[devid] += 1
 						t1 = sum([0.0 if p[x]==0.0 else -q[x]*np.log(p[x]) for x in xrange(0,11)])
 					 
 					# 处理 TimePeriod 熵
@@ -124,38 +125,31 @@ class entropySupCalModule(object):
 			t2 = entropyList[x][3]
 			t3 = entropyList[x][4]
 
+			# 维护 ematrix number 和 entropy 字段
 			self.EMATRIX[ devIntGID ][1] += 1
 			if t1 != -1:
 				self.EMATRIX[ devIntGID ][2] += 1
-				self.EMATRIX[ devIntGID ][3] += t1 / validRecNumList[devid]
-			self.EMATRIX[ devIntGID ][4] += t2 / recNumList[devid]
-			self.EMATRIX[ devIntGID ][5] += t3 / recNumList[devid]
+				self.EMATRIX[ devIntGID ][3] += t1 / self.record[devid]['prop']['vnum']
+			self.EMATRIX[ devIntGID ][4] += t2 / self.record[devid]['prop']['wnum']
+			self.EMATRIX[ devIntGID ][5] += t3 / self.record[devid]['prop']['wnum']
 
 	def ematrixToStr(self, data):
 		datalen = self.GRIDSNUM
 		resStr = []
 		for x in xrange(0, datalen):
-			# t1, t2, t3 = -1, -1, -1
-			# if data[x][2] != 0.0:
-			# 	t1 = data[x][3]/data[x][2]
-			# if data[x][1] != 0.0:
-			# 	t2 = data[x][4]/data[x][1]
-			# 	t3 = data[x][5]/data[x][1]
-
-			# resStr.append( ','.join(str(int(data[x][e])) for e in xrange(0,3)) + ',' + str(t1) + ',' + str(t2) + ',' + str(t3) )
-			
-			resStr.append( ','.join(str(int(data[x][e])) for e in xrange(0,3)) + ',' + ','.join(str(data[x][e]) for e in xrange(3,6)) )
+			resStr.append( ','.join(str(int(data[x][e])) for e in xrange(0,3)) + ',' + ','.join(str(data[x][e]) for e in xrange(3,9)) )
 
 		return '\n'.join(resStr)
+
 def processTask(PROP, DATA):
-	file = os.path.join(PROP['DIRECTORY'], 'entropy/distribution', PROP['CITY'], 'res-%03d' % PROP['INDEX'])
+	file = os.path.join(PROP['DIRECTORY'], 'entropy/distribution', PROP['CITY'], 'respeo-%03d' % PROP['INDEX'])
 	# disArrayNum = getCityDisInfo(PROP['CITY'])
 	DATA['record'] = getPeopleEntropyFromFile(file, PROP['CITYDISNUM'])
 
 	task = entropySupCalModule(PROP, DATA)
 	task.run()
 
-def mergeMatrixFiles(city, GRIDSNUM, filename='recres'):
+def mergeMatrixFiles(city, GRIDSNUM, filename='resrec'):
 	"""Summary
 	
 	Args:
@@ -166,7 +160,7 @@ def mergeMatrixFiles(city, GRIDSNUM, filename='recres'):
 	Returns:
 	    TYPE: Description
 	"""
-	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
+	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
 	baseurl = os.path.join('/home/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
 
 	for x in xrange(0,20):
@@ -183,16 +177,19 @@ def mergeMatrixFiles(city, GRIDSNUM, filename='recres'):
 		if ematrix[x][1] == 0.0:
 			ematrix[x][4] = -1
 			ematrix[x][5] = -1
+			ematrix[x][7] = -1
+			ematrix[x][8] = -1
 		else:
-			ematrix[x][4] /= ematrix[x][1]
-			ematrix[x][5] /= ematrix[x][1]
+			ematrix[x][7] = ematrix[x][4] / ematrix[x][1]
+			ematrix[x][8] = ematrix[x][5] / ematrix[x][1]
 
 		if ematrix[x][2] == 0.0:
 			ematrix[x][3] = -1
+			ematrix[x][6] = -1
 		else:
-			ematrix[x][3] /= ematrix[x][2]
+			ematrix[x][6] = ematrix[x][3] / ematrix[x][2]
 
-		linestr = ','.join([str(int(ematrix[x][e])) for e in xrange(0,3)]) + ',' + ','.join([str(ematrix[x][e]) for e in xrange(3,6)]) + '\n'
+		linestr = ','.join([str(int(ematrix[x][e])) for e in xrange(0,3)]) + ',' + ','.join([str(ematrix[x][e]) for e in xrange(3,9)]) + '\n'
 		resString += linestr
 
 
@@ -230,7 +227,7 @@ def main(argv):
 	print "Start approach at %s" % STARTTIME
 
 	conn, db = connectMongo('tdnormal')
-	GRIDSNUM = db['grids_%s' % city].count()
+	GRIDSNUM = db['newgrids_%s' % city].count()
 	gridsData, validIDs = getGridsFromMongo(city, db)
 	conn.close()
 

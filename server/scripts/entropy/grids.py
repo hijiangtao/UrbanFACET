@@ -26,9 +26,13 @@ def getPeopleEntropyFromFile(file, disnum):
 		for each in stream:
 			line = each.split(',')
 			res[ line[0] ] = {
-				't1': np.array([float(line[x]) for x in xrange(4,15)]),
-				't2': np.array([float(line[x]) for x in xrange(15,29)]),
-				't3': np.array([float(line[x]) for x in xrange(29, disEndInd)])
+				't1': np.array([float(line[x]) for x in xrange(6,17)]),
+				't2': np.array([float(line[x]) for x in xrange(17,31)]),
+				't3': np.array([float(line[x]) for x in xrange(31, disEndInd)]),
+				'prop': {
+					'wnum': int(line[5]),
+					'vnum': int(line[4])
+				}
 			}
 	stream.close()
 
