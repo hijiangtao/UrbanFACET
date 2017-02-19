@@ -111,7 +111,7 @@ class EntropyMatrixModule(object):
 					# 处理 POI 熵
 					if devStrGID in self.validIDs:
 						eobjs[ devid ][ 't1' ][ 'plist' ] = np.add(eobjs[ devid ][ 't1' ][ 'plist' ], self.gridsData[ devStrGID ]) 
-						eobjs[ devid ][ 't1' ][ 'vnum' ] += 1
+						eobjs[ devid ][ 't1' ][ 'vsum' ] += 1
 					
 				# 处理 TimePeriod 熵
 				dayIndex = 0
