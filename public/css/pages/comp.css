@@ -34,7 +34,18 @@ body {
 }
 
 .selectedregion {
-	border: solid red .2em;
+	/*border: solid white .6em;*/
+}
+.selectedregion img {
+    background-color: rgba(250,150,30,1);
+}
+
+.regiondesc {
+    position: absolute;
+    top: 43%;
+    text-align: center;
+    left: .2em;
+    right: .2em;
 }
 
 /*REWRITE SEMANTIC-UI*/

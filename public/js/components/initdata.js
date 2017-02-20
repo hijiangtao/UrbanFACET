@@ -208,7 +208,7 @@ let indexvuedata = {
             'tp': ['','']
         }
     }
-}
+};
 
 let labvuedata = {
 	begin: false,
@@ -268,21 +268,80 @@ let labvuedata = {
 		'value': 5
 	}],
 	tpsel: []
-}
+};
 
-let featureTypes = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'weevening']
-
-let areaCenter = {
-    'BJhlg': {
-
+let comp = {
+    'params': {
+        'regions': [
+            { 'name': 'Beijing', 'val': 'bj' },
+            { 'name': 'Tianjin', 'val': 'tj' },
+            { 'name': 'Zhangjiakou', 'val': 'zjk' },
+            { 'name': 'Tangshan', 'val': 'ts' }
+        ],
+        'etypes': [
+            { 'name': 'POI', 'val': 'p' },
+            { 'name': 'Admin Division', 'val': 'a' },
+            { 'name': 'Time Periods', 'val': 't' }
+        ],
+        'ctypes': [
+            { 'name': 'People Entropy', 'val': 'p' },
+            { 'name': 'Record Entropy', 'val': 'r' }
+        ],
+        'mtypes': [
+            { 'name': 'Summation', 'val': 's' },
+            { 'name': 'Average', 'val': 'a' }
+        ],
+        'scales': {
+            'entropy': 1,
+            'density': 100
+        }
     },
-    'BJtty': {
-        
+    'selections': {
+        'city': 'tj',
+        'etype': 'p',
+        'ctype': 'p',
+        'mtype': 's',
+        'eVal': {
+            'min': 0,
+            'max': 1,
+            'val': [0, 1]
+        }
     },
-    'BJbh': {
-
+    'components': {
+        'eSlider': {
+            tooltip: 'hover',
+            value: [0, 100],
+            // formatter: '{value*100}%',
+            tooltipStyle: {
+              "backgroundColor": "#000",
+              "borderColor": "#f00"
+            },
+            bgStyle: {
+              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
+            },
+            processStyle: {
+              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
+            }
+        },
+        'dSlider': {
+            tooltip: 'hover',
+            value: [0, 100],
+            // formatter: '{value*100}%',
+            tooltipStyle: {
+              "backgroundColor": "#000",
+              "borderColor": "#f00"
+            },
+            bgStyle: {
+              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
+            },
+            processStyle: {
+              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
+            }
+        }
     }
-}
+};
+
+let featureTypes = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'weevening'];
 
 let regionsList = [{
     'name': '回龙观',
@@ -292,7 +351,7 @@ let regionsList = [{
     'coordinates': []
 }, {
     'name': ''
-}]
+}];
 
 let regionRecords = {
     'bj': {
@@ -307,11 +366,12 @@ let regionRecords = {
     'zjk': {
         'center': [40.7915, 114.8875]
     }
-}
+};
 
 export {
 	indexvuedata,
 	labvuedata,
     featureTypes,
-    regionRecords
+    regionRecords,
+    comp
 }

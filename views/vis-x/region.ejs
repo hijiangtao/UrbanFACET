@@ -1,38 +1,72 @@
-<div id="" class="sixteen wide column">
-	<h5 class="vtitle"><i class="right angle icon divider"></i>Data and Parameters</h5>
-	<div class="ui form">
-		<div class="inline fields">
-			<label>Region</label>
-			<div v-for='item in params.regions' class="field">
-				<div class="ui tiny image" v-bind:class="isActive(item.val)">
-				  <img :src="regionImgUrl(item.val)" v-on:click="updateCity(item.val)">
+<div class="ui grid">
+	<div id="" class="sixteen wide column">
+		<h5 class="vtitle"><i class="right angle icon divider"></i>Data and Parameters</h5>
+	</div>
+	<div class="sixteen wide column">
+		<div class="ui form">
+			<div class="inline fields">
+				<label>Region</label>
+				<div v-for='item in params.regions' class="field">
+					<div class="ui tiny image" v-bind:class="isActive(item.val)">
+					  <img :src="regionImgUrl(item.val)" v-on:click="updateCity(item.val)">
+					  <p class="regiondesc">{{item.name}}</p>
+					</div>
+					
 				</div>
-				<span>{{item.name}}</span>
+			</div>
+			<div class="ui divider"></div>
+			<div class="inline fields">
+				<label>Calculation Type</label>
+				<div v-for="item in params.ctypes" class="field">
+			      <div class="ui radio checkbox">
+			        <input type="radio" name="calculationtype"  :value="item.val" v-model="selections.ctype">
+			        <label>{{item.name}}</label>
+			      </div>
+			    </div>
+			</div>
+
+			<div class="inline fields">
+				<label>Entropy Type</label>
+				<div v-for="item in params.etypes" class="field">
+			      <div class="ui radio checkbox">
+			        <input type="radio" name="entropytype"  :value="item.val" v-model="selections.etype">
+			        <label>{{item.name}}</label>
+			      </div>
+			    </div>
+			</div>
+
+			<div class="inline fields">
+				<label>Display Form</label>
+				<div v-for="item in params.mtypes" class="field">
+			      <div class="ui radio checkbox">
+			        <input type="radio" name="displaytype"  :value="item.val" v-model="selections.mtype">
+			        <label>{{item.name}}</label>
+			      </div>
+			    </div>
 			</div>
 		</div>
-		<div class="ui divider"></div>
+	</div>
+
+	<div class="sixteen wide column">
 		<div class="inline fields">
-			<label>Calculation Type</label>
-			<span v-for="item in params.ctypes" >
-			<input type="radio" name="calculationtype" :value="item.val" v-model="selections.ctype">{{item.name}} 
-			</span>
-		</div>
-		<div class="ui divider"></div>
-		<div class="inline fields">
-			<label>Entropy Type</label>
-			<span v-for="item in params.etypes" >
-			<input type="radio" name="entropytype" :value="item.val" v-model="selections.etype">{{item.name}} 
-			</span>
-		</div>
-		<div class="ui divider"></div>
-		<div class="inline fields">
-			Min <input id="eMinValInput" type ="range" min ="0" :max="1" v-model="selections.eVal.min" step="0.01"/> {{selections.eVal.min*100}}%
-			Max <input id="eMaxValInput" type ="range" min ="0" max="1" v-model="selections.eVal.max" step="0.01"/> {{selections.eVal.max*100}}%
-		</div>
-		<div class="ui divider"></div>
-		<div class="inline fields">
-			<button v-on:click="getEntropyOverview">Display Entropy</button>
-			<button v-on:click="getDensityOverview">Display Density</button>
+			<button class="ui tiny primary button" v-on:click="getEntropyOverview">Display Entropy</button>
+			<button class="ui tiny primary button" v-on:click="getDensityOverview">Display Density</button>
 		</div>
 	</div>
+
+	<div class="sixteen wide column">
+		<div class="ui grid">
+			<div class="three wide column">EntropyFilter</div>
+			<div class="thirteen wide column">
+				<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="computedSliderCSS('e')" v-model="components.eSlider.value"></vue-slider>
+			</div>
+			<div class="three wide column">DensityFilter</div>
+			<div class="thirteen wide column">
+				<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="computedSliderCSS('d')" v-model="components.dSlider.value"></vue-slider>
+			</div>
+		</div>	
+	</div>
 </div>
+
+
+

@@ -553,32 +553,35 @@ class mapview {
 	 * @return {[type]}      [description]
 	 */
 	mapgridCDrawing(data, prop) {
-		let self = this
+		let self = this;
 		if(data.features.length === 0) {
 			alert('No records found!')
 			return ;
 		}
 
-		let resprop = data['prop'],
-			resminVal = Number.parseFloat(resprop['minVal']),
-			resmaxVal = Number.parseFloat(resprop['maxVal']),
-			usrminVal = Number.parseFloat(prop['min']),
-			usrmaxVal = Number.parseFloat(prop['max'])
+		let drawtype = prop['type'],
+			resprop = data['prop']
+			// resminVal = Number.parseFloat(resprop['minVal']),
+			// resmaxVal = Number.parseFloat(resprop['maxVal']),
+			// usrminVal = Number.parseFloat(prop['min']),
+			// usrmaxVal = Number.parseFloat(prop['max'])
 
 		// updated color scale
-		let minVal = resminVal>usrminVal? resminVal:usrminVal,
-			maxBVal = resmaxVal<usrmaxVal? resmaxVal:usrmaxVal,
-			maxEVal = resmaxVal<usrmaxVal? usrmaxVal:resmaxVal,
-			interval = maxBVal - minVal,
-			colordomain = [minVal, maxBVal, maxEVal],
-			colorrange = ['rgba(255,255,255,0.5)', 'rgba(255,0,0,1)', 'rgba(255,0,0,1)']
+		let begVal = 0,
+			minVal = prop[drawtype]['min'],
+			maxVal = prop[drawtype]['max'],
+			endVal = prop[drawtype]['scales'],
+			interval = maxVal - minVal,
+			colordomain = [minVal, maxVal, endVal],
+			colorrange = ['rgba(255,255,255,0.8)', 'rgba(255,0,0,0.8)', 'rgba(255,0,0,0.8)']
 
 		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
 
 		// d3.select('#F_SVG').remove();
 		// d3.select('#GRID_SVG').remove();
 		// this.removeheatmap()
-		this.removecanvas()
+		this.removecanvas();
+
 		console.log('Begin to draw gridmap based on received data.');
 		console.time('DRAWING');
         let drawingOnCanvas = function(canvasOverlay, params) {
@@ -590,14 +593,19 @@ class mapview {
             	let feature = data.features[i],
             		// d = feature.properties.center.coordinates,
             		poly = feature.geometry.coordinates[0],
-            		entropy = data.features[i]['properties']['val']
+            		evalue = feature['properties']['entropy'],
+            		dvalue = feature['properties']['density']
 
-                if (params.bounds.contains([poly[0][1], poly[0][0]]) && entropy >= minVal) {
+            	if (evalue < prop['entropy']['min'] || dvalue < prop['density']['min']) {
+            		continue;
+            	}
+
+                if (params.bounds.contains([poly[0][1], poly[0][0]])) {
                     // let dot = canvasOverlay._map.latLngToContainerPoint([d[1], d[0]]);
                     
                     let nw = canvasOverlay._map.latLngToContainerPoint([poly[3][1], poly[3][0]]),
                     	se = canvasOverlay._map.latLngToContainerPoint([poly[1][1], poly[1][0]]);
-                    ctx.fillStyle = color(entropy),
+                    ctx.fillStyle = color(feature['properties'][drawtype]),
                     ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
                 }
             }

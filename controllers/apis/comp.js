@@ -11,24 +11,15 @@ const DATA = require('../../conf/data');
 let EP = require('../../conf/entropy');
 
 let apis = {
-	'overviewEQuery': function(req, res, next) {
+	'overviewQuery': function(req, res, next) {
 		let params = req.query,
 			etype = params.etype,
-			emin = params.emin,
-			emax = params.emax,
+			mtype = params.mtype,
 			ctype = params.ctype,
 			city = params.city
 
-		let prop = {
-			'city': city,
-			'ctype': ctype,
-			'etype': etype,
-			'emin': emin,
-			'emax': emax
-		}
-
 		lib.connectMySQL().then(function(conn) {
-			return EP.getEntropy(conn, prop)
+			return EP.getEntropy(conn, params)
 		}, function(err) {
 			console.error('error: ', err)
 		}).catch(function(error) {

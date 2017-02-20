@@ -15,21 +15,18 @@
     @import url('/css/semantic.css');
     @import url('/css/pages/<%= name %>.css');
     </style>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 
-<body class="ui loading segment">
-    <div id="map">
-        
-    </div>
+<body class="ui segment">
+    <div id="map"></div>
     <div id="userpanel" class="ui row segment">
         <div class="sixteen wide column">
-            <div class="row">
-                <% include vis-x/region %>
-            </div>
+            <% include vis-x/region %>
         </div>
     </div>
-    </div>
     <script src="/dist/<%= name %>.js"></script>
+    
 </body>
 
 </html>

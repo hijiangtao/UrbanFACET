@@ -8,28 +8,35 @@
 'use strict'
 import $ from "jquery"
 
-let getValRange = function(base, selections) {
+let getValRange = function(scales, esels, dsels) {
 	return {
-		'min': base.min+selections.min * Number.parseFloat(base.max-base.min),
-		'max': base.min+selections.max * Number.parseFloat(base.max-base.min)
+		'entropy': {
+			'min': scales.entropy * parseFloat(esels[0]) / 100.0,
+			'max': scales.entropy * parseFloat(esels[1]) / 100.0,
+			'scales': scales.entropy
+		},
+		'density': {
+			'min': scales.density * parseFloat(dsels[0]) / 100.0,
+			'max': scales.density * parseFloat(dsels[1]) / 100.0,
+			'scales': scales.density
+		}
 	}
 };
 
-let getEntropy = function(sels) {
+let getOverview = function(sels) {
 	let city = sels.city,
 		etype = sels.etype,
 		ctype = sels.ctype,
-		emin = sels.eVal.min,
-		emax = sels.eVal.max;
+		mtype = sels.mtype;
 
 	let p = new Promise(function(resolve, reject) {
-		$.get(`/comp/overviewEQuery?city=${city}&etype=${etype}&ctype=${ctype}&emin=${emin}&emax=${emax}`, function(res, err) {
+		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ctype=${ctype}&mtype=${mtype}`, function(res, err) {
 			if (res['scode']) {
 				resolve(res['data'])
 			} else {
 				reject(err)
 			}
-		})
+		});
 	});
 
 	return p;
@@ -39,8 +46,7 @@ let getDensity = function(sels) {
 	let city = sels.city,
 		etype = sels.etype,
 		ctype = sels.ctype,
-		emin = sels.eVal.min,
-		emax = sels.eVal.max;
+		mtype = sels.mtype;
 
 	let p = new Promise(function(resolve, reject) {
 		if (etype === 'p') {
@@ -48,20 +54,21 @@ let getDensity = function(sels) {
 		} else {
 			etype = 'w';
 		}
-		$.get(`/comp/overviewDQuery?city=${city}&etype=${etype}&ctype=${ctype}&emin=${emin}&emax=${emax}`, function(res, err) {
+
+		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ctype=${ctype}&mtype=${mtype}`, function(res, err) {
 			if (res['scode']) {
 				resolve(res['data']);
 			} else {
 				reject(err);
 			}
-		})
+		});
 	});
 
 	return p;
 };
 
 export {
-	getEntropy,
+	getOverview,
 	getDensity,
 	getValRange
 }

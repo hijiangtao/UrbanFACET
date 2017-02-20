@@ -21,6 +21,7 @@
     "geojson": "^0.4.0",
     "heatmap.js": "^2.0.5",
     "jquery": "^3.1.1",
+    "jquery-ui": "^1.12.1",
     "leaflet": "0.7.7",
     "morgan": "~1.7.0",
     "node-sass-middleware": "0.8.0",
@@ -29,6 +30,7 @@
     "shelljs": "^0.7.5",
     "vue": "^2.1.4",
     "vue-router": "^2.1.1",
+    "vue-slider-component": "^2.1.2",
     "vuex": "^2.1.2"
   },
   "devDependencies": {

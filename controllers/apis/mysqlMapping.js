@@ -18,8 +18,8 @@ let mapping = {
 	arearecordsquery: "SELECT lat, lng from ?? WHERE timeSegID >= ? AND timeSegID < ? AND dayType = ? LIMIT 10000",
 	arearecordsquerynight: "SELECT lat, lng from ?? WHERE (timeSegID >= ? OR timeSegID < ?) AND dayType = ?",
 
-	getValScale: "SELECT MAX(??) AS 'val' FROM ??;",
-	getOverviewVal: "SELECT id, ?? AS 'val' FROM ??;"
+	getValScale: "SELECT MAX(??) AS 'eval', MAX(LOG2(??)) AS 'dval' FROM ??;",
+	getOverviewVal: "SELECT id, ?? AS 'eval', LOG2(??) AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;"
 };
  
 module.exports = mapping;

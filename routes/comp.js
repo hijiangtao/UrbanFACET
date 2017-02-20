@@ -12,8 +12,8 @@ router.get('/init', function(req, res, next) {
 	apis.init(req, res, next);
 });
 
-router.get('/overviewEQuery', function(req, res, next) {
-	apis.overviewEQuery(req, res, next);
+router.get('/overviewQuery', function(req, res, next) {
+	apis.overviewQuery(req, res, next);
 });
 router.get('/overviewDQuery', function(req, res, next) {
 	apis.overviewDQuery(req, res, next);

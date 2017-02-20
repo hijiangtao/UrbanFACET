@@ -133,28 +133,28 @@ let connectMySQL = function(argument) {
 let regionRecords = function(city) {
     let citylocslist = {
 		'bj': {
-			'north': 40.734,
-			'south': 39.533,
-			'west': 115.559,
-			'east': 117.215
+			'north': 41.055,
+			'south': 39.445,
+			'west': 115.422,
+			'east': 117.515
 		},
 		'tj': {
-			'north': 39.871,
-			'south': 38.610,
-			'west': 116.792,
-			'east': 117.976
+			'north': 40.254,
+			'south': 38.537,
+			'west': 116.691,
+			'east': 118.087
 		},
 		'zjk': {
-			'north': 41.455,
-			'south': 40.099,
-			'west': 114.153,
-			'east': 115.795
+			'north': 42.139,
+			'south': 39.546,
+			'west': 113.807,
+			'east': 116.400
 		},
 		'ts': {
-			'north': 40.466,
-			'south': 38.964,
-			'west': 117.603,
-			'east': 119.185
+			'north': 40.457,
+			'south': 38.908,
+			'west': 117.488,
+			'east': 119.306
 		}
 	}
 
