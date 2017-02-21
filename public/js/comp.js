@@ -83,16 +83,25 @@ const userpanel = new Vue({
 		'regionImgUrl': function(city) {
 			return `/assets/${city}-icon.png`
 		},
-		'updateCity': function(val) {
-			this.selections.city = val
-		},
-		'isActive': function(val) {
-			if (val === this.selections.city) {
-				return 'selectedregion'
-			} else {
-				return ''
+		'updateSelectRegion': function(val) {
+			for (let i = this.params.regions.length - 1; i >= 0; i--) {
+				if (this.params.regions[i].val !== val) {
+					this.params.regions[i].active = false;
+				} else {
+					this.params.regions[i].active = true;
+				}
+				
 			}
+
+			this.selections.city = val;
 		},
+		// 'isActive': function(val) {
+		// 	if (val === this.selections.city) {
+		// 		return 'selectedregion'
+		// 	} else {
+		// 		return ''
+		// 	}
+		// },
 		// 'isRangeValid': function() {
 		// 	if (this.selections.eVal.min >= this.selections.eVal.max) {
 		// 		alert('The minVal should not be larger than maxVal. Please do it again.');

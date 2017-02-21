@@ -273,10 +273,10 @@ let labvuedata = {
 let comp = {
     'params': {
         'regions': [
-            { 'name': 'Beijing', 'val': 'bj' },
-            { 'name': 'Tianjin', 'val': 'tj' },
-            { 'name': 'Zhangjiakou', 'val': 'zjk' },
-            { 'name': 'Tangshan', 'val': 'ts' }
+            { 'name': 'Beijing', 'val': 'bj', 'aurl': '/assets/bj-aticon.png', 'nurl': '/assets/bj-ticon.png', 'active': false },
+            { 'name': 'Tianjin', 'val': 'tj', 'aurl': '/assets/tj-aticon.png', 'nurl': '/assets/tj-ticon.png', 'active': true },
+            { 'name': 'Zhangjiakou', 'val': 'zjk', 'aurl': '/assets/zjk-aticon.png', 'nurl': '/assets/zjk-ticon.png', 'active': false },
+            { 'name': 'Tangshan', 'val': 'ts', 'aurl': '/assets/ts-aticon.png', 'nurl': '/assets/ts-ticon.png', 'active': false }
         ],
         'etypes': [
             { 'name': 'POI', 'val': 'p' },

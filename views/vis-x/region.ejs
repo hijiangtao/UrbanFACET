@@ -7,9 +7,9 @@
 			<div class="inline fields">
 				<label>Regions</label>
 				<div v-for='item in params.regions' class="field">
-					<div class="ui tiny image" v-bind:class="isActive(item.val)">
-					  <img :src="regionImgUrl(item.val)" v-on:click="updateCity(item.val)">
-					  <p class="regiondesc">{{item.name}}</p>
+					<div class="ui tiny image">
+					  <img v-show="item.active" :src="item.aurl" v-on:click="updateSelectRegion(item.val)">
+					  <img v-show="!item.active" :src="item.nurl" v-on:click="updateSelectRegion(item.val)">
 					</div>
 					
 				</div>

@@ -233,7 +233,7 @@ function getOverview(conn, prop) {
 		})
 	})
 
-	return p
+	return p;
 }
 
 // function getDensity(conn, prop) {
