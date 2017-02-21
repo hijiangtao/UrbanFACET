@@ -150,13 +150,15 @@ function getEntropy(conn, prop) {
 	let city = prop['city'], 
 		entropyattr = `${prop['etype']+prop['ctype']}sval`,
 		densityattr = `${prop['etype'] === 'p'? 'v':'w'}${prop['ctype']}number`,
-		etable = `${city}Ematrix`
+		etable = `${city}Ematrix`;
 
 	let p = new Promise(function(resolve, reject) {
 		let sql = $sql.getValScale + $sql.getOverviewVal,
 			param = [entropyattr, densityattr, etable, entropyattr, densityattr, etable, entropyattr, densityattr]
 
 		conn.query(sql, param, function(err, result) {
+			conn.release();
+
 			if (err) {
 				reject(err)
 			} else {
