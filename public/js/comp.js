@@ -32,6 +32,7 @@ const userpanel = new Vue({
 			if (city !== 'bj') {
 				let self = this;
 				
+				self.selections.initialstate = true;
 				mapins.panTo( regionRecords[city]['center'] );
 				document.getElementById('map').classList.add('loading');
 				console.log('Begin to get data from server.');
@@ -80,9 +81,9 @@ const userpanel = new Vue({
 		// 		alert('Beijing are not available now, please try another region and update again.')
 		// 	}
 		// },
-		'regionImgUrl': function(city) {
-			return `/assets/${city}-icon.png`
-		},
+		// 'regionImgUrl': function(city) {
+		// 	return `/assets/${city}-icon.png`
+		// },
 		'updateSelectRegion': function(val) {
 			for (let i = this.params.regions.length - 1; i >= 0; i--) {
 				if (this.params.regions[i].val !== val) {
@@ -112,7 +113,7 @@ const userpanel = new Vue({
 
 		// 	return true;
 		// },
-		'computedSliderCSS': function(type) {
+		'computedSlider': function(type) {
 			let self = this,
 				v = this.components.eSlider.value;
 			if (type === 'd') {

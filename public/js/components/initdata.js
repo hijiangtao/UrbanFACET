@@ -305,7 +305,8 @@ let comp = {
             'min': 0,
             'max': 1,
             'val': [0, 1]
-        }
+        },
+        'initialstate': true
     },
     'components': {
         'eSlider': {

@@ -56,15 +56,15 @@
 		<h4 class="vtitle"><i class="right angle icon divider"></i>Filters (LOG)</h4>
 	</div>
 
-	<div class="sixteen wide column">
+	<div v-show="!selections.initialstate" class="sixteen wide column">
 		<div class="ui grid">
 			<div class="four wide column">EntropyFilter</div>
 			<div class="twelve wide column">
-				<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="computedSliderCSS('e')" v-model="components.eSlider.value"></vue-slider>
+				<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="computedSlider('e')" v-model="components.eSlider.value"></vue-slider>
 			</div>
 			<div class="four wide column">DensityFilter</div>
 			<div class="twelve wide column">
-				<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="computedSliderCSS('d')" v-model="components.dSlider.value"></vue-slider>
+				<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="computedSlider('d')" v-model="components.dSlider.value"></vue-slider>
 			</div>
 			<!-- <div class="three wide column">OpacityFilter(U)</div>
 			<div class="thirteen wide column">
