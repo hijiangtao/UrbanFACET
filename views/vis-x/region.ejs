@@ -36,7 +36,7 @@
 			</div>
 
 			<div class="inline fields">
-				<label>Display Form</label>
+				<label>Display Form(U)</label>
 				<div v-for="item in params.mtypes" class="field">
 			      <div class="ui radio checkbox">
 			        <input type="radio" name="displaytype"  :value="item.val" v-model="selections.mtype">
@@ -63,6 +63,10 @@
 			<div class="three wide column">DensityFilter</div>
 			<div class="thirteen wide column">
 				<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="computedSliderCSS('d')" v-model="components.dSlider.value"></vue-slider>
+			</div>
+			<div class="three wide column">OpacityFilter(U)</div>
+			<div class="thirteen wide column">
+				<vue-slider id="oSlider" ref="oSlider" v-bind="components.dSlider" v-model="components.dSlider.value"></vue-slider>
 			</div>
 		</div>	
 	</div>

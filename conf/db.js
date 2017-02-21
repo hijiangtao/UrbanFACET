@@ -12,7 +12,7 @@ var localhost = mysql.createPool({
 	timezone: 'GMT',
 	debug	: false,
 	multipleStatements: true 
-})
+});
 
 var server = mysql.createPool({
 	host    : 'localhost', 
@@ -23,6 +23,6 @@ var server = mysql.createPool({
 	timezone: 'GMT',
 	debug	: false,
 	multipleStatements: true 
-})
+});
 
 module.exports = server;

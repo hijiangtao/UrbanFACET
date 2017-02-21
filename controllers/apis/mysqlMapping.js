@@ -19,7 +19,10 @@ let mapping = {
 	arearecordsquerynight: "SELECT lat, lng from ?? WHERE (timeSegID >= ? OR timeSegID < ?) AND dayType = ?",
 
 	getValScale: "SELECT MAX(??) AS 'eval', MAX(LOG2(??)) AS 'dval' FROM ??;",
-	getOverviewVal: "SELECT id, ?? AS 'eval', LOG2(??) AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;"
+	getOverviewVal: "SELECT id, ?? AS 'eval', LOG2(??) AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;",
+
+	getAValScale: "SELECT MAX(??) AS 'eval', MAX(LOG2(??)) AS 'dval' FROM ??;",
+	getAOverviewVal: "SELECT id, ?? AS 'eval', LOG2(??) AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;"
 };
  
 module.exports = mapping;

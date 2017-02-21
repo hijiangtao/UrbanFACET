@@ -24,7 +24,7 @@ var devConfig = {
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'public/dist'),
+        path: path.resolve(__dirname, 'dist'),
         publicPath: publicPath
     },
     devtool: 'source-map',

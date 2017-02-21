@@ -12,20 +12,18 @@ let EP = require('../../conf/entropy');
 
 let apis = {
 	'overviewQuery': function(req, res, next) {
-		let params = req.query,
-			etype = params.etype,
-			mtype = params.mtype,
-			ctype = params.ctype,
-			city = params.city
-
+		let params = req.query;
+		console.log('Going to connect MySQL.');
 		lib.connectMySQL().then(function(conn) {
+			console.log('Got data from MySQL.');
 			return EP.getEntropy(conn, params)
 		}, function(err) {
-			console.error('error: ', err)
+			console.error('error: ', err);
 		}).catch(function(error) {
-			console.log(error);
+			console.error('error: ', err);
 		}).then(function(result) {
-			res.json(result)
+			console.log('Ready to send back result.');
+			res.json(result);
 		})
 	},
 	'overviewDQuery': function(req, res, next) {

@@ -28,8 +28,8 @@ const userpanel = new Vue({
 	},
 	methods: {
 		'getEntropyOverview': function() {
-			let city = this.selections.city
-			if (city !== 'bj' && city !== 'ts') {
+			let city = this.selections.city;
+			if (city !== 'bj') {
 				// if (!this.isRangeValid()) {
 				// 	return false;
 				// }
@@ -58,15 +58,15 @@ const userpanel = new Vue({
 					console.error("Failed!", err);
 				});
 			} else {
-				alert('Beijing and Tangshan are not available now, please try another region and update again.')
+				alert('Beijing are not available now, please try another region and update again.')
 			}
 		},
 		'getDensityOverview': function() {
 			let city = this.selections.city
-			if (city !== 'bj' && city !== 'ts') {
+			if (city !== 'bj') {
 				let self = this
 				
-				mapins.panTo( regionRecords[city]['center'] )
+				mapins.panTo( regionRecords[city]['center'] );
 
 				document.getElementsByTagName('body')[0].classList.add('loading');
 				getOverview(self.selections).then(function(res) {
@@ -82,7 +82,7 @@ const userpanel = new Vue({
 					console.error("Failed!", err);
 				});
 			} else {
-				alert('Beijing and Tangshan are not available now, please try another region and update again.')
+				alert('Beijing are not available now, please try another region and update again.')
 			}
 		},
 		'regionImgUrl': function(city) {
