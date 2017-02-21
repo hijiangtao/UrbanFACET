@@ -56,7 +56,7 @@
 		<h4 class="vtitle"><i class="right angle icon divider"></i>Filters (LOG)</h4>
 	</div>
 
-	<div v-show="!selections.initialstate" class="sixteen wide column">
+	<div v-if="!selections.initialstate" class="sixteen wide column">
 		<div class="ui grid">
 			<div class="four wide column">EntropyFilter</div>
 			<div class="twelve wide column">

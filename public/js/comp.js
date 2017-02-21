@@ -32,7 +32,7 @@ const userpanel = new Vue({
 			if (city !== 'bj') {
 				let self = this;
 				
-				self.selections.initialstate = true;
+				self.selections.initialstate = false;
 				mapins.panTo( regionRecords[city]['center'] );
 				document.getElementById('map').classList.add('loading');
 				console.log('Begin to get data from server.');
