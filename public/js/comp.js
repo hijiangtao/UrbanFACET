@@ -71,11 +71,13 @@ const userpanel = new Vue({
 				document.getElementsByTagName('body')[0].classList.add('loading');
 				getOverview(self.selections).then(function(res) {
 					document.getElementsByTagName('body')[0].classList.remove('loading');
-					self.params.range.max = Number.parseFloat(res['prop']['maxVal']);
-					// self.results.drawData = res;
+					self.params.scales.entropy = res['prop']['emax'];
+					self.params.scales.density = res['prop']['dmax'];
 
-					let valRange = getValRange(self.params.range, self.selections.eVal)
-					mapins.mapgridCDrawing(res, valRange)
+					let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
+					valScales['type'] = 'density';
+
+					mapins.mapgridCDrawing(res, valScales)
 				}).catch(function(err) {
 					console.error("Failed!", err);
 				});
