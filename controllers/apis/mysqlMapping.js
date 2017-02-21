@@ -18,11 +18,17 @@ let mapping = {
 	arearecordsquery: "SELECT lat, lng from ?? WHERE timeSegID >= ? AND timeSegID < ? AND dayType = ? LIMIT 10000",
 	arearecordsquerynight: "SELECT lat, lng from ?? WHERE (timeSegID >= ? OR timeSegID < ?) AND dayType = ?",
 
-	getValScale: "SELECT MAX(??) AS 'eval', MAX(LOG2(??)) AS 'dval' FROM ??;",
-	getOverviewVal: "SELECT id, ?? AS 'eval', LOG2(??) AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;",
+	getValScale: {
+		'sum': "SELECT MAX(??) AS 'eval', MAX(??) AS 'dval' FROM ??;",
+		'ave': "SELECT MAX(??/??) AS 'eval', MAX(??) AS 'dval' FROM ??;"
+	},
+	getOverviewVal: {
+		'sum': "SELECT id, ?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;",
+		'ave': "SELECT id, ??/?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;"
+	},
 
-	getAValScale: "SELECT MAX(??) AS 'eval', MAX(LOG2(??)) AS 'dval' FROM ??;",
-	getAOverviewVal: "SELECT id, ?? AS 'eval', LOG2(??) AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;"
+	getAValScale: "SELECT MAX(??) AS 'eval', MAX(??/??) AS 'dval' FROM ??;",
+	getAOverviewVal: "SELECT id, ??/?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;"
 };
  
 module.exports = mapping;

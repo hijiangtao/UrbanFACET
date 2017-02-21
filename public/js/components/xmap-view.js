@@ -38,6 +38,26 @@ class mapview {
 		layers: self.baseLayer
 	  })
 	  this.map.zoomControl.setPosition('topright');
+	  this.gridData = {};
+	  this.gridDataType = '';
+	}
+
+	getGridData() {
+		return this.gridData;
+	}
+
+	setGridData(data) {
+		this.gridData = data;
+		return this;
+	}
+
+	getGridDataType() {
+		return this.gridDataType;
+	}
+
+	setGridDataType(data) {
+		this.gridDataType = data;
+		return this;
 	}
 
 	/**
@@ -552,11 +572,20 @@ class mapview {
 	 * @param  {[type]} prop [description]
 	 * @return {[type]}      [description]
 	 */
-	mapgridCDrawing(data, prop) {
+	mapgridCDrawing(data, prop, update=false) {
 		let self = this;
-		if(data.features.length === 0) {
-			alert('No records found!')
-			return ;
+		// if(data.features.length === 0) {
+		// 	alert('No records found!')
+		// 	return ;
+		// }
+
+		// update为false表示当前执行重绘操作, update为true则从实例中调用历史数据进行绘制
+		if (!update) {
+			this.setGridData(data);
+			this.setGridDataType(prop['type']);
+		} else {
+			data = this.getGridData();
+			prop['type'] = this.getGridDataType();
 		}
 
 		let drawtype = prop['type'],
@@ -573,7 +602,7 @@ class mapview {
 			endVal = prop[drawtype]['scales'],
 			interval = maxVal - minVal,
 			colordomain = [minVal, maxVal, endVal],
-			colorrange = ['rgba(255,255,255,0.8)', 'rgba(255,0,0,0.8)', 'rgba(255,0,0,0.8)']
+			colorrange = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgba(255,0,0,1)']
 
 		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
 

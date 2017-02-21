@@ -280,16 +280,16 @@ let comp = {
         ],
         'etypes': [
             { 'name': 'POI', 'val': 'p' },
-            { 'name': 'Admin Division', 'val': 'a' },
-            { 'name': 'Time Periods', 'val': 't' }
+            { 'name': 'Districts', 'val': 'a' },
+            { 'name': 'TimeBlocks', 'val': 't' }
         ],
         'ctypes': [
             { 'name': 'People Entropy', 'val': 'p' },
             { 'name': 'Record Entropy', 'val': 'r' }
         ],
         'mtypes': [
-            { 'name': 'Summation', 'val': 's' },
-            { 'name': 'Average', 'val': 'a' }
+            { 'name': 'Summation', 'val': 'sum' },
+            { 'name': 'Average', 'val': 'ave' }
         ],
         'scales': {
             'entropy': 1,
@@ -300,7 +300,7 @@ let comp = {
         'city': 'tj',
         'etype': 'p',
         'ctype': 'p',
-        'mtype': 's',
+        'mtype': 'sum',
         'eVal': {
             'min': 0,
             'max': 1,

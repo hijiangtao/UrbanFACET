@@ -1,11 +1,11 @@
 <div class="ui grid">
 	<div id="" class="sixteen wide column">
-		<h5 class="vtitle"><i class="right angle icon divider"></i>Data and Parameters</h5>
+		<h4 class="vtitle"><i class="right angle icon divider"></i>Data and Parameters</h4>
 	</div>
 	<div class="sixteen wide column">
 		<div class="ui form">
 			<div class="inline fields">
-				<label>Region</label>
+				<label>Regions</label>
 				<div v-for='item in params.regions' class="field">
 					<div class="ui tiny image" v-bind:class="isActive(item.val)">
 					  <img :src="regionImgUrl(item.val)" v-on:click="updateCity(item.val)">
@@ -36,7 +36,7 @@
 			</div>
 
 			<div class="inline fields">
-				<label>Display Form(U)</label>
+				<label>Display Value</label>
 				<div v-for="item in params.mtypes" class="field">
 			      <div class="ui radio checkbox">
 			        <input type="radio" name="displaytype"  :value="item.val" v-model="selections.mtype">
@@ -44,30 +44,32 @@
 			      </div>
 			    </div>
 			</div>
+
+			<div class="inline fields">
+				<button class="ui tiny primary button" v-on:click="getOverview('entropy')">Display Entropy</button>
+				<button class="ui tiny primary button" v-on:click="getOverview('density')">Display Density</button>
+			</div>
 		</div>
 	</div>
 
-	<div class="sixteen wide column">
-		<div class="inline fields">
-			<button class="ui tiny primary button" v-on:click="getEntropyOverview">Display Entropy</button>
-			<button class="ui tiny primary button" v-on:click="getDensityOverview">Display Density</button>
-		</div>
+	<div id="" class="sixteen wide column">
+		<h4 class="vtitle"><i class="right angle icon divider"></i>Filters (LOG)</h4>
 	</div>
 
 	<div class="sixteen wide column">
 		<div class="ui grid">
-			<div class="three wide column">EntropyFilter</div>
-			<div class="thirteen wide column">
+			<div class="four wide column">EntropyFilter</div>
+			<div class="twelve wide column">
 				<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="computedSliderCSS('e')" v-model="components.eSlider.value"></vue-slider>
 			</div>
-			<div class="three wide column">DensityFilter</div>
-			<div class="thirteen wide column">
+			<div class="four wide column">DensityFilter</div>
+			<div class="twelve wide column">
 				<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="computedSliderCSS('d')" v-model="components.dSlider.value"></vue-slider>
 			</div>
-			<div class="three wide column">OpacityFilter(U)</div>
+			<!-- <div class="three wide column">OpacityFilter(U)</div>
 			<div class="thirteen wide column">
 				<vue-slider id="oSlider" ref="oSlider" v-bind="components.dSlider" v-model="components.dSlider.value"></vue-slider>
-			</div>
+			</div> -->
 		</div>	
 	</div>
 </div>

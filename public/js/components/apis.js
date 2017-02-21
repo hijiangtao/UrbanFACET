@@ -11,19 +11,19 @@ import $ from "jquery"
 let getValRange = function(scales, esels, dsels) {
 	return {
 		'entropy': {
-			'min': scales.entropy * parseFloat(esels[0]) / 100.0,
-			'max': scales.entropy * parseFloat(esels[1]) / 100.0,
-			'scales': scales.entropy
+			'min': Math.exp( scales.entropy * parseFloat(esels[0]) / 100.0 ) - 1,
+			'max': Math.exp( scales.entropy * parseFloat(esels[1]) / 100.0 ) - 1,
+			'scales': Math.exp( scales.entropy ) - 1
 		},
 		'density': {
-			'min': scales.density * parseFloat(dsels[0]) / 100.0,
-			'max': scales.density * parseFloat(dsels[1]) / 100.0,
-			'scales': scales.density
+			'min': Math.exp( scales.density * parseFloat(dsels[0]) / 100.0 ) - 1,
+			'max': Math.exp( scales.density * parseFloat(dsels[1]) / 100.0 ) - 1,
+			'scales': Math.exp( scales.density ) - 1
 		}
 	}
 };
 
-let getOverview = function(sels) {
+let getOverviewDatasets = function(sels) {
 	let city = sels.city,
 		etype = sels.etype,
 		ctype = sels.ctype,
@@ -68,7 +68,7 @@ let getDensity = function(sels) {
 };
 
 export {
-	getOverview,
+	getOverviewDatasets,
 	getDensity,
 	getValRange
 }

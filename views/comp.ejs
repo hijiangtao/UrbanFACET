@@ -18,15 +18,19 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 
-<body class="ui segment">
-    <div id="map"></div>
-    <div id="userpanel" class="ui row segment">
-        <div class="sixteen wide column">
+<body class="">
+    <div id="titlemenu" class="ui inverted menu">
+        <div class="header item"><h2>Information-theoretic visual analysis of big urban check-in data</h2></div>
+    </div>
+
+    <div class="ui row">    
+        <div id="userpanel" class="ui segment">
             <% include vis-x/region %>
         </div>
+        <div id="map" class="ui segment"></div>
     </div>
-    <script src="/dist/<%= name %>.js"></script>
     
+    <script src="/dist/<%= name %>.js"></script>
 </body>
 
 </html>

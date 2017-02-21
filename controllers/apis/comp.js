@@ -16,7 +16,7 @@ let apis = {
 		console.log('Going to connect MySQL.');
 		lib.connectMySQL().then(function(conn) {
 			console.log('Got data from MySQL.');
-			return EP.getEntropy(conn, params)
+			return EP.getOverview(conn, params)
 		}, function(err) {
 			console.error('error: ', err);
 		}).catch(function(error) {

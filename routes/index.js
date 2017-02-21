@@ -11,7 +11,7 @@ const router = express.Router();
 // });
 /* GET comparison page. */
 router.get('/comp', function(req, res, next) {
-  res.render('comp', { title: 'JingJinJi Region Visual Comparsion', name: 'comp' });
+  res.render('comp', { title: 'Information-theoretic visual analysis of big urban check-in data', name: 'comp' });
 });
 
 /* GET stats page. */

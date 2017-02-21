@@ -146,21 +146,26 @@ function mongoQueries(idlist, db, prop) {
 	return Promise.all([q1, q2, q3])
 }
 
-function getEntropy(conn, prop) {
+function getOverview(conn, prop) {
 	let city = prop['city'], 
 		entropyattr = `${prop['etype']+prop['ctype']}sval`,
 		densityattr = `${prop['etype'] === 'p'? 'v':'w'}${prop['ctype']}number`,
-		etable = `${city}Ematrix`;
+		etable = `${city}Ematrix`,
+		mtype = prop['mtype'];
 
 	let p = new Promise(function(resolve, reject) {
-		let sql = $sql.getValScale + $sql.getOverviewVal,
-			param = [entropyattr, densityattr, etable, entropyattr, densityattr, etable, entropyattr, densityattr]
+		let sql = $sql.getValScale[mtype] + $sql.getOverviewVal[mtype],
+			param = [entropyattr, densityattr, etable, entropyattr, densityattr, etable, entropyattr, densityattr];
+
+		if (mtype === 'ave') {
+			param = [entropyattr, densityattr, densityattr, etable, entropyattr, densityattr, densityattr, etable, entropyattr, densityattr];
+		}
 
 		conn.query(sql, param, function(err, result) {
 			conn.release();
 
 			if (err) {
-				reject(err)
+				reject(err);
 			} else {
 				// result[0]: Max value of entropy 
 				// result[1]: Entropy list
@@ -231,86 +236,86 @@ function getEntropy(conn, prop) {
 	return p
 }
 
-function getDensity(conn, prop) {
-	let city = prop['city'], 
-		eattr = `${prop['etype']}${prop['ctype']}number`,
-		etable = `${city}Ematrix`
+// function getDensity(conn, prop) {
+// 	let city = prop['city'], 
+// 		eattr = `${prop['etype']}${prop['ctype']}number`,
+// 		etable = `${city}Ematrix`
 
-	let p = new Promise(function(resolve, reject) {
-		let sql = $sql.getValScale + $sql.getOverviewVal,
-			param = [eattr, etable, eattr, etable]
+// 	let p = new Promise(function(resolve, reject) {
+// 		let sql = $sql.getValScale + $sql.getOverviewVal,
+// 			param = [eattr, etable, eattr, etable]
 
-		conn.query(sql, param, function(err, result) {
-			if (err) {
-				reject(err)
-			} else {
-				// result[0]: Max value of entropy 
-				// result[1]: Entropy list
-				// console.log('result[0]', result[0])
+// 		conn.query(sql, param, function(err, result) {
+// 			if (err) {
+// 				reject(err)
+// 			} else {
+// 				// result[0]: Max value of entropy 
+// 				// result[1]: Entropy list
+// 				// console.log('result[0]', result[0])
 
-				let DATA = [], 
-					minVal = 0.0,
-					maxVal = result[0][0]['val'],
-					SPLIT = 0.003,
-					centerincrement = 0.0015,//.toFixed(4),
-					locs = data.getRegionBound(city),
-					elist = result[1],
-					reslen = elist.length,
-					emin = minVal+maxVal*Number.parseFloat(prop['emin']),
-					emax = minVal+maxVal*Number.parseFloat(prop['emax'])
+// 				let DATA = [], 
+// 					minVal = 0.0,
+// 					maxVal = result[0][0]['val'],
+// 					SPLIT = 0.003,
+// 					centerincrement = 0.0015,//.toFixed(4),
+// 					locs = data.getRegionBound(city),
+// 					elist = result[1],
+// 					reslen = elist.length,
+// 					emin = minVal+maxVal*Number.parseFloat(prop['emin']),
+// 					emax = minVal+maxVal*Number.parseFloat(prop['emax'])
 
-				for (let i = elist.length - 1; i >= 0; i--) {
-					// 清楚熵值不符合的 grids
-					if (elist[i]['val'] < emin) {
-						continue
-					}
+// 				for (let i = elist.length - 1; i >= 0; i--) {
+// 					// 清楚熵值不符合的 grids
+// 					if (elist[i]['val'] < emin) {
+// 						continue
+// 					}
 
-					let id = Number.parseInt(elist[i]['id']),
-						LNGNUM = parseInt((locs['east'] - locs['west']) / SPLIT + 1),
-						latind = parseInt(id/LNGNUM),
-						lngind = id-latind*LNGNUM,
-						lat = (locs['south'] + latind * SPLIT),//.toFixed(3),
-						lng = (locs['west'] + lngind * SPLIT),//.toFixed(3),
-						lnginc = (lng+SPLIT),//.toFixed(3),
-						latinc = (lat+SPLIT),//.toFixed(3),
-						lngcen = (lng+centerincrement),//.toFixed(4),
-						latcen = (lat+centerincrement),//.toFixed(4),
-						coordsarr = [ [lng, lat], [lnginc, lat], [lnginc, latinc], [lng, latinc], [lng, lat] ]
+// 					let id = Number.parseInt(elist[i]['id']),
+// 						LNGNUM = parseInt((locs['east'] - locs['west']) / SPLIT + 1),
+// 						latind = parseInt(id/LNGNUM),
+// 						lngind = id-latind*LNGNUM,
+// 						lat = (locs['south'] + latind * SPLIT),//.toFixed(3),
+// 						lng = (locs['west'] + lngind * SPLIT),//.toFixed(3),
+// 						lnginc = (lng+SPLIT),//.toFixed(3),
+// 						latinc = (lat+SPLIT),//.toFixed(3),
+// 						lngcen = (lng+centerincrement),//.toFixed(4),
+// 						latcen = (lat+centerincrement),//.toFixed(4),
+// 						coordsarr = [ [lng, lat], [lnginc, lat], [lnginc, latinc], [lng, latinc], [lng, lat] ]
 
-					// "center" : { 
-					// 	"type" : "Point", 
-					// 	"coordinates" : [ 116.39340292117386, 39.98484242786196 ] 
-					// }
-					DATA.push({
-						"geometry" : { 
-							"type" : "Polygon", 
-							"coordinates" : [ coordsarr ] 
-						}, 
-						"type" : "Feature", 
-						"id" : id, 
-						"properties" : {
-							'val': parseFloat(elist[i]['val'])
-						}
-					}) 
-				}
+// 					// "center" : { 
+// 					// 	"type" : "Point", 
+// 					// 	"coordinates" : [ 116.39340292117386, 39.98484242786196 ] 
+// 					// }
+// 					DATA.push({
+// 						"geometry" : { 
+// 							"type" : "Polygon", 
+// 							"coordinates" : [ coordsarr ] 
+// 						}, 
+// 						"type" : "Feature", 
+// 						"id" : id, 
+// 						"properties" : {
+// 							'val': parseFloat(elist[i]['val'])
+// 						}
+// 					}) 
+// 				}
 				
-				resolve({
-					'scode': 1,
-					'data': { 
-						"type": "FeatureCollection",
-						"features": DATA,
-						"prop": {
-							'maxVal': maxVal,
-							'minVal': minVal
-						}
-					}
-				})
-			}
-		})
-	})
+// 				resolve({
+// 					'scode': 1,
+// 					'data': { 
+// 						"type": "FeatureCollection",
+// 						"features": DATA,
+// 						"prop": {
+// 							'maxVal': maxVal,
+// 							'minVal': minVal
+// 						}
+// 					}
+// 				})
+// 			}
+// 		})
+// 	})
 
-	return p
-}
+// 	return p
+// }
 
 function generateGridsJson(locs, obj) {
 	fs.exists('myjsonfile.json', function(exists){
@@ -330,6 +335,5 @@ module.exports = {
 	readIdlistFile: readIdlistFile,
 	connectMongo: connectMongo,
 	mongoQueries: mongoQueries,
-	getEntropy: getEntropy,
-	getDensity: getDensity
+	getOverview: getOverview
 }

@@ -13,19 +13,32 @@ body {
 }
 
 #map {
-    height: 100vh;
-    width: 100vw;
+    height: 93vh;
+    width: 74vw;
+    /*padding: .5rem;*/
+    position: absolute;
+    left: 26vw;
+    margin: 0;
+}
+
+#titlemenu {
+    height: 7vh;
+    margin: 0;
+    /*padding-left: 4rem;
+    padding-right: 4rem;*/
+    /*margin: 0;
+    min-height: 0;*/
 }
 
 /*user panel background stylesheets*/
 #userpanel {
-    top: 0;
+    /*top: 9vh;*/
     width: 26vw;
     position: absolute;
-    padding: .5rem;
+    /*padding: .5rem;*/
     margin: 0;
-    height: 100vh;
-    z-index: 9;
+    height: 93vh;
+    /*z-index: 9;*/
     background-color: rgba(255, 255, 255, .8);
 }
 
@@ -50,6 +63,11 @@ body {
 
 /*REWRITE SEMANTIC-UI*/
 .ui.tiny.image {
-	width: 70px;
+	width: 5.2rem;
+}
+
+.ui.grid > .column:not(.row) {
+    padding-top: .6rem;
+    padding-bottom: 0;
 }
 /*REWRITE SEMANTIC-UI*/

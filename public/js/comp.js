@@ -13,7 +13,7 @@ import mapview from './components/xmap-view'
 import $ from "jquery"
 // window.jQuery = $
 import {regionRecords, comp} from './components/initdata'
-import {getOverview, getDensity, getValRange} from './components/apis'
+import {getOverviewDatasets, getDensity, getValRange} from './components/apis'
 import vueSlider from 'vue-slider-component'
 
 // Vue.use(Vuex)
@@ -27,64 +27,59 @@ const userpanel = new Vue({
 		vueSlider
 	},
 	methods: {
-		'getEntropyOverview': function() {
+		'getOverview': function(typeval) {
 			let city = this.selections.city;
 			if (city !== 'bj') {
-				// if (!this.isRangeValid()) {
-				// 	return false;
-				// }
-
 				let self = this;
 				
-				mapins.panTo( regionRecords[city]['center'] )
-				document.getElementsByTagName('body')[0].classList.add('loading');
+				mapins.panTo( regionRecords[city]['center'] );
+				document.getElementById('map').classList.add('loading');
 				console.log('Begin to get data from server.');
 				console.time('SERVER');
 
-				// basicGetOverview(city, self);
-
-				getOverview(self.selections).then(function(res) {
+				getOverviewDatasets(self.selections).then(function(res) {
 					console.log('Already got data from server.');
 					console.timeEnd('SERVER');
-					document.getElementsByTagName('body')[0].classList.remove('loading');
-					self.params.scales.entropy = res['prop']['emax'];
-					self.params.scales.density = res['prop']['dmax'];
+					document.getElementById('map').classList.remove('loading');
+
+					self.params.scales.entropy = Math.log(res['prop']['emax']+1);
+					self.params.scales.density = Math.log(res['prop']['dmax']+1);
 					
 					let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
-					valScales['type'] = 'entropy';
+					valScales['type'] = typeval;
 
 					mapins.mapgridCDrawing(res, valScales)
 				}).catch(function(err) {
 					console.error("Failed!", err);
 				});
 			} else {
-				alert('Beijing are not available now, please try another region and update again.')
+				alert('Beijing is not available now, please try another region and update again.')
 			}
 		},
-		'getDensityOverview': function() {
-			let city = this.selections.city
-			if (city !== 'bj') {
-				let self = this
+		// 'getDensityOverview': function() {
+		// 	let city = this.selections.city
+		// 	if (city !== 'bj') {
+		// 		let self = this
 				
-				mapins.panTo( regionRecords[city]['center'] );
+		// 		mapins.panTo( regionRecords[city]['center'] );
 
-				document.getElementsByTagName('body')[0].classList.add('loading');
-				getOverview(self.selections).then(function(res) {
-					document.getElementsByTagName('body')[0].classList.remove('loading');
-					self.params.scales.entropy = res['prop']['emax'];
-					self.params.scales.density = res['prop']['dmax'];
+		// 		document.getElementsByTagName('body')[0].classList.add('loading');
+		// 		getOverview(self.selections).then(function(res) {
+		// 			document.getElementsByTagName('body')[0].classList.remove('loading');
+		// 			self.params.scales.entropy = res['prop']['emax'];
+		// 			self.params.scales.density = res['prop']['dmax'];
 
-					let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
-					valScales['type'] = 'density';
+		// 			let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
+		// 			valScales['type'] = 'density';
 
-					mapins.mapgridCDrawing(res, valScales)
-				}).catch(function(err) {
-					console.error("Failed!", err);
-				});
-			} else {
-				alert('Beijing are not available now, please try another region and update again.')
-			}
-		},
+		// 			mapins.mapgridCDrawing(res, valScales)
+		// 		}).catch(function(err) {
+		// 			console.error("Failed!", err);
+		// 		});
+		// 	} else {
+		// 		alert('Beijing are not available now, please try another region and update again.')
+		// 	}
+		// },
 		'regionImgUrl': function(city) {
 			return `/assets/${city}-icon.png`
 		},
@@ -109,12 +104,17 @@ const userpanel = new Vue({
 		// 	return true;
 		// },
 		'computedSliderCSS': function(type) {
-			let v = this.components.eSlider.value;
+			let self = this,
+				v = this.components.eSlider.value;
 			if (type === 'd') {
 				v = this.components.dSlider.value;
 			}
 			// console.log('v:', v);
 			document.getElementById(`${type}Slider`).getElementsByClassName('vue-slider')[0].style.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
+
+			let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
+
+			mapins.mapgridCDrawing({}, valScales, true);
 		}
 	},
 	// computed: {
@@ -140,59 +140,3 @@ const userpanel = new Vue({
 		})
 	}
 })
-
-// let commonFunc = (function() {
-// 	return {
-// 		'getValRange': function(base, selections) {
-// 			return {
-// 				'min': base.min+selections.min * Number.parseFloat(base.max-base.min),
-// 				'max': base.min+selections.max * Number.parseFloat(base.max-base.min)
-// 			}
-// 		}
-// 	}
-// })();
-
-// let getEntropy = function(sels) {
-// 	let city = sels.city,
-// 		etype = sels.etype,
-// 		ctype = sels.ctype,
-// 		emin = sels.eVal.min,
-// 		emax = sels.eVal.max;
-
-// 	let p = new Promise(function(resolve, reject) {
-// 		$.get(`/comp/overviewEQuery?city=${city}&etype=${etype}&ctype=${ctype}&emin=${emin}&emax=${emax}`, function(res, err) {
-// 			if (res['scode']) {
-// 				resolve(res['data'])
-// 			} else {
-// 				reject(err)
-// 			}
-// 		})
-// 	});
-
-// 	return p
-// };
-
-// let getDensity = function(sels) {
-// 	let city = sels.city,
-// 		etype = sels.etype,
-// 		ctype = sels.ctype,
-// 		emin = sels.eVal.min,
-// 		emax = sels.eVal.max;
-
-// 	let p = new Promise(function(resolve, reject) {
-// 		if (etype === 'p') {
-// 			etype = 'v'
-// 		} else {
-// 			etype = 'w'
-// 		}
-// 		$.get(`/comp/overviewDQuery?city=${city}&etype=${etype}&ctype=${ctype}&emin=${emin}&emax=${emax}`, function(res, err) {
-// 			if (res['scode']) {
-// 				resolve(res['data'])
-// 			} else {
-// 				reject(err)
-// 			}
-// 		})
-// 	});
-
-// 	return p
-// };
