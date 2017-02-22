@@ -76,7 +76,7 @@ class mapview {
 		
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
-		this.removeheatmap()
+		this.removeheatmap();
 
 		if(data.features.length === 0) {
 			alert('No records found!')
@@ -615,9 +615,9 @@ class mapview {
 
 		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
 
-		// d3.select('#F_SVG').remove();
-		// d3.select('#GRID_SVG').remove();
-		// this.removeheatmap()
+		d3.select('#F_SVG').remove();
+		d3.select('#GRID_SVG').remove();
+		this.removeheatmap();
 		this.removecanvas();
 
 		console.log('Begin to draw gridmap based on received data.');
@@ -688,6 +688,9 @@ class mapview {
 
 		let color = d3.scaleLinear().domain(colordomain).range(colorrange);
 
+		d3.select('#F_SVG').remove();
+		d3.select('#GRID_SVG').remove();
+		this.removeheatmap();
 		this.removecanvas();
 
 		console.log('Begin to draw gridmap based on received data.');
