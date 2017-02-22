@@ -17,9 +17,9 @@ var devConfig = {
     // 页面入口文件配置
     entry: {
         home: ['./public/js/home.js', hotMiddlewareScript],
-        lab: ['./public/js/lab.js', hotMiddlewareScript],
-        ui: ['./public/js/ui.js', hotMiddlewareScript],
-        demo: ['./public/js/demo.js', hotMiddlewareScript],
+        // lab: ['./public/js/lab.js', hotMiddlewareScript],
+        // ui: ['./public/js/ui.js', hotMiddlewareScript],
+        // demo: ['./public/js/demo.js', hotMiddlewareScript],
         comp: ['./public/js/comp.js', hotMiddlewareScript]
     },
     output: {

@@ -11,6 +11,7 @@ import L from './map'
 // import heatmap from 'heatmap.js'
 import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js'
 import * as d3 from 'd3'
+import {legendColor} from 'd3-svg-legend'
 
 // 临时变量 
 import $ from "jquery"
@@ -33,7 +34,7 @@ class mapview {
 		  accessToken: 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'
 		})
 	  this.map = new L.map(self.id, {
-		center: L.latLng(39.914,116.39),
+		center: L.latLng(39.9120, 116.3907),
 		zoom: 11,
 		layers: self.baseLayer
 	  })
@@ -567,7 +568,7 @@ class mapview {
 	}
 
 	/**
-	 * [mapgridCDrawing description]
+	 * 用 canvas 绘制 gridmap, 提供从本地或者远程获取数据两种绘制方式
 	 * @param  {[type]} data [description]
 	 * @param  {[type]} prop [description]
 	 * @return {[type]}      [description]
@@ -648,39 +649,98 @@ class mapview {
 	}
 
 	/**
-	 * [heatmapDrawing description]
+	 * 绘制地图中的参考图标
+	 * @param  {String} title [description]
+	 * @param  {Array}  scale [description]
+	 * @param  {[type]} 100]  [description]
+	 * @return {[type]}       [description]
+	 */
+	maplegendDrawing(title='entropy', scale=[0, 100]) {
+		var linear = d3.scaleLinear()
+		  .domain(scale)
+		  .range(['rgba(255,255,255,0)', 'rgba(255,0,0,1)']);
+
+		d3.select('#maplegend').selectAll('svg').remove();
+		var svg = d3.select("#maplegend").append('svg');
+
+		svg.append('text')
+		  .attr('y', 23)
+		  .attr('x', 5)
+		  .text(title);
+
+		svg.append("g")
+		  .attr("class", "legendLinear")
+		  .attr("transform", "translate(60,10)");
+
+		var legendLinear = legendColor()
+		  .shapeWidth(30)
+		  .orient('horizontal')
+		  .scale(linear);
+
+		svg.select(".legendLinear")
+		  .call(legendLinear);
+	}
+
+	/**
+	 * 利用 contour 方式绘制 heatmap,使绘制出的结果较 gridmap 连续
 	 * @param  {[type]} data [description]
 	 * @param  {[type]} prop [description]
 	 * @return {[type]}      [description]
 	 */
-	heatmapDrawing(data, prop) {
+	mapcontourCDrawing(data, prop, update=false) {
+		// update为false表示当前执行重绘操作, update为true则从实例中调用历史数据进行绘制
+		if (!update) {
+			this.setGridData(data);
+			this.setGridDataType(prop['type']);
+		} else {
+			data = this.getGridData();
+			prop['type'] = this.getGridDataType();
+		}
+
+		console.log('Contour props: ', prop, 'Update: ', update);
+
 		let len = data.features.length,
 			hdata = {
 				max: 0,
 				data: []
 			}
+		let drawtype = prop['type'],
+			resprop = data['prop']
+
+		// updated color scale
+		let minVal = prop[drawtype]['min'],
+			maxVal = prop[drawtype]['max'];
+		hdata.max = maxVal
 
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
-		this.removeheatmap()
-		this.removecanvas()
+		this.removeheatmap();
+		this.removecanvas();
 
+		let countVal = 0;
 		for (let i = len - 1; i >= 0; i--) {
-			let center = data.features[i]['properties']['center']['coordinates'],
-				entropy = data.features[i]['properties']['entropy']
+			let feature = data.features[i],
+        		evalue = feature['properties']['entropy'],
+        		dvalue = feature['properties']['density'];
 
-			if (hdata.max < entropy) {
-				hdata.max = entropy
-			}
+        	if (evalue < prop['entropy']['min'] || dvalue < prop['density']['min']) {
+        		continue;
+        	}
 
-			hdata.data.push({'lat': center[1], 'lng': center[0], 'count': entropy})
+        	countVal += 1;
+
+        	let center = data.features[i]['geometry']['coordinates'][0][0],
+				val = data.features[i]['properties'][ drawtype ];
+
+			hdata.data.push({'lat': center[1], 'lng': center[0], 'count': val})
 		}
+		console.log('countVal: ', countVal.length);
 
 		let cfg = {
 		  // radius should be small ONLY if scaleRadius is true (or small radius is intended)
 		  // if scaleRadius is false it will be the constant radius used in pixels
-		  "radius": .012,
-		  "maxOpacity": .8, 
+		  "radius": .005,
+		  "maxOpacity": .9, 
 		  // scales the radius based on map zoom
 		  "scaleRadius": true, 
 		  // if set to false the heatmap uses the global maximum for colorization
@@ -688,11 +748,11 @@ class mapview {
 		  //   (there will always be a red spot with useLocalExtremas true)
 		  "useLocalExtrema": false,
 		  // which field name in your data represents the latitude - default "lat"
-		  latField: 'lat',
+		  "latField": 'lat',
 		  // which field name in your data represents the longitude - default "lng"
-		  lngField: 'lng',
+		  "lngField": 'lng',
 		  // which field name in your data represents the data value - default "value"
-		  valueField: 'count'
+		  "valueField": 'count'
 		};
 		let heatmapLayer = new HeatmapOverlay(cfg);
 

@@ -7,6 +7,80 @@
 
 import { genNumArr } from './lib'
 
+let comp = {
+    'params': {
+        'regions': [
+            { 'name': 'Beijing', 'val': 'bj', 'aurl': '/assets/bj-aticon.png', 'nurl': '/assets/bj-ticon.png', 'active': false },
+            { 'name': 'Tianjin', 'val': 'tj', 'aurl': '/assets/tj-aticon.png', 'nurl': '/assets/tj-ticon.png', 'active': true },
+            { 'name': 'Zhangjiakou', 'val': 'zjk', 'aurl': '/assets/zjk-aticon.png', 'nurl': '/assets/zjk-ticon.png', 'active': false },
+            { 'name': 'Tangshan', 'val': 'ts', 'aurl': '/assets/ts-aticon.png', 'nurl': '/assets/ts-ticon.png', 'active': false }
+        ],
+        'etypes': [
+            { 'name': 'POI', 'val': 'p' },
+            { 'name': 'Districts', 'val': 'a' },
+            { 'name': 'TimeBlocks', 'val': 't' }
+        ],
+        'ctypes': [
+            { 'name': 'People Entropy', 'val': 'p' },
+            { 'name': 'Record Entropy', 'val': 'r' }
+        ],
+        'mtypes': [
+            { 'name': 'Summation', 'val': 'sum' },
+            { 'name': 'Average', 'val': 'ave' }
+        ],
+        'scales': {
+            'entropy': 1,
+            'density': 100
+        }
+    },
+    'selections': {
+        'city': 'tj',
+        'etype': 'p',
+        'ctype': 'p',
+        'mtype': 'sum',
+        'eVal': {
+            'min': 0,
+            'max': 1,
+            'val': [0, 1]
+        },
+        'initialstate': true,
+        'displaytype': '', // 存储 entropy 或者 density, 用于存储当前绘制图形的含义
+        'contourmap': false
+    },
+    'components': {
+        'eSlider': {
+            tooltip: 'hover',
+            value: [0, 100],
+            // formatter: '{value*100}%',
+            tooltipStyle: {
+              "backgroundColor": "#000",
+              "borderColor": "#f00"
+            },
+            bgStyle: {
+              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
+            },
+            processStyle: {
+              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
+            }
+        },
+        'dSlider': {
+            tooltip: 'hover',
+            value: [0, 100],
+            // formatter: '{value*100}%',
+            tooltipStyle: {
+              "backgroundColor": "#000",
+              "borderColor": "#f00"
+            },
+            bgStyle: {
+              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
+            },
+            processStyle: {
+              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
+            }
+        }
+    }
+};
+
 let indexvuedata = {
     'settings': {
         'entropytypes': [
@@ -268,78 +342,6 @@ let labvuedata = {
 		'value': 5
 	}],
 	tpsel: []
-};
-
-let comp = {
-    'params': {
-        'regions': [
-            { 'name': 'Beijing', 'val': 'bj', 'aurl': '/assets/bj-aticon.png', 'nurl': '/assets/bj-ticon.png', 'active': false },
-            { 'name': 'Tianjin', 'val': 'tj', 'aurl': '/assets/tj-aticon.png', 'nurl': '/assets/tj-ticon.png', 'active': true },
-            { 'name': 'Zhangjiakou', 'val': 'zjk', 'aurl': '/assets/zjk-aticon.png', 'nurl': '/assets/zjk-ticon.png', 'active': false },
-            { 'name': 'Tangshan', 'val': 'ts', 'aurl': '/assets/ts-aticon.png', 'nurl': '/assets/ts-ticon.png', 'active': false }
-        ],
-        'etypes': [
-            { 'name': 'POI', 'val': 'p' },
-            { 'name': 'Districts', 'val': 'a' },
-            { 'name': 'TimeBlocks', 'val': 't' }
-        ],
-        'ctypes': [
-            { 'name': 'People Entropy', 'val': 'p' },
-            { 'name': 'Record Entropy', 'val': 'r' }
-        ],
-        'mtypes': [
-            { 'name': 'Summation', 'val': 'sum' },
-            { 'name': 'Average', 'val': 'ave' }
-        ],
-        'scales': {
-            'entropy': 1,
-            'density': 100
-        }
-    },
-    'selections': {
-        'city': 'tj',
-        'etype': 'p',
-        'ctype': 'p',
-        'mtype': 'sum',
-        'eVal': {
-            'min': 0,
-            'max': 1,
-            'val': [0, 1]
-        },
-        'initialstate': true
-    },
-    'components': {
-        'eSlider': {
-            tooltip: 'hover',
-            value: [0, 100],
-            // formatter: '{value*100}%',
-            tooltipStyle: {
-              "backgroundColor": "#000",
-              "borderColor": "#f00"
-            },
-            bgStyle: {
-              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
-            },
-            processStyle: {
-              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
-            }
-        },
-        'dSlider': {
-            tooltip: 'hover',
-            value: [0, 100],
-            // formatter: '{value*100}%',
-            tooltipStyle: {
-              "backgroundColor": "#000",
-              "borderColor": "#f00"
-            },
-            bgStyle: {
-              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
-            },
-            processStyle: {
-              'background': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
-            }
-        }
-    }
 };
 
 let featureTypes = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'weevening'];

@@ -15,19 +15,21 @@
     @import url('/css/semantic.css');
     @import url('/css/pages/<%= name %>.css');
     </style>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
 </head>
 
-<body class="">
+<body>
     <div id="titlemenu" class="ui inverted menu">
-        <div class="header item"><h2>Information-theoretic visual analysis of big urban check-in data</h2></div>
+        <div class="header item"><h2>Urban Mobility Map: Information-theoretic visual analysis of big user check-in data</h2></div>
     </div>
 
-    <div class="ui row">    
+    <div class="ui row" id="main">    
         <div id="userpanel" class="ui segment">
             <% include vis-x/region %>
         </div>
-        <div id="map" class="ui segment"></div>
+        <div id="map" class="ui segment">
+            <% include vis-x/map %>
+        </div>
     </div>
     
     <script src="/dist/<%= name %>.js"></script>

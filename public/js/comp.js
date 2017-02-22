@@ -33,6 +33,7 @@ const userpanel = new Vue({
 				let self = this;
 				
 				self.selections.initialstate = false;
+				self.selections.displaytype = typeval;
 				mapins.panTo( regionRecords[city]['center'] );
 				document.getElementById('map').classList.add('loading');
 				console.log('Begin to get data from server.');
@@ -49,7 +50,17 @@ const userpanel = new Vue({
 					let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
 					valScales['type'] = typeval;
 
-					mapins.mapgridCDrawing(res, valScales)
+					if (typeval === 'entropy') {
+						mapins.maplegendDrawing(typeval, self.components.eSlider.value)
+					} else {
+						mapins.maplegendDrawing(typeval, self.components.dSlider.value)
+					}
+					
+					if (self.selections.contourmap) {
+						mapins.mapcontourCDrawing(res, valScales);
+					} else {
+						mapins.mapgridCDrawing(res, valScales);
+					}
 				}).catch(function(err) {
 					console.error("Failed!", err);
 				});
@@ -57,34 +68,8 @@ const userpanel = new Vue({
 				alert('Beijing is not available now, please try another region and update again.')
 			}
 		},
-		// 'getDensityOverview': function() {
-		// 	let city = this.selections.city
-		// 	if (city !== 'bj') {
-		// 		let self = this
-				
-		// 		mapins.panTo( regionRecords[city]['center'] );
-
-		// 		document.getElementsByTagName('body')[0].classList.add('loading');
-		// 		getOverview(self.selections).then(function(res) {
-		// 			document.getElementsByTagName('body')[0].classList.remove('loading');
-		// 			self.params.scales.entropy = res['prop']['emax'];
-		// 			self.params.scales.density = res['prop']['dmax'];
-
-		// 			let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
-		// 			valScales['type'] = 'density';
-
-		// 			mapins.mapgridCDrawing(res, valScales)
-		// 		}).catch(function(err) {
-		// 			console.error("Failed!", err);
-		// 		});
-		// 	} else {
-		// 		alert('Beijing are not available now, please try another region and update again.')
-		// 	}
-		// },
-		// 'regionImgUrl': function(city) {
-		// 	return `/assets/${city}-icon.png`
-		// },
 		'updateSelectRegion': function(val) {
+			// mapins.maplegendDrawing();
 			for (let i = this.params.regions.length - 1; i >= 0; i--) {
 				if (this.params.regions[i].val !== val) {
 					this.params.regions[i].active = false;
@@ -96,23 +81,6 @@ const userpanel = new Vue({
 
 			this.selections.city = val;
 		},
-		// 'isActive': function(val) {
-		// 	if (val === this.selections.city) {
-		// 		return 'selectedregion'
-		// 	} else {
-		// 		return ''
-		// 	}
-		// },
-		// 'isRangeValid': function() {
-		// 	if (this.selections.eVal.min >= this.selections.eVal.max) {
-		// 		alert('The minVal should not be larger than maxVal. Please do it again.');
-		// 		this.selections.eVal.min = 0
-		// 		this.selections.eVal.max = 1
-		// 		return false;
-		// 	}
-
-		// 	return true;
-		// },
 		'computedSlider': function(type) {
 			let self = this,
 				v = this.components.eSlider.value;
@@ -124,7 +92,11 @@ const userpanel = new Vue({
 
 			let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
 
-			mapins.mapgridCDrawing({}, valScales, true);
+			if (self.selections.contourmap) {
+				mapins.mapcontourCDrawing({}, valScales, true);
+			} else {
+				mapins.mapgridCDrawing({}, valScales, true);
+			}
 		}
 	},
 	// computed: {
@@ -137,16 +109,14 @@ const userpanel = new Vue({
 	watch: {
 		'components.slider.value': {
 			handler: function(val, OldVal) {
-				// let v = this.components.slider.value;
-				// document.getElementById('rangeSlider').getElementsByClassName('vue-slider')[0].style.background = '-webkit-repeating-linear-gradient(white, white ${v[0]}%, red ${v[1]}%, red 100%)';
-				// $('#rangeSlider .vue-slider').css('background', '-webkit-repeating-linear-gradient(white, white ${this.params.range.val[0]}%, red ${val}%, red 100%)');
+				
 			},
 			deep: true
 		}
 	},
 	mounted() {
 		this.$nextTick(function () {
-			// this.getEntropyOverview();
+			mapins.maplegendDrawing();
 		})
 	}
 })

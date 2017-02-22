@@ -46,8 +46,16 @@
 			</div>
 
 			<div class="inline fields">
-				<button class="ui tiny primary button" v-on:click="getOverview('entropy')">Display Entropy</button>
-				<button class="ui tiny primary button" v-on:click="getOverview('density')">Display Density</button>
+				<div class="field">
+					<button class="ui tiny primary button" v-on:click="getOverview('entropy')">Entropy</button>
+					<button class="ui tiny primary button" v-on:click="getOverview('density')">Density</button>
+				</div>
+				<div class="field">
+					<div class="ui checkbox">
+					  <input type="checkbox" name="heatmaptype" v-model='selections.contourmap'>
+					  <label>ContourMap: {{selections.contourmap}}</label>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
