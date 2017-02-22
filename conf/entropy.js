@@ -171,16 +171,12 @@ function getOverview(conn, prop) {
 				// result[1]: Entropy list
 				console.log('eval type: ', typeof result[0][0]['eval']);
 
-				let DATA = [], 
-					// minVal = 0.0,
-					// maxVal = result[0][0]['val'],
+				let DATA = [],
 					SPLIT = 0.003,
 					centerincrement = 0.0015,//.toFixed(4),
 					locs = data.getRegionBound(city),
 					elist = result[1],
 					reslen = elist.length
-					// emin = minVal+maxVal*Number.parseFloat(prop['emin']),
-					// emax = minVal+maxVal*Number.parseFloat(prop['emax'])
 
 				for (let i = elist.length - 1; i >= 0; i--) {
 					// 清楚熵值不符合的 grids
@@ -213,7 +209,8 @@ function getOverview(conn, prop) {
 						"id" : id, 
 						"properties" : {
 							'entropy': parseFloat(elist[i]['eval']),
-							'density': parseInt(elist[i]['dval'])
+							'density': parseInt(elist[i]['dval']),
+							'center': [lngcen, latcen]
 						}
 					}) 
 				}

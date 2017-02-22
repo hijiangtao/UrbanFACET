@@ -12,6 +12,7 @@ import L from './map'
 import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js'
 import * as d3 from 'd3'
 import {legendColor} from 'd3-svg-legend'
+import {getSubGrids} from './apis'
 
 // 临时变量 
 import $ from "jquery"
@@ -28,7 +29,7 @@ class mapview {
 	  this.id = id
 	  this.baseLayer = L.tileLayer(
 		'https://api.mapbox.com/styles/v1/{id}/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
-		  attribution: 'Living-Modes-Visual-Comparison 2016 &copy; ISCAS VIS',
+		  attribution: 'Urban Mobility Map 2016-2017 &copy; ISCAS VIS',
 		  maxZoom: 18,
 		  id: 'hijiangtao',
 		  accessToken: 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'
@@ -184,6 +185,13 @@ class mapview {
 		}
 	}
 
+	/**
+	 * Canvas Drawing Function
+	 * @param  {[type]} data   [description]
+	 * @param  {[type]} idlist [description]
+	 * @param  {[type]} legend [description]
+	 * @return {[type]}        [description]
+	 */
 	pointmapCDrawing(data, idlist, legend) {
 		const LEDINTERVAL = 20,
 			  RADIUS = 1,
@@ -649,6 +657,81 @@ class mapview {
 	}
 
 	/**
+	 * 用 canvas 实现的分割的 Gridmap 绘制方法
+	 * @param  {[type]}  data   [description]
+	 * @param  {[type]}  prop   [description]
+	 * @param  {Boolean} update [description]
+	 * @return {[type]}         [description]
+	 */
+	mapgridSplitCDrawing(data, prop, update=false) {
+		let self = this;
+		// update为false表示当前执行重绘操作, update为true则从实例中调用历史数据进行绘制
+		if (!update) {
+			this.setGridData(data);
+			this.setGridDataType(prop['type']);
+		} else {
+			data = this.getGridData();
+			prop['type'] = this.getGridDataType();
+		}
+
+		let drawtype = prop['type'],
+			resprop = data['prop']
+
+		// updated color scale
+		let begVal = 0,
+			minVal = prop[drawtype]['min'],
+			maxVal = prop[drawtype]['max'],
+			endVal = prop[drawtype]['scales'],
+			interval = maxVal - minVal,
+			colordomain = [minVal, maxVal, endVal],
+			colorrange = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgba(255,0,0,1)']
+
+		let color = d3.scaleLinear().domain(colordomain).range(colorrange);
+
+		this.removecanvas();
+
+		console.log('Begin to draw gridmap based on received data.');
+		console.time('DRAWING');
+        let drawingOnCanvas = function(canvasOverlay, params) {
+			let ctx = params.canvas.getContext('2d');
+            ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
+
+            let len = data.features.length
+            for (let i = 0; i < len; i++) {
+            	let feature = data.features[i],
+            		poly = feature.geometry.coordinates[0],
+            		center = feature['properties']['center'],
+            		evalue = feature['properties']['entropy'],
+            		dvalue = feature['properties']['density']
+
+            	if (evalue < prop['entropy']['min'] || dvalue < prop['density']['min']) {
+            		continue;
+            	}
+
+                if (params.bounds.contains([poly[0][1], poly[0][0]])) {
+                    let subgrids = getSubGrids(poly, center, 4)
+
+                    for (let subind = subgrids.length - 1; subind >= 0; subind--) {
+                    	// 
+                    	let nw = canvasOverlay._map.latLngToContainerPoint(subgrids[subind]['nw']),
+	                    	se = canvasOverlay._map.latLngToContainerPoint(subgrids[subind]['se']);
+	                    ctx.fillStyle = color(feature['properties'][drawtype] * (1+Math.random()*0.3)),
+	                    ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
+
+                    	subgrids[subind]
+                    }
+                }
+            }
+		}
+
+		console.log('Finished gridmap drawing.');
+		console.timeEnd('DRAWING');
+		L.canvasOverlay()
+            .drawing(drawingOnCanvas)
+            .addTo(self.map);
+	}
+
+	/**
 	 * 绘制地图中的参考图标
 	 * @param  {String} title [description]
 	 * @param  {Array}  scale [description]
@@ -774,13 +857,6 @@ class mapview {
 	}
 
 	removeheatmap() {
-		// let canvas = document.getElementsByClassName('heatmap-canvas')[0]
-		// if (canvas) {
-		// 	canvas.parentNode.removeChild(canvas)
-		// }
-		// 
-		
-		
 		let obj = $('.leaflet-overlay-pane .leaflet-zoom-hide')
 		if (obj) {
 			obj.remove();

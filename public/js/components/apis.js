@@ -23,6 +23,26 @@ let getValRange = function(scales, esels, dsels) {
 	}
 };
 
+let getSubGrids = function(poly, center, num=4) {
+	if (num === 4) {
+		return [
+			{
+				'nw': [center[1], poly[0][0]],
+				'se': [poly[0][1], center[0]]
+			},{
+				'nw': [center[1], center[0]],
+				'se': [poly[1][1], poly[1][0]]
+			},{
+				'nw': [poly[2][1], center[0]],
+				'se': [center[1], poly[2][0]]
+			},{
+				'nw': [poly[3][1], poly[3][0]],
+				'se': [center[1], center[0]]
+			},
+		]
+	}
+};
+
 let getOverviewDatasets = function(sels) {
 	let city = sels.city,
 		etype = sels.etype,
@@ -70,5 +90,6 @@ let getDensity = function(sels) {
 export {
 	getOverviewDatasets,
 	getDensity,
-	getValRange
+	getValRange,
+	getSubGrids
 }

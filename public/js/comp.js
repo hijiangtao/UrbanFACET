@@ -58,6 +58,8 @@ const userpanel = new Vue({
 					
 					if (self.selections.contourmap) {
 						mapins.mapcontourCDrawing(res, valScales);
+					} else if (self.selections.splitgridmap) {
+						mapins.mapgridSplitCDrawing(res, valScales);
 					} else {
 						mapins.mapgridCDrawing(res, valScales);
 					}
@@ -94,6 +96,8 @@ const userpanel = new Vue({
 
 			if (self.selections.contourmap) {
 				mapins.mapcontourCDrawing({}, valScales, true);
+			} else if (self.selections.splitgridmap) {
+				mapins.mapgridSplitCDrawing({}, valScales, true);
 			} else {
 				mapins.mapgridCDrawing({}, valScales, true);
 			}
