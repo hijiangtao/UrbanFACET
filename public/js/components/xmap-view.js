@@ -796,7 +796,10 @@ class mapview {
 		// updated color scale
 		let minVal = prop[drawtype]['min'],
 			maxVal = prop[drawtype]['max'];
-		hdata.max = maxVal
+		hdata.max = prop[drawtype]['scales'];
+
+		let maxRate = (maxVal/hdata.max).toString(),
+			minRate = (minVal/hdata.max).toString();
 
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
@@ -820,7 +823,7 @@ class mapview {
 
 			hdata.data.push({'lat': center[1], 'lng': center[0], 'count': val})
 		}
-		console.log('countVal: ', countVal.length);
+		console.log('countVal: ', countVal);
 
 		let cfg = {
 		  // radius should be small ONLY if scaleRadius is true (or small radius is intended)
@@ -830,9 +833,10 @@ class mapview {
 		  // scales the radius based on map zoom
 		  "scaleRadius": true, 
 		  // if set to false the heatmap uses the global maximum for colorization
-		  // if activated: uses the data maximum within the current map boundaries 
+		  // if activated: uses the data maximum within the current map boundaries
+
 		  //   (there will always be a red spot with useLocalExtremas true)
-		  "useLocalExtrema": false,
+		  "useLocalExtrema": prop['useLocalExtrema'],
 		  // which field name in your data represents the latitude - default "lat"
 		  "latField": 'lat',
 		  // which field name in your data represents the longitude - default "lng"
@@ -840,6 +844,21 @@ class mapview {
 		  // which field name in your data represents the data value - default "value"
 		  "valueField": 'count'
 		};
+
+		console.log('minRate', minRate);
+		if (!prop['multiColorSchema']) {
+			cfg.gradient = {
+				// enter n keys between 0 and 1 here
+				// for gradient color customization
+				'1': 'red'
+			}
+			cfg.gradient[minRate] = 'white';
+			if (maxRate !== '1') {
+				cfg.gradient[maxRate] = 'red';
+			}
+
+		}
+		
 		let heatmapLayer = new HeatmapOverlay(cfg);
 
 		this.map.addLayer(heatmapLayer);

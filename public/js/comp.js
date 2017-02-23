@@ -18,6 +18,11 @@ import vueSlider from 'vue-slider-component'
 
 // Vue.use(Vuex)
 
+if (typeof(Storage) === undefined) {
+    alert('Please Update your browser to support localStorage');
+}
+
+
 let mapins = new mapview('map');
 
 const userpanel = new Vue({
@@ -49,6 +54,8 @@ const userpanel = new Vue({
 					
 					let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
 					valScales['type'] = typeval;
+					valScales['multiColorSchema'] = self.selections.multiColorSchema;
+					valScales['useLocalExtrema'] = self.selections.useLocalExtrema;
 
 					if (typeval === 'entropy') {
 						mapins.maplegendDrawing(typeval, self.components.eSlider.value)
@@ -93,6 +100,8 @@ const userpanel = new Vue({
 			document.getElementById(`${type}Slider`).getElementsByClassName('vue-slider')[0].style.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
 
 			let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
+			valScales['multiColorSchema'] = self.selections.multiColorSchema;
+			valScales['useLocalExtrema'] = self.selections.useLocalExtrema;
 
 			if (self.selections.contourmap) {
 				mapins.mapcontourCDrawing({}, valScales, true);

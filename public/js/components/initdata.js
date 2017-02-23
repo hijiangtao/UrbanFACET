@@ -46,6 +46,8 @@ let comp = {
         'initialstate': true,
         'displaytype': '', // 存储 entropy 或者 density, 用于存储当前绘制图形的含义
         'contourmap': false,
+        'multiColorSchema': true,
+        'useLocalExtrema': false,
         'splitgridmap': false
     },
     'components': {

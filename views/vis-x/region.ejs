@@ -1,8 +1,54 @@
 <div class="ui grid">
-	<div id="" class="sixteen wide column">
-		<h4 class="vtitle"><i class="right angle icon divider"></i>Data and Parameters</h4>
+	<div id="floatpanel">
+		<div class="sixteen wide column">
+			<h4 class="vtitle"><i class="right angle icon divider"></i>Analysis Objects</h4>
+			<h4 class="vtitle"><i class="plus square outline icon"></i></h4>
+		</div>
+
+		<div class="sixteen wide column">
+			<div class="ui cards">
+			  <div class="card">
+			    <div class="content">
+			      
+			      <div class="header">
+			        Elliot Fu
+			      </div>
+			      <div class="meta">
+			        Friends of Veronika
+			      </div>
+			      <div class="description">
+			        Elliot requested permission to view your contact details
+			      </div>
+			    </div>
+			    <div class="extra content">
+			      <div class="ui basic red button">Decline</div>
+			    </div>
+			  </div>
+			  <div class="card">
+			    <div class="content">
+			      
+			      <div class="header">
+			        Elliot Fu
+			      </div>
+			      <div class="meta">
+			        Friends of Veronika
+			      </div>
+			      <div class="description">
+			        Elliot requested permission to view your contact details
+			      </div>
+			    </div>
+			    <div class="extra content">
+			      <div class="ui basic red button">Decline</div>
+			    </div>
+			  </div>
+			</div>
+		</div>
 	</div>
-	<div class="sixteen wide column">
+
+	<div id="" class="sixteen wide column">
+		<div class="ui row">
+			<h4 class="vtitle"><i class="right angle icon divider"></i>Data and Parameters</h4>
+		</div>
 		<div class="ui form">
 			<div class="inline fields">
 				<label>Regions</label>
@@ -14,7 +60,7 @@
 					
 				</div>
 			</div>
-			<div class="ui divider"></div>
+			<!-- <div class="ui divider"></div> -->
 			<div class="inline fields">
 				<label>Calculation Type</label>
 				<div v-for="item in params.ctypes" class="field">
@@ -46,32 +92,43 @@
 			</div>
 
 			<div class="inline fields">
-				<div class="field">
-					<button class="ui tiny primary button" v-on:click="getOverview('entropy')">Entropy</button>
-					<button class="ui tiny primary button" v-on:click="getOverview('density')">Density</button>
+				<div class="ui fluid buttons">
+					<button class="ui tiny primary button" v-on:click="getOverview('entropy')">Display Entropy</button>
+					<button class="ui tiny primary button" v-on:click="getOverview('density')">Display Density</button>
 				</div>
+			</div>
+
+			<div class="inline fields">
 				<div class="field">
 					<div class="ui checkbox">
 					  <input type="checkbox" name="heatmaptype" v-model='selections.contourmap'>
 					  <label>Contour</label>
 					</div>
 				</div>
+				<div v-show="selections.contourmap" class="field">
+					<div class="ui toggle checkbox">
+					  <input type="checkbox" name="multiColorSchema" v-model="selections.multiColorSchema">
+					  <label>Multicolor Schema</label>
+					</div>
+				</div>
 				<div class="field">
 					<div class="ui checkbox">
 					  <input type="checkbox" name="gridmaptype" v-model='selections.splitgridmap'>
-					  <label>Subgrid</label>
+					  <label>Subgrid(4)</label>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div id="" class="sixteen wide column">
-		<h4 class="vtitle"><i class="right angle icon divider"></i>Filters (LOG)</h4>
+		<div class="ui divider"></div>
 	</div>
 
 	<div v-if="!selections.initialstate" class="sixteen wide column">
-		<div class="ui grid">
+		<div class="ui row">
+			<h4 class="vtitle"><i class="right angle icon divider"></i>Filters (LOG)</h4>
+		</div>
+
+		<div class="ui row">
 			<div class="four wide column">EntropyFilter</div>
 			<div class="twelve wide column">
 				<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="computedSlider('e')" v-model="components.eSlider.value"></vue-slider>
