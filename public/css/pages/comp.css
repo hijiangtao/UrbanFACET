@@ -52,6 +52,7 @@ body {
     position: absolute;
     left: 26vw;
     padding: 1rem;
+    margin-top: 6rem;
     /*width: 20vw;*/
     z-index: 9999;
     background-color: rgba(255,255,255,0.8);
