@@ -180,7 +180,7 @@ def usage():
 
 def main(argv):
 	try:
-		opts, args = getopt.getopt(argv, "hc:d:n:m:", ["help", "city=", 'directory=', 'number=', 'mode=', 'timeperiod='])
+		opts, args = getopt.getopt(argv, "hc:d:n:m:t:", ["help", "city=", 'directory=', 'number=', 'mode=', 'timeperiod=', 'timeperiod='])
 	except getopt.GetoptError as err:
 		print str(err)
 		usage()
