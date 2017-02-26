@@ -331,7 +331,7 @@ def mergeMatrixFiles(city, GRIDSNUM):
 
 	print "%d lines into matrix res-xxx file" % GRIDSNUM
 
-def help():
+def usage():
 	print "Not Yet."
 
 def main(argv):

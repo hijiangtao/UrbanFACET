@@ -175,6 +175,9 @@ def mergeMatrixFiles(city, GRIDSNUM, timeperiod, filename='resrec'):
 
 	print "%d lines into matrix %s-xxx file" % (GRIDSNUM, filename)
 
+def usage():
+	print "Not Yet."
+
 def main(argv):
 	try:
 		opts, args = getopt.getopt(argv, "hc:d:n:m:", ["help", "city=", 'directory=', 'number=', 'mode=', 'timeperiod='])
@@ -184,7 +187,7 @@ def main(argv):
 		sys.exit(2)
 
 	# 处理输入参数
-	city, directory, number, mode = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 999, 'all'
+	city, directory, number, timeperiod, mode = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 999, 0, 'all'
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
