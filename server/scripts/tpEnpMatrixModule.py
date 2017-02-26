@@ -283,14 +283,14 @@ def help():
 def main(argv):
 	# 输入参数对照列表
 	try:
-		opts, args = getopt.getopt(argv, "hc:d:n:t:", ["help", "city=", 'directory=', 'number=', 'time='])
+		opts, args = getopt.getopt(argv, "hc:d:n:t:", ["help", "city=", 'directory=', 'number=', 'timeperiod='])
 	except getopt.GetoptError as err:
 		print str(err)
 		usage()
 		sys.exit(2)
 
 	# 处理输入参数
-	city, directory, number, time = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 999, 0
+	city, directory, number, timeperiod = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 999, 0
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
@@ -301,7 +301,7 @@ def main(argv):
 			directory = arg
 		elif opt in ('-n', '--number'):
 			number = int(arg)
-		elif opt in ('-t', '--time'):
+		elif opt in ('-t', '--timeperiod'):
 			timeperiod = int(arg)
 
 	STARTTIME = time.time()
