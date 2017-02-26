@@ -72,3 +72,51 @@ def getPeopleTPEnpFromFile(file, disnum):
 	stream.close()
 
 	return res
+
+def getPeopleDTEnpFromFile(file, disnum):
+	"""从 distribution 文件恢复 tdid Entropy 分布, 用于计算 record entropy (daytype 数据)
+	
+	Args:
+	    file (TYPE): Description
+	    disnum (TYPE): Description
+	
+	Returns:
+	    TYPE: Description
+	"""
+	res, disEndInd = {}, 24 + disnum
+	with open(file, 'rb') as stream:
+		for each in stream:
+			line = each.split(',')
+			res[ line[0] ] = {
+				't1': np.array([float(line[x]) for x in xrange(6,17)]),
+				't2': np.array([float(line[x]) for x in xrange(17,24)]),
+				't3': np.array([float(line[x]) for x in xrange(24, disEndInd)]),
+				'prop': {
+					'wnum': int(line[5]),
+					'vnum': int(line[4])
+				}
+			}
+	stream.close()
+
+	return res
+
+def filterByDaytype(val, type):
+	"""根据 daytype 值判断当前记录是否符合 filter 条件,返回 Boolean 值, 7表示工作日, 8表示周末
+	
+	Args:
+	    val (TYPE): Description
+	    type (TYPE): Description
+	
+	Returns:
+	    TYPE: Description
+	"""
+	if type == 7:
+		if val == 0 or val == 6:
+			return true
+		else:
+			return false
+	elif type == 8:
+		if val > 0 and val < 6:
+			return true
+		else:
+			return false

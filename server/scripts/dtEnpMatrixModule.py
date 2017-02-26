@@ -18,7 +18,7 @@ from CommonFunc import getCityDisInfo
 from CommonFunc import connectMongo
 from multiprocessing import Process, Manager, Value, Array, Lock
 from ctypes import c_wchar_p
-from entropy.grids import getGridsFromMongo
+from entropy.grids import getGridsFromMongo, filterByDaytype
 pLock = Lock()
 
 class dtEnpMatrixModule(object):
@@ -216,27 +216,6 @@ class dtEnpMatrixModule(object):
 				# 'nsum': 0
 			}
 		}
-
-def filterByDaytype(val, type):
-	"""根据 daytype 值判断当前记录是否符合 filter 条件,返回 Boolean 值, 7表示工作日, 8表示周末
-	
-	Args:
-	    val (TYPE): Description
-	    type (TYPE): Description
-	
-	Returns:
-	    TYPE: Description
-	"""
-	if type == 7:
-		if val == 0 or val == 6:
-			return true
-		else:
-			return false
-	elif type == 8:
-		if val > 0 and val < 6:
-			return true
-		else:
-			return false
 
 def processTask(PROP, DATA):
 	task = dtEnpMatrixModule(PROP, DATA)
