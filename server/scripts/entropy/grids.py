@@ -21,6 +21,15 @@ def getGridsFromMongo(city, db):
 	return gridsData, validIDs
 
 def getPeopleEntropyFromFile(file, disnum):
+	"""从 distribution 文件恢复 tdid Entropy 分布, 用于计算 record entropy (全量数据)
+	
+	Args:
+	    file (TYPE): Description
+	    disnum (TYPE): Description
+	
+	Returns:
+	    TYPE: Description
+	"""
 	res, disEndInd = {}, 31 + disnum
 	with open(file, 'rb') as stream:
 		for each in stream:
@@ -32,6 +41,32 @@ def getPeopleEntropyFromFile(file, disnum):
 				'prop': {
 					'wnum': int(line[5]),
 					'vnum': int(line[4])
+				}
+			}
+	stream.close()
+
+	return res
+
+def getPeopleTPEnpFromFile(file, disnum):
+	"""从 distribution 文件恢复 tdid Entropy 分布, 用于计算 record entropy (timeperiod 数据)
+	
+	Args:
+	    file (TYPE): Description
+	    disnum (TYPE): Description
+	
+	Returns:
+	    TYPE: Description
+	"""
+	res, disEndInd = {}, 16 + disnum
+	with open(file, 'rb') as stream:
+		for each in stream:
+			line = each.split(',')
+			res[ line[0] ] = {
+				't1': np.array([float(line[x]) for x in xrange(5,16)]),
+				't3': np.array([float(line[x]) for x in xrange(16, disEndInd)]),
+				'prop': {
+					'wnum': int(line[4]),
+					'vnum': int(line[3])
 				}
 			}
 	stream.close()
