@@ -83,6 +83,9 @@ body {
     padding-bottom: 0;
 }
 
+.ui.grid {
+    margin-top: 0;
+}
 /*.ui.button {
     padding: 0.385714em 0.7em;
 }*/

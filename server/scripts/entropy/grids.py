@@ -112,11 +112,11 @@ def filterByDaytype(val, type):
 	"""
 	if type == 7:
 		if val == 0 or val == 6:
-			return true
+			return True
 		else:
-			return false
+			return False
 	elif type == 8:
 		if val > 0 and val < 6:
-			return true
+			return True
 		else:
-			return false
+			return False
