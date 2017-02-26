@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Date    : 2017-02-08 18:55:01
+# @Date    : 2017-02-26 09:37:45
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
@@ -21,10 +21,10 @@ from ctypes import c_wchar_p
 from entropy.grids import getGridsFromMongo
 pLock = Lock()
 
-class EntropyMatrixModule(object):
-	"""docstring for EntropyMatrixModule"""
+class tpEnpMatrixModule(object):
+	"""docstring for tpEnpMatrixModule"""
 	def __init__(self, PROP, DATA):
-		super(EntropyMatrixModule, self).__init__()
+		super(tpEnpMatrixModule, self).__init__()
 		self.FILENUM = PROP['FILENUM']
 		self.INDEX = PROP['INDEX']
 		self.DIRECTORY = PROP['DIRECTORY']
@@ -34,16 +34,17 @@ class EntropyMatrixModule(object):
 		self.CITY = PROP['CITY']
 		self.CITYDISNUM = PROP['CITYDISNUM']
 		self.CITYDISIND = PROP['CITYDISIND']
+		self.TIMEPERIOD = PROP['TIMEPERIOD']
 		self.starttime = time.time()
 		
 		# self.EMATRIX = DATA['EMATRIX']
 		# all string in EMATRIX
-		self.EMATRIX = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, PROP['GRIDSNUM'])])
+		self.EMATRIX = np.array([np.array([x, 0, 0, 0.0, 0.0]) for x in xrange(0, PROP['GRIDSNUM'])])
 
 	def run(self):
 		logging.info('TASK-%d running in %s' % (self.INDEX, (time.time()-self.starttime)))
 		# print 'TASK-%d running in %s' % (self.INDEX, (time.time()-self.starttime))
-		ofilename = 'respeo-%03d' % self.INDEX
+		ofilename = 't%d-respeo-%03d' % (self.TIMEPERIOD, self.INDEX)
 
 		idcoldir = os.path.join(self.DIRECTORY, 'records/idcollection', self.CITY )
 		entropyfile = os.path.join(self.DIRECTORY, 'entropy/matrix', self.CITY, ofilename)
@@ -89,11 +90,15 @@ class EntropyMatrixModule(object):
 			for line in stream:
 				dictlist = line.strip('\n').split(',')
 				devid = dictlist[0]
-				devday = dictlist[3]
-				devperiod = int( dictlist[4] )
+				devday = dictlist[3] # 存储的星期几信息
+				devperiod = int( dictlist[4] ) # 存储的时间段信息 (指一天内)
 				devdis = int(dictlist[5])
 				devStrGID = dictlist[6]
 				devIntGID = int( devStrGID )
+
+				# 如果当天时间段没有对上则跳过该记录
+				if devperiod != self.TIMEPERIOD:
+					continue
 
 				if devid not in idlist:
 					# 初始化设备的熵计算对象
@@ -112,13 +117,6 @@ class EntropyMatrixModule(object):
 					if devStrGID in self.validIDs:
 						eobjs[ devid ][ 't1' ][ 'plist' ] = np.add(eobjs[ devid ][ 't1' ][ 'plist' ], self.gridsData[ devStrGID ]) 
 						eobjs[ devid ][ 't1' ][ 'vsum' ] += 1
-					
-				# 处理 TimePeriod 熵
-				dayIndex = 0
-				if devday == '0' or devday == '6':
-					dayIndex = 7
-				eobjs[ devid ][ 't2' ][ 'nlist' ][ dayIndex+devperiod ] += 1
-				eobjs[ devid ][ 't2' ][ 'nsum' ] += 1
 
 				# 处理 行政区划 熵
 				eobjs[ devid ][ 't3' ][ 'nlist' ][ devdis-self.CITYDISIND ] += 1
@@ -131,16 +129,12 @@ class EntropyMatrixModule(object):
 			if eobjs[ each ][ 't1' ][ 'psum' ] != 0.0:
 				eobjs[ each ][ 't1' ][ 'plist' ] = np.divide(eobjs[ each ][ 't1' ][ 'plist' ], eobjs[ each ][ 't1' ][ 'psum' ])
 
-			eobjs[ each ][ 't2' ][ 'nsum' ] = np.sum(eobjs[ each ][ 't2' ][ 'nlist' ])
-			eobjs[ each ][ 't2' ][ 'nlist' ] = np.divide(eobjs[ each ][ 't2' ][ 'nlist' ], float(eobjs[ each ][ 't2' ][ 'nsum' ]))
-
-			eobjs[ each ][ 't3' ][ 'nlist' ] = np.divide(eobjs[ each ][ 't3' ][ 'nlist' ], float(eobjs[ each ][ 't2' ][ 'nsum' ]))
+			eobjs[ each ][ 't3' ][ 'nsum' ] = np.sum(eobjs[ each ][ 't3' ][ 'nlist' ])
+			eobjs[ each ][ 't3' ][ 'nlist' ] = np.divide(eobjs[ each ][ 't3' ][ 'nlist' ], float(eobjs[ each ][ 't3' ][ 'nsum' ]))
 
 			# POI
 			if eobjs[ each ][ 't1' ][ 'psum' ] != 0.0:
 				eobjs[each]['t1']['val'] = sc.entropy( eobjs[ each ][ 't1' ][ 'plist' ] )
-			# TIME PERIODS
-			eobjs[each]['t2']['val'] = sc.entropy( eobjs[ each ][ 't2' ][ 'nlist' ] )
 			# ADMIN
 			eobjs[each]['t3']['val'] = sc.entropy( eobjs[ each ][ 't3' ][ 'nlist' ] )
 
@@ -160,8 +154,7 @@ class EntropyMatrixModule(object):
 				einvalidnumlist[ devIntGID ] += 1
 			else:
 				self.EMATRIX[ devIntGID ][3] += eobjs[ devid ]['t1']['val']
-			self.EMATRIX[ devIntGID ][4] += eobjs[ devid ]['t2']['val']
-			self.EMATRIX[ devIntGID ][5] += eobjs[ devid ]['t3']['val']
+			self.EMATRIX[ devIntGID ][4] += eobjs[ devid ]['t3']['val']
 
 		# entropy-matrix 记录数更新
 		for x in xrange(0, self.GRIDSNUM):
@@ -175,15 +168,15 @@ class EntropyMatrixModule(object):
 		res.close()
 
 	def aggregate(self, id, obj):
-		valStr = id + ',' + str(obj['t1']['val']) + ',' + str(obj['t2']['val']) + ',' + str(obj['t3']['val']) + ',' + str(obj['t1']['vsum']) + ',' + str(obj['t2']['nsum'])
-		tArrStr = ','.join([str(each) for each in obj['t1']['plist']]) + ',' + ','.join([str(each) for each in obj['t2']['nlist']]) + ',' + ','.join([str(each) for each in obj['t3']['nlist']])
+		valStr = id + ',' + str(obj['t1']['val']) + ',' + str(obj['t3']['val']) + ',' + str(obj['t1']['vsum']) + ',' + str(obj['t3']['nsum'])
+		tArrStr = ','.join([str(each) for each in obj['t1']['plist']]) + ',' + ','.join([str(each) for each in obj['t3']['nlist']])
 		return valStr + ',' + tArrStr + '\n'
 
 	def ematrixToStr(self, data):
 		datalen = self.GRIDSNUM
 		resStr = []
 		for x in xrange(0, datalen):
-			resStr.append( ','.join(str(int(data[x][e])) for e in xrange(0,3)) + ',' + ','.join(str(data[x][e]) for e in xrange(3,9)) )
+			resStr.append( ','.join(str(int(data[x][e])) for e in xrange(0,3)) + ',' + ','.join(str(data[x][e]) for e in xrange(3,5)) )
 
 		return '\n'.join(resStr)
 
@@ -196,39 +189,27 @@ class EntropyMatrixModule(object):
 				'psum': 0, # POI 概率分布总和
 				'vsum': 0 # 有效的记录数 (以 valid grid 为准)
 			},
-			't2': {
-				'val': -1, # 熵
-				# 'plist': [0 for x in xrange(0,14)],
-				'nlist': np.array([0 for x in xrange(0,14)]), #不同时间段的定位次数
-				# 'psum': 0,
-				'nsum': 0 # 总记录数
-			},
+			# 't2': {
+			# 	'val': -1, # 熵
+			# 	# 'plist': [0 for x in xrange(0,14)],
+			# 	'nlist': np.array([0 for x in xrange(0,14)]), #不同时间段的定位次数
+			# 	# 'psum': 0,
+			# 	'nsum': 0 # 总记录数
+			# },
 			't3': {
 				'val': -1, # 熵
 				# 'plist': [0 for x in xrange(0, self.CITYDISNUM)],
 				'nlist': np.array([0 for x in xrange(0, self.CITYDISNUM)]), # 不同区划的定位次数
 				# 'psum': 0,
-				# 'nsum': 0
+				'nsum': 0 # 总记录数
 			}
 		}
 
 def processTask(PROP, DATA):
-	task = EntropyMatrixModule(PROP, DATA)
+	task = tpEnpMatrixModule(PROP, DATA)
 	task.run()
 
-# def getGridsFromMongo(city, db):
-# 	res = list( db['grids_%s' % city].find({"properties.vecvalid": True }, {"properties.uid": 1, "properties.vec": 1}) )
-# 	gridsData, validIDs = {}, []
-# 	reslen = len(res)
-# 	for x in xrange(0, reslen):
-# 		id = str(res[x]['properties']['uid'])
-# 		vec = np.array(res[x]['properties']['vec'], dtype='f')
-# 		gridsData[ id ] = vec
-# 		validIDs.append(id)
-
-# 	return gridsData, validIDs
-
-def mergeDistributionFiles(city):
+def mergeDistributionFiles(city, TIMEPERIOD):
 	"""将不同 ID 的熵信息以及其他档案合并至一个文件,简单追加即并没有涉及复杂操作
 	
 	Args:
@@ -238,14 +219,14 @@ def mergeDistributionFiles(city):
 	    TYPE: Description
 	"""
 	baseurl = '/home/tao.jiang/datasets/JingJinJi/entropy/distribution'
-	file = os.path.join(baseurl, city, 'respeo-xxx')
+	file = os.path.join(baseurl, city, 't%d-respeo-xxx' % TIMEPERIOD)
 	number = 0
 
 	with open(file, 'ab') as res:
 		for x in xrange(0,20):
 			# 
 			onefile = []
-			with open(os.path.join(baseurl, city, 'respeo-%03d' % x), 'rb') as stream:
+			with open(os.path.join(baseurl, city, 't%d-respeo-%03d' % (TIMEPERIOD, x)), 'rb') as stream:
 				for each in stream:
 					onefile.append(each + '\n')
 			stream.close()
@@ -255,7 +236,7 @@ def mergeDistributionFiles(city):
 
 	print "%d lines into distribution respeo-xxx file" % (number)
 
-def mergeMatrixFiles(city, GRIDSNUM):
+def mergeMatrixFiles(city, GRIDSNUM, TIMEPERIOD):
 	"""合并 CityGrids 信息,分别读取文件,最后需将叠加的信息处理存入一个合并的文件
 	
 	Args:
@@ -265,11 +246,11 @@ def mergeMatrixFiles(city, GRIDSNUM):
 	Returns:
 	    TYPE: Description
 	"""
-	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
+	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
 	baseurl = os.path.join('/home/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
 
 	for x in xrange(0,20):
-		with open(os.path.join(baseurl, 'respeo-%03d' % x), 'rb') as stream:
+		with open(os.path.join(baseurl, 't%d-respeo-%03d' % (TIMEPERIOD, x)), 'rb') as stream:
 			for each in stream:
 				line = np.array(each.split(','), dtype='f')
 				id = int(line[0])
@@ -281,25 +262,16 @@ def mergeMatrixFiles(city, GRIDSNUM):
 	for x in xrange(0,GRIDSNUM):
 		if ematrix[x][1] == 0:
 			ematrix[x][4] = -1
-			ematrix[x][5] = -1
-			ematrix[x][7] = -1
-			ematrix[x][8] = -1
-		else:
-			ematrix[x][7] = ematrix[x][4] / ematrix[x][1]
-			ematrix[x][8] = ematrix[x][5] / ematrix[x][1]
 
 		# 处理 POI 熵
 		if ematrix[x][2] == 0.0:
 			ematrix[x][3] = -1
-			ematrix[x][6] = -1
-		else:
-			ematrix[x][6] = ematrix[x][3] / ematrix[x][2]
 
-		linestr = ','.join([str(int(ematrix[x][e])) for e in xrange(0,3)]) + ',' + ','.join([str(ematrix[x][e]) for e in xrange(3,9)]) + '\n'
+		linestr = ','.join([str(int(ematrix[x][e])) for e in xrange(0,3)]) + ',' + ','.join([str(ematrix[x][e]) for e in xrange(3,5)]) + '\n'
 		resString += linestr
 
 
-	with open(os.path.join(baseurl, 'respeo-xxx'), 'ab') as res:
+	with open(os.path.join(baseurl, 't%d-respeo-xxx' % TIMEPERIOD), 'ab') as res:
 		res.write(resString)
 	res.close()
 
@@ -311,14 +283,14 @@ def help():
 def main(argv):
 	# 输入参数对照列表
 	try:
-		opts, args = getopt.getopt(argv, "hc:d:n:", ["help", "city=", 'directory=', 'number='])
+		opts, args = getopt.getopt(argv, "hc:d:n:t:", ["help", "city=", 'directory=', 'number=', 'time='])
 	except getopt.GetoptError as err:
 		print str(err)
 		usage()
 		sys.exit(2)
 
 	# 处理输入参数
-	city, directory, number = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 999
+	city, directory, number, time = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 999, 0
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
@@ -329,6 +301,8 @@ def main(argv):
 			directory = arg
 		elif opt in ('-n', '--number'):
 			number = int(arg)
+		elif opt in ('-t', '--time'):
+			timeperiod = int(arg)
 
 	STARTTIME = time.time()
 	print "Start approach at %s" % STARTTIME
@@ -341,43 +315,44 @@ def main(argv):
 	CITYDISIND, CITYDISNUM = getCityDisInfo(city)
 
 	# @多进程运行程序 START
-	# manager = Manager()
-	# jobs = []
+	manager = Manager()
+	jobs = []
 
-	# for x in xrange(0,20):
-	# 	# time.sleep(random.random()*2)
-	# 	PROP = {
-	# 		'INDEX': x,
-	# 		'DIRECTORY': directory,
-	# 		'GRIDSNUM': GRIDSNUM,
-	# 		'CITY': city,
-	# 		'CITYDISIND': CITYDISIND,
-	# 		'CITYDISNUM': CITYDISNUM,
-	# 		'FILENUM': number
-	# 	}
+	for x in xrange(0,20):
+		# time.sleep(random.random()*2)
+		PROP = {
+			'INDEX': x,
+			'DIRECTORY': directory,
+			'GRIDSNUM': GRIDSNUM,
+			'CITY': city,
+			'CITYDISIND': CITYDISIND,
+			'CITYDISNUM': CITYDISNUM,
+			'FILENUM': number,
+			'TIMEPERIOD': timeperiod
+		}
 
-	# 	DATA = {
-	# 		'gridsData': gridsData,
-	# 		'validIDs': validIDs
-	# 	}
+		DATA = {
+			'gridsData': gridsData,
+			'validIDs': validIDs
+		}
 
-	# 	jobs.append( Process(target=processTask, args=(PROP, DATA)) )
-	# 	jobs[x].start()
+		jobs.append( Process(target=processTask, args=(PROP, DATA)) )
+		jobs[x].start()
 
-	# # 等待所有进程结束
-	# for job in jobs:
-	#     job.join()
+	# 等待所有进程结束
+	for job in jobs:
+	    job.join()
 
 	# Start to merge result files
 	MERGE = time.time()
 	print "Start merge at %s" % MERGE
-	# mergeMatrixFiles(city, GRIDSNUM)
-	mergeDistributionFiles(city)
+	mergeMatrixFiles(city, GRIDSNUM, timeperiod)
+	mergeDistributionFiles(city, timeperiod)
 	print "End merge in %s" % str(time.time() - MERGE)
 
 	ENDTIME = time.time()
 	print "End approach at %s" % ENDTIME
 
 if __name__ == '__main__':
-	logging.basicConfig(filename='logger-entropymatrixcalmodule.log', level=logging.DEBUG)
+	logging.basicConfig(filename='logger-tpenpmatrixmodule.log', level=logging.DEBUG)
 	main(sys.argv[1:])
