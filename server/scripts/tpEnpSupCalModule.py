@@ -128,7 +128,7 @@ class tpEnpSupCalModule(object):
 		return '\n'.join(resStr)
 
 def processTask(PROP, DATA):
-	file = os.path.join(PROP['DIRECTORY'], 'entropy/distribution', PROP['CITY'], 'respeo-%03d' % PROP['INDEX'])
+	file = os.path.join(PROP['DIRECTORY'], 'entropy/distribution', PROP['CITY'], 't%d-respeo-%03d' % (PROP['TIMEPERIOD'], PROP['INDEX']))
 	# disArrayNum = getCityDisInfo(PROP['CITY'])
 	DATA['record'] = getPeopleTPEnpFromFile(file, PROP['CITYDISNUM'])
 
