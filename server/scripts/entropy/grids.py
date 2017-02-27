@@ -47,6 +47,38 @@ def getPeopleEntropyFromFile(file, disnum):
 
 	return res
 
+def getFullPeopleEntropyFromFile(file, disnum):
+	"""从 distribution 文件恢复 tdid Entropy 分布, 用于计算 record entropy (全量数据, 包含 entropy values)
+	
+	Args:
+	    file (TYPE): Description
+	    disnum (TYPE): Description
+	
+	Returns:
+	    TYPE: Description
+	"""
+	res, disEndInd = {}, 31 + disnum
+	with open(file, 'rb') as stream:
+		for each in stream:
+			line = each.split(',')
+			res[ line[0] ] = {
+				't1': np.array([float(line[x]) for x in xrange(6,17)]),
+				't2': np.array([float(line[x]) for x in xrange(17,31)]),
+				't3': np.array([float(line[x]) for x in xrange(31, disEndInd)]),
+				'prop': {
+					'wnum': 0,
+					'vnum': 0
+				},
+				'val': {
+					't1': float( line[1] ),
+					't2': float( line[2] ),
+					't3': float( line[3] )
+				}
+			}
+	stream.close()
+
+	return res
+
 def getPeopleTPEnpFromFile(file, disnum):
 	"""从 distribution 文件恢复 tdid Entropy 分布, 用于计算 record entropy (timeperiod 数据)
 	
@@ -100,7 +132,7 @@ def getPeopleDTEnpFromFile(file, disnum):
 
 	return res
 
-def filterByDaytype(val, type):
+def filterByDaytype(val, type, tpVal=0):
 	"""根据 daytype 值判断当前记录是否符合 filter 条件,返回 Boolean 值, 7表示工作日, 8表示周末
 	
 	Args:
@@ -117,6 +149,11 @@ def filterByDaytype(val, type):
 			return False
 	elif type == 8:
 		if val > 0 and val < 6:
+			return True
+		else:
+			return False
+	elif type <= 6:
+		if type === tpVal:
 			return True
 		else:
 			return False
