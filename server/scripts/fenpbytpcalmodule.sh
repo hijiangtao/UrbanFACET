@@ -1,7 +1,7 @@
 
 cd /home/tao.jiang/git/living-modes-visual-comparison/server/scripts
 
-python fEnpByTPCalModule.py -c zhangjiakou -t 0
+# python fEnpByTPCalModule.py -c zhangjiakou -t 0
 python fEnpByTPCalModule.py -c zhangjiakou -t 1
 python fEnpByTPCalModule.py -c zhangjiakou -t 2
 python fEnpByTPCalModule.py -c zhangjiakou -t 3
