@@ -39,6 +39,7 @@ const userpanel = new Vue({
 				
 				self.selections.initialstate = false;
 				self.selections.displaytype = typeval;
+				self.selections.visval = typeval;
 				mapins.panTo( regionRecords[city]['center'] );
 				document.getElementById('map').classList.add('loading');
 				console.log('Begin to get data from server.');
@@ -52,23 +53,24 @@ const userpanel = new Vue({
 					self.params.scales.entropy = Math.log(res['prop']['emax']+1);
 					self.params.scales.density = Math.log(res['prop']['dmax']+1);
 					
-					let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
-					valScales['type'] = typeval;
-					valScales['multiColorSchema'] = self.selections.multiColorSchema;
-					valScales['useLocalExtrema'] = self.selections.useLocalExtrema;
+					let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value, self.selections);
 
-					if (typeval === 'entropy') {
-						mapins.maplegendDrawing(typeval, self.components.eSlider.value)
-					} else {
-						mapins.maplegendDrawing(typeval, self.components.dSlider.value)
+					// drawing legends
+					switch (typeval) {
+						case 'entropy':
+							mapins.maplegendDrawing(typeval, self.components.eSlider.value);
+							break;
+						case 'density':
+							mapins.maplegendDrawing(typeval, self.components.dSlider.value);
+							break;
+						default:
+							break;
 					}
 					
 					if (self.selections.contourmap) {
 						mapins.mapcontourCDrawing(res, valScales);
-					} else if (self.selections.splitgridmap) {
-						mapins.mapgridSplitCDrawing(res, valScales);
 					} else {
-						mapins.mapgridCDrawing(res, valScales);
+						mapins.mapgridCDrawing(res, valScales, false, self.selections.splitgridmap, false);
 					}
 				}).catch(function(err) {
 					console.error("Failed!", err);
@@ -85,7 +87,6 @@ const userpanel = new Vue({
 				} else {
 					this.params.regions[i].active = true;
 				}
-				
 			}
 
 			this.selections.city = val;
@@ -99,16 +100,24 @@ const userpanel = new Vue({
 			// console.log('v:', v);
 			document.getElementById(`${type}Slider`).getElementsByClassName('vue-slider')[0].style.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
 
-			let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value);
-			valScales['multiColorSchema'] = self.selections.multiColorSchema;
-			valScales['useLocalExtrema'] = self.selections.useLocalExtrema;
+			let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value, self.selections);
+
+			// drawing legends
+			switch (self.selections.visval) {
+				case 'entropy':
+					mapins.maplegendDrawing(typeval, self.components.eSlider.value);
+					break;
+				case 'density':
+					mapins.maplegendDrawing(typeval, self.components.dSlider.value);
+					break;
+				default:
+					break;
+			}
 
 			if (self.selections.contourmap) {
 				mapins.mapcontourCDrawing({}, valScales, true);
-			} else if (self.selections.splitgridmap) {
-				mapins.mapgridSplitCDrawing({}, valScales, true);
 			} else {
-				mapins.mapgridCDrawing({}, valScales, true);
+				mapins.mapgridCDrawing({}, valScales, true, self.selections.splitgridmap, false);
 			}
 		}
 	},
@@ -120,11 +129,29 @@ const userpanel = new Vue({
 	//     }
 	// },
 	watch: {
-		'components.slider.value': {
-			handler: function(val, OldVal) {
+		// 'components.slider.value': {
+		// 	handler: function(val, OldVal) {
 				
+		// 	},
+		// 	deep: true
+		// },
+		'selections.dtype': {
+			handler: function(val, OldVal) {
+				console.log('Value of dtype has changed.');
+				if (this.selections.initialstate) {
+					return ;
+				}
+
+				let self=this,
+					valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value, self.selections);
+
+				if (self.selections.contourmap) {
+					mapins.mapcontourCDrawing({}, valScales, true);
+				} else {
+					mapins.mapgridCDrawing({}, valScales, true, self.selections.splitgridmap, false);
+				}
 			},
-			deep: true
+			deep: false
 		}
 	},
 	mounted() {

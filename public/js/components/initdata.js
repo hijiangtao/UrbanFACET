@@ -28,6 +28,11 @@ let comp = {
             { 'name': 'Summation', 'val': 'sum' },
             { 'name': 'Average', 'val': 'ave' }
         ],
+        'dtypes': [
+            { 'name': 'Basic', 'val': 'basic' },
+            { 'name': 'DensityBased', 'val': 'density' }
+            // { 'name': 'HSV', 'val': 'hsv' }
+        ],
         'scales': {
             'entropy': 1,
             'density': 100
@@ -38,6 +43,8 @@ let comp = {
         'etype': 'p',
         'ctype': 'p',
         'mtype': 'sum',
+        'dtype': 'basic',
+        'visval': 'entropy',
         'eVal': {
             'min': 0,
             'max': 1,

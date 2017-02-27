@@ -1,43 +1,41 @@
 <div class="ui grid">
 	<div id="floatpanel">
 		<div class="sixteen wide column">
-			<h4 class="vtitle"><i class="right angle icon divider"></i>Analysis Objects <i class="plus square outline icon"></i></h4>
-		</div>
-
-		<div class="sixteen wide column">
 			<div class="ui cards">
 			  <div class="card">
 			    <div class="content">
-			      
 			      <div class="header">
-			        Elliot Fu
+			        Beijing
 			      </div>
 			      <div class="meta">
-			        Friends of Veronika
+			        2016.7-2016.10
 			      </div>
 			      <div class="description">
-			        Elliot requested permission to view your contact details
+			        WIFI, GPS
 			      </div>
 			    </div>
 			    <div class="extra content">
-			      <div class="ui basic red button">Decline</div>
+			      <div class="ui basic red button">Remove</div>
 			    </div>
+			  </div>
+			  <div class="ui divider"></div>
+			  <div class="sixteen wide column">
+			  	<i class="plus square outline icon"></i>
 			  </div>
 			  <div class="card">
 			    <div class="content">
-			      
 			      <div class="header">
-			        Elliot Fu
+			        Tianjin
 			      </div>
 			      <div class="meta">
-			        Friends of Veronika
+			        2016.7-2016.10
 			      </div>
 			      <div class="description">
-			        Elliot requested permission to view your contact details
+			        WIFI, GPS
 			      </div>
 			    </div>
 			    <div class="extra content">
-			      <div class="ui basic red button">Decline</div>
+			      <div class="ui basic red button">Remove</div>
 			    </div>
 			  </div>
 			</div>
@@ -116,6 +114,16 @@
 					  <label>Subgrid(4)</label>
 					</div>
 				</div>
+			</div>
+
+			<div v-show="selections.contourmap" class="inline fields">
+				<label>Display Schema</label>
+				<div v-for="item in params.dtypes" class="field">
+			      <div class="ui radio checkbox">
+			        <input type="radio" name="displayschema"  :value="item.val" v-model="selections.dtype">
+			        <label>{{item.name}}</label>
+			      </div>
+			    </div>
 			</div>
 		</div>
 

@@ -8,7 +8,7 @@
 'use strict'
 import $ from "jquery"
 
-let getValRange = function(scales, esels, dsels) {
+let getValRange = function(scales, esels, dsels, vuesels) {
 	return {
 		'entropy': {
 			'min': Math.exp( scales.entropy * parseFloat(esels[0]) / 100.0 ) - 1,
@@ -19,7 +19,11 @@ let getValRange = function(scales, esels, dsels) {
 			'min': Math.exp( scales.density * parseFloat(dsels[0]) / 100.0 ) - 1,
 			'max': Math.exp( scales.density * parseFloat(dsels[1]) / 100.0 ) - 1,
 			'scales': Math.exp( scales.density ) - 1
-		}
+		},
+		'type': vuesels.visval,
+		'multiColorSchema': vuesels.multiColorSchema,
+		'useLocalExtrema': vuesels.useLocalExtrema,
+		'displaySchema': vuesels.dtype
 	}
 };
 
@@ -87,9 +91,31 @@ let getDensity = function(sels) {
 	return p;
 };
 
+let getLinearNum = function(target, minVal, maxVal, minNum, maxNum) {
+	if (target < minVal) {
+		return 0;
+	} else if (target > maxVal) {
+		return maxNum;
+	}
+
+	let a = (maxNum-minNum) / Number.parseFloat(maxVal-minVal),
+		b = minNum - minVal*a; 
+
+	return Number.parseInt( a * target + b );
+}
+
+let getRandomCenter = function(point, base, scale) {
+	let lng = (point[0]+base) + Math.random()*scale,
+		lat = (point[1]+base) + Math.random()*scale;
+
+	return [lng, lat]
+}
+
 export {
 	getOverviewDatasets,
 	getDensity,
 	getValRange,
-	getSubGrids
+	getSubGrids,
+	getLinearNum,
+	getRandomCenter
 }

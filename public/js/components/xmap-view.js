@@ -12,12 +12,14 @@ import L from './map'
 import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js'
 import * as d3 from 'd3'
 import {legendColor} from 'd3-svg-legend'
-import {getSubGrids} from './apis'
+import {getSubGrids, getLinearNum, getRandomCenter} from './apis'
 
 // 临时变量 
 import $ from "jquery"
 window.jQuery = $
 // 临时变量
+
+const SPLIT = 0.003
 
 class mapview {
 	/**
@@ -581,89 +583,7 @@ class mapview {
 	 * @param  {[type]} prop [description]
 	 * @return {[type]}      [description]
 	 */
-	mapgridCDrawing(data, prop, update=false) {
-		let self = this;
-		// if(data.features.length === 0) {
-		// 	alert('No records found!')
-		// 	return ;
-		// }
-
-		// update为false表示当前执行重绘操作, update为true则从实例中调用历史数据进行绘制
-		if (!update) {
-			this.setGridData(data);
-			this.setGridDataType(prop['type']);
-		} else {
-			data = this.getGridData();
-			prop['type'] = this.getGridDataType();
-		}
-
-		let drawtype = prop['type'],
-			resprop = data['prop']
-			// resminVal = Number.parseFloat(resprop['minVal']),
-			// resmaxVal = Number.parseFloat(resprop['maxVal']),
-			// usrminVal = Number.parseFloat(prop['min']),
-			// usrmaxVal = Number.parseFloat(prop['max'])
-
-		// updated color scale
-		let begVal = 0,
-			minVal = prop[drawtype]['min'],
-			maxVal = prop[drawtype]['max'],
-			endVal = prop[drawtype]['scales'],
-			interval = maxVal - minVal,
-			colordomain = [minVal, maxVal, endVal],
-			colorrange = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgba(255,0,0,1)']
-
-		let color = d3.scaleLinear().domain(colordomain).range(colorrange)
-
-		d3.select('#F_SVG').remove();
-		d3.select('#GRID_SVG').remove();
-		this.removeheatmap();
-		this.removecanvas();
-
-		console.log('Begin to draw gridmap based on received data.');
-		console.time('DRAWING');
-        let drawingOnCanvas = function(canvasOverlay, params) {
-			let ctx = params.canvas.getContext('2d');
-            ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
-
-            let len = data.features.length
-            for (let i = 0; i < len; i++) {
-            	let feature = data.features[i],
-            		// d = feature.properties.center.coordinates,
-            		poly = feature.geometry.coordinates[0],
-            		evalue = feature['properties']['entropy'],
-            		dvalue = feature['properties']['density']
-
-            	if (evalue < prop['entropy']['min'] || dvalue < prop['density']['min']) {
-            		continue;
-            	}
-
-                if (params.bounds.contains([poly[0][1], poly[0][0]])) {
-                    // let dot = canvasOverlay._map.latLngToContainerPoint([d[1], d[0]]);
-                    
-                    let nw = canvasOverlay._map.latLngToContainerPoint([poly[3][1], poly[3][0]]),
-                    	se = canvasOverlay._map.latLngToContainerPoint([poly[1][1], poly[1][0]]);
-                    ctx.fillStyle = color(feature['properties'][drawtype]),
-                    ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
-                }
-            }
-		}
-
-		console.log('Finished gridmap drawing.');
-		console.timeEnd('DRAWING');
-		L.canvasOverlay()
-            .drawing(drawingOnCanvas)
-            .addTo(self.map);
-	}
-
-	/**
-	 * 用 canvas 实现的分割的 Gridmap 绘制方法
-	 * @param  {[type]}  data   [description]
-	 * @param  {[type]}  prop   [description]
-	 * @param  {Boolean} update [description]
-	 * @return {[type]}         [description]
-	 */
-	mapgridSplitCDrawing(data, prop, update=false) {
+	mapgridCDrawing(data, prop, update=false, split=false, random=false) {
 		let self = this;
 		// update为false表示当前执行重绘操作, update为true则从实例中调用历史数据进行绘制
 		if (!update) {
@@ -711,18 +631,25 @@ class mapview {
             		continue;
             	}
 
-                if (params.bounds.contains([poly[0][1], poly[0][0]])) {
-                    let subgrids = getSubGrids(poly, center, 4)
+                if (params.bounds.contains([center[1], center[0]])) {
+	                if (split) {
+	                	let subgrids = getSubGrids(poly, center, 4)
 
-                    for (let subind = subgrids.length - 1; subind >= 0; subind--) {
-                    	// 
-                    	let nw = canvasOverlay._map.latLngToContainerPoint(subgrids[subind]['nw']),
-	                    	se = canvasOverlay._map.latLngToContainerPoint(subgrids[subind]['se']);
-	                    ctx.fillStyle = color(feature['properties'][drawtype] * (1+Math.random()*0.3)),
-	                    ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
+	                    for (let subind = subgrids.length - 1; subind >= 0; subind--) {
+	                    	// 
+	                    	let nw = canvasOverlay._map.latLngToContainerPoint(subgrids[subind]['nw']),
+		                    	se = canvasOverlay._map.latLngToContainerPoint(subgrids[subind]['se']);
+		                    ctx.fillStyle = color(feature['properties'][drawtype] * (1+Math.random()*0.3)),
+		                    ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
 
-                    	subgrids[subind]
-                    }
+	                    	subgrids[subind]
+	                    }
+	                } else {
+	                	let nw = canvasOverlay._map.latLngToContainerPoint([poly[3][1], poly[3][0]]),
+		                	se = canvasOverlay._map.latLngToContainerPoint([poly[1][1], poly[1][0]]);
+		                ctx.fillStyle = color(feature['properties'][drawtype]),
+		                ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
+	                }
                 }
             }
 		}
@@ -818,10 +745,18 @@ class mapview {
 
         	countVal += 1;
 
-        	let center = data.features[i]['geometry']['coordinates'][0][0],
-				val = data.features[i]['properties'][ drawtype ];
+        	let center = data.features[i]['properties']['center'],
+				val = data.features[i]['properties'][ drawtype ],
+				renderNum = getLinearNum(val, minVal, maxVal, 1, 4);
 
-			hdata.data.push({'lat': center[1], 'lng': center[0], 'count': val})
+			if (prop['displaySchema'] === 'basic') {
+				hdata.data.push({'lat': center[1], 'lng': center[0], 'count': val})
+			} else if (prop['displaySchema'] === 'density') {
+				for (let i=0; i<renderNum; i++) {
+					let random = getRandomCenter(center, -SPLIT/2, SPLIT)
+					hdata.data.push({'lat': random[1], 'lng': random[0], 'count': val})
+				}
+			}
 		}
 		console.log('countVal: ', countVal);
 
@@ -846,15 +781,15 @@ class mapview {
 		};
 
 		console.log('minRate', minRate);
-		if (!prop['multiColorSchema']) {
+		if (!prop['multiColorSchema'] && prop['displaySchema'] !== 'hsv') {
 			cfg.gradient = {
 				// enter n keys between 0 and 1 here
 				// for gradient color customization
-				'1': 'red'
+				'1': 'rgba(255,0,0,1)'
 			}
-			cfg.gradient[minRate] = 'white';
+			cfg.gradient[minRate] = 'rgba(255,255,255,1)';
 			if (maxRate !== '1') {
-				cfg.gradient[maxRate] = 'red';
+				cfg.gradient[maxRate] = 'rgba(255,0,0,1)';
 			}
 
 		}
