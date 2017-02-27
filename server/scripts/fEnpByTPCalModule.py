@@ -284,5 +284,5 @@ def main(argv):
 	print "End approach at %s" % ENDTIME
 
 if __name__ == '__main__':
-	logging.basicConfig(filename='logger-entropysupcalmodule.log', level=logging.DEBUG)
+	logging.basicConfig(filename='logger-fenpbytpcalmodule.log', level=logging.DEBUG)
 	main(sys.argv[1:])
