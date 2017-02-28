@@ -15,8 +15,8 @@ router.get('/init', function(req, res, next) {
 router.get('/overviewQuery', function(req, res, next) {
 	apis.overviewQuery(req, res, next);
 });
-router.get('/overviewDQuery', function(req, res, next) {
-	apis.overviewDQuery(req, res, next);
+router.get('/filterviewQuery', function(req, res, next) {
+	apis.overviewQuery(req, res, next);
 });
 
 module.exports = router;

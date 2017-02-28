@@ -715,6 +715,7 @@ class mapview {
 		let len = data.features.length,
 			hdata = {
 				max: 0,
+				min: 0,
 				data: []
 			}
 		let drawtype = prop['type'],
@@ -722,11 +723,18 @@ class mapview {
 
 		// updated color scale
 		let minVal = prop[drawtype]['min'],
-			maxVal = prop[drawtype]['max'];
-		hdata.max = prop[drawtype]['scales'];
+			maxVal = prop[drawtype]['max'],
+			scales = prop[drawtype]['scales'];
+		hdata.max = scales;
+		hdata.min = minVal;
 
-		let maxRate = (maxVal/hdata.max).toString(),
-			minRate = (minVal/hdata.max).toString();
+		let maxRate = maxVal/hdata.max,
+			minRate = minVal/hdata.max,
+			judRate = (maxVal-minVal)/(scales-minVal),
+			oneqVal = 0.25*judRate,
+			twoqVal = 0.5*judRate,
+			thrqVal = 0.85*judRate,
+			forqVal = judRate;
 
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
@@ -781,18 +789,47 @@ class mapview {
 		};
 
 		console.log('minRate', minRate);
-		if (!prop['multiColorSchema'] && prop['displaySchema'] !== 'hsv') {
-			cfg.gradient = {
-				// enter n keys between 0 and 1 here
-				// for gradient color customization
-				'1': 'rgba(255,0,0,1)'
-			}
-			cfg.gradient[minRate] = 'rgba(255,255,255,1)';
-			if (maxRate !== '1') {
-				cfg.gradient[maxRate] = 'rgba(255,0,0,1)';
-			}
+		switch (prop['displaySchema']) {
+			case 'hsv':
+				// 
+				break;
+			default:
+				if (!prop['multiColorSchema']) {
+					cfg.gradient = {
+						// enter n keys between 0 and 1 here
+						// for gradient color customization
+						'1.0': 'rgba(255,0,0,1)'
+					}
+					// cfg.gradient[minRate] = 'rgba(255,255,255,0)';
+					if (judRate !== 1.0) {
+						cfg.gradient[maxRate] = 'rgba(255,0,0,1)';
+					}
+				} else {
+					console.info('I am set configurations for MultiColorSchema.');
+					cfg.gradient = {};
+					cfg.gradient[oneqVal.toString()] = "rgb(0,0,255)";
+					cfg.gradient[twoqVal.toString()] = "rgb(0,255,0)";
+					cfg.gradient[thrqVal.toString()] = "yellow";
+					cfg.gradient[forqVal.toString()] = "rgb(255,0,0)";
 
+					if (judRate !== 1.0) {
+						cfg.gradient['1.0'] = "rgb(255,0,0)";
+					}
+				}
+				break;
 		}
+
+		// if (!prop['multiColorSchema'] && prop['displaySchema'] !== 'hsv') {
+		// 	cfg.gradient = {
+		// 		// enter n keys between 0 and 1 here
+		// 		// for gradient color customization
+		// 		'1': 'rgba(255,0,0,1)'
+		// 	}
+		// 	// cfg.gradient[minRate] = 'rgba(255,255,255,1)';
+		// 	if (maxRate !== '1') {
+		// 		cfg.gradient[maxRate] = 'rgba(255,0,0,1)';
+		// 	}
+		// }
 		
 		let heatmapLayer = new HeatmapOverlay(cfg);
 

@@ -6,13 +6,13 @@
  */
 
 'use strict'
-let fs = require('fs');
-let path = require('path');
+const fs = require('fs');
+const path = require('path');
 
-let mongodb = require('mongodb');
-let MongoClient = mongodb.MongoClient;
-let url = 'mongodb://192.168.1.42:27017/tdVC';
-let pool = require('./db');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+const url = 'mongodb://192.168.1.42:27017/tdVC';
+const pool = require('./db');
 let $sql = require('../controllers/apis/mysqlMapping');
 
 let ArrayContains = function(obj, val) {

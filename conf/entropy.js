@@ -7,12 +7,12 @@
 
 'use strict'
 
-let mongodb = require('mongodb');
-let MongoClient = mongodb.MongoClient;
-let url = 'mongodb://192.168.1.42:27017/tdVC';
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+const url = 'mongodb://192.168.1.42:27017/tdVC';
 
-let fs = require('fs');
-let path = require('path');
+const fs = require('fs');
+const path = require('path');
 const data = require('./data');
 const $sql = require('../controllers/apis/mysqlMapping');
 
@@ -147,11 +147,19 @@ function mongoQueries(idlist, db, prop) {
 }
 
 function getOverview(conn, prop) {
-	let city = prop['city'], 
+	let city = prop['city'],
+		ftpval = prop['ftpval'], 
 		entropyattr = `${prop['etype']+prop['ctype']}sval`,
-		densityattr = `${prop['etype'] === 'p'? 'v':'w'}${prop['ctype']}number`,
+		// densityattr = `${prop['etype'] === 'p'? 'v':'w'}${prop['ctype']}number`, 考虑 POI 的有效记录数和总量记录数不一致的情况
+		densityattr = `w${prop['ctype']}number`,
 		etable = `${city}Ematrix`,
 		mtype = prop['mtype'];
+
+	// prop['ftpval']
+	if (ftpval) {
+		etable = `${city}F${ftpval}mat`;
+	}
+	console.log('Query table name: ', etable);
 
 	let p = new Promise(function(resolve, reject) {
 		let sql = $sql.getValScale[mtype] + $sql.getOverviewVal[mtype],
@@ -179,11 +187,6 @@ function getOverview(conn, prop) {
 					reslen = elist.length
 
 				for (let i = elist.length - 1; i >= 0; i--) {
-					// 清楚熵值不符合的 grids
-					// if (elist[i]['val'] < emin) {
-					// 	continue
-					// }
-
 					let id = Number.parseInt(elist[i]['id']),
 						LNGNUM = parseInt((locs['east'] - locs['west']) / SPLIT + 1),
 						latind = parseInt(id/LNGNUM),

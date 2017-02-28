@@ -20,7 +20,7 @@ let getValRange = function(scales, esels, dsels, vuesels) {
 			'max': Math.exp( scales.density * parseFloat(dsels[1]) / 100.0 ) - 1,
 			'scales': Math.exp( scales.density ) - 1
 		},
-		'type': vuesels.visval,
+		'type': vuesels.displaytype,
 		'multiColorSchema': vuesels.multiColorSchema,
 		'useLocalExtrema': vuesels.useLocalExtrema,
 		'displaySchema': vuesels.dtype
@@ -51,10 +51,13 @@ let getOverviewDatasets = function(sels) {
 	let city = sels.city,
 		etype = sels.etype,
 		ctype = sels.ctype,
-		mtype = sels.mtype;
-
+		mtype = sels.mtype,
+		tpfilter = sels.tpfilter,
+		ftpval = tpfilter? `&ftpval=${sels.ftpval}`:'';
+	console.log('tpfilter: ', tpfilter);
+	
 	let p = new Promise(function(resolve, reject) {
-		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ctype=${ctype}&mtype=${mtype}`, function(res, err) {
+		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ctype=${ctype}&mtype=${mtype+ftpval}`, function(res, err) {
 			if (res['scode']) {
 				resolve(res['data'])
 			} else {

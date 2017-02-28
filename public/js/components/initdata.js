@@ -36,7 +36,18 @@ let comp = {
         'scales': {
             'entropy': 1,
             'density': 100
-        }
+        },
+        'tpfilters': [
+            { 'name': 'Morning', 'val': '0', 'aurl': '/assets/tp0-aicon.png', 'nurl': '/assets/tp0-icon.png', 'active': true },
+            { 'name': 'Forenoon', 'val': '1', 'aurl': '/assets/tp1-aicon.png', 'nurl': '/assets/tp1-icon.png', 'active': false },
+            { 'name': 'Noon', 'val': '2', 'aurl': '/assets/tp2-aicon.png', 'nurl': '/assets/tp2-icon.png', 'active': false },
+            { 'name': 'Afternoon', 'val': '3', 'aurl': '/assets/tp3-aicon.png', 'nurl': '/assets/tp3-icon.png', 'active': false },
+            { 'name': 'Evening', 'val': '4', 'aurl': '/assets/tp4-aicon.png', 'nurl': '/assets/tp4-icon.png', 'active': false },
+            { 'name': 'Night', 'val': '5', 'aurl': '/assets/tp5-aicon.png', 'nurl': '/assets/tp5-icon.png', 'active': false },
+            { 'name': 'Weehour', 'val': '6', 'aurl': '/assets/tp6-aicon.png', 'nurl': '/assets/tp6-icon.png', 'active': false },
+            { 'name': 'Weekend', 'val': '7', 'aurl': '/assets/tp7-aicon.png', 'nurl': '/assets/tp7-icon.png', 'active': false },
+            { 'name': 'Workday', 'val': '8', 'aurl': '/assets/tp8-aicon.png', 'nurl': '/assets/tp8-icon.png', 'active': false }
+        ]
     },
     'selections': {
         'city': 'tj',
@@ -55,7 +66,9 @@ let comp = {
         'contourmap': false,
         'multiColorSchema': true,
         'useLocalExtrema': false,
-        'splitgridmap': false
+        'splitgridmap': false,
+        'tpfilter': false,
+        'ftpval': '0'
     },
     'components': {
         'eSlider': {

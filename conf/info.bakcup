@@ -1,0 +1,21 @@
+Device number
+
+zhangjiakou: 1392236
+tianjin: 8011128
+tangshan: 2786668
+beijing: 
+
+---
+
+First step to deal with
+
+tangshan
+start: 2017/2/8 18:58:41
+end: 2017/2/8 20:38:44
+
+tianjin
+start: 2017/2/9 16:56:17
+end: 2017/2/9 21:13:10
+
+mysqldump  --add-drop-table -uusername -ppassword -database databasename > backupfile.sql
+mysql -uroot -p tdnormal < tdnormal.no-tj-bj.sql

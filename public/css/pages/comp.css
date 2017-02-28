@@ -44,6 +44,12 @@ body {
     z-index: 11;
 }
 
+.ftpimg {
+    padding-left: 2px;
+    padding-right: 2px;
+    width: 15%;
+}
+
 .vtitle {
 	color: orange;
 }

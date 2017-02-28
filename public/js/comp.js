@@ -32,18 +32,22 @@ const userpanel = new Vue({
 		vueSlider
 	},
 	methods: {
-		'getOverview': function(typeval) {
+		'getOverview': function(typeval='') {
 			let city = this.selections.city;
 			if (city !== 'bj') {
-				let self = this;
-				
+				if (typeval !== '') {
+					this.selections.displaytype = typeval;
+					this.selections.tpfilter = false;
+				}
+				let self = this,
+					distype = self.selections.displaytype;
+
 				self.selections.initialstate = false;
-				self.selections.displaytype = typeval;
-				self.selections.visval = typeval;
 				mapins.panTo( regionRecords[city]['center'] );
 				document.getElementById('map').classList.add('loading');
 				console.log('Begin to get data from server.');
 				console.time('SERVER');
+				console.log('DisplayType: ', distype);
 
 				getOverviewDatasets(self.selections).then(function(res) {
 					console.log('Already got data from server.');
@@ -56,12 +60,12 @@ const userpanel = new Vue({
 					let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value, self.selections);
 
 					// drawing legends
-					switch (typeval) {
+					switch (distype) {
 						case 'entropy':
-							mapins.maplegendDrawing(typeval, self.components.eSlider.value);
+							mapins.maplegendDrawing(distype, self.components.eSlider.value);
 							break;
 						case 'density':
-							mapins.maplegendDrawing(typeval, self.components.dSlider.value);
+							mapins.maplegendDrawing(distype, self.components.dSlider.value);
 							break;
 						default:
 							break;
@@ -76,7 +80,7 @@ const userpanel = new Vue({
 					console.error("Failed!", err);
 				});
 			} else {
-				alert('Beijing is not available now, please try another region and update again.')
+				alert('Beijing is not available now, please try another region and update again.');
 			}
 		},
 		'updateSelectRegion': function(val) {
@@ -91,9 +95,25 @@ const userpanel = new Vue({
 
 			this.selections.city = val;
 		},
+		'updateTPFilter': function(val) {
+			for (let i = this.params.tpfilters.length - 1; i >= 0; i--) {
+				if (this.params.tpfilters[i].val !== val) {
+					this.params.tpfilters[i].active = false;
+				} else {
+					this.params.tpfilters[i].active = true;
+				}
+			}
+
+			this.selections.ftpval = val;
+
+			if (this.selections.tpfilter) {
+				this.getOverview();
+			}
+		},
 		'computedSlider': function(type) {
 			let self = this,
-				v = this.components.eSlider.value;
+				v = this.components.eSlider.value,
+				distype = self.selections.displaytype;
 			if (type === 'd') {
 				v = this.components.dSlider.value;
 			}
@@ -103,12 +123,12 @@ const userpanel = new Vue({
 			let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value, self.selections);
 
 			// drawing legends
-			switch (self.selections.visval) {
+			switch (distype) {
 				case 'entropy':
-					mapins.maplegendDrawing(self.selections.visval, self.components.eSlider.value);
+					mapins.maplegendDrawing(distype, self.components.eSlider.value);
 					break;
 				case 'density':
-					mapins.maplegendDrawing(self.selections.visval, self.components.dSlider.value);
+					mapins.maplegendDrawing(distype, self.components.dSlider.value);
 					break;
 				default:
 					break;

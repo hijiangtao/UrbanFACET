@@ -54,7 +54,6 @@
 					  <img v-show="item.active" :src="item.aurl" v-on:click="updateSelectRegion(item.val)">
 					  <img v-show="!item.active" :src="item.nurl" v-on:click="updateSelectRegion(item.val)">
 					</div>
-					
 				</div>
 			</div>
 			<!-- <div class="ui divider"></div> -->
@@ -130,6 +129,19 @@
 		<div class="ui divider"></div>
 	</div>
 
+	<div class="sixteen wide column">
+				<div class="ui checkbox checkbox">
+					<input type="checkbox" name="tpfilteropt" v-model="selections.tpfilter">
+					<label for="tpfilteropt">Filter by Timeblocks or Daytype</label>
+				</div>
+			</div>
+			<div class="sixteen wide column">
+				<div v-for='item in params.tpfilters' class="ftpimg ui image">
+				  <img v-show="item.active" :src="item.aurl" v-on:click="updateTPFilter(item.val)">
+				  <img v-show="!item.active" :src="item.nurl" v-on:click="updateTPFilter(item.val)">
+				</div>
+			</div>
+
 	<div v-if="!selections.initialstate" class="sixteen wide column">
 		<div class="ui row">
 			<h4 class="vtitle"><i class="right angle icon divider"></i>Filters (LOG)</h4>
@@ -144,10 +156,9 @@
 			<div class="twelve wide column">
 				<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="computedSlider('d')" v-model="components.dSlider.value"></vue-slider>
 			</div>
-			<!-- <div class="three wide column">OpacityFilter(U)</div>
-			<div class="thirteen wide column">
-				<vue-slider id="oSlider" ref="oSlider" v-bind="components.dSlider" v-model="components.dSlider.value"></vue-slider>
-			</div> -->
+			
+			
+			
 		</div>	
 	</div>
 </div>
