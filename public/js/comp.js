@@ -105,10 +105,10 @@ const userpanel = new Vue({
 			// drawing legends
 			switch (self.selections.visval) {
 				case 'entropy':
-					mapins.maplegendDrawing(typeval, self.components.eSlider.value);
+					mapins.maplegendDrawing(self.selections.visval, self.components.eSlider.value);
 					break;
 				case 'density':
-					mapins.maplegendDrawing(typeval, self.components.dSlider.value);
+					mapins.maplegendDrawing(self.selections.visval, self.components.dSlider.value);
 					break;
 				default:
 					break;
