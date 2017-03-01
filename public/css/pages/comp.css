@@ -64,6 +64,19 @@ body {
     background-color: rgba(255,255,255,0.8);
 }
 
+/*CHARTS STYLESHEET*/
+.area {
+  fill: steelblue;
+  clip-path: url(#clip);
+}
+
+.zoom {
+  cursor: move;
+  fill: none;
+  pointer-events: all;
+}
+/*CHARTS STYLESHEET*/
+
 /*.selectedregion {
 	border: solid white .6em;
 }

@@ -394,10 +394,13 @@ let regionRecords = {
     }
 };
 
+let chartTestData = [{"group-id":"1","num":"142378"}, {"group-id":"2","num":"2173"}, {"group-id":"3","num":"1052"}, {"group-id":"4","num":"663"}, {"group-id":"5","num":"507"}, {"group-id":"6","num":"379"}, {"group-id":"7","num":"312"}, {"group-id":"8","num":"237"}, {"group-id":"9","num":"201"}, {"group-id":"10","num":"235"}, {"group-id":"11","num":"198"}, {"group-id":"12","num":"159"}, {"group-id":"13","num":"129"}, {"group-id":"14","num":"128"}, {"group-id":"15","num":"98"}, {"group-id":"16","num":"96"}, {"group-id":"17","num":"78"}, {"group-id":"18","num":"71"}, {"group-id":"19","num":"53"}, {"group-id":"20","num":"58"}, {"group-id":"21","num":"55"}, {"group-id":"22","num":"40"}, {"group-id":"23","num":"40"}, {"group-id":"24","num":"28"}, {"group-id":"25","num":"34"}, {"group-id":"26","num":"20"}, {"group-id":"27","num":"14"}, {"group-id":"28","num":"18"}, {"group-id":"29","num":"22"}, {"group-id":"30","num":"17"}, {"group-id":"31","num":"21"}, {"group-id":"32","num":"10"}, {"group-id":"33","num":"17"}, {"group-id":"34","num":"13"}, {"group-id":"35","num":"10"}, {"group-id":"36","num":"7"}, {"group-id":"37","num":"11"}, {"group-id":"38","num":"7"}, {"group-id":"39","num":"11"}, {"group-id":"40","num":"7"}, {"group-id":"41","num":"6"}, {"group-id":"42","num":"7"}, {"group-id":"43","num":"4"}, {"group-id":"44","num":"2"}, {"group-id":"45","num":"3"}, {"group-id":"46","num":"5"}, {"group-id":"47","num":"3"}, {"group-id":"48","num":"3"}, {"group-id":"49","num":"3"}, {"group-id":"50","num":"1"}, {"group-id":"51","num":"7"}, {"group-id":"52","num":"4"}, {"group-id":"53","num":"2"}, {"group-id":"54","num":"1"}, {"group-id":"55","num":"3"}, {"group-id":"58","num":"4"}, {"group-id":"59","num":"2"}, {"group-id":"60","num":"2"}, {"group-id":"61","num":"1"}, {"group-id":"62","num":"1"}, {"group-id":"63","num":"2"}, {"group-id":"64","num":"1"}, {"group-id":"65","num":"2"}, {"group-id":"66","num":"1"}, {"group-id":"67","num":"1"}, {"group-id":"69","num":"2"}, {"group-id":"70","num":"1"}, {"group-id":"74","num":"2"}, {"group-id":"75","num":"1"}, {"group-id":"80","num":"1"}, {"group-id":"81","num":"1"}, {"group-id":"83","num":"1"}, {"group-id":"86","num":"1"}, {"group-id":"90","num":"1"}, {"group-id":"101","num":"1"}];
+
 export {
 	indexvuedata,
 	labvuedata,
     featureTypes,
     regionRecords,
-    comp
+    comp,
+    chartTestData
 }

@@ -25,6 +25,9 @@ let apis = {
 			console.info('Ready to send back result.');
 			res.json(result);
 		})
+	},
+	'getTmpFile': function(req, res, next) {
+		let params = req.query;
 	}
 }
 

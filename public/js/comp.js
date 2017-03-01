@@ -10,6 +10,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import mapview from './components/xmap-view'
+import chart from './components/chartview'
 import $ from "jquery"
 // window.jQuery = $
 import {regionRecords, comp} from './components/initdata'
@@ -23,7 +24,10 @@ if (typeof(Storage) === undefined) {
 }
 
 
-let mapins = new mapview('map');
+let mapins = new mapview('map'),
+	chartins = new chart('#estatChart');
+
+chartins.initDraw();
 
 const userpanel = new Vue({
 	el: '#userpanel',

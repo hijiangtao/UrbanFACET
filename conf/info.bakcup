@@ -21,3 +21,8 @@ mysqldump  --add-drop-table -uusername -ppassword -database databasename > backu
 mysql -uroot -p tdnormal < tdnormal.no-tj-bj.sql
 
 
+SELECT a.id, a.wpnumber, a.vpnumber, b.wpnumber, b.vpnumber, a.ppsval, a.tpsval, a.apsval, b.ppsval, b.tpsval, b.apsval FROM `tjF0mat` a inner join `tjF1mat` b WHERE a.id=b.id and a.wpnumber != b.wpnumber LIMIT 10;
+
+-- query the maximum value in one table
+
+SELECT MAX(id), MAX(wpnumber), MAX(vpnumber), MAX(wrnumber), MAX(vrnumber), MAX(prsval), MAX(trsval), MAX(arsval), MAX(ppsval), MAX(tpsval), MAX(apsval) FROM tjEmatrix WHERE 1;

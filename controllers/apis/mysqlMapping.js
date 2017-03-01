@@ -28,7 +28,9 @@ let mapping = {
 	},
 
 	getAValScale: "SELECT MAX(??) AS 'eval', MAX(??/??) AS 'dval' FROM ??;",
-	getAOverviewVal: "SELECT id, ??/?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;"
+	getAOverviewVal: "SELECT id, ??/?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;",
+
+	queryDistribution: "SELECT FLOOR(ppsval*100/2147864.0+1) AS 'group-id', COUNT(1) AS 'num' FROM `tjEmatrix` WHERE ppsval != -1 GROUP BY FLOOR(ppsval*100/2147864.0+1)"
 };
  
 module.exports = mapping;
