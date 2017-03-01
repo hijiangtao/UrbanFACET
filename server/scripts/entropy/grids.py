@@ -154,6 +154,6 @@ def filterByDaytype(val, type, tpVal=0):
 			return False
 	elif type <= 6:
 		if type == tpVal:
-			return True
-		else:
 			return False
+		else:
+			return True
