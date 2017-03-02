@@ -10,15 +10,25 @@ import $ from "jquery"
 
 let getValRange = function(scales, esels, dsels, vuesels) {
 	return {
+		// 'entropy': {
+		// 	'min': Math.log( scales.entropy * parseFloat(esels[0]) / 100.0 + 1 ),
+		// 	'max': Math.log( scales.entropy * parseFloat(esels[1]) / 100.0 + 1 ),
+		// 	'scales': Math.log( scales.entropy + 1 )
+		// },
+		// 'density': {
+		// 	'min': Math.log( scales.density * parseFloat(dsels[0]) / 100.0 ),
+		// 	'max': Math.log( scales.density * parseFloat(dsels[1]) / 100.0 ),
+		// 	'scales': Math.log( scales.density )
+		// },
 		'entropy': {
-			'min': Math.exp( scales.entropy * parseFloat(esels[0]) / 100.0 ) - 1,
-			'max': Math.exp( scales.entropy * parseFloat(esels[1]) / 100.0 ) - 1,
-			'scales': Math.exp( scales.entropy ) - 1
+			'min': scales.entropy * parseFloat(esels[0]) / 100.0,
+			'max': scales.entropy * parseFloat(esels[1]) / 100.0,
+			'scales': scales.entropy
 		},
 		'density': {
-			'min': Math.exp( scales.density * parseFloat(dsels[0]) / 100.0 ) - 1,
-			'max': Math.exp( scales.density * parseFloat(dsels[1]) / 100.0 ) - 1,
-			'scales': Math.exp( scales.density ) - 1
+			'min': scales.density * parseFloat(dsels[0]) / 100.0,
+			'max': scales.density * parseFloat(dsels[1]) / 100.0,
+			'scales': scales.density
 		},
 		'type': vuesels.displaytype,
 		'multiColorSchema': vuesels.multiColorSchema,

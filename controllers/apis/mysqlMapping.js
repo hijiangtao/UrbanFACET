@@ -26,11 +26,11 @@ let mapping = {
 		'sum': "SELECT id, ?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;",
 		'ave': "SELECT id, ??/?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;"
 	},
-
-	getAValScale: "SELECT MAX(??) AS 'eval', MAX(??/??) AS 'dval' FROM ??;",
-	getAOverviewVal: "SELECT id, ??/?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;",
-
-	queryDistribution: "SELECT FLOOR(ppsval*100/2147864.0+1) AS 'group-id', COUNT(1) AS 'num' FROM `tjEmatrix` WHERE ppsval != -1 GROUP BY FLOOR(ppsval*100/2147864.0+1)"
+	getDistribute: {
+		'sum': "SELECT FLOOR((EXP(??)-1)*100/(EXP(??)-1)+1) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY FLOOR((EXP(??)-1)*100/(EXP(??)-1)+1);",
+		'ave': "SELECT FLOOR((EXP(??/??)-1)*100/(EXP(??)-1)+1) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY FLOOR((EXP(??)-1)*100/(EXP(??)-1)+1);"
+	},
+	queryDistribution: "SELECT FLOOR(??*100/??+1) AS 'id', COUNT(1) AS 'num' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY FLOOR(??*100/??+1);"
 };
  
 module.exports = mapping;

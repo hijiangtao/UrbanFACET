@@ -26,8 +26,39 @@ let apis = {
 			res.json(result);
 		})
 	},
-	'getTmpFile': function(req, res, next) {
-		let params = req.query;
+	'getJsonSum': function(req, res, next) {
+		let params = req.query,
+			table = params.table;
+
+		lib.connectMySQL().then(function(conn) {
+			console.info('Got data from MySQL.');
+			conn.query("SELECT ? AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval) AS 'prsval', MAX(trsval) AS 'trsval', MAX(arsval) AS 'arsval', MAX(ppsval) AS 'ppsval', MAX(tpsval) AS 'tpsval', MAX(apsval) AS 'apsval' FROM ?? WHERE 1;", [table, table], function(err, result) {
+				conn.release();
+
+				res.json(result[0]);
+			});
+		}, function(err) {
+			console.error('error: ', err);
+		}).catch(function(error) {
+			console.error('error: ', err);
+		});
+	},
+	'getJsonAve': function(req, res, next) {
+		let params = req.query,
+			table = params.table;
+
+		lib.connectMySQL().then(function(conn) {
+			console.info('Got data from MySQL.');
+			conn.query("SELECT ? AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval/vrnumber) AS 'prsval', MAX(trsval/wrnumber) AS 'trsval', MAX(arsval/wrnumber) AS 'arsval', MAX(ppsval/vpnumber) AS 'ppsval', MAX(tpsval/wpnumber) AS 'tpsval', MAX(apsval/wpnumber) AS 'apsval' FROM ?? WHERE 1;", [table, table], function(err, result) {
+				conn.release();
+
+				res.json(result[0]);
+			});
+		}, function(err) {
+			console.error('error: ', err);
+		}).catch(function(error) {
+			console.error('error: ', err);
+		});
 	}
 }
 

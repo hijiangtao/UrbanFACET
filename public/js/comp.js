@@ -27,8 +27,6 @@ if (typeof(Storage) === undefined) {
 let mapins = new mapview('map'),
 	chartins = new chart('#estatChart');
 
-chartins.initDraw();
-
 const userpanel = new Vue({
 	el: '#userpanel',
 	data: comp,
@@ -58,10 +56,12 @@ const userpanel = new Vue({
 					console.timeEnd('SERVER');
 					document.getElementById('map').classList.remove('loading');
 
-					self.params.scales.entropy = Math.log(res['prop']['emax']+1);
-					self.params.scales.density = Math.log(res['prop']['dmax']+1);
+					self.params.scales.entropy = res['prop']['emax'];
+					self.params.scales.density = res['prop']['dmax'];
 					
 					let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value, self.selections);
+
+					console.log('entropy range', valScales['entropy']);
 
 					// drawing legends
 					switch (distype) {
@@ -80,6 +80,8 @@ const userpanel = new Vue({
 					} else {
 						mapins.mapgridCDrawing(res, valScales, false, self.selections.splitgridmap, false);
 					}
+
+					chartins.initDraw('#estatChart', res['chart']);
 				}).catch(function(err) {
 					console.error("Failed!", err);
 				});
@@ -126,6 +128,7 @@ const userpanel = new Vue({
 
 			let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value, self.selections);
 
+			console.log('entropy range', valScales['entropy']);
 			// drawing legends
 			switch (distype) {
 				case 'entropy':
@@ -183,4 +186,5 @@ const userpanel = new Vue({
 			mapins.maplegendDrawing();
 		})
 	}
-})
+});
+

@@ -18,5 +18,12 @@ router.get('/overviewQuery', function(req, res, next) {
 router.get('/filterviewQuery', function(req, res, next) {
 	apis.overviewQuery(req, res, next);
 });
+router.get('/getJsonSum', function(req, res, next) {
+	apis.getJsonSum(req, res, next);
+});
+router.get('/getJsonAve', function(req, res, next) {
+	apis.getJsonAve(req, res, next);
+});
+
 
 module.exports = router;

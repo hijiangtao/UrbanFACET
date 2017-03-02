@@ -17,7 +17,7 @@ tianjin
 start: 2017/2/9 16:56:17
 end: 2017/2/9 21:13:10
 
-mysqldump  --add-drop-table -uusername -ppassword -database databasename > backupfile.sql
+mysqldump -uusername -ppassword -database databasename > backupfile.sql
 mysql -uroot -p tdnormal < tdnormal.no-tj-bj.sql
 
 
@@ -25,4 +25,6 @@ SELECT a.id, a.wpnumber, a.vpnumber, b.wpnumber, b.vpnumber, a.ppsval, a.tpsval,
 
 -- query the maximum value in one table
 
-SELECT MAX(id), MAX(wpnumber), MAX(vpnumber), MAX(wrnumber), MAX(vrnumber), MAX(prsval), MAX(trsval), MAX(arsval), MAX(ppsval), MAX(tpsval), MAX(apsval) FROM tjEmatrix WHERE 1;
+SELECT 'tjEmatrix' AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval) AS 'prsval', MAX(trsval) AS 'trsval', MAX(arsval) AS 'arsval', MAX(ppsval) AS 'ppsval', MAX(tpsval) AS 'tpsval', MAX(apsval) AS 'apsval' FROM tjEmatrix WHERE 1;
+
+SELECT 'tjF0mat' AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval) AS 'prsval', MAX(trsval) AS 'trsval', MAX(arsval) AS 'arsval', MAX(ppsval) AS 'ppsval', MAX(tpsval) AS 'tpsval', MAX(apsval) AS 'apsval' FROM tjF0mat WHERE 1;

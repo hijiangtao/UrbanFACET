@@ -15,6 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const data = require('./data');
 const $sql = require('../controllers/apis/mysqlMapping');
+const eMax = require('./eMax');
 
 function readIdlistMongo(dbname, queryrate, minVal, maxVal, prop) {
 	let promise = new Promise(function(resolve, reject) {
@@ -147,23 +148,32 @@ function mongoQueries(idlist, db, prop) {
 }
 
 function getOverview(conn, prop) {
+	// city: 城市简称, tj, zjk, ts, bj
+	// ftpval: 时间段或者日期类型编号, 0-8
+	// entropyattr: 查找的 entropy value 字段
+	// densityattr: 查找的 density value 字段
+	// etable: 查找的数据表名称
+	// mtype: 查询结果的显示类型,统计或者平均值
+	// sqldoc: 各个表中字段的最大值
 	let city = prop['city'],
 		ftpval = prop['ftpval'], 
 		entropyattr = `${prop['etype']+prop['ctype']}sval`,
 		// densityattr = `${prop['etype'] === 'p'? 'v':'w'}${prop['ctype']}number`, 考虑 POI 的有效记录数和总量记录数不一致的情况
 		densityattr = `w${prop['ctype']}number`,
-		etable = `${city}Ematrix`,
-		mtype = prop['mtype'];
+		etable = ftpval?  `${city}F${ftpval}mat`:`${city}Ematrix`,
+		mtype = prop['mtype'],
+		sqldoc = eMax[etable],
+		sMax = Number.parseFloat(sqldoc[mtype][entropyattr]);
 
-	// prop['ftpval']
-	if (ftpval) {
-		etable = `${city}F${ftpval}mat`;
-	}
 	console.log('Query table name: ', etable);
 
 	let p = new Promise(function(resolve, reject) {
-		let sql = $sql.getValScale[mtype] + $sql.getOverviewVal[mtype],
-			param = [entropyattr, densityattr, etable, entropyattr, densityattr, etable, entropyattr, densityattr];
+		let sql = $sql.getValScale[mtype] + $sql.getOverviewVal[mtype] + `SELECT ROUND(LOG(??+1)*100/LOG(${sMax+1})) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY ROUND(LOG(??+1)*100/LOG(${sMax+1}));`,
+			param = [
+				entropyattr, densityattr, etable, 
+				entropyattr, densityattr, etable, entropyattr, densityattr,
+				entropyattr, etable, entropyattr, densityattr, entropyattr
+			];
 
 		if (mtype === 'ave') {
 			param = [entropyattr, densityattr, densityattr, etable, entropyattr, densityattr, densityattr, etable, entropyattr, densityattr];
@@ -177,6 +187,7 @@ function getOverview(conn, prop) {
 			} else {
 				// result[0]: Max value of entropy 
 				// result[1]: Entropy list
+				// result[2]: Entropy distribution stats
 				console.log('eval type: ', typeof result[0][0]['eval']);
 
 				let DATA = [],
@@ -199,10 +210,6 @@ function getOverview(conn, prop) {
 						latcen = (lat+centerincrement),//.toFixed(4),
 						coordsarr = [ [lng, lat], [lnginc, lat], [lnginc, latinc], [lng, latinc], [lng, lat] ]
 
-					// "center" : { 
-					// 	"type" : "Point", 
-					// 	"coordinates" : [ 116.39340292117386, 39.98484242786196 ] 
-					// }
 					DATA.push({
 						"geometry" : { 
 							"type" : "Polygon", 
@@ -217,6 +224,11 @@ function getOverview(conn, prop) {
 						}
 					}) 
 				}
+
+				// 规整 distribution 
+				// while (result[2].length > 100) {
+				// 	result[2][99]['v'] += result[2][]
+				// }
 				
 				resolve({
 					'scode': 1,
@@ -226,7 +238,8 @@ function getOverview(conn, prop) {
 						"prop": {
 							'emax': parseFloat(result[0][0]['eval']),
 							'dmax': parseInt(result[0][0]['dval'])
-						}
+						},
+						'chart': result[2] // id, num
 					}
 				})
 			}

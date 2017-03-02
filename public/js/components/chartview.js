@@ -15,14 +15,19 @@ class chart {
 		this.data = chartTestData;
 	}
 
-	initDraw() {
-		let svg = d3.select(this.id)
-			.append('svg')
-			.attr('width', '380')
-			.attr('height', '140');
+	initDraw(id, data) {
+		let containerwidth = document.getElementById(id.substring(1)).offsetWidth,
+			containerheight = document.getElementById(id.substring(1)).offsetHeight;
 
-		let margin = {top: 10, right: 10, bottom: 58, left: 40},
-		    margin2 = {top: 100, right: 10, bottom: 18, left: 40},
+		d3.select('#estatsvg').remove();
+		let svg = d3.select(id)
+			.append('svg')
+			.attr('id', 'estatsvg')
+			.attr('width', containerwidth)
+			.attr('height', containerheight);
+
+		let margin = {top: 5, right: 10, bottom: containerheight*0.8, left: 40},
+		    margin2 = {top: containerheight*0.3, right: 10, bottom: 18, left: 40},
 		    width = +svg.attr("width") - margin.left - margin.right,
 		    height = +svg.attr("height") - margin.top - margin.bottom,
 		    height2 = +svg.attr("height") - margin2.top - margin2.bottom;
@@ -32,9 +37,11 @@ class chart {
 		    y = d3.scaleLinear().range([height, 0]),
 		    y2 = d3.scaleLinear().range([height2, 0]);
 
-		let xAxis = d3.axisBottom(x),
-		    xAxis2 = d3.axisBottom(x2),
-		    yAxis = d3.axisLeft(y);
+		let xAxis = d3.axisBottom(x).ticks(5),//.tickFormat(d3.format("d")),
+		    xAxis2 = d3.axisBottom(x2).ticks(5),//.tickFormat(d3.format("d")),
+		    yAxis2 = d3.axisLeft(y2).ticks(5).tickFormat(function(d){
+		    	return `${d/1000}K`;
+		    });
 
 		let brush = d3.brushX()
 		    .extent([[0, 0], [width, height2]])
@@ -48,21 +55,21 @@ class chart {
 
 		let area = d3.area()
 		    .curve(d3.curveMonotoneX)
-		    .x(function(d) { return x(d.id); })
+		    .x(function(d) { return x(d.k); })
 		    .y0(height)
-		    .y1(function(d) { return y(d.num); });
+		    .y1(function(d) { return y(d.v); });
 
 		let area2 = d3.area()
 		    .curve(d3.curveMonotoneX)
-		    .x(function(d) { return x2(d.id); })
+		    .x(function(d) { return x2(d.k); })
 		    .y0(height2)
-		    .y1(function(d) { return y2(d.num); });
+		    .y1(function(d) { return y2(d.v); });
 
 		svg.append("defs").append("clipPath")
 		    .attr("id", "clip")
 		  .append("rect")
 		    .attr("width", width)
-		    .attr("height", height);
+		    .attr("height", height2);
 
 		let focus = svg.append("g")
 		    .attr("class", "focus")
@@ -72,10 +79,10 @@ class chart {
 		    .attr("class", "context")
 		    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
-		let data = this.data.map(type);
+		data = data.map(type);
 
-		x.domain(d3.extent(data, function(d) { return d.id; }));
-		y.domain([0, d3.max(data, function(d) { return d.num; })]);
+		x.domain(d3.extent(data, function(d) { return d.k; }));
+		y.domain([0, d3.max(data, function(d) { return d.v; })]);
 		x2.domain(x.domain());
 		y2.domain(y.domain());
 
@@ -84,14 +91,14 @@ class chart {
 		  .attr("class", "area")
 		  .attr("d", area);
 
-		focus.append("g")
-		  .attr("class", "axis axis--x")
-		  .attr("transform", "translate(0," + height + ")")
-		  .call(xAxis);
+		// focus.append("g")
+		//   .attr("class", "axis axis--x")
+		//   .attr("transform", "translate(0," + height + ")")
+		//   .call(xAxis);
 
-		focus.append("g")
+		context.append("g")
 		  .attr("class", "axis axis--y")
-		  .call(yAxis);
+		  .call(yAxis2);
 
 		context.append("path")
 		  .datum(data)
@@ -115,8 +122,6 @@ class chart {
 		  .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 		  .call(zoom);
 
-		// console.log('Event type', d3.event.sourceEvent);
-
 		function brushed() {
 		  if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
 		  let s = d3.event.selection || x2.range();
@@ -138,8 +143,8 @@ class chart {
 		}
 
 		function type(d) {
-		  d.id = +d['group-id'];
-		  d.num = +d['num'];
+		  d.k = +d['k'];
+		  d.v = +d['v'];
 		  return d;
 		}
 	}

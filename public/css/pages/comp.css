@@ -65,8 +65,12 @@ body {
 }
 
 /*CHARTS STYLESHEET*/
+#estatChart {
+    width: 100%;
+    height: 180px;
+}
 .area {
-  fill: steelblue;
+  fill: rgba(250,150,30,1);
   clip-path: url(#clip);
 }
 
