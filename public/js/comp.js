@@ -23,7 +23,6 @@ if (typeof(Storage) === undefined) {
     alert('Please Update your browser to support localStorage');
 }
 
-
 let mapins = new mapview('map'),
 	chartins = new chart('#estatChart');
 
@@ -81,7 +80,10 @@ const userpanel = new Vue({
 						mapins.mapgridCDrawing(res, valScales, false, self.selections.splitgridmap, false);
 					}
 
-					chartins.initDraw('#estatChart', res['chart']);
+					if (typeval !== '') {
+						chartins.brushDraw('#estatChart', res['chart']['e']);
+						chartins.brushDraw('#dstatChart', res['chart']['d']);
+					}
 				}).catch(function(err) {
 					console.error("Failed!", err);
 				});

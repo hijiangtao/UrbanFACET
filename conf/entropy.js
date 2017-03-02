@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const data = require('./data');
 const $sql = require('../controllers/apis/mysqlMapping');
-const eMax = require('./eMax');
+const iMax = require('./eMax');
 
 function readIdlistMongo(dbname, queryrate, minVal, maxVal, prop) {
 	let promise = new Promise(function(resolve, reject) {
@@ -155,29 +155,40 @@ function getOverview(conn, prop) {
 	// etable: 查找的数据表名称
 	// mtype: 查询结果的显示类型,统计或者平均值
 	// sqldoc: 各个表中字段的最大值
+	// console.log('I am in the function.');
+	// console.log(prop);
 	let city = prop['city'],
 		ftpval = prop['ftpval'], 
 		entropyattr = `${prop['etype']+prop['ctype']}sval`,
 		// densityattr = `${prop['etype'] === 'p'? 'v':'w'}${prop['ctype']}number`, 考虑 POI 的有效记录数和总量记录数不一致的情况
 		densityattr = `w${prop['ctype']}number`,
-		etable = ftpval?  `${city}F${ftpval}mat`:`${city}Ematrix`,
+		etable = ftpval!==undefined?  `${city}F${ftpval}mat`:`${city}Ematrix`,
 		mtype = prop['mtype'],
-		sqldoc = eMax[etable],
-		sMax = Number.parseFloat(sqldoc[mtype][entropyattr]);
+		sqldoc = iMax[mtype],
+		eMax = Number.parseFloat(sqldoc[etable][entropyattr]),
+		dMax = Number.parseFloat(sqldoc[etable][densityattr]);
 
 	console.log('Query table name: ', etable);
 
 	let p = new Promise(function(resolve, reject) {
-		let sql = $sql.getValScale[mtype] + $sql.getOverviewVal[mtype] + `SELECT ROUND(LOG(??+1)*100/LOG(${sMax+1})) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY ROUND(LOG(??+1)*100/LOG(${sMax+1}));`,
+		let sql = $sql.getValScale[mtype] + $sql.getOverviewVal[mtype] + $sql.getDistribute(mtype, eMax) + $sql.getDistribute('sum', dMax),
 			param = [
 				entropyattr, densityattr, etable, 
 				entropyattr, densityattr, etable, entropyattr, densityattr,
-				entropyattr, etable, entropyattr, densityattr, entropyattr
+				entropyattr, etable, entropyattr, densityattr, entropyattr,
+				densityattr, etable, entropyattr, densityattr, densityattr
 			];
 
 		if (mtype === 'ave') {
-			param = [entropyattr, densityattr, densityattr, etable, entropyattr, densityattr, densityattr, etable, entropyattr, densityattr];
+			param = [
+				entropyattr, densityattr, densityattr, etable, 
+				entropyattr, densityattr, densityattr, etable, entropyattr, densityattr,
+				entropyattr, densityattr, etable, entropyattr, densityattr, entropyattr, densityattr,
+				densityattr, etable, entropyattr, densityattr, densityattr,
+			];
 		}
+
+		console.log('Query distribution sql', $sql.getDistribute[mtype]);
 
 		conn.query(sql, param, function(err, result) {
 			conn.release();
@@ -197,6 +208,7 @@ function getOverview(conn, prop) {
 					elist = result[1],
 					reslen = elist.length
 
+				console.log('Result length', reslen)
 				for (let i = elist.length - 1; i >= 0; i--) {
 					let id = Number.parseInt(elist[i]['id']),
 						LNGNUM = parseInt((locs['east'] - locs['west']) / SPLIT + 1),
@@ -239,7 +251,10 @@ function getOverview(conn, prop) {
 							'emax': parseFloat(result[0][0]['eval']),
 							'dmax': parseInt(result[0][0]['dval'])
 						},
-						'chart': result[2] // id, num
+						'chart': {
+							'e': result[2],
+							'd': result[3] // k, v
+						}
 					}
 				})
 			}
