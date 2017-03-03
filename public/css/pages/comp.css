@@ -79,6 +79,10 @@ body {
   fill: none;
   pointer-events: all;
 }
+.brush.selection {
+    stroke: none;
+    fill: red;
+}
 /*CHARTS STYLESHEET*/
 
 /*.selectedregion {
