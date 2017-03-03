@@ -39,7 +39,7 @@ class chart {
 
 		let xAxis = d3.axisBottom(x).ticks(5),//.tickFormat(d3.format("d")),
 		    xAxis2 = d3.axisBottom(x2).ticks(5),//.tickFormat(d3.format("d")),
-		    yAxis2 = d3.axisLeft(y2).ticks(5).tickFormat(function(d){
+		    yAxis2 = d3.axisLeft(y2).ticks(3).tickFormat(function(d){
 		    	return `${d/1000}K`;
 		    });
 
@@ -144,7 +144,7 @@ class chart {
 
 		function type(d) {
 		  d.k = +d['k'];
-		  d.v = +d['v'];
+		  d.v = +d['v']; //Math.log(Number.parseFloat(d['v']));
 		  return d;
 		}
 	}

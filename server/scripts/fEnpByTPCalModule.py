@@ -73,7 +73,7 @@ class fEnpByTPCalModule(object):
 			for line in stream:
 				dictlist = line.strip('\n').split(',')
 				devid = dictlist[0]
-				devday = int(dictlist[3])
+				devday = int( dictlist[3] )
 				devperiod = int( dictlist[4] )
 
 				if filterByDaytype(devday, self.TIMEPERIOD, devperiod):
@@ -85,12 +85,12 @@ class fEnpByTPCalModule(object):
 
 				# 如果 ID 在网格内则更新 valid 网格信息, 且加入熵数组
 				if devIntGID >= 0 and devIntGID < self.GRIDSNUM:
-					self.record[devid]['prop']['wnum'] += 1
+					# self.record[devid]['prop']['wnum'] += 1
 
 					# 处理 POI 熵
 					t1 = -1
 					if devStrGID in self.validIDs:
-						self.record[devid]['prop']['vnum'] += 1
+						# self.record[devid]['prop']['vnum'] += 1
 						q = self.gridsData[devStrGID]
 						p = self.record[devid]['t1']
 						# validRecNumList[devid] += 1
@@ -206,7 +206,7 @@ def mergeMatrixFiles(city, GRIDSNUM, timeperiod, filename='ressql'):
 		res.write(resString)
 	res.close()
 
-	print "%d lines into matrix t%d-%s-xxx file" % (GRIDSNUM, timeperiod, filename)
+	print "%d lines into matrix %s t%d-%s-xxx file" % (GRIDSNUM, city, timeperiod, filename)
 
 def main(argv):
 	try:

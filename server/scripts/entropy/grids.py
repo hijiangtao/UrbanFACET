@@ -66,8 +66,8 @@ def getFullPeopleEntropyFromFile(file, disnum):
 				't2': np.array([float(line[x]) for x in xrange(17,31)]),
 				't3': np.array([float(line[x]) for x in xrange(31, disEndInd)]),
 				'prop': {
-					'wnum': 0,
-					'vnum': 0
+					'wnum': int(line[5]),
+					'vnum': int(line[4])
 				},
 				'val': {
 					't1': float( line[1] ),
