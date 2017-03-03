@@ -30,12 +30,27 @@ let apis = {
 		let params = req.query,
 			table = params.table;
 
+		let sqlstr = "SELECT ? AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval) AS 'prsval', MAX(trsval) AS 'trsval', MAX(arsval) AS 'arsval', MAX(ppsval) AS 'ppsval', MAX(tpsval) AS 'tpsval', MAX(apsval) AS 'apsval' FROM ?? WHERE 1;", sql = "";
+
+		for (let i=0; i<30; i++ ) {
+			sql += sqlstr;
+		}
+		let tablearr = ['tjEmatrix', 'tjEmatrix', 'tsEmatrix', 'tsEmatrix', 'zjkEmatrix', 'zjkEmatrix'];
+		for (var i = 0; i < 9; i++) {
+			tablearr.push(`tjF${i}mat`, `tjF${i}mat`, `tsF${i}mat`, `tsF${i}mat`, `zjkF${i}mat`, `zjkF${i}mat` );
+		}
+
 		lib.connectMySQL().then(function(conn) {
 			console.info('Got data from MySQL.');
-			conn.query("SELECT ? AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval) AS 'prsval', MAX(trsval) AS 'trsval', MAX(arsval) AS 'arsval', MAX(ppsval) AS 'ppsval', MAX(tpsval) AS 'tpsval', MAX(apsval) AS 'apsval' FROM ?? WHERE 1;", [table, table], function(err, result) {
+			conn.query(sql, tablearr, function(err, result) {
 				conn.release();
 
-				res.json(result[0]);
+				let size = result.length, response = {};
+				for (let i=0; i<size; i++) {
+					response[ tablearr[i*2] ] = result[i];
+				}
+
+				res.json( response );
 			});
 		}, function(err) {
 			console.error('error: ', err);
@@ -47,12 +62,27 @@ let apis = {
 		let params = req.query,
 			table = params.table;
 
+		let sqlstr = "SELECT ? AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval/vrnumber) AS 'prsval', MAX(trsval/wrnumber) AS 'trsval', MAX(arsval/wrnumber) AS 'arsval', MAX(ppsval/vpnumber) AS 'ppsval', MAX(tpsval/wpnumber) AS 'tpsval', MAX(apsval/wpnumber) AS 'apsval' FROM ?? WHERE 1;", sql;
+
+		for (let i=0; i<30; i++ ) {
+			sql += sqlstr;
+		}
+		let tablearr = ['tjEmatrix', 'tjEmatrix', 'tsEmatrix', 'tsEmatrix', 'zjkEmatrix', 'zjkEmatrix'];
+		for (var i = 0; i < 9; i++) {
+			tablearr.push(`tjF${i}mat`, `tjF${i}mat`, `tsF${i}mat`, `tsF${i}mat`, `zjkF${i}mat`, `zjkF${i}mat` );
+		}
+
 		lib.connectMySQL().then(function(conn) {
 			console.info('Got data from MySQL.');
-			conn.query("SELECT ? AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval/vrnumber) AS 'prsval', MAX(trsval/wrnumber) AS 'trsval', MAX(arsval/wrnumber) AS 'arsval', MAX(ppsval/vpnumber) AS 'ppsval', MAX(tpsval/wpnumber) AS 'tpsval', MAX(apsval/wpnumber) AS 'apsval' FROM ?? WHERE 1;", [table, table], function(err, result) {
+			conn.query(sql, tablearr, function(err, result) {
 				conn.release();
 
-				res.json(result[0]);
+				let size = result.length, response = {};
+				for (let i=0; i<size; i++) {
+					response[ tablearr[i*2] ] = result[i];
+				}
+
+				res.json( response );
 			});
 		}, function(err) {
 			console.error('error: ', err);
