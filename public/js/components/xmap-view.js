@@ -730,11 +730,15 @@ class mapview {
 
 		let maxRate = maxVal/hdata.max,
 			minRate = minVal/hdata.max,
-			judRate = (maxVal-minVal)/(scales-minVal),
+			judRate = Number.parseFloat( (maxVal-minVal)/(scales-minVal) ),
 			oneqVal = 0.25*judRate,
 			twoqVal = 0.5*judRate,
 			thrqVal = 0.85*judRate,
 			forqVal = judRate;
+
+		if (forqVal > 1.0) {
+			forqVal = 1.0;
+		}
 
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
@@ -812,7 +816,7 @@ class mapview {
 					cfg.gradient[thrqVal.toString()] = "yellow";
 					cfg.gradient[forqVal.toString()] = "rgb(255,0,0)";
 
-					if (judRate !== 1.0) {
+					if (judRate < 1.0) {
 						cfg.gradient['1.0'] = "rgb(255,0,0)";
 					}
 				}

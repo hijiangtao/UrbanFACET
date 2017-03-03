@@ -12,22 +12,22 @@ import {chartTestData} from './initdata'
 class chart {
 	constructor(id) {
 		this.id = id
-		this.data = chartTestData;
+		// this.data = chartTestData;
 	}
 
-	initDraw(id, data) {
+	brushDraw(id, data) {
 		let containerwidth = document.getElementById(id.substring(1)).offsetWidth,
 			containerheight = document.getElementById(id.substring(1)).offsetHeight;
 
-		d3.select('#estatsvg').remove();
+		d3.select(`${id}svg`).remove();
 		let svg = d3.select(id)
 			.append('svg')
-			.attr('id', 'estatsvg')
+			.attr('id', `${id.substring(1)}svg`)
 			.attr('width', containerwidth)
 			.attr('height', containerheight);
 
-		let margin = {top: 5, right: 10, bottom: containerheight*0.8, left: 40},
-		    margin2 = {top: containerheight*0.3, right: 10, bottom: 18, left: 40},
+		let margin = {top: 1, right: 5, bottom: containerheight*0.7, left: 30},
+		    margin2 = {top: containerheight*0.35, right: 5, bottom: 14, left: 30},
 		    width = +svg.attr("width") - margin.left - margin.right,
 		    height = +svg.attr("height") - margin.top - margin.bottom,
 		    height2 = +svg.attr("height") - margin2.top - margin2.bottom;

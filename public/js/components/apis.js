@@ -21,13 +21,13 @@ let getValRange = function(scales, esels, dsels, vuesels) {
 		// 	'scales': Math.log( scales.density )
 		// },
 		'entropy': {
-			'min': scales.entropy * parseFloat(esels[0]) / 100.0,
-			'max': scales.entropy * parseFloat(esels[1]) / 100.0,
+			'min': Math.exp( Math.log(scales.entropy+1) * parseFloat(esels[0]) / 100.0 )-1,
+			'max': Math.exp( Math.log(scales.entropy+1) * parseFloat(esels[1]) / 100.0 )-1,
 			'scales': scales.entropy
 		},
 		'density': {
-			'min': scales.density * parseFloat(dsels[0]) / 100.0,
-			'max': scales.density * parseFloat(dsels[1]) / 100.0,
+			'min': Math.exp( Math.log(scales.density) * parseFloat(dsels[0]) / 100.0 ),
+			'max': Math.exp( Math.log(scales.density) * parseFloat(dsels[1]) / 100.0 ),
 			'scales': scales.density
 		},
 		'type': vuesels.displaytype,

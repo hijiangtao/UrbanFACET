@@ -16,7 +16,7 @@ let apis = {
 		console.info('Going to connect MySQL.');
 		lib.connectMySQL().then(function(conn) {
 			console.info('Got data from MySQL.');
-			return EP.getOverview(conn, params)
+			return EP.getOverview(conn, params);
 		}, function(err) {
 			console.error('error: ', err);
 		}).catch(function(error) {
