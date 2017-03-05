@@ -19,11 +19,13 @@ body {
     position: absolute;
     left: 26vw;
     margin: 0;
+    border-radius: 0;
 }
 
 #titlemenu {
     height: 7vh;
     margin: 0;
+    border-radius: 0;
 }
 
 
@@ -37,11 +39,25 @@ body {
     height: 93vh;
     /*z-index: 9;*/
     background-color: rgba(255, 255, 255, .8);
+    border-radius: 0;
 }
 
 #maplegend {
     position: absolute;
     z-index: 11;
+    /*height: 50px;*/
+    width: 300px;
+}
+
+#ethemeselect {
+    border-color: rgb(0,0,0);
+    
+    -webkit-border-radius: .6rem;
+    -moz-border-radius: .6rem;
+    border-radius: .6rem;
+
+    padding: 0.32em 1em;
+    outline: none;
 }
 
 .ftpimg {
@@ -79,7 +95,7 @@ body {
   fill: none;
   pointer-events: all;
 }
-.brush.selection {
+.brush rect.selection {
     stroke: none;
     fill: red;
 }

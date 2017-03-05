@@ -10,10 +10,10 @@ import { genNumArr } from './lib'
 let comp = {
     'params': {
         'regions': [
-            { 'name': 'Beijing', 'val': 'bj', 'aurl': '/assets/bj-aticon.png', 'nurl': '/assets/bj-ticon.png', 'active': false },
-            { 'name': 'Tianjin', 'val': 'tj', 'aurl': '/assets/tj-aticon.png', 'nurl': '/assets/tj-ticon.png', 'active': true },
-            { 'name': 'Zhangjiakou', 'val': 'zjk', 'aurl': '/assets/zjk-aticon.png', 'nurl': '/assets/zjk-ticon.png', 'active': false },
-            { 'name': 'Tangshan', 'val': 'ts', 'aurl': '/assets/ts-aticon.png', 'nurl': '/assets/ts-ticon.png', 'active': false }
+            { 'name': 'Beijing', 'val': 'bj', 'aurl': '/assets/bj-aicon.png', 'nurl': '/assets/bj-icon.png', 'active': false },
+            { 'name': 'Tianjin', 'val': 'tj', 'aurl': '/assets/tj-aicon.png', 'nurl': '/assets/tj-icon.png', 'active': true },
+            { 'name': 'Zhangjiakou', 'val': 'zjk', 'aurl': '/assets/zjk-aicon.png', 'nurl': '/assets/zjk-icon.png', 'active': false },
+            { 'name': 'Tangshan', 'val': 'ts', 'aurl': '/assets/ts-aicon.png', 'nurl': '/assets/ts-icon.png', 'active': false }
         ],
         'etypes': [
             { 'name': 'POI', 'val': 'p' },
@@ -29,8 +29,9 @@ let comp = {
             { 'name': 'Average', 'val': 'ave' }
         ],
         'dtypes': [
-            { 'name': 'Basic', 'val': 'basic' },
-            { 'name': 'DensityBased', 'val': 'density' }
+            { 'name': 'Entropy', 'val': 'basic' },
+            { 'name': 'Mixture', 'val': 'density' },
+            { 'name': 'Density', 'val': 'density2' }
             // { 'name': 'HSV', 'val': 'hsv' }
         ],
         'scales': {
@@ -38,13 +39,13 @@ let comp = {
             'density': 100
         },
         'tpfilters': [
-            { 'name': 'Morning', 'val': '0', 'aurl': '/assets/tp0-aicon.png', 'nurl': '/assets/tp0-icon.png', 'active': true },
+            { 'name': 'Morning', 'val': '0', 'aurl': '/assets/tp0-aicon.png', 'nurl': '/assets/tp0-icon.png', 'active': false },
             { 'name': 'Forenoon', 'val': '1', 'aurl': '/assets/tp1-aicon.png', 'nurl': '/assets/tp1-icon.png', 'active': false },
             { 'name': 'Noon', 'val': '2', 'aurl': '/assets/tp2-aicon.png', 'nurl': '/assets/tp2-icon.png', 'active': false },
             { 'name': 'Afternoon', 'val': '3', 'aurl': '/assets/tp3-aicon.png', 'nurl': '/assets/tp3-icon.png', 'active': false },
             { 'name': 'Evening', 'val': '4', 'aurl': '/assets/tp4-aicon.png', 'nurl': '/assets/tp4-icon.png', 'active': false },
             { 'name': 'Night', 'val': '5', 'aurl': '/assets/tp5-aicon.png', 'nurl': '/assets/tp5-icon.png', 'active': false },
-            { 'name': 'Weehour', 'val': '6', 'aurl': '/assets/tp6-aicon.png', 'nurl': '/assets/tp6-icon.png', 'active': false },
+            // { 'name': 'Weehour', 'val': '6', 'aurl': '/assets/tp6-aicon.png', 'nurl': '/assets/tp6-icon.png', 'active': false },
             { 'name': 'Weekend', 'val': '7', 'aurl': '/assets/tp7-aicon.png', 'nurl': '/assets/tp7-icon.png', 'active': false },
             { 'name': 'Workday', 'val': '8', 'aurl': '/assets/tp8-aicon.png', 'nurl': '/assets/tp8-icon.png', 'active': false }
         ]
@@ -53,7 +54,7 @@ let comp = {
         'city': 'tj',
         'etype': 'p',
         'ctype': 'p',
-        'mtype': 'sum',
+        'mtype': 'ave',
         'dtype': 'basic',
         'visval': 'entropy',
         'eVal': {

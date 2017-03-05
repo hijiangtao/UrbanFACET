@@ -155,20 +155,21 @@ function getOverview(conn, prop) {
 	// etable: 查找的数据表名称
 	// mtype: 查询结果的显示类型,统计或者平均值
 	// sqldoc: 各个表中字段的最大值
-	// console.log('I am in the function.');
-	// console.log(prop);
+	// eMax: 获得的 entropy 最大值
+	// dMax: 获得的 density 最大值
+	
 	let city = prop['city'],
 		ftpval = prop['ftpval'], 
 		entropyattr = `${prop['etype']+prop['ctype']}sval`,
-		// densityattr = `${prop['etype'] === 'p'? 'v':'w'}${prop['ctype']}number`, 考虑 POI 的有效记录数和总量记录数不一致的情况
+		// densityattr = `${prop['etype'] === 'p'? 'v':'w'}${prop['ctype']}number`, 暂不考虑 POI 的有效记录数和总量记录数不一致的情况
 		densityattr = `w${prop['ctype']}number`,
-		etable = ftpval!==undefined?  `${city}F${ftpval}mat`:`${city}Ematrix`,
-		mtype = prop['mtype'],
+		etable = ftpval !== '' ? `${city}F${ftpval}mat`:`${city}Ematrix`,
+		mtype = 'ave', // prop['mtype'],
 		sqldoc = iMax[mtype],
 		eMax = Number.parseFloat(sqldoc[etable][entropyattr]),
 		dMax = Number.parseFloat(sqldoc[etable][densityattr]);
 
-	console.log('Query table name: ', etable);
+	// console.log('Query table name: ', etable);
 
 	let p = new Promise(function(resolve, reject) {
 		let sql = $sql.getValScale[mtype] + $sql.getOverviewVal[mtype] + $sql.getDistribute(mtype, eMax) + $sql.getDistribute('sum', dMax),
@@ -199,6 +200,7 @@ function getOverview(conn, prop) {
 				// result[0]: Max value of entropy 
 				// result[1]: Entropy list
 				// result[2]: Entropy distribution stats
+				// result[3]: Density distribution stats
 				console.log('eval type: ', typeof result[0][0]['eval']);
 
 				let DATA = [],
@@ -214,12 +216,12 @@ function getOverview(conn, prop) {
 						LNGNUM = parseInt((locs['east'] - locs['west']) / SPLIT + 1),
 						latind = parseInt(id/LNGNUM),
 						lngind = id-latind*LNGNUM,
-						lat = (locs['south'] + latind * SPLIT),//.toFixed(3),
-						lng = (locs['west'] + lngind * SPLIT),//.toFixed(3),
-						lnginc = (lng+SPLIT),//.toFixed(3),
-						latinc = (lat+SPLIT),//.toFixed(3),
-						lngcen = (lng+centerincrement),//.toFixed(4),
-						latcen = (lat+centerincrement),//.toFixed(4),
+						lat = (locs['south'] + latind * SPLIT),
+						lng = (locs['west'] + lngind * SPLIT),
+						lnginc = (lng+SPLIT),
+						latinc = (lat+SPLIT),
+						lngcen = (lng+centerincrement),
+						latcen = (lat+centerincrement),
 						coordsarr = [ [lng, lat], [lnginc, lat], [lnginc, latinc], [lng, latinc], [lng, lat] ]
 
 					DATA.push({
@@ -229,10 +231,10 @@ function getOverview(conn, prop) {
 						}, 
 						"type" : "Feature", 
 						"id" : id, 
-						"properties" : {
-							'entropy': parseFloat(elist[i]['eval']),
-							'density': parseInt(elist[i]['dval']),
-							'center': [lngcen, latcen]
+						"prop" : {
+							'e': parseFloat(elist[i]['eval']),
+							'd': parseInt(elist[i]['dval']),
+							'c': [lngcen, latcen] // center point
 						}
 					}) 
 				}

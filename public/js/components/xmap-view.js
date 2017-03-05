@@ -27,20 +27,24 @@ class mapview {
 	 * @return {[type]} [description]
 	 */
 	constructor(id) {
-	  let self = this
-	  this.id = id
+	  let self = this;
+	  this.ides = {
+	  	'grdleg': 'gridmaplegend',
+	  	'ctrleg': 'contourmaplegend'
+	  };
 	  this.baseLayer = L.tileLayer(
 		'https://api.mapbox.com/styles/v1/{id}/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
 		  attribution: 'Urban Mobility Map 2016-2017 &copy; ISCAS VIS',
 		  maxZoom: 18,
 		  id: 'hijiangtao',
 		  accessToken: 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'
-		})
-	  this.map = new L.map(self.id, {
+		});
+	  this.heatmapLayer = null;
+	  this.map = new L.map(id, {
 		center: L.latLng(39.9120, 116.3907),
 		zoom: 11,
 		layers: self.baseLayer
-	  })
+	  });
 	  this.map.zoomControl.setPosition('topright');
 	  this.gridData = {};
 	  this.gridDataType = '';
@@ -78,7 +82,7 @@ class mapview {
 		
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
-		this.removeheatmap();
+		this.clearLayers();
 
 		if(data.features.length === 0) {
 			alert('No records found!')
@@ -203,7 +207,7 @@ class mapview {
 		
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
-		this.removeheatmap()
+		this.clearLayers()
 
 		if(data.features.length === 0) {
 			alert('No records found!')
@@ -456,7 +460,7 @@ class mapview {
 
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
-		this.removeheatmap()
+		this.clearLayers()
 
 		let self = this,
 			panelwidth = document.getElementById('userpanel').getBoundingClientRect().width,
@@ -595,6 +599,7 @@ class mapview {
 		}
 
 		let drawtype = prop['type'],
+			abbrdtype = drawtype === 'entropy'? 'e':'d',
 			resprop = data['prop']
 
 		// updated color scale
@@ -602,16 +607,20 @@ class mapview {
 			minVal = prop[drawtype]['min'],
 			maxVal = prop[drawtype]['max'],
 			endVal = prop[drawtype]['scales'],
+			maxRate = maxVal/endVal,
+			minRate = minVal/endVal,
 			interval = maxVal - minVal,
 			colordomain = [minVal, maxVal, endVal],
+			ledcolordomain = [minRate, maxRate, 1],
 			colorrange = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgba(255,0,0,1)']
 
-		let color = d3.scaleLinear().domain(colordomain).range(colorrange);
+		let color = d3.scaleLinear().domain(colordomain).range(colorrange),
+			legColor = d3.scaleLinear().domain(ledcolordomain).range(colorrange);
 
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
-		this.removeheatmap();
-		this.removecanvas();
+		this.clearLayers();
+		// this.removecanvas();
 
 		console.log('Begin to draw gridmap based on received data.');
 		console.time('DRAWING');
@@ -623,9 +632,9 @@ class mapview {
             for (let i = 0; i < len; i++) {
             	let feature = data.features[i],
             		poly = feature.geometry.coordinates[0],
-            		center = feature['properties']['center'],
-            		evalue = feature['properties']['entropy'],
-            		dvalue = feature['properties']['density']
+            		center = feature['prop']['c'],
+            		evalue = feature['prop']['e'],
+            		dvalue = feature['prop']['d']
 
             	if (evalue < prop['entropy']['min'] || dvalue < prop['density']['min']) {
             		continue;
@@ -639,7 +648,7 @@ class mapview {
 	                    	// 
 	                    	let nw = canvasOverlay._map.latLngToContainerPoint(subgrids[subind]['nw']),
 		                    	se = canvasOverlay._map.latLngToContainerPoint(subgrids[subind]['se']);
-		                    ctx.fillStyle = color(feature['properties'][drawtype] * (1+Math.random()*0.3)),
+		                    ctx.fillStyle = color(feature['prop'][abbrdtype] * (1+Math.random()*0.3)),
 		                    ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
 
 	                    	subgrids[subind]
@@ -647,16 +656,18 @@ class mapview {
 	                } else {
 	                	let nw = canvasOverlay._map.latLngToContainerPoint([poly[3][1], poly[3][0]]),
 		                	se = canvasOverlay._map.latLngToContainerPoint([poly[1][1], poly[1][0]]);
-		                ctx.fillStyle = color(feature['properties'][drawtype]),
+		                ctx.fillStyle = color(feature['prop'][abbrdtype]),
 		                ctx.fillRect(nw.x, nw.y, Math.abs(se.x-nw.x), Math.abs(se.y-nw.y));
 	                }
                 }
             }
 		}
 
+		this.drawGridLegend(`Content ${drawtype}`, legColor);
+
 		console.log('Finished gridmap drawing.');
 		console.timeEnd('DRAWING');
-		L.canvasOverlay()
+		this.gridmapLayer = L.canvasOverlay()
             .drawing(drawingOnCanvas)
             .addTo(self.map);
 	}
@@ -668,30 +679,94 @@ class mapview {
 	 * @param  {[type]} 100]  [description]
 	 * @return {[type]}       [description]
 	 */
-	maplegendDrawing(title='entropy', scale=[0, 100]) {
-		var linear = d3.scaleLinear()
-		  .domain(scale)
-		  .range(['rgba(255,255,255,0)', 'rgba(255,0,0,1)']);
+	drawGridLegend(title='entropy', linear) {
+		this.switchLegDisplay('grdleg');
 
-		d3.select('#maplegend').selectAll('svg').remove();
-		var svg = d3.select("#maplegend").append('svg');
+		let id = `#${this.ides.grdleg}`;
+
+		// let linear = d3.scaleLinear()
+		//   .domain([0, 25, 50, 75,])
+		//   .range(['rgba(255,255,255,0)', 'rgba(255,0,0,1)']);
+
+		d3.select(id).selectAll('*').remove();
+		let svg = d3.select(id);
 
 		svg.append('text')
 		  .attr('y', 23)
-		  .attr('x', 5)
+		  .attr('x', 2)
 		  .text(title);
 
 		svg.append("g")
 		  .attr("class", "legendLinear")
-		  .attr("transform", "translate(60,10)");
+		  .attr("transform", "translate(120,10)");
 
-		var legendLinear = legendColor()
+		let legendLinear = legendColor()
+		  .labelFormat(function(d) {
+		  	return `${Number.parseInt(d*100)}%`
+		  })
 		  .shapeWidth(30)
 		  .orient('horizontal')
 		  .scale(linear);
 
 		svg.select(".legendLinear")
 		  .call(legendLinear);
+	}
+
+	/**
+	 * 根据 contour 的标题以及 scale 定制绘制 legend
+	 * @param  {[type]} title [description]
+	 * @param  {[type]} scale [description]
+	 * @return {[type]}       [description]
+	 */
+	drawContourLegend(title="Contour Legend", gradientCfg) {
+		this.switchLegDisplay('ctrleg');
+
+		let svg = d3.select(`#${this.ides.ctrleg}`),
+			legCanvas = document.createElement('canvas');
+		legCanvas.width = 150;
+		legCanvas.height = 15;
+
+		svg.selectAll('*').remove();
+		let g = svg.append('svg')
+		  .attr('height', 50)
+		  .attr("transform", "translate(120,10)");
+
+		g.append('text')
+		  .attr('y', 13)
+		  .attr('x', 2)
+		  .text(title);
+		g.append('text')
+		  .attr('y', 33)
+		  .attr('x', 120)
+		  .text('0%');
+		g.append('text')
+		  .attr('y', 33)
+		  .attr('x', 250)
+		  .text('100%');
+
+		let gradientImg = document.createElement("img"),
+			legCtx = legCanvas.getContext('2d');
+
+		let gradient = legCtx.createLinearGradient(0,0,100,1);
+			// grdInd = 0;
+
+		for (let key in gradientCfg) {
+			gradient.addColorStop(key, gradientCfg[key]);
+			// g.append('text')
+			//   .attr('y', 43)
+			//   .attr('x', 120+120*Number.parseFloat(key))
+			//   .text(`${key}`);
+			// grdInd += 1;
+		}
+
+		legCtx.fillStyle = gradient;
+		legCtx.fillRect(0,0,150,15);
+
+		gradientImg.src = legCanvas.toDataURL();
+		gradientImg.style.position = 'absolute';
+		gradientImg.style.left = '120px';
+		document.getElementById(this.ides.ctrleg).appendChild(gradientImg);
+		// gradientImg.attr('src', legCanvas.toDataURL());
 	}
 
 	/**
@@ -719,6 +794,7 @@ class mapview {
 				data: []
 			}
 		let drawtype = prop['type'],
+			abbrdtype = drawtype === 'entropy'? 'e':'d',
 			resprop = data['prop']
 
 		// updated color scale
@@ -742,14 +818,14 @@ class mapview {
 
 		d3.select('#F_SVG').remove();
 		d3.select('#GRID_SVG').remove();
-		this.removeheatmap();
-		this.removecanvas();
+		this.clearLayers();
+		// this.removecanvas();
 
 		let countVal = 0;
 		for (let i = len - 1; i >= 0; i--) {
 			let feature = data.features[i],
-        		evalue = feature['properties']['entropy'],
-        		dvalue = feature['properties']['density'];
+        		evalue = feature['prop']['e'],
+        		dvalue = feature['prop']['d'];
 
         	if (evalue < prop['entropy']['min'] || dvalue < prop['density']['min']) {
         		continue;
@@ -757,8 +833,8 @@ class mapview {
 
         	countVal += 1;
 
-        	let center = data.features[i]['properties']['center'],
-				val = data.features[i]['properties'][ drawtype ],
+        	let center = data.features[i]['prop']['c'],
+				val = data.features[i]['prop'][ abbrdtype ],
 				renderNum = getLinearNum(val, minVal, maxVal, 1, 4);
 
 			if (prop['displaySchema'] === 'basic') {
@@ -802,9 +878,9 @@ class mapview {
 					cfg.gradient = {
 						// enter n keys between 0 and 1 here
 						// for gradient color customization
+						'0': 'rgba(255,255,255,0)',
 						'1.0': 'rgba(255,0,0,1)'
 					}
-					// cfg.gradient[minRate] = 'rgba(255,255,255,0)';
 					if (judRate !== 1.0) {
 						cfg.gradient[maxRate] = 'rgba(255,0,0,1)';
 					}
@@ -823,19 +899,11 @@ class mapview {
 				break;
 		}
 
-		// if (!prop['multiColorSchema'] && prop['displaySchema'] !== 'hsv') {
-		// 	cfg.gradient = {
-		// 		// enter n keys between 0 and 1 here
-		// 		// for gradient color customization
-		// 		'1': 'rgba(255,0,0,1)'
-		// 	}
-		// 	// cfg.gradient[minRate] = 'rgba(255,255,255,1)';
-		// 	if (maxRate !== '1') {
-		// 		cfg.gradient[maxRate] = 'rgba(255,0,0,1)';
-		// 	}
-		// }
+		// draw legends
+		this.drawContourLegend(`Content ${drawtype}`, cfg.gradient);
 		
 		let heatmapLayer = new HeatmapOverlay(cfg);
+		this.heatmapLayer = heatmapLayer;
 
 		this.map.addLayer(heatmapLayer);
 		heatmapLayer.setData(hdata)
@@ -854,16 +922,39 @@ class mapview {
 		this.map.setView(L.latLng(lat,lng), zoom)
 	}
 
-	removeheatmap() {
-		let obj = $('.leaflet-overlay-pane .leaflet-zoom-hide')
-		if (obj) {
-			obj.remove();
-		} 
+	clearLayers() {
+		if (this.heatmapLayer) {
+			this.map.removeLayer(this.heatmapLayer);
+			this.heatmapLayer = null;
+		}
+		if (this.gridmapLayer) {
+			this.map.removeLayer(this.gridmapLayer);
+			this.gridmapLayer = null;
+		}
 	}
 
-	removecanvas() {
-		$('canvas.leaflet-heatmap-layer.leaflet-zoom-animated').remove();
+	switchLegDisplay(cfg) {
+		for (let key in this.ides) {
+			let val = this.ides[key];
+			if (key !== cfg) {
+				document.getElementById(val).style.display = 'none';
+			} else {
+				document.getElementById(val).style.display = 'inline';
+			}
+		}
 	}
+
+	duplicatedRemoveLayers() {
+		let map = this.map;
+		
+		map.eachLayer(function (layer) {
+		    map.removeLayer(layer);
+		});
+	}
+
+	// removecanvas() {
+	// 	$('canvas.leaflet-heatmap-layer.leaflet-zoom-animated').remove();
+	// }
 }
 
 export default mapview

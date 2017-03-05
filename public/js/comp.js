@@ -19,6 +19,7 @@ import vueSlider from 'vue-slider-component'
 
 // Vue.use(Vuex)
 
+// 判断浏览器是否支持 localStorage
 if (typeof(Storage) === undefined) {
     alert('Please Update your browser to support localStorage');
 }
@@ -38,7 +39,6 @@ const userpanel = new Vue({
 			if (city !== 'bj') {
 				if (typeval !== '') {
 					this.selections.displaytype = typeval;
-					this.selections.tpfilter = false;
 				}
 				let self = this,
 					distype = self.selections.displaytype;
@@ -61,18 +61,6 @@ const userpanel = new Vue({
 					let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value, self.selections);
 
 					console.log('entropy range', valScales['entropy']);
-
-					// drawing legends
-					switch (distype) {
-						case 'entropy':
-							mapins.maplegendDrawing(distype, self.components.eSlider.value);
-							break;
-						case 'density':
-							mapins.maplegendDrawing(distype, self.components.dSlider.value);
-							break;
-						default:
-							break;
-					}
 					
 					if (self.selections.contourmap) {
 						mapins.mapcontourCDrawing(res, valScales);
@@ -80,10 +68,8 @@ const userpanel = new Vue({
 						mapins.mapgridCDrawing(res, valScales, false, self.selections.splitgridmap, false);
 					}
 
-					if (typeval !== '') {
-						chartins.brushDraw('#estatChart', res['chart']['e']);
-						chartins.brushDraw('#dstatChart', res['chart']['d']);
-					}
+					chartins.brushDraw('#estatChart', res['chart']['e']);
+					chartins.brushDraw('#dstatChart', res['chart']['d']);
 				}).catch(function(err) {
 					console.error("Failed!", err);
 				});
@@ -92,7 +78,7 @@ const userpanel = new Vue({
 			}
 		},
 		'updateSelectRegion': function(val) {
-			// mapins.maplegendDrawing();
+			// mapins.drawGridLegend();
 			for (let i = this.params.regions.length - 1; i >= 0; i--) {
 				if (this.params.regions[i].val !== val) {
 					this.params.regions[i].active = false;
@@ -125,23 +111,12 @@ const userpanel = new Vue({
 			if (type === 'd') {
 				v = this.components.dSlider.value;
 			}
-			// console.log('v:', v);
+			
 			document.getElementById(`${type}Slider`).getElementsByClassName('vue-slider')[0].style.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
 
 			let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value, self.selections);
 
 			console.log('entropy range', valScales['entropy']);
-			// drawing legends
-			switch (distype) {
-				case 'entropy':
-					mapins.maplegendDrawing(distype, self.components.eSlider.value);
-					break;
-				case 'density':
-					mapins.maplegendDrawing(distype, self.components.dSlider.value);
-					break;
-				default:
-					break;
-			}
 
 			if (self.selections.contourmap) {
 				mapins.mapcontourCDrawing({}, valScales, true);
@@ -158,12 +133,17 @@ const userpanel = new Vue({
 	//     }
 	// },
 	watch: {
-		// 'components.slider.value': {
-		// 	handler: function(val, OldVal) {
-				
-		// 	},
-		// 	deep: true
-		// },
+		'selections.tpfilter': {
+			handler: function(val, OldVal) {
+				if (!val) {
+					for (let i = this.params.tpfilters.length - 1; i >= 0; i--) {
+						this.params.tpfilters[i].active = false;
+					}
+
+					this.selections.ftpval = '';
+				}
+			}
+		},
 		'selections.dtype': {
 			handler: function(val, OldVal) {
 				console.log('Value of dtype has changed.');
@@ -185,7 +165,7 @@ const userpanel = new Vue({
 	},
 	mounted() {
 		this.$nextTick(function () {
-			mapins.maplegendDrawing();
+
 		})
 	}
 });

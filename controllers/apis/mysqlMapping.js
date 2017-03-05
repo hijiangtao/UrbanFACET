@@ -26,10 +26,6 @@ let mapping = {
 		'sum': "SELECT id, ?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;",
 		'ave': "SELECT id, ??/?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;"
 	},
-	// getDistribute: {
-	// 	'sum': `SELECT ROUND(LOG(??+1)*100/LOG(${sMax+1})) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY ROUND(LOG(??+1)*100/LOG(${sMax+1}));`,
-	// 	'ave': `SELECT ROUND(LOG(??/??+1)*100/LOG(${sMax+1})) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY ROUND(LOG(??/??+1)*100/LOG(${sMax+1}));`
-	// },
 	getDistribute: function(mtype, sMax) {
 		if (mtype === 'sum') {
 			return `SELECT ROUND(LOG(??+1)*100/LOG(${sMax+1})) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY ROUND(LOG(??+1)*100/LOG(${sMax+1}));`;
@@ -37,7 +33,6 @@ let mapping = {
 			return `SELECT ROUND(LOG(??/??+1)*100/LOG(${sMax+1})) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY ROUND(LOG(??/??+1)*100/LOG(${sMax+1}));`;
 		}
 	},
-	queryDistribution: "SELECT FLOOR(??*100/??+1) AS 'id', COUNT(1) AS 'num' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY FLOOR(??*100/??+1);"
 };
  
 module.exports = mapping;

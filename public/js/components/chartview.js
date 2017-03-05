@@ -12,7 +12,6 @@ import {chartTestData} from './initdata'
 class chart {
 	constructor(id) {
 		this.id = id
-		// this.data = chartTestData;
 	}
 
 	brushDraw(id, data) {
@@ -37,8 +36,8 @@ class chart {
 		    y = d3.scaleLinear().range([height, 0]),
 		    y2 = d3.scaleLinear().range([height2, 0]);
 
-		let xAxis = d3.axisBottom(x).ticks(5),//.tickFormat(d3.format("d")),
-		    xAxis2 = d3.axisBottom(x2).ticks(5),//.tickFormat(d3.format("d")),
+		let xAxis = d3.axisBottom(x).ticks(4),//.tickFormat(d3.format("d")),
+		    xAxis2 = d3.axisBottom(x2).ticks(4),//.tickFormat(d3.format("d")),
 		    yAxis2 = d3.axisLeft(y2).ticks(3).tickFormat(function(d){
 		    	return `${d/1000}K`;
 		    });
@@ -47,17 +46,6 @@ class chart {
 		    .extent([[0, 0], [width, height2]])
 		    .on("brush end", brushed);
 
-		// let zoom = d3.zoom()
-		//     .scaleExtent([1, Infinity])
-		//     .translateExtent([[0, 0], [width, height]])
-		//     .extent([[0, 0], [width, height]])
-		//     .on("zoom", zoomed);
-
-		// let area = d3.area()
-		//     .curve(d3.curveMonotoneX)
-		//     .x(function(d) { return x(d.k); })
-		//     .y0(height)
-		//     .y1(function(d) { return y(d.v); });
 
 		let area2 = d3.area()
 		    .curve(d3.curveMonotoneX)
@@ -83,18 +71,8 @@ class chart {
 
 		x.domain(d3.extent(data, function(d) { return d.k; }));
 		y.domain([0, d3.max(data, function(d) { return d.v; })]);
-		x2.domain(x.domain());
-		y2.domain(y.domain());
-
-		// focus.append("path")
-		//   .datum(data)
-		//   .attr("class", "area")
-		//   .attr("d", area);
-
-		// focus.append("g")
-		//   .attr("class", "axis axis--x")
-		//   .attr("transform", "translate(0," + height + ")")
-		//   .call(xAxis);
+		x2.domain(d3.extent(data, function(d) { return d.k; }));
+		y2.domain([0, d3.max(data, function(d) { return d.v; })]);
 
 		context.append("g")
 		  .attr("class", "axis axis--y")
@@ -113,14 +91,7 @@ class chart {
 		context.append("g")
 		  .attr("class", "brush")
 		  .call(brush)
-		  .call(brush.move, x.range());
-
-		// svg.append("rect")
-		//   .attr("class", "zoom")
-		//   .attr("width", width)
-		//   .attr("height", height)
-		//   .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-		//   .call(zoom);
+		  .call(brush.move, x2.range());
 
 		function brushed() {
 		  if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
@@ -132,15 +103,6 @@ class chart {
 		  //     .scale(width / (s[1] - s[0]))
 		  //     .translate(-s[0], 0));
 		}
-
-		// function zoomed() {
-		//   if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
-		//   let t = d3.event.transform;
-		//   x.domain(t.rescaleX(x2).domain());
-		//   focus.select(".area").attr("d", area);
-		//   focus.select(".axis--x").call(xAxis);
-		//   context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
-		// }
 
 		function type(d) {
 		  d.k = +d['k'];

@@ -76,7 +76,7 @@ L.CanvasOverlay = L.Class.extend({
         if (map.options.zoomAnimation) {
             map.off('zoomanim', this._animateZoom, this);
         }
-        this_canvas = null;
+        this._canvas = null;
 
     },
 

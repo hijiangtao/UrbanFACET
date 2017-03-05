@@ -18,26 +18,6 @@
 			      <div class="ui basic red button">Remove</div>
 			    </div>
 			  </div>
-			  <div class="ui divider"></div>
-			  <div class="sixteen wide column">
-			  	<i class="plus square outline icon"></i>
-			  </div>
-			  <div class="card">
-			    <div class="content">
-			      <div class="header">
-			        Tianjin
-			      </div>
-			      <div class="meta">
-			        2016.7-2016.10
-			      </div>
-			      <div class="description">
-			        WIFI, GPS
-			      </div>
-			    </div>
-			    <div class="extra content">
-			      <div class="ui basic red button">Remove</div>
-			    </div>
-			  </div>
 			</div>
 		</div>
 	</div> -->
@@ -51,18 +31,28 @@
 				<label>Regions</label>
 				<div v-for='item in params.regions' class="field">
 					<div class="ui tiny image">
-					  <img v-show="item.active" :src="item.aurl" v-on:click="updateSelectRegion(item.val)">
-					  <img v-show="!item.active" :src="item.nurl" v-on:click="updateSelectRegion(item.val)">
+					  <img v-show="item.val === selections.city" :src="item.aurl" v-on:click="updateSelectRegion(item.val)">
+					  <img v-show="item.val !== selections.city" :src="item.nurl" v-on:click="updateSelectRegion(item.val)">
 					</div>
 				</div>
 			</div>
 			<!-- <div class="ui divider"></div> -->
 			<div class="inline fields">
+				<label>Entropy Type</label>
+				<div class="field">
+					<select id="ethemeselect">
+					  <option>adadasdad</option>
+					  <option>Badadada</option>
+					  <option>Cdadsadsad</option>
+					</select>
+				</div>
+			</div>
+			<div class="inline fields">
 				<label>Calculation Type</label>
 				<div v-for="item in params.ctypes" class="field">
 			      <div class="ui radio checkbox">
 			        <input type="radio" name="calculationtype"  :value="item.val" v-model="selections.ctype">
-			        <label>{{item.name}}</label>
+			        <label for="calculationtype">{{item.name}}</label>
 			      </div>
 			    </div>
 			</div>
@@ -77,7 +67,7 @@
 			    </div>
 			</div>
 
-			<div class="inline fields">
+			<!-- <div class="inline fields">
 				<label>Display Value</label>
 				<div v-for="item in params.mtypes" class="field">
 			      <div class="ui radio checkbox">
@@ -85,12 +75,12 @@
 			        <label>{{item.name}}</label>
 			      </div>
 			    </div>
-			</div>
+			</div> -->
 
 			<div class="inline fields">
 				<div class="ui fluid buttons">
 					<button class="ui tiny primary button" v-on:click="getOverview('entropy')">Display Entropy</button>
-					<button class="ui tiny primary button" v-on:click="getOverview('density')">Display Density</button>
+					<!-- <button class="ui tiny primary button" v-on:click="getOverview('density')">Display Density</button> -->
 				</div>
 			</div>
 
@@ -98,13 +88,13 @@
 				<div class="field">
 					<div class="ui checkbox">
 					  <input type="checkbox" name="heatmaptype" v-model='selections.contourmap'>
-					  <label>Contour</label>
+					  <label for="heatmaptype">Contour</label>
 					</div>
 				</div>
 				<div v-show="selections.contourmap" class="field">
 					<div class="ui toggle checkbox">
 					  <input type="checkbox" name="multiColorSchema" v-model="selections.multiColorSchema">
-					  <label>Multicolor Schema</label>
+					  <label for="multiColorSchema">Multicolor Schema</label>
 					</div>
 				</div>
 				<div class="field">

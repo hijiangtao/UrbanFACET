@@ -8,18 +8,16 @@
 'use strict'
 import $ from "jquery"
 
+/**
+ * 根据传回的数据确定当前 filter 以及 map 中的 value 范围
+ * @param  {[type]} scales  [description]
+ * @param  {[type]} esels   [description]
+ * @param  {[type]} dsels   [description]
+ * @param  {[type]} vuesels [vue instance 中存储的 selections object]
+ * @return {[type]}         [description]
+ */
 let getValRange = function(scales, esels, dsels, vuesels) {
 	return {
-		// 'entropy': {
-		// 	'min': Math.log( scales.entropy * parseFloat(esels[0]) / 100.0 + 1 ),
-		// 	'max': Math.log( scales.entropy * parseFloat(esels[1]) / 100.0 + 1 ),
-		// 	'scales': Math.log( scales.entropy + 1 )
-		// },
-		// 'density': {
-		// 	'min': Math.log( scales.density * parseFloat(dsels[0]) / 100.0 ),
-		// 	'max': Math.log( scales.density * parseFloat(dsels[1]) / 100.0 ),
-		// 	'scales': Math.log( scales.density )
-		// },
 		'entropy': {
 			'min': Math.exp( Math.log(scales.entropy+1) * parseFloat(esels[0]) / 100.0 )-1,
 			'max': Math.exp( Math.log(scales.entropy+1) * parseFloat(esels[1]) / 100.0 )-1,
@@ -62,37 +60,12 @@ let getOverviewDatasets = function(sels) {
 		etype = sels.etype,
 		ctype = sels.ctype,
 		mtype = sels.mtype,
-		tpfilter = sels.tpfilter,
-		ftpval = tpfilter? `&ftpval=${sels.ftpval}`:'';
-	console.log('tpfilter: ', tpfilter);
+		// tpfilter = sels.tpfilter,
+		ftpval = sels.ftpval;
+	// console.log('tpfilter: ', tpfilter);
 	
 	let p = new Promise(function(resolve, reject) {
-		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ctype=${ctype}&mtype=${mtype+ftpval}`, function(res, err) {
-			if (res['scode']) {
-				resolve(res['data'])
-			} else {
-				reject(err)
-			}
-		});
-	});
-
-	return p;
-};
-
-let getDensity = function(sels) {
-	let city = sels.city,
-		etype = sels.etype,
-		ctype = sels.ctype,
-		mtype = sels.mtype;
-
-	let p = new Promise(function(resolve, reject) {
-		if (etype === 'p') {
-			etype = 'v';
-		} else {
-			etype = 'w';
-		}
-
-		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ctype=${ctype}&mtype=${mtype}`, function(res, err) {
+		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ctype=${ctype}&mtype=${mtype}&ftpval=${ftpval}`, function(res, err) {
 			if (res['scode']) {
 				resolve(res['data']);
 			} else {
@@ -126,7 +99,6 @@ let getRandomCenter = function(point, base, scale) {
 
 export {
 	getOverviewDatasets,
-	getDensity,
 	getValRange,
 	getSubGrids,
 	getLinearNum,
