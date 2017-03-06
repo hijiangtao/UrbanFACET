@@ -60,6 +60,14 @@ body {
     outline: none;
 }
 
+img.ui.image {
+    display: inline;
+}
+
+.ui.pointing.secondary.menu {
+    width: 100%;
+}
+
 .ftpimg {
     padding-left: 2px;
     padding-right: 2px;
@@ -128,6 +136,10 @@ body {
 
 .ui.grid {
     margin-top: 0;
+}
+
+.ui.attached.segment {
+    border-top: 0;
 }
 /*.ui.button {
     padding: 0.385714em 0.7em;

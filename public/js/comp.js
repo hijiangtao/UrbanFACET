@@ -17,6 +17,8 @@ import {regionRecords, comp} from './components/initdata'
 import {getOverviewDatasets, getDensity, getValRange} from './components/apis'
 import vueSlider from 'vue-slider-component'
 
+require('../../semantic/dist/components/tab')
+
 // Vue.use(Vuex)
 
 // 判断浏览器是否支持 localStorage
@@ -90,6 +92,11 @@ const userpanel = new Vue({
 			this.selections.city = val;
 		},
 		'updateTPFilter': function(val) {
+			// 和之前选择一致,逻辑为取消
+			if (this.selections.ftpval === val) {
+				val = '';
+			}
+
 			for (let i = this.params.tpfilters.length - 1; i >= 0; i--) {
 				if (this.params.tpfilters[i].val !== val) {
 					this.params.tpfilters[i].active = false;
@@ -111,7 +118,7 @@ const userpanel = new Vue({
 			if (type === 'd') {
 				v = this.components.dSlider.value;
 			}
-			
+
 			document.getElementById(`${type}Slider`).getElementsByClassName('vue-slider')[0].style.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
 
 			let valScales = getValRange(self.params.scales, self.components.eSlider.value, self.components.dSlider.value, self.selections);
@@ -165,7 +172,7 @@ const userpanel = new Vue({
 	},
 	mounted() {
 		this.$nextTick(function () {
-
+			$('.menu .item').tab();
 		})
 	}
 });
