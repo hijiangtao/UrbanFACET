@@ -132,15 +132,15 @@ class fEnpByTPCalModule(object):
 			self.EMATRIX[ devIntGID ][3] += 1
 			if rt1 != -1:
 				self.EMATRIX[ devIntGID ][4] += 1
-				self.EMATRIX[ devIntGID ][8] += rt1 / self.record[devid]['prop']['vnum']
+				self.EMATRIX[ devIntGID ][8] += rt1 # / self.record[devid]['prop']['vnum']
 			if pt1 >= 0:
 				self.EMATRIX[ devIntGID ][2] += 1
 				self.EMATRIX[ devIntGID ][5] += pt1
 
 			self.EMATRIX[ devIntGID ][6] += pt2;
 			self.EMATRIX[ devIntGID ][7] += pt3;
-			self.EMATRIX[ devIntGID ][9] += rt2 / self.record[devid]['prop']['wnum']
-			self.EMATRIX[ devIntGID ][10] += rt3 / self.record[devid]['prop']['wnum']
+			self.EMATRIX[ devIntGID ][9] += rt2 # / self.record[devid]['prop']['wnum']
+			self.EMATRIX[ devIntGID ][10] += rt3 # / self.record[devid]['prop']['wnum']
 
 		# entropy-matrix 记录数更新
 		for x in xrange(0, self.GRIDSNUM):

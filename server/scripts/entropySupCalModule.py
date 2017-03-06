@@ -129,9 +129,9 @@ class entropySupCalModule(object):
 			self.EMATRIX[ devIntGID ][1] += 1
 			if t1 != -1:
 				self.EMATRIX[ devIntGID ][2] += 1
-				self.EMATRIX[ devIntGID ][3] += t1 / self.record[devid]['prop']['vnum']
-			self.EMATRIX[ devIntGID ][4] += t2 / self.record[devid]['prop']['wnum']
-			self.EMATRIX[ devIntGID ][5] += t3 / self.record[devid]['prop']['wnum']
+				self.EMATRIX[ devIntGID ][3] += t1 # / self.record[devid]['prop']['vnum']
+			self.EMATRIX[ devIntGID ][4] += t2 # / self.record[devid]['prop']['wnum']
+			self.EMATRIX[ devIntGID ][5] += t3 # / self.record[devid]['prop']['wnum']
 
 	def ematrixToStr(self, data):
 		datalen = self.GRIDSNUM
@@ -192,12 +192,11 @@ def mergeMatrixFiles(city, GRIDSNUM, filename='resrec'):
 		linestr = ','.join([str(int(ematrix[x][e])) for e in xrange(0,3)]) + ',' + ','.join([str(ematrix[x][e]) for e in xrange(3,9)]) + '\n'
 		resString += linestr
 
-
 	with open(os.path.join(baseurl, '%s-xxx' % filename), 'ab') as res:
 		res.write(resString)
 	res.close()
 
-	print "%d lines into matrix %s-xxx file" % (GRIDSNUM, filename)
+	print "%d lines into matrix %s %s-xxx file" % (GRIDSNUM, city, filename)
 
 def main(argv):
 	try:
