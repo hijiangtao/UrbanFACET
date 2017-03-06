@@ -71,26 +71,25 @@ let comp = {
             'etype': 'pp',
             'dtype': 'e',
             'maprev': false,
-            'ftpon': false,
-            'ftpval': ''
+            'ftpval': '',
+            'scales': {
+                'e': 1,
+                'd': 100
+            },
+            'id': {
+                'card': 'card0',
+                'map': 'map0',
+                'panel': 'tab0'
+            }
         }],
         'ctrmap': false,
         'ctrsets': {
             'multiColorSchema': true,
             'useLocalExtrema': false
         },
-        'num': 1
-    },
-    'res': {
-        /**
-         * value scales
-         */
-        'objs': [{
-            'scales': {
-                'e': 1,
-                'd': 100
-            }
-        }]
+        'splitmap': false,
+        'num': 1,
+        'lstindex': -999
     },
     'components': {
         'eSlider': {

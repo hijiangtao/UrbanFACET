@@ -12,7 +12,7 @@ body {
     border: none !important;
 }
 
-#map {
+#map0 {
     height: 93vh;
     width: 74vw;
     /*padding: .5rem;*/
@@ -42,7 +42,7 @@ body {
     border-radius: 0;
 }
 
-#maplegend {
+#maplegend0 {
     position: absolute;
     z-index: 11;
     /*height: 50px;*/
@@ -74,22 +74,13 @@ img.ui.image {
     width: 15%;
 }
 
-.vtitle {
-	color: orange;
-}
-
-#floatpanel {
-    position: absolute;
-    left: 26vw;
-    padding: 1rem;
-    margin-top: 6rem;
-    /*width: 20vw;*/
-    z-index: 9999;
-    background-color: rgba(255,255,255,0.8);
+.designedfontcolor {
+    color: rgba(250,150,30,1);
 }
 
 /*CHARTS STYLESHEET*/
-#estatChart, #dstatChart {
+#estatChart0, #dstatChart0 {
+    margin-top: 5px;
     width: 100%;
     height: 60px;
 }
@@ -140,6 +131,12 @@ img.ui.image {
 
 .ui.attached.segment {
     border-top: 0;
+}
+h4.ui.header {
+    color: rgba(250,150,30,1);
+}
+.ui.attached.segment {
+    border-bottom: 0;
 }
 /*.ui.button {
     padding: 0.385714em 0.7em;

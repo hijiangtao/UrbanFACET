@@ -13,16 +13,16 @@ const EP = require('../../conf/entropy');
 let apis = {
 	'overviewQuery': function(req, res, next) {
 		let params = req.query;
-		console.info('Going to connect MySQL.');
+		// console.info('Going to connect MySQL.');
 		lib.connectMySQL().then(function(conn) {
-			console.info('Got data from MySQL.');
+			// console.info('Got data from MySQL.');
 			return EP.getOverview(conn, params);
 		}, function(err) {
 			console.error('error: ', err);
 		}).catch(function(error) {
 			console.error('error: ', err);
 		}).then(function(result) {
-			console.info('Ready to send back result.');
+			// console.info('Ready to send back result.');
 			res.json(result);
 		})
 	},

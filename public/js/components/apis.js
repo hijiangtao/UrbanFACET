@@ -16,22 +16,34 @@ import $ from "jquery"
  * @param  {[type]} vuesels [vue instance 中存储的 selections object]
  * @return {[type]}         [description]
  */
-let getValRange = function(scales, esels, dsels, vuesels) {
+let getValRange = function(scales, esels, dsels, vuesels, index) {
+	let sels = vuesels.objs[index],
+		emin = Math.exp( Math.log(scales.e+1) * parseFloat(esels[0]) / 100.0 )-1,
+		emax = Math.exp( Math.log(scales.e+1) * parseFloat(esels[1]) / 100.0 )-1,
+		escales = scales.e;
+
 	return {
-		'entropy': {
-			'min': Math.exp( Math.log(scales.entropy+1) * parseFloat(esels[0]) / 100.0 )-1,
-			'max': Math.exp( Math.log(scales.entropy+1) * parseFloat(esels[1]) / 100.0 )-1,
-			'scales': scales.entropy
+		'e': { // entropy
+			'min': emin,
+			'max': emax,
+			'scales': escales
 		},
-		'density': {
-			'min': Math.exp( Math.log(scales.density) * parseFloat(dsels[0]) / 100.0 ),
-			'max': Math.exp( Math.log(scales.density) * parseFloat(dsels[1]) / 100.0 ),
-			'scales': scales.density
+		'm': { // entropy
+			'min': emin,
+			'max': emax,
+			'scales': escales
 		},
-		'type': vuesels.displaytype,
-		'multiColorSchema': vuesels.multiColorSchema,
-		'useLocalExtrema': vuesels.useLocalExtrema,
-		'displaySchema': vuesels.dtype
+		'd': { // density
+			'min': Math.exp( Math.log(scales.d) * parseFloat(dsels[0]) / 100.0 ),
+			'max': Math.exp( Math.log(scales.d) * parseFloat(dsels[1]) / 100.0 ),
+			'scales': scales.d
+		},
+		'prop': {
+			'type': sels.dtype,
+			'maprev': sels.maprev,
+			'multiColorSchema': vuesels.ctrsets.multiColorSchema,
+			'useLocalExtrema': vuesels.ctrsets.useLocalExtrema,
+		}
 	}
 };
 
@@ -58,14 +70,11 @@ let getSubGrids = function(poly, center, num=4) {
 let getOverviewDatasets = function(sels) {
 	let city = sels.city,
 		etype = sels.etype,
-		ctype = sels.ctype,
-		mtype = sels.mtype,
-		// tpfilter = sels.tpfilter,
+		dtype = sels.dtype,
 		ftpval = sels.ftpval;
-	// console.log('tpfilter: ', tpfilter);
 	
 	let p = new Promise(function(resolve, reject) {
-		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ctype=${ctype}&mtype=${mtype}&ftpval=${ftpval}`, function(res, err) {
+		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&dtype=${dtype}&ftpval=${ftpval}`, function(res, err) {
 			if (res['scode']) {
 				resolve(res['data']);
 			} else {
@@ -97,10 +106,29 @@ let getRandomCenter = function(point, base, scale) {
 	return [lng, lat]
 }
 
+let outOfRange = function(t, evalue, dvalue, emin, dmin) {
+	if (t === 'e') {
+		if (evalue < emin) {
+    		return true;
+    	}
+	} else if (t === 'm') {
+		if (evalue < emin || dvalue < dmin) {
+    		return true;
+    	}
+	} else if (t === 'd') {
+		if (dvalue < dmin) {
+    		return true;
+    	}
+	}
+
+	return false;
+}
+
 export {
 	getOverviewDatasets,
 	getValRange,
 	getSubGrids,
 	getLinearNum,
-	getRandomCenter
+	getRandomCenter,
+	outOfRange
 }

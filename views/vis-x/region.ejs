@@ -1,159 +1,131 @@
 <div class="ui grid">
-	<!-- <div id="floatpanel">
+	<div id="vctab" class="ui pointing secondary menu">
+	  <div class="active item" data-tab="tab1">Object1</div>
+	  <div class="item" ><i class="designedfontcolor plus square outline icon"></i></div>
+	</div>
+
+	<div v-for="(model, index) in sels.objs" :id="'tab' + index" :class="{ active: index === 0 }" class="ui bottom attached tab segment" :data-tab="'tab'+index">
 		<div class="sixteen wide column">
-			<div class="ui cards">
-			  <div class="card">
-			    <div class="content">
-			      <div class="header">
-			        Beijing
-			      </div>
-			      <div class="meta">
-			        2016.7-2016.10
-			      </div>
-			      <div class="description">
-			        WIFI, GPS
-			      </div>
-			    </div>
-			    <div class="extra content">
-			      <div class="ui basic red button">Remove</div>
-			    </div>
-			  </div>
-			</div>
+			<h4 class="designedfontcolor ui header"><i class="right angle icon divider"></i>Data and Parameters</h4>
 		</div>
-	</div> -->
-	
-	<div class="ui pointing secondary menu">
-	  <div class=" item" data-tab="first">Object</div>
-	  <div class="item" data-tab="second">Tab</div>
-	  <div class="item" data-tab="three">Tab</div>
-	  <div class="item" ><i class="plus square outline icon"></i></div>
-	</div>
-	<div class="ui bottom attached tab segment" data-tab="first">
-	  <p>asdasd</p>
-	  <p></p>
-	</div>
-	<div class="ui bottom attached tab segment" data-tab="second">
-	  <p>111111</p>
-	  <p></p>
-	</div>
-	<div class="ui bottom attached tab segment" data-tab="three">
-	  <p>{{ selections.eVal.val[1] }}</p>
-	  <p></p>
-	</div>
-
-	<div id="" class="sixteen wide column">
-		<div class="ui row">
-			<h4 class="ui header"><i class="chevron right icon"></i> Data and Parameters</h4>
-		</div>
-		<div class="ui form">
-			<div class="inline fields">
-				<label><img class="ui mini image" src="/assets/region-icon.png"> Regions</label>
-				<div v-for='item in params.regions' class="field">
-					<div class="ui tiny image">
-					  <img v-show="item.val === selections.city" :src="item.aurl" v-on:click="updateSelectRegion(item.val)">
-					  <img v-show="item.val !== selections.city" :src="item.nurl" v-on:click="updateSelectRegion(item.val)">
+		<div class="sixteen wide column">
+			<div class="ui form">
+				<div class="inline fields">
+					<label><img class="ui mini image" src="/assets/region-icon.png">Regions</label>
+					<div v-for='item in params.regions' class="field">
+						<div class="ui tiny image">
+						  <img v-show="item.val === model.city" :src="item.aurl" v-on:click="updateSelectRegion(index, item.val)">
+						  <img v-show="item.val !== model.city" :src="item.nurl" v-on:click="updateSelectRegion(index, item.val)">
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="ui divider"></div>
-			<div class="inline fields">
-				<label><img class="ui mini image" src="/assets/type-icon.png">Entropy Type</label>
-				<div class="field">
-					<select id="ethemeselect" >
-					  <option v-for='item in params.etypes' :value="item.val">{{ item.name }}</option>
-					</select>
-				</div>
-			</div>
-		</div>
-
-		<label><img class="ui mini image" src="/assets/time-icon.png">Timeblocks or Daytype</label>
-	</div>
-	<div class="sixteen wide column">
-		<div v-for='item in params.tpfilters' class="ftpimg ui image">
-		  <img v-show="item.active" :src="item.aurl" v-on:click="updateTPFilter(item.val)">
-		  <img v-show="!item.active" :src="item.nurl" v-on:click="updateTPFilter(item.val)">
-		</div>
-	</div>
-	
-	<div class="sixteen wide column">
-		<div class="ui fluid buttons">
-			<button class="ui tiny primary button" v-on:click="getOverview('entropy')">Display Entropy</button>
-			<!-- <button class="ui tiny primary button" v-on:click="getOverview('density')">Display Density</button> -->
-		</div>
-	</div>
-
-	<div class="sixteen wide column">
-		<div class="ui row">
-			<h4 class="vtitle"><i class="right angle icon divider"></i>Display Control</h4>
-		</div>
-
-		<div class="ui form">
-			<div class="inline fields">
-				<div class="field">
-					<div class="ui checkbox">
-					  <input type="checkbox" name="heatmaptype" v-model='selections.contourmap'>
-					  <label for="heatmaptype">Contour</label>
-					</div>
-				</div>
-				<div v-show="selections.contourmap" class="field">
-					<div class="ui toggle checkbox">
-					  <input type="checkbox" name="multiColorSchema" v-model="selections.multiColorSchema">
-					  <label for="multiColorSchema">Multicolor Schema</label>
-					</div>
-				</div>
-				<div class="field">
-					<div class="ui checkbox">
-					  <input type="checkbox" name="gridmaptype" v-model='selections.splitgridmap'>
-					  <label>Subgrid(4)</label>
+				<!-- <div class="ui divider"></div> -->
+				<div class="inline fields">
+					<label><img class="ui mini image" src="/assets/type-icon.png">Entropy Type</label>
+					<div class="field">
+						<select id="ethemeselect" v-model='model.etype'>
+						  <option v-for='item in params.etypes' :value="item.val">{{ item.name }}</option>
+						</select>
 					</div>
 				</div>
 			</div>
 		</div>
-			
-		<div class="ui form">
-			<div class="inline fields">
-				<label>Display Schema</label>
-				<div v-for="item in params.dtypes" class="field">
-			      <div class="ui radio checkbox">
-			        <input type="radio" name="displayschema"  :value="item.val" v-model="selections.dtype">
-			        <label>{{item.name}}</label>
-			      </div>
-			    </div>
+		<div class="sixteen wide column">
+			<label><img class="ui mini image" src="/assets/time-icon.png">Timeblocks or Daytype</label><br>
+
+			<div v-for='item in params.tpfilters' class="ftpimg ui image">
+			  <img v-show="item.val === model.ftpval" :src="item.aurl" v-on:click="updateTPFilter(item.val, index)">
+			  <img v-show="item.val !== model.ftpval" :src="item.nurl" v-on:click="updateTPFilter(item.val, index)">
+			</div>
+		</div>
+
+		<div class="sixteen wide column">
+			<div class="ui row">
+				<h4 class="ui header"><i class="right angle icon divider"></i>Display Control</h4>
 			</div>
 		</div>
 		
-	</div>
+		<div class="sixteen wide column">
+			<div class="ui form">
+				<div class="inline fields">
+					<label><img class="ui mini image" src="/assets/type-icon.png">VIS</label>
+					<div class="field">
+						<div class="ui checkbox">
+						  <input type="checkbox" name="heatmaptype" v-model='sels.ctrmap'>
+						  <label for="heatmaptype">Contour</label>
+						</div>
+					</div>
+					<div v-show="sels.ctrmap" class="field">
+						<div class="ui toggle checkbox">
+						  <input type="checkbox" name="multiColorSchema" v-model="sels.ctrsets.multiColorSchema">
+						  <label for="multiColorSchema">MultiColors</label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+						  <input type="checkbox" name="gridmaptype" v-model='sels.splitmap'>
+						  <label>Subgrid(4)</label>
+						</div>
+					</div>
+				</div>
 
-	<div class="ui divider"></div>
-
-	<div class="sixteen wide column">
-		<div id="estatChart"></div>
-	</div>
-	<div class="sixteen wide column">
-		<div id="dstatChart"></div>
-	</div>
-
-
-	<div v-if="!selections.initialstate" class="sixteen wide column">
-		<div class="ui row">
-			<h4 class="vtitle"><i class="right angle icon divider"></i>Filters</h4>
+				<div class="inline fields">
+					<label><img class="ui mini image" src="/assets/type-icon.png">Display Schema</label>
+					<div v-for="item in params.dtypes" class="field" >
+				      <div class="ui radio checkbox">
+				        <input type="radio" name="displayschema" :value="item.val" v-on:click="updateDS(index, item.val)">
+				        <label>{{ item.name }}</label>
+				      </div>
+				    </div>
+				    <div class="field">
+				    	<div class="ui checkbox">
+				    		<input type="checkbox" name="mapreverse" v-model="model.maprev">
+				    		<label>Reverse</label>
+				    	</div>
+				    </div>
+				</div>
+			</div>
 		</div>
 
-		<div class="ui grid">
-			<div class="four wide column">
-				<label for=""><img class="ui mini image" src="/assets/filter-icon.png"> Entropy</label>
+		<div class="sixteen wide column">
+			<div class="ui fluid buttons">
+				<button class="ui tiny primary button" v-on:click="getOverview(index)">Display Entropy</button>
+				<!-- <button class="ui tiny primary button" v-on:click="getOverview(index)">Display Density</button> -->
 			</div>
-			<div class="twelve wide column">
-				<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="computedSlider('e')" v-model="components.eSlider.value"></vue-slider>
-			</div>
-			<div class="four wide column">DensityFilter</div>
-			<div class="twelve wide column">
-				<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="computedSlider('d')" v-model="components.dSlider.value"></vue-slider>
-			</div>
-			
-		</div>	
-	</div>
+		</div>
 
+		<div class="ui divider"></div>
+
+		<div class="sixteen wide column">
+			<div class="ui row">
+				<h4 class="ui header"><i class="right angle icon divider"></i>Filters</h4>
+			</div>
+
+			<div class="ui grid">
+				<div class="four wide column">
+					<label for=""><img class="ui mini image" src="/assets/filter-icon.png">Entropy</label>
+				</div>
+				<div class="twelve wide column">
+					<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="computedSlider('e')" v-model="components.eSlider.value"></vue-slider>
+				</div>
+				<div class="four wide column">
+					<label for=""><img class="ui mini image" src="/assets/filter-icon.png">Density</label>
+				</div>
+				<div class="twelve wide column">
+					<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="computedSlider('d')" v-model="components.dSlider.value"></vue-slider>
+				</div>
+			</div>	
+		</div>
+
+		<br>
+
+		<div class="sixteen wide column">
+			<div :id="'estatChart'+index"></div>
+		</div>
+		<div class="sixteen wide column">
+			<div :id="'dstatChart'+index"></div>
+		</div>
+	</div>
 	
 </div>
 
