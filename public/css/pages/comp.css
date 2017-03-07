@@ -12,15 +12,38 @@ body {
     border: none !important;
 }
 
-#map0 {
+/*MAP STYLESHEETS*/
+#mappanel {
     height: 93vh;
     width: 74vw;
-    /*padding: .5rem;*/
-    position: absolute;
     left: 26vw;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+}
+
+#mappanel>div {
+    float: left;
     margin: 0;
     border-radius: 0;
 }
+
+.onemap {
+    height: 100%;
+    width: 100%;
+}
+.twomap {
+    height: 100%;
+    width: 50%;
+    /*float: left;*/
+    background-color: gray;
+}
+.formap {
+    height: 50%;
+    width: 50%;
+}
+
+/*MAP STYLESHEETS*/
 
 #titlemenu {
     height: 7vh;
@@ -49,7 +72,7 @@ body {
     width: 300px;
 }
 
-#ethemeselect {
+.ui.form select, .field select.roundselect, select.roundselect {
     border-color: rgb(0,0,0);
     
     -webkit-border-radius: .6rem;
@@ -79,10 +102,10 @@ img.ui.image {
 }
 
 /*CHARTS STYLESHEET*/
-#estatChart0, #dstatChart0 {
+.statcharts>div {
     margin-top: 5px;
     width: 100%;
-    height: 60px;
+    /*height: 60px;*/
 }
 .area {
   fill: rgba(250,150,30,1);

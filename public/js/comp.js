@@ -14,7 +14,8 @@ import chart from './components/chartview'
 import $ from "jquery"
 // window.jQuery = $
 import { regionRecords, comp } from './components/init'
-import { getOverviewDatasets, getDensity, getValRange } from './components/apis'
+import { getOverviewDatasets, getDensity, getValRange, objClone } from './components/apis'
+import { appendMap, removeMaps, bindTabClick } from './components/events'
 import vueSlider from 'vue-slider-component'
 
 // require('../../semantic/dist/components/tab')
@@ -36,6 +37,11 @@ const userpanel = new Vue({
 		vueSlider
 	},
 	methods: {
+		/**
+		 * 从服务器拉取 entropy 以及 density 数据并显示在相应 map 板块
+		 * @param  {[type]} index map 面板编号
+		 * @return {[type]}       [description]
+		 */
 		'getOverview': function(index) {
 			// 当前 index 不在合法的阈值范围内
 			let self = this,
@@ -86,9 +92,21 @@ const userpanel = new Vue({
 
 			}
 		},
+		/**
+		 * 更新指定 map 面板中选中的 City
+		 * @param  {[type]} index [description]
+		 * @param  {[type]} val   [description]
+		 * @return {[type]}       [description]
+		 */
 		'updateSelectRegion': function(index, val) {
 			this.sels.objs[index].city = val;
 		},
+		/**
+		 * 更新指定 map 面板中的时间过滤条件
+		 * @param  {[type]} val   [description]
+		 * @param  {[type]} index [description]
+		 * @return {[type]}       [description]
+		 */
 		'updateTPFilter': function(val, index) {
 			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
 			let self = this,
@@ -108,10 +126,16 @@ const userpanel = new Vue({
 
 			this.getOverview(index);
 		},
+		/**
+		 * 更新数据的 display type
+		 * @param  {[type]} index [description]
+		 * @param  {[type]} val   [description]
+		 * @return {[type]}       [description]
+		 */
 		'updateDS': function(index, val) {
 			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
 			index = Number.parseInt(index);
-			this.sels.objs[index].dtype = val;
+			// this.sels.objs[index].dtype = val;
 
 			if (this.sels.lstindex === -999) {
 				return;
@@ -134,7 +158,12 @@ const userpanel = new Vue({
 					break;
 			}
 		},
-		'computedSlider': function(type) {
+		/**
+		 * 计算与更新 slider 样式, 更新 map
+		 * @param  {[type]} type 传入的 slider 类型值, d/e
+		 * @return {[type]}      [description]
+		 */
+		'updateSlider': function(type) {
 			// 定位 slider
 			let v = this.components.eSlider.value;
 			if (type === 'd') {
@@ -166,6 +195,92 @@ const userpanel = new Vue({
 					break;
 				default:
 					break;
+			}
+		},
+
+		'addAnaObj': function() {
+			let self = this,
+				currentSize = self.sels.objs.length;
+			console.log('currentSize', currentSize);
+
+			switch (currentSize) {
+				// 添加一个对象
+				case 1:
+				appendMap( [1] );
+				self.updateSels(1, 'add');
+				break;
+				// 复制现有两个对象并添加
+				case 2:
+				appendMap( [2,3] );
+				self.updateSels(2, 'add');
+				break;
+				case 4:
+				alert('No more objects can be created, please remove some first.');
+				break;
+				default:
+				break;
+			}
+
+			for (let i = currentSize*2 - 1; i >= currentSize; i--) {
+				// 新建 map & chart model view
+				maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`);
+				charts[i] = new chart(`#estatChart${i}`);
+
+				// 更新 objs 中的 id 对象
+				self.sels.objs[i].id.card = `card${i}`;
+				self.sels.objs[i].id.map = `map${i}`;
+				self.sels.objs[i].id.tab = `tab${i}`;
+
+				// 更新视图
+				self.getOverview(i);
+				// setTimeout(self.getOverview(i), 1000);
+			}
+		},
+		'delAnaObj': function() {
+			let self = this,
+				currentSize = self.sels.objs.length;
+
+			switch (currentSize) {
+				// 添加一个对象
+				case 4:
+				removeMaps(2);
+				self.updateSels(2, 'del');
+				break;
+				// 复制现有两个对象并添加
+				case 2:
+				removeMaps(1);
+				self.updateSels(1, 'del');
+				break;
+				case 1:
+				alert('No more objects can be removed, one object should be reserved in the page.');
+				break;
+				default:
+				break;
+			}
+
+			for (let i = currentSize*2 - 1; i >= currentSize; i--) {
+				maps[i].splice(-1,1);
+				charts[i].splice(-1,1);
+			}
+		},
+		/**
+		 * 更新 vue 实例中存储的 objs 数组, isize 为个数
+		 * @param  {[type]} isize [description]
+		 * @param  {[type]} type  [description]
+		 * @return {[type]}       [description]
+		 */
+		'updateSels': function(isize, type) {
+			let self = this;
+
+			for (let i=0; i<isize; i++) {
+				switch (type) {
+					case 'add':
+					self.sels.objs.push( objClone( self.sels.objs[i] ) );
+					break;
+					default:
+					self.sels.objs.splice(-1, 1);
+					break;
+				}
 			}
 		}
 	},
@@ -207,6 +322,8 @@ const userpanel = new Vue({
 		this.$nextTick(function() {
 			maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0');
 			charts[0] = new chart('#estatChart0');
+
+			document.getElementById( `switch0` ).addEventListener('click', bindTabClick);
 		})
 	}
 });

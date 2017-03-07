@@ -124,11 +124,27 @@ let outOfRange = function(t, evalue, dvalue, emin, dmin) {
 	return false;
 }
 
+let objClone = function (obj) {
+    let res = {};
+
+    for (let attr in obj) {
+        if (obj.hasOwnProperty(attr)) {
+            if (typeof(obj[attr]) !== "object") {
+                res[attr] = obj[attr];
+            } else {
+            	res[attr] = objClone(obj[attr]);
+            }
+        }
+    }
+    return res;
+};
+
 export {
 	getOverviewDatasets,
 	getValRange,
 	getSubGrids,
 	getLinearNum,
 	getRandomCenter,
-	outOfRange
+	outOfRange,
+	objClone
 }

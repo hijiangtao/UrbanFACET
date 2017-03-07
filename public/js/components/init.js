@@ -79,9 +79,9 @@ let comp = {
             'id': {
                 'card': 'card0',
                 'map': 'map0',
-                'panel': 'tab0'
+                'tab': 'tab0'
             }
-        }],
+        } ],
         'ctrmap': false,
         'ctrsets': {
             'multiColorSchema': true,

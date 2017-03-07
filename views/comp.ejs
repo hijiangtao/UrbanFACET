@@ -26,9 +26,21 @@
         <div id="userpanel" class="ui segment">
             <% include vis-x/region %>
         </div>
-        <div id="map0" class="ui segment">
-            <% include vis-x/map %>
+        <div id="mappanel" class="ui segment">
+            <div id="map0" class="onemap vamap ui segment">
+                <div id="maplegend0">
+                    <svg id='gridmaplegend0' height='50'></svg>
+                    <div id="contourmaplegend0" ></div>
+                </div>
+
+                <div class="ui dimmer">
+                    <div class="ui medium text loader">Loading Data</div>
+                </div>
+            </div>
+
+            <!-- <div id="map1" class="twomap vamap ui segment"></div> -->
         </div>
+            
     </div>
     
     <script src="/dist/<%= name %>.js"></script>

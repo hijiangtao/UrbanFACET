@@ -1,10 +1,11 @@
 <div class="ui grid">
 	<div id="vctab" class="ui pointing secondary menu">
-	  <div class="active item" data-tab="tab1">Object1</div>
-	  <div class="item" ><i class="designedfontcolor plus square outline icon"></i></div>
+	  <div id="switch0" class="tabs active item" data-tab="tab0">OBJ0</div>
+	  <div id='addObjBtn' class="item" @click='addAnaObj'><i class="designedfontcolor plus square outline icon"></i></div>
+	  <div id='delObjBtn' class="item" @click='delAnaObj'><i class="minus square outline icon"></i></div>
 	</div>
 
-	<div v-for="(model, index) in sels.objs" :id="'tab' + index" :class="{ active: index === 0 }" class="ui bottom attached tab segment" :data-tab="'tab'+index">
+	<div v-for="(model, index) in sels.objs" :id="'tab' + index" :class="{ active: index === 0 }" class="panels ui bottom attached tab segment" :data-tab="'tab'+index">
 		<div class="sixteen wide column">
 			<h4 class="designedfontcolor ui header"><i class="right angle icon divider"></i>Data and Parameters</h4>
 		</div>
@@ -14,8 +15,8 @@
 					<label><img class="ui mini image" src="/assets/region-icon.png">Regions</label>
 					<div v-for='item in params.regions' class="field">
 						<div class="ui tiny image">
-						  <img v-show="item.val === model.city" :src="item.aurl" v-on:click="updateSelectRegion(index, item.val)">
-						  <img v-show="item.val !== model.city" :src="item.nurl" v-on:click="updateSelectRegion(index, item.val)">
+						  <img v-show="item.val === model.city" :src="item.aurl" @click="updateSelectRegion(index, item.val)">
+						  <img v-show="item.val !== model.city" :src="item.nurl" @click="updateSelectRegion(index, item.val)">
 						</div>
 					</div>
 				</div>
@@ -23,7 +24,7 @@
 				<div class="inline fields">
 					<label><img class="ui mini image" src="/assets/type-icon.png">Entropy Type</label>
 					<div class="field">
-						<select id="ethemeselect" v-model='model.etype'>
+						<select class="roundselect" v-model='model.etype'>
 						  <option v-for='item in params.etypes' :value="item.val">{{ item.name }}</option>
 						</select>
 					</div>
@@ -71,12 +72,20 @@
 
 				<div class="inline fields">
 					<label><img class="ui mini image" src="/assets/type-icon.png">Display Schema</label>
-					<div v-for="item in params.dtypes" class="field" >
+					
+					<div class="field">
+						<select class="roundselect" v-model='model.dtype' @change="updateDS(index, model.dtype)">
+						  <option v-for='item in params.dtypes' :value="item.val">{{ item.name }}</option>
+						</select>
+					</div>
+
+					<!-- <div v-for="item in params.dtypes" class="field" >
 				      <div class="ui radio checkbox">
-				        <input type="radio" name="displayschema" :value="item.val" v-on:click="updateDS(index, item.val)">
+				        <input type="radio" name="displayschema" :value="item.val" @click="updateDS(index, item.val)">
 				        <label>{{ item.name }}</label>
 				      </div>
-				    </div>
+				    </div> -->
+
 				    <div class="field">
 				    	<div class="ui checkbox">
 				    		<input type="checkbox" name="mapreverse" v-model="model.maprev">
@@ -106,20 +115,20 @@
 					<label for=""><img class="ui mini image" src="/assets/filter-icon.png">Entropy</label>
 				</div>
 				<div class="twelve wide column">
-					<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="computedSlider('e')" v-model="components.eSlider.value"></vue-slider>
+					<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="updateSlider('e')" v-model="components.eSlider.value"></vue-slider>
 				</div>
 				<div class="four wide column">
 					<label for=""><img class="ui mini image" src="/assets/filter-icon.png">Density</label>
 				</div>
 				<div class="twelve wide column">
-					<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="computedSlider('d')" v-model="components.dSlider.value"></vue-slider>
+					<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="updateSlider('d')" v-model="components.dSlider.value"></vue-slider>
 				</div>
 			</div>	
 		</div>
 
 		<br>
 
-		<div class="sixteen wide column">
+		<div class="statcharts sixteen wide column">
 			<div :id="'estatChart'+index"></div>
 		</div>
 		<div class="sixteen wide column">
