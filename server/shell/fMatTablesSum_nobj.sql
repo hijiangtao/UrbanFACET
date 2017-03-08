@@ -1,3 +1,6 @@
+
+USE tdnormal;
+
 CREATE TABLE `tdnormal`.`tjF0mat` (
   `id` mediumint(8) UNSIGNED NOT NULL,
   `wpnumber` int(10) UNSIGNED NOT NULL DEFAULT '0',
