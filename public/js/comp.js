@@ -9,6 +9,8 @@
 
 import Vue from 'vue'
 import Vuex from 'vuex'
+Vue.use(Vuex)
+
 import mapview from './components/xmap-view'
 import chart from './components/chartview'
 import $ from "jquery"
@@ -18,21 +20,30 @@ import { getOverviewDatasets, getDensity, getValRange, objClone } from './compon
 import { appendMap, removeMaps, bindTabClick } from './components/events'
 import vueSlider from 'vue-slider-component'
 
-// require('../../semantic/dist/components/tab')
-
-// Vue.use(Vuex)
+// Vuex Instance
+const store = new Vuex.Store({
+  state: {
+    init: true
+  },
+  mutations: {
+    updateInitState (state) {
+      state.init = !state.init;
+    }
+  }
+})
 
 // 判断浏览器是否支持 localStorage
 if (typeof(Storage) === undefined) {
 	alert('Please Update your browser to support localStorage');
 }
 
-let maps = new Array(4),
-	charts = new Array(4);
+let maps = [],
+	charts = [];
 
 const userpanel = new Vue({
 	el: '#userpanel',
 	data: comp,
+	store,
 	components: {
 		vueSlider
 	},
@@ -47,8 +58,16 @@ const userpanel = new Vue({
 			let self = this,
 				esvals = self.components.eSlider.value,
 				dsvals = self.components.dSlider.value;
+			
 			index = Number.parseInt(index);
-			self.sels.lstindex = index;
+			this.sels.lstindex = index;
+
+			// 改变页面初始化状态
+			if (store.state.init) {
+				store.commit(updateInitState);
+			}
+
+
 			if (index > 3) {
 				alert('Selected object is out of index.');
 			}
@@ -112,16 +131,17 @@ const userpanel = new Vue({
 			let self = this,
 				sels = self.sels.objs[index];
 			
-			index = Number.parseInt(index);
-			if (this.sels.lstindex === -999) {
-				return;
-			}
-
 			// 和之前选择一致,逻辑为取消
 			if (sels.ftpval === val) {
 				sels.ftpval = '';
 			} else {
 				sels.ftpval = val;
+			}
+
+			index = Number.parseInt(index);
+			this.sels.lstindex = index;
+			if (store.state.init) {
+				return;
 			}
 
 			this.getOverview(index);
@@ -135,9 +155,9 @@ const userpanel = new Vue({
 		'updateDS': function(index, val) {
 			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
 			index = Number.parseInt(index);
-			// this.sels.objs[index].dtype = val;
+			this.sels.lstindex = index;
 
-			if (this.sels.lstindex === -999) {
+			if (store.state.init) {
 				return;
 			}
 
@@ -163,7 +183,7 @@ const userpanel = new Vue({
 		 * @param  {[type]} type 传入的 slider 类型值, d/e
 		 * @return {[type]}      [description]
 		 */
-		'updateSlider': function(type) {
+		'updateSlider': function(type, index) {
 			// 定位 slider
 			let v = this.components.eSlider.value;
 			if (type === 'd') {
@@ -174,8 +194,9 @@ const userpanel = new Vue({
 			document.getElementById(`${type}Slider`).getElementsByClassName('vue-slider')[0].style.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
 
 			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
-			let index = this.sels.lstindex;
-			if (index === -999) {
+			index = Number.parseInt(index);
+			this.sels.lstindex = index;
+			if (store.state.init) {
 				return;
 			}
 
@@ -259,8 +280,8 @@ const userpanel = new Vue({
 			}
 
 			for (let i = currentSize*2 - 1; i >= currentSize; i--) {
-				maps[i].splice(-1,1);
-				charts[i].splice(-1,1);
+				maps.splice(-1,1);
+				charts.splice(-1,1);
 			}
 		},
 		/**
@@ -293,7 +314,7 @@ const userpanel = new Vue({
 				console.log('dtype changed.');
 				// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
 				let index = this.sels.lstindex;
-				if (index === -999) {
+				if (store.state.init) {
 					return;
 				}
 
@@ -324,6 +345,7 @@ const userpanel = new Vue({
 			charts[0] = new chart('#estatChart0');
 
 			document.getElementById( `switch0` ).addEventListener('click', bindTabClick);
-		})
+			document.getElementById( `tab0` ).classList.add('e-active');
+		});
 	}
 });

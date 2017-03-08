@@ -11,8 +11,10 @@ let iterateTabs = function(tval, pval) {
 	// 遍历 tab 元素
 	document.querySelectorAll('.tabs').forEach(function(e) {
 		// 判断 tab 是否更换样式
-		if (e.id === tval && !e.classList.contains('active')) {
-			e.classList.add('active');
+		if (e.id === tval) {
+			if (!e.classList.contains('active')) {
+				e.classList.add('active');
+			}
 		} else {
 			e.classList.remove('active');
 		}
@@ -20,10 +22,12 @@ let iterateTabs = function(tval, pval) {
 
 	// 遍历 panel 判断显示或者隐藏
 	document.querySelectorAll('.panels').forEach(function(e) {
-		if (e.id === pval && !e.classList.contains('active')) {
-			e.classList.add('active');
+		if (e.id === pval) {
+			if (!e.classList.contains('e-active')) {
+				e.classList.add('e-active');
+			}
 		} else {
-			e.classList.remove('active');
+			e.classList.remove('e-active');
 		}
 	})
 };
@@ -87,7 +91,7 @@ let appendMap = function(indexs) {
  * @return {[type]}        [description]
  */
 let removeMaps = function(number) {
-	let tcontainer = document.getElementById(''),
+	let tcontainer = document.getElementById('vctab'),
 		mcontainer = document.getElementById('mappanel'),
 		isize = document.getElementsByClassName('vamap').length,
 		preclass = isize === 4? 'formap':'twomap',
@@ -103,14 +107,14 @@ let removeMaps = function(number) {
 			tcontainer.removeChild( tchild );
 			number -= 1;	
 		} else {
-			tchild.classList.remove( preclass );
-			tchild.classList.add( curclass );
+			mchild.classList.remove( preclass );
+			mchild.classList.add( curclass );
 		}
 		
 	}
 
 	// 恢复第一个 tab 的聚焦
-	iterateTabs('0', '0');
+	iterateTabs('switch0', 'tab0');
 
 	return isize-number;
 };

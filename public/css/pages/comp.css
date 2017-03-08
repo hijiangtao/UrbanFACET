@@ -121,6 +121,17 @@ img.ui.image {
     stroke: none;
     fill: red;
 }
+
+.e-active {
+    display: block !important;
+}
+
+#vctab>div.item {
+    font-size: 1.5rem;
+    padding: .4rem 1rem;
+    border-bottom-width: 4px;
+}
+
 /*CHARTS STYLESHEET*/
 
 /*.selectedregion {
@@ -161,7 +172,7 @@ h4.ui.header {
 .ui.attached.segment {
     border-bottom: 0;
 }
-/*.ui.button {
-    padding: 0.385714em 0.7em;
+/*.ui.tab {
+    display: block;
 }*/
 /*REWRITE SEMANTIC-UI*/
