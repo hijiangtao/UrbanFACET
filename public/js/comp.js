@@ -346,7 +346,7 @@ const userpanel = new Vue({
 
 			document.getElementById( `switch0` ).addEventListener('click', bindTabClick);
 
-			maps[0].drawGeojson('bj');
+			maps[0].drawGeojson('tj');
 		});
 	}
 });
