@@ -7,14 +7,12 @@
     <title>
         <%= title %> | ISCAS-VIS
     </title>
-    <meta name="description" content="">
-    <meta name="keywords" content="">
+    <meta name="description" content=""Urban Mobility Map: Information-theoretic visual analysis of big user check-in data>
+    <meta name="keywords" content="Visual Analytics">
     <link href="/favicon.ico" rel="shortcut icon">
-    <style type="text/css" rel="stylesheet">
-    @import url('/css/leaflet.css');
-    @import url('/css/semantic.css');
-    @import url('/css/pages/<%= name %>.css');
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/leaflet.css">
+    <link rel="stylesheet" type="text/css" href="/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="/css/pages/<%= name %>.css">
 </head>
 
 <body>
@@ -28,7 +26,7 @@
         </div>
         <div id="mappanel" class="ui segment">
             <div id="map0" class="onemap vamap ui segment">
-                <div id="maplegend0">
+                <div id="maplegend0" class="m-legend">
                     <svg id='gridmaplegend0' height='50'></svg>
                     <div id="contourmaplegend0" ></div>
                 </div>

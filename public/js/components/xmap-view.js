@@ -13,6 +13,7 @@ import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.j
 import * as d3 from 'd3'
 import { legendColor } from 'd3-svg-legend'
 import { getSubGrids, getLinearNum, getRandomCenter, outOfRange } from './apis'
+import * as coordtransform from 'coordtransform';
 
 // 临时变量 
 import $ from "jquery"
@@ -95,7 +96,7 @@ class mapview {
 			height = Math.max(500, window.innerHeight)
 			// prefix = prefixMatch(["webkit", "ms", "Moz", "O"]);
 
-		var projection = d3.geoMercator()
+		let projection = d3.geoMercator()
 			.scale((1 << 24) / 2 / Math.PI)
 			.translate([-width / 2, -height / 2]);
 
@@ -145,6 +146,51 @@ class mapview {
 			let point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
 			return [point.x, point.y];
 		}
+	}
+
+	drawGeojson(city="bj") {
+		let self = this;
+		let svg = d3.select(self.map.getPanes().overlayPane).append("svg"),
+		    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+
+		d3.json(`/${city}.json`, function(error, collection) {
+		  if (error) throw error;
+
+		  let transform = d3.geoTransform({point: projectPoint}),
+		      path = d3.geoPath().projection(transform);
+
+		  let feature = g.selectAll("path")
+		      .data(collection.features)
+		    .enter().append("path");
+
+		  self.map.on("viewreset", reset);
+		  reset();
+
+		  // Reposition the SVG to cover the features.
+		  function reset() {
+		    let bounds = path.bounds(collection),
+		        topLeft = bounds[0],
+		        bottomRight = bounds[1];
+
+		    svg .attr("width", bottomRight[0] - topLeft[0])
+		        .attr("height", bottomRight[1] - topLeft[1])
+		        .style("left", topLeft[0] + "px")
+		        .style("top", topLeft[1] + "px");
+
+		    g   .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+
+		    feature.attr("d", path);
+		  }
+
+		  // Use Leaflet to implement a D3 geometric transformation.
+		  function projectPoint(x, y) {
+		  	let p2 = coordtransform.gcj02towgs84(x, y);
+		  		// p2 = coordtransform.gcj02towgs84(p[0], p[1]);
+
+		    let point = self.map.latLngToLayerPoint(new L.LatLng(p2[1], p2[0]));
+		    this.stream.point(point.x, point.y);
+		  }
+		});
 	}
 
 	/**
@@ -393,7 +439,7 @@ class mapview {
 		let id = `#${this.ides.grdleg}`;
 
 		d3.select(id).selectAll('*').remove();
-		let svg = d3.select(id);
+		let svg = d3.select(id).attr('height', 50);
 
 		svg.append('text')
 			.attr('y', 23)
@@ -478,6 +524,10 @@ class mapview {
 		this.map.setView(L.latLng(lat, lng), zoom)
 	}
 
+	/**
+	 * 删除所有附加可视化图层
+	 * @return {[type]} [description]
+	 */
 	clearLayers() {
 		if (this.heatmapLayer) {
 			this.map.removeLayer(this.heatmapLayer);
@@ -489,6 +539,11 @@ class mapview {
 		}
 	}
 
+	/**
+	 * 切换不同 legend 的图层显示
+	 * @param  {[type]} cfg [description]
+	 * @return {[type]}     [description]
+	 */
 	switchLegDisplay(cfg) {
 		for (let key in this.ides) {
 			if (key === 'mapid') {

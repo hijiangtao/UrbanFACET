@@ -35,12 +35,22 @@ body {
 .twomap {
     height: 100%;
     width: 50%;
-    /*float: left;*/
-    background-color: gray;
 }
 .formap {
     height: 50%;
     width: 50%;
+}
+
+path {
+  fill: #000;
+  fill-opacity: .2;
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+path:hover {
+  fill: brown;
+  fill-opacity: .7;
 }
 
 /*MAP STYLESHEETS*/
@@ -65,10 +75,9 @@ body {
     border-radius: 0;
 }
 
-#maplegend0 {
+.m-legend {
     position: absolute;
     z-index: 11;
-    /*height: 50px;*/
     width: 300px;
 }
 
@@ -131,6 +140,11 @@ img.ui.image {
     padding: .4rem 1rem;
     border-bottom-width: 4px;
 }
+
+#test {
+    width: 400px;
+}
+
 
 /*CHARTS STYLESHEET*/
 

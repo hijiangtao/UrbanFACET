@@ -5,7 +5,7 @@
 	  <div id='delObjBtn' class="item" @click='delAnaObj'><i class="minus square outline icon"></i></div>
 	</div>
 
-	<div v-for="(model, index) in sels.objs" :id="'tab' + index" class="panels ui bottom attached tab segment" :data-tab="'tab'+index">
+	<div v-for="(model, index) in sels.objs" :id="'tab' + index" class="panels e-active ui bottom attached tab segment" :data-tab="'tab'+index">
 		<div class="sixteen wide column">
 			<h4 class="designedfontcolor ui header"><i class="right angle icon divider"></i>Data and Parameters</h4>
 		</div>
@@ -114,15 +114,19 @@
 				<div class="four wide column">
 					<label for=""><img class="ui mini image" src="/assets/filter-icon.png">Entropy</label>
 				</div>
+				<template>
 				<div class="twelve wide column">
 					<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="updateSlider('e', index)" v-model="components.eSlider.value"></vue-slider>
 				</div>
+				</template>
 				<div class="four wide column">
 					<label for=""><img class="ui mini image" src="/assets/filter-icon.png">Density</label>
 				</div>
+				<template>
 				<div class="twelve wide column">
 					<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="updateSlider('d', index)" v-model="components.dSlider.value"></vue-slider>
 				</div>
+				</template>
 			</div>	
 		</div>
 

@@ -93,11 +93,14 @@ let comp = {
     },
     'components': {
         'eSlider': {
+            width: "auto",
             tooltip: 'hover',
             value: [0, 100],
+            disabled: false,
+            clickable: false,
             tooltipStyle: {
                 "backgroundColor": "#000",
-                "borderColor": "#f00"
+                "borderColor": "#000"
             },
             bgStyle: {
                 'background': settings['whiteToRed']
@@ -107,11 +110,14 @@ let comp = {
             }
         },
         'dSlider': {
+            width: "auto",
             tooltip: 'hover',
             value: [0, 100],
+            disabled: false,
+            clickable: false,
             tooltipStyle: {
                 "backgroundColor": "#000",
-                "borderColor": "#f00"
+                "borderColor": "#000"
             },
             bgStyle: {
                 'background': settings['whiteToRed']

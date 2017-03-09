@@ -70,8 +70,8 @@ let appendMap = function(indexs) {
 
 		// 添加 map 容器
 		map.classList.add(curclass, 'vamap', 'ui', 'segment');
-		map.innerHTML = `<div id='maplegend${index}'>
-			<svg id='gridmaplegend${index}' height='50'></svg>
+		map.innerHTML = `<div id='maplegend${index}' class='m-legend'>
+			<svg id='gridmaplegend${index}'></svg>
 			<div id='contourmaplegend${index}' ></div>
 		</div>
 		<div class='ui dimmer'><div class="ui medium text loader">Loading Data</div></div>`;

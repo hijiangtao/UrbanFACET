@@ -18,14 +18,14 @@ class chart {
 		let containerwidth = document.getElementById(id.substring(1)).offsetWidth,
 			containerheight = document.getElementById(id.substring(1)).offsetHeight;
 
-		d3.select(`${id.substring(1)}svg`).remove();
+		d3.select(`${id}svg`).remove();
 		let svg = d3.select(id)
 			.append('svg')
 			.attr('id', `${id.substring(1)}svg`)
 			.attr('width', containerwidth)
 			.attr('height', 60);
 
-		let margin = {top: 1, right: 5, bottom: containerheight*0.7, left: 30},
+		let margin = {top: 5, right: 5, bottom: containerheight*0.7, left: 30},
 		    margin2 = {top: 2, right: 12, bottom: 18, left: 30},
 		    width = +svg.attr("width") - margin.left - margin.right,
 		    height = +svg.attr("height") - margin.top - margin.bottom,

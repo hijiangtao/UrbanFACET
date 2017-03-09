@@ -11,6 +11,7 @@
     "async": "^2.1.4",
     "body-parser": "~1.15.1",
     "cookie-parser": "^1.4.3",
+    "coordtransform": "^2.1.2",
     "d3": "^4.4.0",
     "d3-svg-legend": "^2.21.0",
     "debug": "~2.2.0",

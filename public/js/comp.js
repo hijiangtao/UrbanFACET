@@ -62,12 +62,6 @@ const userpanel = new Vue({
 			index = Number.parseInt(index);
 			this.sels.lstindex = index;
 
-			// 改变页面初始化状态
-			if (store.state.init) {
-				store.commit(updateInitState);
-			}
-
-
 			if (index > 3) {
 				alert('Selected object is out of index.');
 			}
@@ -91,6 +85,7 @@ const userpanel = new Vue({
 					let valScales = getValRange(sels.scales, esvals, dsvals, self.sels, index);
 					console.log('valScales', valScales);
 
+					maps[index].panTo(regionRecords[city]['center']);
 					switch (self.sels.ctrmap) {
 						case true:
 							maps[index].mapcontourCDrawing(res, valScales);
@@ -104,11 +99,15 @@ const userpanel = new Vue({
 
 					charts[index].brushDraw(`#estatChart${index}`, res['chart']['e']);
 					charts[index].brushDraw(`#dstatChart${index}`, res['chart']['d']);
-					maps[index].panTo(regionRecords[city]['center']);
+					
 				}).catch(function(err) {
 					console.error("Failed!", err);
 				});
+			}
 
+			// 改变页面初始化状态
+			if (store.state.init) {
+				store.commit('updateInitState');
 			}
 		},
 		/**
@@ -340,12 +339,14 @@ const userpanel = new Vue({
 		}
 	},
 	mounted() {
+		let self = this;
 		this.$nextTick(function() {
 			maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0');
 			charts[0] = new chart('#estatChart0');
 
 			document.getElementById( `switch0` ).addEventListener('click', bindTabClick);
-			document.getElementById( `tab0` ).classList.add('e-active');
+
+			maps[0].drawGeojson('bj');
 		});
 	}
 });
