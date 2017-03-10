@@ -122,5 +122,6 @@ let removeMaps = function(number) {
 export {
 	appendMap,
 	removeMaps,
-	bindTabClick
+	bindTabClick,
+	iterateTabs
 };

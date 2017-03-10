@@ -17,7 +17,7 @@ import $ from "jquery"
 // window.jQuery = $
 import { regionRecords, comp } from './components/init'
 import { getOverviewDatasets, getDensity, getValRange, objClone } from './components/apis'
-import { appendMap, removeMaps, bindTabClick } from './components/events'
+import { appendMap, removeMaps, bindTabClick, iterateTabs } from './components/events'
 import vueSlider from 'vue-slider-component'
 
 // Vuex Instance
@@ -99,7 +99,7 @@ const userpanel = new Vue({
 
 					charts[index].brushDraw(`#estatChart${index}`, res['chart']['e']);
 					charts[index].brushDraw(`#dstatChart${index}`, res['chart']['d']);
-					
+
 				}).catch(function(err) {
 					console.error("Failed!", err);
 				});
@@ -255,6 +255,9 @@ const userpanel = new Vue({
 				self.getOverview(i);
 				// setTimeout(self.getOverview(i), 1000);
 			}
+
+			// 非同步操作: 将视图聚焦切换到最新的 tab 上
+			iterateTabs(`switch${maps.length-1}`, `tab${maps.length-1}`);
 		},
 		'delAnaObj': function() {
 			let self = this,
@@ -346,7 +349,7 @@ const userpanel = new Vue({
 
 			document.getElementById( `switch0` ).addEventListener('click', bindTabClick);
 
-			maps[0].drawGeojson('tj');
+			// maps[0].drawGeojson('tj');
 		});
 	}
 });
