@@ -28,8 +28,8 @@ let comp = {
         'etypes': [
             { 'name': 'Vibrancy', 'val': 'pp' },
             { 'name': 'Mobility', 'val': 'pd' },
-            { 'name': 'Value', 'val': 'rp' },
-            { 'name': 'Casualty', 'val': 'rd' }
+            { 'name': 'Variation', 'val': 'rp' },
+            { 'name': 'Fluidity', 'val': 'rd' }
         ],
         /**
          * display types
