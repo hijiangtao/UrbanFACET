@@ -149,7 +149,7 @@ def processTask(PROP, DATA):
 	task = entropySupCalModule(PROP, DATA)
 	task.run()
 
-def mergeMatrixFiles(city, GRIDSNUM, filename='resrec'):
+def mergeMatrixFiles(city, GRIDSNUM, directory, filename='resrec'):
 	"""Summary
 	
 	Args:
@@ -161,7 +161,7 @@ def mergeMatrixFiles(city, GRIDSNUM, filename='resrec'):
 	    TYPE: Description
 	"""
 	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
-	baseurl = os.path.join('/home/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
+	baseurl = os.path.join(directory, 'entropy/matrix', city)
 
 	for x in xrange(0,20):
 		with open(os.path.join(baseurl, '%s-%03d' % (filename, x)), 'rb') as stream:
@@ -207,7 +207,7 @@ def main(argv):
 		sys.exit(2)
 
 	# 处理输入参数
-	city, directory, number, mode = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 999, 'all'
+	city, directory, number, mode = 'beijing', '/enigma/tao.jiang/datasets/JingJinJi', 999, 'all'
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
@@ -264,7 +264,7 @@ def main(argv):
 	# Start to merge result files
 	MERGE = time.time()
 	print "Start merge at %s" % MERGE
-	mergeMatrixFiles(city, GRIDSNUM)
+	mergeMatrixFiles(city, GRIDSNUM, directory)
 	print "End merge in %s" % str(time.time() - MERGE)
 
 	ENDTIME = time.time()

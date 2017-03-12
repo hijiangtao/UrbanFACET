@@ -237,7 +237,7 @@ def mergeDistributionFiles(city, directory):
 	Returns:
 	    TYPE: Description
 	"""
-	baseurl = path.join(directory, 'entropy/distribution') 
+	baseurl = os.path.join(directory, 'entropy/distribution') 
 	file = os.path.join(baseurl, city, 'respeo-xxx')
 	number = 0
 
@@ -371,7 +371,7 @@ def main(argv):
 	# Start to merge result files
 	MERGE = time.time()
 	print "Start merge at %s" % MERGE
-	mergeMatrixFiles(city, GRIDSNUM, directory)
+	# mergeMatrixFiles(city, GRIDSNUM, directory)
 	mergeDistributionFiles(city, directory)
 	print "End merge in %s" % str(time.time() - MERGE)
 
