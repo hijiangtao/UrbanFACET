@@ -228,7 +228,7 @@ def processTask(PROP, DATA):
 
 # 	return gridsData, validIDs
 
-def mergeDistributionFiles(city):
+def mergeDistributionFiles(city, directory):
 	"""将不同 ID 的熵信息以及其他档案合并至一个文件,简单追加即并没有涉及复杂操作
 	
 	Args:
@@ -237,7 +237,7 @@ def mergeDistributionFiles(city):
 	Returns:
 	    TYPE: Description
 	"""
-	baseurl = '/home/tao.jiang/datasets/JingJinJi/entropy/distribution'
+	baseurl = path.join(directory, 'entropy/distribution') 
 	file = os.path.join(baseurl, city, 'respeo-xxx')
 	number = 0
 
@@ -255,7 +255,7 @@ def mergeDistributionFiles(city):
 
 	print "%d lines into distribution respeo-xxx file" % (number)
 
-def mergeMatrixFiles(city, GRIDSNUM):
+def mergeMatrixFiles(city, GRIDSNUM, directory):
 	"""合并 CityGrids 信息,分别读取文件,最后需将叠加的信息处理存入一个合并的文件
 	
 	Args:
@@ -266,7 +266,7 @@ def mergeMatrixFiles(city, GRIDSNUM):
 	    TYPE: Description
 	"""
 	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
-	baseurl = os.path.join('/home/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
+	baseurl = os.path.join(directory, 'entropy/matrix', city)
 
 	for x in xrange(0,20):
 		with open(os.path.join(baseurl, 'respeo-%03d' % x), 'rb') as stream:
@@ -341,38 +341,38 @@ def main(argv):
 	CITYDISIND, CITYDISNUM = getCityDisInfo(city)
 
 	# @多进程运行程序 START
-	manager = Manager()
-	jobs = []
+	# manager = Manager()
+	# jobs = []
 
-	for x in xrange(0,20):
-		# time.sleep(random.random()*2)
-		PROP = {
-			'INDEX': x,
-			'DIRECTORY': directory,
-			'GRIDSNUM': GRIDSNUM,
-			'CITY': city,
-			'CITYDISIND': CITYDISIND,
-			'CITYDISNUM': CITYDISNUM,
-			'FILENUM': number
-		}
+	# for x in xrange(0,20):
+	# 	# time.sleep(random.random()*2)
+	# 	PROP = {
+	# 		'INDEX': x,
+	# 		'DIRECTORY': directory,
+	# 		'GRIDSNUM': GRIDSNUM,
+	# 		'CITY': city,
+	# 		'CITYDISIND': CITYDISIND,
+	# 		'CITYDISNUM': CITYDISNUM,
+	# 		'FILENUM': number
+	# 	}
 
-		DATA = {
-			'gridsData': gridsData,
-			'validIDs': validIDs
-		}
+	# 	DATA = {
+	# 		'gridsData': gridsData,
+	# 		'validIDs': validIDs
+	# 	}
 
-		jobs.append( Process(target=processTask, args=(PROP, DATA)) )
-		jobs[x].start()
+	# 	jobs.append( Process(target=processTask, args=(PROP, DATA)) )
+	# 	jobs[x].start()
 
-	# 等待所有进程结束
-	for job in jobs:
-	    job.join()
+	# # 等待所有进程结束
+	# for job in jobs:
+	#     job.join()
 
 	# Start to merge result files
 	MERGE = time.time()
 	print "Start merge at %s" % MERGE
-	# mergeMatrixFiles(city, GRIDSNUM)
-	mergeDistributionFiles(city)
+	mergeMatrixFiles(city, GRIDSNUM, directory)
+	mergeDistributionFiles(city, directory)
 	print "End merge in %s" % str(time.time() - MERGE)
 
 	ENDTIME = time.time()
