@@ -174,7 +174,7 @@ def mergeMatrixFiles(city, GRIDSNUM, timeperiod, filename='ressql'):
 	    TYPE: Description
 	"""
 	ematrix = np.array([np.array([x, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
-	baseurl = os.path.join('/home/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
+	baseurl = os.path.join('/enigma/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
 
 	for x in xrange(0,20):
 		with open(os.path.join(baseurl, 't%d-%s-%03d' % (timeperiod, filename, x)), 'rb') as stream:
@@ -217,7 +217,7 @@ def main(argv):
 		sys.exit(2)
 
 	# 处理输入参数
-	city, directory, number, timeperiod, mode = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 999, 0, 'all'
+	city, directory, number, timeperiod, mode = 'zhangjiakou', '/enigma/tao.jiang/datasets/JingJinJi', 999, 0, 'all'
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
