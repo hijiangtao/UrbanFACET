@@ -12,7 +12,7 @@ import L from './map'
 import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js'
 import * as d3 from 'd3'
 import { legendColor } from 'd3-svg-legend'
-import { getSubGrids, getLinearNum, getRandomCenter, outOfRange } from './apis'
+import { getSubGrids, getLinearNum, getRandomCenter, outOfRange, getPropName } from './apis'
 import * as coordtransform from 'coordtransform';
 
 // 临时变量 
@@ -276,7 +276,7 @@ class mapview {
 			}
 		}
 
-		self.drawGridLegend(`Content ${drawtype}`, legColor);
+		self.drawGridLegend(`Content ${getPropName(drawtype)}`, legColor);
 
 		console.log('Finished gridmap drawing.');
 		console.timeEnd('DRAWING');
@@ -419,7 +419,7 @@ class mapview {
 		}
 
 		// draw legends
-		this.drawContourLegend(`Content ${drawtype}`, cfg.gradient);
+		this.drawContourLegend(`Content ${getPropName(drawtype)}`, cfg.gradient);
 
 		this.heatmapLayer = new HeatmapOverlay(cfg);
 		this.map.addLayer(this.heatmapLayer);

@@ -139,6 +139,14 @@ let objClone = function (obj) {
     return res;
 };
 
+let getPropName = function (argument) {
+	if (argument === 'e') {
+		return 'entropy';
+	} else if (argument === 'd') {
+		return 'density';
+	}
+}
+
 export {
 	getOverviewDatasets,
 	getValRange,
@@ -146,5 +154,6 @@ export {
 	getLinearNum,
 	getRandomCenter,
 	outOfRange,
-	objClone
+	objClone,
+	getPropName
 }
