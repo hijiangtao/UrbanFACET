@@ -17,7 +17,7 @@ import $ from "jquery"
 // window.jQuery = $
 import { regionRecords, comp } from './components/init'
 import { getOverviewDatasets, getDensity, getValRange, objClone } from './components/apis'
-import { appendMap, removeMaps, bindTabClick, iterateTabs } from './components/events'
+import { appendMap, removeMaps } from './components/events'
 import vueSlider from 'vue-slider-component'
 
 // Vuex Instance
@@ -40,8 +40,15 @@ if (typeof(Storage) === undefined) {
 let maps = [],
 	charts = [];
 
+// let bindTabClick = function() {
+// 	let self = this,
+// 		panelId = self.getAttribute('data-tab');
+
+// 	iterateTabs(self.id, panelId);
+// }
+
 const userpanel = new Vue({
-	el: '#userpanel',
+	el: '#main',
 	data: comp,
 	store,
 	components: {
@@ -60,7 +67,6 @@ const userpanel = new Vue({
 				dsvals = self.components.dSlider.value;
 			
 			index = Number.parseInt(index);
-			this.sels.lstindex = index;
 
 			if (index > 3) {
 				alert('Selected object is out of index.');
@@ -68,8 +74,42 @@ const userpanel = new Vue({
 
 			// 判断是单个对象绘制还是多个对象绘制, 多对象 index 值为 -1
 			if (index === -1) {
+				let objs = self.sels.objs;
 
+				for (let i = objs.length - 1; i >= 0; i--) {
+					let obj = objs[i];
+
+					document.getElementById(obj.id.map).classList.add('loading');
+
+					getOverviewDatasets(obj).then(function(res) {
+						document.getElementById(obj.id.map).classList.remove('loading');
+
+						obj.scales = res['prop']['scales'];
+
+						let valScales = getValRange(obj.scales, esvals, dsvals, self.sels, i);
+						console.log('valScales', valScales);
+
+						maps[i].panTo(regionRecords[city]['center']);
+						switch (self.sels.ctrmap) {
+							case true:
+								maps[i].mapcontourCDrawing(res, valScales);
+								break;
+							case false:
+								maps[i].mapgridCDrawing(res, valScales, false, self.sels.splitmap, false);
+								break;
+							default:
+								break;
+						}
+
+						charts[i].brushDraw(`#estatChart${i}`, res['chart']['e']);
+						charts[i].brushDraw(`#dstatChart${i}`, res['chart']['d']);
+					}).catch(function(err) {
+						console.error("Failed!", err);
+					});
+				}
 			} else {
+				// this.sels.lstindex = index;
+
 				let sels = self.sels.objs[index],
 					city = sels.city;
 
@@ -138,7 +178,7 @@ const userpanel = new Vue({
 			}
 
 			index = Number.parseInt(index);
-			this.sels.lstindex = index;
+			// this.sels.lstindex = index;
 			if (store.state.init) {
 				return;
 			}
@@ -154,7 +194,7 @@ const userpanel = new Vue({
 		'updateDS': function(index, val) {
 			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
 			index = Number.parseInt(index);
-			this.sels.lstindex = index;
+			// this.sels.lstindex = index;
 
 			if (store.state.init) {
 				return;
@@ -194,7 +234,7 @@ const userpanel = new Vue({
 
 			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
 			index = Number.parseInt(index);
-			this.sels.lstindex = index;
+			// this.sels.lstindex = index;
 			if (store.state.init) {
 				return;
 			}
@@ -222,6 +262,7 @@ const userpanel = new Vue({
 			let self = this,
 				currentSize = self.sels.objs.length;
 			console.log('currentSize', currentSize);
+			self.sels.lstnum = currentSize;
 
 			switch (currentSize) {
 				// 添加一个对象
@@ -241,35 +282,36 @@ const userpanel = new Vue({
 				break;
 			}
 
-			for (let i = currentSize*2 - 1; i >= currentSize; i--) {
-				// 新建 map & chart model view
-				maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`);
-				charts[i] = new chart(`#estatChart${i}`);
+			// for (let i = currentSize*2 - 1; i >= currentSize; i--) {
+			// 	// 新建 map & chart model view
+			// 	maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`);
+			// 	charts[i] = new chart(`#estatChart${i}`);
 
-				// 更新 objs 中的 id 对象
-				self.sels.objs[i].id.card = `card${i}`;
-				self.sels.objs[i].id.map = `map${i}`;
-				self.sels.objs[i].id.tab = `tab${i}`;
+			// 	// 更新 objs 中的 id 对象
+			// 	self.sels.objs[i].id.card = `card${i}`;
+			// 	self.sels.objs[i].id.map = `map${i}`;
+			// 	self.sels.objs[i].id.tab = `tab${i}`;
 
-				// 更新视图
-				self.getOverview(i);
-				// setTimeout(self.getOverview(i), 1000);
-			}
+			// 	// 更新视图
+			// 	self.getOverview(i);
+			// 	// setTimeout(self.getOverview(i), 1000);
+			// }
 
-			// 非同步操作: 将视图聚焦切换到最新的 tab 上
-			iterateTabs(`switch${maps.length-1}`, `tab${maps.length-1}`);
+			// // 非同步操作: 将视图聚焦切换到最新的 tab 上
+			// iterateTabs(`switch${maps.length-1}`, `tab${maps.length-1}`);
 		},
 		'delAnaObj': function() {
 			let self = this,
 				currentSize = self.sels.objs.length;
+			self.sels.lstnum = currentSize;
 
 			switch (currentSize) {
-				// 添加一个对象
+				// 删除两个对象
 				case 4:
 				removeMaps(2);
 				self.updateSels(2, 'del');
 				break;
-				// 复制现有两个对象并添加
+				// 删除一个对象
 				case 2:
 				removeMaps(1);
 				self.updateSels(1, 'del');
@@ -285,6 +327,8 @@ const userpanel = new Vue({
 				maps.splice(-1,1);
 				charts.splice(-1,1);
 			}
+
+			this.sels.lstindex = 0;
 		},
 		/**
 		 * 更新 vue 实例中存储的 objs 数组, isize 为个数
@@ -304,6 +348,34 @@ const userpanel = new Vue({
 					self.sels.objs.splice(-1, 1);
 					break;
 				}
+			}
+		},
+		'getTabImg': function(val, type) {
+			let cities = {
+				'bj': 0,
+				'tj': 1,
+				'zjk': 2,
+				'ts': 3
+			}
+
+			return this.params.regions[`${type}url`];
+		},
+		'bindTabClick': function(val) {
+			this.sels.lstindex = val;
+		}
+	},
+	computed: {
+		mapClass: function() {
+			switch (this.sels.objs.length) {
+				case 1:
+				return 'onemap vamap ui segment';
+				break;
+				case 2:
+				return 'twomap vamap ui segment';
+				break;
+				default:
+				return 'formap vamap ui segment';
+				break;
 			}
 		}
 	},
@@ -347,9 +419,36 @@ const userpanel = new Vue({
 			maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0');
 			charts[0] = new chart('#estatChart0');
 
-			document.getElementById( `switch0` ).addEventListener('click', bindTabClick);
+			// document.getElementById( `switch0` ).addEventListener('click', bindTabClick);
 
 			// maps[0].drawGeojson('tj');
 		});
+	},
+	updated() {
+		let self = this,
+			curnum = self.sels.objs.length,
+			lstnum = self.sels.lstnum;
+
+		if (curnum > lstnum) {
+			for (let i = curnum - 1; i >= lstnum; i--) {
+				// 新建 map & chart model view
+				maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`);
+				charts[i] = new chart(`#estatChart${i}`);
+
+				// 更新 objs 中的 id 对象
+				self.sels.objs[i].id.card = `card${i}`;
+				self.sels.objs[i].id.map = `map${i}`;
+				self.sels.objs[i].id.tab = `tab${i}`;
+
+				// 更新视图
+				self.getOverview(i);
+			}
+
+			// 非同步操作: 将视图聚焦切换到最新的 tab 上
+			// iterateTabs(`switch${maps.length-1}`, `tab${maps.length-1}`);
+
+			self.sels.lstnum = curnum;
+			self.sels.lstindex = curnum-1;
+		}
 	}
 });

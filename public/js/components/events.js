@@ -47,39 +47,24 @@ let bindTabClick = function() {
 let appendMap = function(indexs) {
 	let tcontainer = document.getElementById('vctab'),
 		mcontainer = document.getElementById('mappanel'),
-		isize = indexs.length,
-		preclass = isize === 1? 'onemap':'twomap',
-		curclass = isize === 1? 'twomap':'formap';
+		isize = indexs.length;
+		// preclass = isize === 1? 'onemap':'twomap',
+		// curclass = isize === 1? 'twomap':'formap';
 
 	for (var i = 0; i < isize; i++) {
 		let index = indexs[i],
-			map = document.createElement("div"),
 			tab = document.createElement('div');
 
 		// 添加 tab 标签项
-		tab.setAttribute('data-tab', `tab${index}`);
-		tab.setAttribute('id', `switch${index}`);
-		tab.classList.add('tabs', 'item');
-		tab.innerHTML = `OBJ${index}`;
+		// tab.setAttribute('data-tab', `tab${index}`);
+		// tab.setAttribute('id', `switch${index}`);
+		// tab.classList.add('tabs', 'item', 'cursor');
+		// tab.innerHTML = `OBJ${index}`;
 
-		tcontainer.insertBefore(tab, document.getElementById("addObjBtn"));
+		// tcontainer.insertBefore(tab, document.getElementById("addObjBtn"));
 
-		// 修改原有 map 容器样式
-		document.getElementById( `map${i}` ).classList.remove(preclass);
-		document.getElementById( `map${i}` ).classList.add(curclass);
-
-		// 添加 map 容器
-		map.classList.add(curclass, 'vamap', 'ui', 'segment');
-		map.innerHTML = `<div id='maplegend${index}' class='m-legend'>
-			<svg id='gridmaplegend${index}'></svg>
-			<div id='contourmaplegend${index}' ></div>
-		</div>
-		<div class='ui dimmer'><div class="ui medium text loader">Loading Data</div></div>`;
-		map.setAttribute('id', `map${index}`);
-		mcontainer.appendChild(map);
-
-		// 绑定点击事件
-		tab.addEventListener('click', bindTabClick);
+		// // 绑定点击事件
+		// tab.addEventListener('click', bindTabClick);
 	}
 	
 	return isize*2;
@@ -105,7 +90,7 @@ let removeMaps = function(number) {
 		if (number>0) {
 			mcontainer.removeChild( mchild );
 			tcontainer.removeChild( tchild );
-			number -= 1;	
+			number -= 1;
 		} else {
 			mchild.classList.remove( preclass );
 			mchild.classList.add( curclass );

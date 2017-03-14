@@ -17,7 +17,7 @@
 
 <body>
     <div id="titlemenu" class="ui inverted menu">
-        <div class="header item"><h2>Urban Mobility Map: Information-theoretic visual analysis of big user check-in data</h2></div>
+        <div class="header item"><h2>Urban Prism: User-level Visual Analysis of Mobile Big Data</h2></div>
     </div>
 
     <div class="ui row" id="main">    
@@ -25,11 +25,8 @@
             <% include vis-x/region %>
         </div>
         <div id="mappanel" class="ui segment">
-            <div id="map0" class="onemap vamap ui segment">
-                <div id="maplegend0" class="m-legend">
-                    <svg id='gridmaplegend0' height='50'></svg>
-                    <div id="contourmaplegend0" ></div>
-                </div>
+            <div v-for="(model, index) in sels.objs" :id="'map' + index" :class="mapClass">
+                <% include vis-x/mapcard %>
 
                 <div class="ui dimmer">
                     <div class="ui medium text loader">Loading Data</div>

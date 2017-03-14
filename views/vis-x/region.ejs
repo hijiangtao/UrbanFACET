@@ -1,11 +1,13 @@
 <div class="ui grid">
 	<div id="vctab" class="ui pointing secondary menu">
-	  <div id="switch0" class="tabs active item" data-tab="tab0">OBJ0</div>
-	  <div id='addObjBtn' class="item" @click='addAnaObj'><i class="designedfontcolor plus square outline icon"></i></div>
-	  <div id='delObjBtn' class="item" @click='delAnaObj'><i class="minus square outline icon"></i></div>
+	  <div v-for="(model, index) in sels.objs" :id="'switch'+index" :class="{'active':index === sels.lstindex}" class="tabs item cursor" :data-tab="'tab'+index" @click="bindTabClick(index)">{{'OBJ-'+index}}</div>
+
+	  <!-- <div id="switch0" class="tabs active item cursor" data-tab="tab0">OBJ0</div> -->
+	  <div id='addObjBtn' class="item cursor" @click='addAnaObj'><i class="designedfontcolor plus square outline icon"></i></div>
+	  <div id='delObjBtn' class="item cursor" @click='delAnaObj'><i class="minus square outline icon"></i></div>
 	</div>
 
-	<div v-for="(model, index) in sels.objs" :id="'tab' + index" class="panels e-active ui bottom attached tab segment" :data-tab="'tab'+index">
+	<div v-for="(model, index) in sels.objs" :id="'tab' + index" :class="{'e-active':index === sels.lstindex}" class="panels ui bottom attached tab segment" :data-tab="'tab'+index">
 		<div class="sixteen wide column">
 			<h4 class="designedfontcolor ui header"><i class="right angle icon divider"></i>Data and Parameters</h4>
 		</div>
@@ -14,7 +16,7 @@
 				<div class="inline fields">
 					<label><img class="ui mini image" src="/assets/region-icon.png">Regions</label>
 					<div v-for='item in params.regions' class="field">
-						<div class="ui tiny image">
+						<div class="ui tiny image cursor">
 						  <img v-show="item.val === model.city" :src="item.aurl" @click="updateSelectRegion(index, item.val)" :title="item.name">
 						  <img v-show="item.val !== model.city" :src="item.nurl" @click="updateSelectRegion(index, item.val)" :title="item.name">
 						</div>
@@ -24,7 +26,7 @@
 				<div class="inline fields">
 					<label><img class="ui mini image" src="/assets/type-icon.png">Entropy Type</label>
 					<div class="field">
-						<select class="roundselect" v-model='model.etype'>
+						<select class="roundselect cursor" v-model='model.etype'>
 						  <option v-for='item in params.etypes' :value="item.val">{{ item.name }}</option>
 						</select>
 					</div>
@@ -34,7 +36,7 @@
 		<div class="sixteen wide column">
 			<label><img class="ui mini image" src="/assets/time-icon.png">Timeblocks or Daytype</label><br>
 
-			<div v-for='item in params.tpfilters' class="ftpimg ui image">
+			<div v-for='item in params.tpfilters' class="ftpimg ui image cursor">
 			  <img v-show="item.val === model.ftpval" :src="item.aurl" v-on:click="updateTPFilter(item.val, index)" :title="item.name">
 			  <img v-show="item.val !== model.ftpval" :src="item.nurl" v-on:click="updateTPFilter(item.val, index)" :title="item.name">
 			</div>
@@ -62,19 +64,19 @@
 						  <label for="multiColorSchema">MultiColors</label>
 						</div>
 					</div>
-					<div class="field">
+					<!-- <div class="field">
 						<div class="ui checkbox">
 						  <input type="checkbox" name="gridmaptype" v-model='sels.splitmap'>
 						  <label>Subgrid(4)</label>
 						</div>
-					</div>
+					</div> -->
 				</div>
 
 				<div class="inline fields">
 					<label><img class="ui mini image" src="/assets/type-icon.png">Display Schema</label>
 					
 					<div class="field">
-						<select class="roundselect" v-model='model.dtype' @change="updateDS(index, model.dtype)">
+						<select class="roundselect cursor" v-model='model.dtype' @change="updateDS(index, model.dtype)">
 						  <option v-for='item in params.dtypes' :value="item.val">{{ item.name }}</option>
 						</select>
 					</div>

@@ -441,14 +441,14 @@ class mapview {
 		d3.select(id).selectAll('*').remove();
 		let svg = d3.select(id).attr('height', 50);
 
-		svg.append('text')
-			.attr('y', 23)
-			.attr('x', 2)
-			.text(title);
+		// svg.append('text')
+		// 	.attr('y', 23)
+		// 	.attr('x', 2)
+		// 	.text(title);
 
 		svg.append("g")
 			.attr("class", "legendLinear")
-			.attr("transform", "translate(120,10)");
+			.attr("transform", "translate(10,10)");
 
 		let legendLinear = legendColor()
 			.labelFormat(function(d) {
@@ -471,27 +471,28 @@ class mapview {
 	drawContourLegend(title = "Contour Legend", gradientCfg) {
 		this.switchLegDisplay('ctrleg');
 
-		let svg = d3.select(`#${this.ides.ctrleg}`),
+		let container = document.getElementById(this.ides.ctrleg),
+			svg = d3.select(`#${this.ides.ctrleg}`),
 			legCanvas = document.createElement('canvas');
-		legCanvas.width = 150;
+		legCanvas.width = 180;
 		legCanvas.height = 15;
 
 		svg.selectAll('*').remove();
 		let g = svg.append('svg')
-			.attr('height', 50)
-			.attr("transform", "translate(120,10)");
+			.attr('height', 20)
+			// .attr("transform", "translate(10,10)");
 
+		// g.append('text')
+		// 	.attr('y', 13)
+		// 	.attr('x', 2)
+		// 	.text(title);
 		g.append('text')
 			.attr('y', 13)
 			.attr('x', 2)
-			.text(title);
-		g.append('text')
-			.attr('y', 33)
-			.attr('x', 120)
 			.text('0%');
 		g.append('text')
-			.attr('y', 33)
-			.attr('x', 250)
+			.attr('y', 13)
+			.attr('x', 145)
 			.text('100%');
 
 		let gradientImg = document.createElement("img"),
@@ -503,12 +504,12 @@ class mapview {
 		}
 
 		legCtx.fillStyle = gradient;
-		legCtx.fillRect(0, 0, 150, 15);
+		legCtx.fillRect(0, 0, 180, 15);
 
 		gradientImg.src = legCanvas.toDataURL();
-		gradientImg.style.position = 'absolute';
-		gradientImg.style.left = '120px';
-		document.getElementById(this.ides.ctrleg).appendChild(gradientImg);
+		// gradientImg.style.position = 'absolute';
+		// gradientImg.style.left = '10px';
+		container.insertBefore(gradientImg, container.childNodes[0]);
 	}
 
 	/**

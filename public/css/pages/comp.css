@@ -25,7 +25,7 @@ body {
 #mappanel>div {
     float: left;
     margin: 0;
-    border-radius: 0;
+    border-radius: 2px;
 }
 
 .onemap {
@@ -39,6 +39,10 @@ body {
 .formap {
     height: 50%;
     width: 50%;
+}
+
+.cursor {
+    cursor:pointer;
 }
 
 /*path {
@@ -80,9 +84,9 @@ path:hover {
 }
 
 .m-legend {
-    position: absolute;
-    z-index: 11;
-    width: 300px;
+    /*position: absolute;*/
+    /*z-index: 11;*/
+    min-height: 0;
 }
 
 .ui.form select, .field select.roundselect, select.roundselect {
@@ -192,5 +196,18 @@ h4.ui.header {
 }
 .ui.segment[class*="bottom attached"] {
     margin-bottom: 0;
+}
+
+.ui.card {
+    position: absolute;
+    z-index: 11;
+    top: 1rem;
+    left: 1rem;
+    border-radius: .5rem;
+    width: 210px;
+    border-radius: 4px;
+}
+.ui.card>.image {
+    padding: 1.7rem;
 }
 /*REWRITE SEMANTIC-UI*/

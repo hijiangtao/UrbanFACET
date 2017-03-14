@@ -1,0 +1,28 @@
+<div :id="'card' + index" @click="bindTabClick(index)" class="ui card">
+    <div class="image">
+        <img v-show="sels.lstindex === index" :src="cals.cimgs[model.city].aurl">
+        <img v-show="sels.lstindex !== index" :src="cals.cimgs[model.city].nurl">
+    </div>
+    <div class="content">
+        <a class="header">{{'Region: ' + cals.cities[model.city]}}</a>
+        <!-- <div class="meta">
+          <span class="date">Joined in 2013</span>
+        </div> -->
+        <div class="description">
+          <p>{{'Entropy Type: ' + cals.enps[model.etype] }}</p>
+          <p>{{model.ftpval === ''? 'No filters':'Filter with ' + params.tpfilters[Number.parseInt(model.ftpval)].name  + ' Data.'}}</p>
+        </div>
+    </div>
+    <div class="extra content">
+        <a>
+          <i class="map outline icon"></i>
+          Display Schema is {{ cals.dtypes[model.dtype] }}, drawed in  {{sels.ctrmap? 'Contour Map.':'Grid Map.'}}
+        </a>
+
+        <div :id="'maplegend'+index" class="m-legend">
+            <svg :id="'gridmaplegend'+index" height='0'></svg>
+            <div :id="'contourmaplegend'+index" >
+            </div>
+        </div>
+    </div>
+</div>

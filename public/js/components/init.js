@@ -88,8 +88,8 @@ let comp = {
             'useLocalExtrema': false
         },
         'splitmap': false,
-        'num': 1,
-        'lstindex': -999
+        'lstnum': 1,
+        'lstindex': 0
     },
     'components': {
         'eSlider': {
@@ -125,6 +125,31 @@ let comp = {
             processStyle: {
                 'background': settings['whiteToRed']
             }
+        }
+    },
+    'cals': {
+        'cities': {
+            'bj': 'Beijing',
+            'tj': 'Tianjin',
+            'zjk': 'Zhangjiakou',
+            'ts': 'Tangshan'
+        },
+        'enps': {
+            'pp': 'Vibrancy',
+            'pd': 'Mobility',
+            'rp': 'Variation',
+            'rd': 'Fluidity'
+        },
+        'dtypes': {
+            'e': 'Entropy',
+            'm': 'Mixture',
+            'd': 'Density'
+        },
+        'cimgs': {
+            'bj': { 'aurl': '/assets/bj-aicon.png', 'nurl': '/assets/bj-icon.png' },
+            'tj': { 'aurl': '/assets/tj-aicon.png', 'nurl': '/assets/tj-icon.png' },
+            'zjk': { 'aurl': '/assets/zjk-aicon.png', 'nurl': '/assets/zjk-icon.png' },
+            'ts': { 'aurl': '/assets/ts-aicon.png', 'nurl': '/assets/ts-icon.png' }
         }
     }
 };
