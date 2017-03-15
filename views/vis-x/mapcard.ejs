@@ -34,7 +34,7 @@
 	</div>
 	<div class="extra content">
 		<a>
-			<i class="map outline icon"></i> Display Schema is {{ cals.dtypes[model.dtype] }}, drawed in {{sels.ctrmap? 'Contour Map.':'Grid Map.'}}
+			<i class="map outline icon"></i> Display Schema: {{ cals.dtypes[model.dtype] }}, drawed in {{sels.ctrmap? 'Contour Map.':'Grid Map.'}}
 		</a>
 		<div :id="'maplegend'+index" class="m-legend">
 			<svg :id="'gridmaplegend'+index" height='0'></svg>

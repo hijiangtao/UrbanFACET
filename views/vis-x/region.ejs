@@ -64,6 +64,13 @@
 						  <label for="multiColorSchema">MultiColors</label>
 						</div>
 					</div>
+					<!-- getOverlay -->
+					<div v-if="sels.objs.length === 1" class="field">
+						<select class="roundselect cursor" v-model='model.otype' @change="getOverlay(index)">
+						  <option v-for='item in params.otypes' :value="item.val">{{ item.name }}</option>
+						</select>
+					</div>
+
 					<!-- <div class="field">
 						<div class="ui checkbox">
 						  <input type="checkbox" name="gridmaptype" v-model='sels.splitmap'>

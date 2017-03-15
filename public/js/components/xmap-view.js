@@ -150,7 +150,9 @@ class mapview {
 	boundaryDrawing(data, prop) {
 		let self = this,
 			city = prop['city'] || 'bj';
-		let svg = d3.select(self.map.getPanes().overlayPane).append("svg"),
+
+		d3.select('#boundarySVG').remove();
+		let svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', 'boundarySVG'),
 		    g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
 		d3.json(`/${city}.json`, function(error, collection) {
@@ -161,7 +163,14 @@ class mapview {
 
 		  let feature = g.selectAll("path")
 		      .data(collection.features)
-		    .enter().append("path");
+		    .enter().append("path")
+		    .attr('fill', function(d) {
+		    	console.log(d.properties.name);
+		    	let val = 200 + Math.floor(Math.random()*55);
+		    	return `rgba(${val}, ${val}, ${val}, 0.4)`;
+		    })
+		    .attr('stroke', 'white')
+		    .attr("stroke-width", 2);
 
 		  self.map.on("viewreset", reset);
 		  reset();

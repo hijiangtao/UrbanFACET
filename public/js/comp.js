@@ -150,6 +150,11 @@ const userpanel = new Vue({
 				store.commit('updateInitState');
 			}
 		},
+		'getOverlay': function(index) {
+			index = Number.parseInt(index);
+
+			maps[index].boundaryDrawing({}, {'city': this.sels.objs[index].city});
+		},
 		/**
 		 * 更新指定 map 面板中选中的 City
 		 * @param  {[type]} index [description]
