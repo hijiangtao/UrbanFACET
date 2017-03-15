@@ -69,7 +69,7 @@ let comp = {
         'objs': [{
             'city': 'tj',
             'etype': 'pp',
-            'dtype': 'e',
+            'dtype': 'm',
             'maprev': false,
             'ftpval': '',
             'scales': {

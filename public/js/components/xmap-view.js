@@ -18,7 +18,6 @@ import * as coordtransform from 'coordtransform';
 // 临时变量 
 import $ from "jquery"
 window.jQuery = $
-	// 临时变量
 
 const SPLIT = 0.003
 
@@ -148,8 +147,9 @@ class mapview {
 		}
 	}
 
-	drawGeojson(city="bj") {
-		let self = this;
+	boundaryDrawing(data, prop) {
+		let self = this,
+			city = prop['city'] || 'bj';
 		let svg = d3.select(self.map.getPanes().overlayPane).append("svg"),
 		    g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
@@ -238,6 +238,7 @@ class mapview {
 		console.time('DRAWING');
 
 		// canvas 图层绘制方法
+		let countVal = 0;
 		let drawingOnCanvas = function(canvasOverlay, params) {
 			let ctx = params.canvas.getContext('2d');
 			ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
@@ -254,6 +255,7 @@ class mapview {
 				if (outOfRange(drawtype, evalue, dvalue, prop['e']['min'], prop['d']['min'])) {
 					continue;
 				}
+				countVal += 1;
 
 				if (params.bounds.contains([center[1], center[0]])) {
 					if (split) {
@@ -276,6 +278,7 @@ class mapview {
 			}
 		}
 
+		console.log('Gridmap Used Feature Number ', countVal);
 		self.drawGridLegend(`Content ${getPropName(drawtype)}`, legColor);
 
 		console.log('Finished gridmap drawing.');
@@ -348,7 +351,7 @@ class mapview {
 
 			let center = data.features[i]['prop']['c'],
 				val = data.features[i]['prop']['e'],
-				renderNum = getLinearNum(val, minVal, maxVal, 1, 4);
+				renderNum = getLinearNum(dvalue, minVal, maxVal, 1, SPLITNUMBER);
 
 			// 为 hdata 注入数据
 			switch (drawtype) {
@@ -361,7 +364,7 @@ class mapview {
 				case 'd': // density
 					for (let i = 0; i < renderNum; i++) {
 						let random = getRandomCenter(center, -SPLIT / 2, SPLIT)
-						hdata.data.push({ 'lat': random[1], 'lng': random[0], 'c': hdata.max*0.99 })
+						hdata.data.push({ 'lat': random[1], 'lng': random[0], 'c': hdata.max*0.5 })
 					}
 					break;
 				default: // entropy
@@ -369,7 +372,7 @@ class mapview {
 					break;
 			}
 		}
-		console.log('Used point number', countVal);
+		console.log('Contourmap Used point number', countVal);
 
 		let cfg = {
 			// radius should be small ONLY if scaleRadius is true (or small radius is intended)

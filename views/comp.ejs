@@ -25,9 +25,9 @@
             <% include vis-x/region %>
         </div>
         <div id="mappanel" class="ui segment">
-            <div v-for="(model, index) in sels.objs" :id="'map' + index" :class="mapClass">
-                <% include vis-x/mapcard %>
+            <% include vis-x/mapcard %>
 
+            <div v-for="(model, index) in sels.objs" :id="'map' + index" :class="mapClass" class="vamap ui segment leaflet-container leaflet-fade-anim">
                 <div class="ui dimmer">
                     <div class="ui medium text loader">Loading Data</div>
                 </div>

@@ -91,7 +91,7 @@ path:hover {
 
 .ui.form select, .field select.roundselect, select.roundselect {
     border-color: rgb(0,0,0);
-    
+    background-color: white;
     -webkit-border-radius: .6rem;
     -moz-border-radius: .6rem;
     border-radius: .6rem;

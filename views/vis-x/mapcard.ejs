@@ -1,28 +1,45 @@
-<div :id="'card' + index" @click="bindTabClick(index)" class="ui card">
-    <div class="image">
-        <img v-show="sels.lstindex === index" :src="cals.cimgs[model.city].aurl">
-        <img v-show="sels.lstindex !== index" :src="cals.cimgs[model.city].nurl">
-    </div>
-    <div class="content">
-        <a class="header">{{'Region: ' + cals.cities[model.city]}}</a>
-        <!-- <div class="meta">
-          <span class="date">Joined in 2013</span>
-        </div> -->
-        <div class="description">
-          <p>{{'Entropy Type: ' + cals.enps[model.etype] }}</p>
-          <p>{{model.ftpval === ''? 'No filters':'Filter with ' + params.tpfilters[Number.parseInt(model.ftpval)].name  + ' Data.'}}</p>
-        </div>
-    </div>
-    <div class="extra content">
-        <a>
-          <i class="map outline icon"></i>
-          Display Schema is {{ cals.dtypes[model.dtype] }}, drawed in  {{sels.ctrmap? 'Contour Map.':'Grid Map.'}}
-        </a>
-
-        <div :id="'maplegend'+index" class="m-legend">
-            <svg :id="'gridmaplegend'+index" height='0'></svg>
-            <div :id="'contourmaplegend'+index" >
-            </div>
-        </div>
-    </div>
+<div v-for="(model, index) in sels.objs" :id="'card' + index" @click="bindTabClick(index)" class="ui card">
+	<div class="image">
+		<img v-show="sels.lstindex === index" :src="cals.cimgs[model.city].aurl">
+		<img v-show="sels.lstindex !== index" :src="cals.cimgs[model.city].nurl">
+	</div>
+	<div class="content">
+		<a class="header">{{'Region: ' + cals.cities[model.city]}}</a>
+		<!-- <div class="meta">
+		  <span class="date">Joined in 2013</span>
+		</div> -->
+		<div class="description">
+			<p>{{'Entropy Type: ' + cals.enps[model.etype] }}</p>
+			<p>{{model.ftpval === ''? 'No filters':'Filter with ' + params.tpfilters[Number.parseInt(model.ftpval)].name + ' Data.'}}</p>
+			<!-- <div class="ui divider"></div> -->
+			<div class="ui grid">
+				<template v-if="model.dtype !== 'd'" >
+					<div class="two wide column">
+						<label for=""><!-- <img class="ui mini image" src="/assets/filter-icon.png"> -->E</label>
+					</div>
+					<div class="thirteen wide column">
+						<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="updateSlider('e', index)" v-model="components.eSlider.value"></vue-slider>
+					</div>
+				</template>
+				<template v-if="model.dtype !== 'e'" >
+					<div class="two wide column">
+						<label for=""><!-- <img class="ui mini image" src="/assets/filter-icon.png"> -->D</label>
+					</div>
+					<div class="thirteen wide column">
+						<vue-slider id="dSlider" ref="dSlider" v-bind="components.dSlider" @drag-end="updateSlider('d', index)" v-model="components.dSlider.value"></vue-slider>
+					</div>
+				</template>
+			</div>
+		</div>
+	</div>
+	<div class="extra content">
+		<a>
+			<i class="map outline icon"></i> Display Schema is {{ cals.dtypes[model.dtype] }}, drawed in {{sels.ctrmap? 'Contour Map.':'Grid Map.'}}
+		</a>
+		<div :id="'maplegend'+index" class="m-legend">
+			<svg :id="'gridmaplegend'+index" height='0'></svg>
+			<div :id="'contourmaplegend'+index">
+			</div>
+		</div>
+	</div>
 </div>

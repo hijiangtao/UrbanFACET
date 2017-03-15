@@ -368,13 +368,13 @@ const userpanel = new Vue({
 		mapClass: function() {
 			switch (this.sels.objs.length) {
 				case 1:
-				return 'onemap vamap ui segment';
+				return 'onemap';
 				break;
 				case 2:
-				return 'twomap vamap ui segment';
+				return 'twomap';
 				break;
 				default:
-				return 'formap vamap ui segment';
+				return 'formap';
 				break;
 			}
 		}
@@ -383,7 +383,7 @@ const userpanel = new Vue({
 		/**
 		 * 如果展示的数据类型变化,则更新视图
 		 */
-		'selections.dtype': {
+		'sels.dtype': {
 			handler: function(val, OldVal) {
 				console.log('dtype changed.');
 				// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
