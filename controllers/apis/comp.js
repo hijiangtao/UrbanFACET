@@ -14,9 +14,9 @@ let apis = {
 	'overviewQuery': function(req, res, next) {
 		let params = req.query;
 		// console.info('Going to connect MySQL.');
-		lib.connectMySQL().then(function(conn) {
+		lib.connectMySQL().then(function(db) {
 			// console.info('Got data from MySQL.');
-			return EP.getOverview(conn, params);
+			return EP.getOverview(db, params);
 		}, function(err) {
 			console.error('error: ', err);
 		}).catch(function(error) {
@@ -25,6 +25,18 @@ let apis = {
 			// console.info('Ready to send back result.');
 			res.json(result);
 		})
+	},
+	'extrainfoQuery': function(req, res, next) {
+		let params = req.query;
+
+		lib.connectMongo().then(function(db) {
+			return EP.getExtraInfo(db, params);
+
+		}, function(err) {
+			console.error('error: ', err);
+		}).catch(function(error) {
+			console.error('error: ', err);
+		});
 	},
 	'getJsonSum': function(req, res, next) {
 		let params = req.query,

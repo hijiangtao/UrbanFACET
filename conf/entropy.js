@@ -316,10 +316,29 @@ function generateGridsJson(locs, obj) {
     });
 }
 
+function getExtraInfo(db, params) {
+    let city = params.city,
+        ftype = params.ftype,
+        collection = db.collection('pois_beijing');
+
+    // console.log('idlist: ', idlist)
+    collection.find({'properties.ftype': Number.parseInt(ftype)}, { 'properties.center': 1, 'properties.name': 1, 'properties.': 1 }).toArray(function(err, result) {
+        
+        mongoCallback(err, result, res, {
+            "clalist": clalist,
+            "idstr": idstr,
+            "db": db,
+            "claidRelation": claidRelation,
+            "file": path.join(dir, file)
+        })
+    });
+}
+
 module.exports = {
     readIdlistMongo: readIdlistMongo,
     readIdlistFile: readIdlistFile,
     connectMongo: connectMongo,
     mongoQueries: mongoQueries,
-    getOverview: getOverview
+    getOverview: getOverview,
+    getExtraInfo: getExtraInfo
 }

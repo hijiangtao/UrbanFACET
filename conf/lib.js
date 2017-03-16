@@ -11,7 +11,7 @@ const path = require('path');
 
 const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
-const url = 'mongodb://192.168.1.42:27017/tdVC';
+const url = 'mongodb://192.168.1.42:27017/tdnormal';
 const pool = require('./db');
 let $sql = require('../controllers/apis/mysqlMapping');
 
