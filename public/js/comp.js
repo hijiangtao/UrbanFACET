@@ -77,7 +77,8 @@ const userpanel = new Vue({
 				let objs = self.sels.objs;
 
 				for (let i = objs.length - 1; i >= 0; i--) {
-					let obj = objs[i];
+					let obj = objs[i],
+						city = obj.city;
 
 					document.getElementById(obj.id.map).classList.add('loading');
 
@@ -153,7 +154,11 @@ const userpanel = new Vue({
 		'getOverlay': function(index) {
 			index = Number.parseInt(index);
 
-			maps[index].boundaryDrawing({}, {'city': this.sels.objs[index].city});
+			let prop = {
+				'city': this.sels.objs[index].city,
+				'type': Number.parseInt( this.sels.objs[index].otype )
+			}
+			maps[index].boundaryDrawing({}, prop);
 		},
 		/**
 		 * 更新指定 map 面板中选中的 City

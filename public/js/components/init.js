@@ -40,10 +40,11 @@ let comp = {
             { 'name': 'Density', 'val': 'd' }
         ],
         'otypes': [
-            { 'name': 'NULL', 'val': 'n' },
-            { 'name': 'GDP', 'val': 'g' },
-            { 'name': 'Population', 'val': 'p' },
-            { 'name': 'House Price', 'val': 'h' }
+            { 'name': 'NULL', 'val': -1 },
+            { 'name': 'Ttoal GDP', 'val': 0 },
+            { 'name': 'Ave GDP', 'val': 3 },
+            { 'name': 'Population', 'val': 1 },
+            { 'name': 'House Price', 'val': 4 }
         ],
         /**
          * timeblock filters object
@@ -76,7 +77,7 @@ let comp = {
             'city': 'tj',
             'etype': 'pp',
             'dtype': 'm',
-            'otype': 'n',
+            'otype': -1,
             'maprev': false,
             'ftpval': '',
             'scales': {
@@ -255,5 +256,6 @@ let stats = {
 
 export {
     regionRecords,
-    comp
+    comp,
+    stats
 }

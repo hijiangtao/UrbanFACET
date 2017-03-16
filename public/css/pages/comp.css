@@ -153,6 +153,17 @@ img.ui.image {
     width: 400px;
 }
 
+.svgtooltip {
+    position: absolute;         
+    text-align: center;         
+    width: 60px;                    
+    height: 28px;                   
+    padding: 2px;              
+    background: white; 
+    border: 0px;        
+    border-radius: 4px;         
+    pointer-events: none;       
+}
 
 /*CHARTS STYLESHEET*/
 
@@ -206,6 +217,7 @@ h4.ui.header {
     border-radius: .5rem;
     width: 210px;
     border-radius: 4px;
+    z-index: 11;
 }
 .ui.card>.image {
     padding: 1.7rem;

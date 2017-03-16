@@ -62,7 +62,7 @@ let apis = {
 		let params = req.query,
 			table = params.table;
 
-		let sqlstr = "SELECT ? AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval/vrnumber) AS 'prsval', MAX(trsval/wrnumber) AS 'trsval', MAX(arsval/wrnumber) AS 'arsval', MAX(ppsval/vpnumber) AS 'ppsval', MAX(tpsval/wpnumber) AS 'tpsval', MAX(apsval/wpnumber) AS 'apsval' FROM ?? WHERE 1;", sql;
+		let sqlstr = "SELECT ? AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval/vrnumber) AS 'prsval', MAX(trsval/wrnumber) AS 'trsval', MAX(arsval/wrnumber) AS 'arsval', MAX(ppsval/vpnumber) AS 'ppsval', MAX(tpsval/wpnumber) AS 'tpsval', MAX(apsval/wpnumber) AS 'apsval' FROM ?? WHERE 1;", sql='';
 
 		for (let i=0; i<30; i++ ) {
 			sql += sqlstr;
@@ -77,6 +77,7 @@ let apis = {
 			conn.query(sql, tablearr, function(err, result) {
 				conn.release();
 
+				// console.log(err, result);
 				let size = result.length, response = {};
 				for (let i=0; i<size; i++) {
 					response[ tablearr[i*2] ] = result[i];
