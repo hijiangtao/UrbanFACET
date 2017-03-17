@@ -1,7 +1,7 @@
 /**
- * xmap-view.js
+ * hmap-view.js
  * @authors Joe Jiang (hijiangtao@gmail.com)
- * @date    2017-02-13 21:40:37
+ * @date    2017-03-17 22:26:08
  * @version $Id$
  */
 

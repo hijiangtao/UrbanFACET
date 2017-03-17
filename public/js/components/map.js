@@ -15,50 +15,50 @@ import L from 'leaflet'
 
 L.CanvasOverlay = L.Class.extend({
 
-    initialize: function (userDrawFunc, options) {
+    initialize: function(userDrawFunc, options) {
         this._userDrawFunc = userDrawFunc;
         L.setOptions(this, options);
     },
 
-    drawing: function (userDrawFunc) {
+    drawing: function(userDrawFunc) {
         this._userDrawFunc = userDrawFunc;
         return this;
     },
 
-    params:function(options){
+    params: function(options) {
         L.setOptions(this, options);
         return this;
     },
-    
-    canvas: function () {
+
+    canvas: function() {
         return this._canvas;
     },
 
-    redraw: function () {
+    redraw: function() {
         if (!this._frame) {
             this._frame = L.Util.requestAnimFrame(this._redraw, this);
         }
         return this;
     },
 
-    
-  
-    onAdd: function (map) {
+
+
+    onAdd: function(map) {
         this._map = map;
         this._canvas = L.DomUtil.create('canvas', 'leaflet-heatmap-layer');
 
-        var size = this._map.getSize();
+        let size = this._map.getSize();
         this._canvas.width = size.x;
         this._canvas.height = size.y;
 
-        var animated = this._map.options.zoomAnimation && L.Browser.any3d;
+        let animated = this._map.options.zoomAnimation && L.Browser.any3d;
         L.DomUtil.addClass(this._canvas, 'leaflet-zoom-' + (animated ? 'animated' : 'hide'));
 
 
         map._panes.overlayPane.appendChild(this._canvas);
 
         map.on('moveend', this._reset, this);
-        map.on('resize',  this._resize, this);
+        map.on('resize', this._resize, this);
 
         if (map.options.zoomAnimation && L.Browser.any3d) {
             map.on('zoomanim', this._animateZoom, this);
@@ -67,9 +67,9 @@ L.CanvasOverlay = L.Class.extend({
         this._reset();
     },
 
-    onRemove: function (map) {
+    onRemove: function(map) {
         map.getPanes().overlayPane.removeChild(this._canvas);
- 
+
         map.off('moveend', this._reset, this);
         map.off('resize', this._resize, this);
 
@@ -80,49 +80,48 @@ L.CanvasOverlay = L.Class.extend({
 
     },
 
-    addTo: function (map) {
+    addTo: function(map) {
         map.addLayer(this);
         return this;
     },
 
-    _resize: function (resizeEvent) {
-        this._canvas.width  = resizeEvent.newSize.x;
+    _resize: function(resizeEvent) {
+        this._canvas.width = resizeEvent.newSize.x;
         this._canvas.height = resizeEvent.newSize.y;
     },
-    _reset: function () {
-        var topLeft = this._map.containerPointToLayerPoint([0, 0]);
+    _reset: function() {
+        let topLeft = this._map.containerPointToLayerPoint([0, 0]);
         L.DomUtil.setPosition(this._canvas, topLeft);
         this._redraw();
     },
 
-    _redraw: function () {
-        var size     = this._map.getSize();
-        var bounds   = this._map.getBounds();
-        var zoomScale = (size.x * 180) / (20037508.34  * (bounds.getEast() - bounds.getWest())); // resolution = 1/zoomScale
-        var zoom = this._map.getZoom();
-     
+    _redraw: function() {
+        let size = this._map.getSize();
+        let bounds = this._map.getBounds();
+        let zoomScale = (size.x * 180) / (20037508.34 * (bounds.getEast() - bounds.getWest())); // resolution = 1/zoomScale
+        let zoom = this._map.getZoom();
+
         // console.time('process');
 
         if (this._userDrawFunc) {
-            this._userDrawFunc(this,
-                                {
-                                    canvas   :this._canvas,
-                                    bounds   : bounds,
-                                    size     : size,
-                                    zoomScale: zoomScale,
-                                    zoom : zoom,
-                                    options: this.options
-                               });
+            this._userDrawFunc(this, {
+                canvas: this._canvas,
+                bounds: bounds,
+                size: size,
+                zoomScale: zoomScale,
+                zoom: zoom,
+                options: this.options
+            });
         }
-       
-       
+
+
         // console.timeEnd('process');
-        
+
         this._frame = null;
     },
 
-    _animateZoom: function (e) {
-        var scale = this._map.getZoomScale(e.zoom),
+    _animateZoom: function(e) {
+        let scale = this._map.getZoomScale(e.zoom),
             offset = this._map._getCenterOffset(e.center)._multiplyBy(-scale).subtract(this._map._getMapPanePos());
 
         this._canvas.style[L.DomUtil.TRANSFORM] = L.DomUtil.getTranslateString(offset) + ' scale(' + scale + ')';
@@ -130,8 +129,149 @@ L.CanvasOverlay = L.Class.extend({
     }
 });
 
-L.canvasOverlay = function (userDrawFunc, options) {
+L.canvasOverlay = function(userDrawFunc, options) {
     return new L.CanvasOverlay(userDrawFunc, options);
 };
+
+/*
+ * Extends L.Map to synchronize the interaction on one map to one or more other maps.
+ */
+let NO_ANIMATION = {
+    animate: false,
+    reset: true
+};
+
+L.Map = L.Map.extend({
+    sync: function(map, options) {
+        this._initSync();
+        options = L.extend({
+            noInitialSync: false,
+            syncCursor: false,
+            syncCursorMarkerOptions: {
+                radius: 10,
+                fillOpacity: 0.3,
+                color: '#da291c',
+                fillColor: '#fff'
+            }
+        }, options);
+
+        // prevent double-syncing the map:
+        if (this._syncMaps.indexOf(map) === -1) {
+            this._syncMaps.push(map);
+        }
+
+        if (!options.noInitialSync) {
+            map.setView(this.getCenter(), this.getZoom(), NO_ANIMATION);
+        }
+        if (options.syncCursor) {
+            map.cursor = L.circleMarker([0, 0], options.syncCursorMarkerOptions).addTo(map);
+
+            this._cursors.push(map.cursor);
+
+            this.on('mousemove', this._cursorSyncMove, this);
+            this.on('mouseout', this._cursorSyncOut, this);
+        }
+        return this;
+    },
+
+    _cursorSyncMove: function(e) {
+        this._cursors.forEach(function(cursor) {
+            cursor.setLatLng(e.latlng);
+        });
+    },
+
+    _cursorSyncOut: function(e) {
+        this._cursors.forEach(function(cursor) {
+            // TODO: hide cursor in stead of moving to 0, 0
+            cursor.setLatLng([0, 0]);
+        });
+    },
+
+
+    // unsync maps from each other
+    unsync: function(map) {
+        let self = this;
+
+        if (this._syncMaps) {
+            this._syncMaps.forEach(function(synced, id) {
+                if (map === synced) {
+                    self._syncMaps.splice(id, 1);
+                    if (map.cursor) {
+                        map.cursor.removeFrom(map);
+                    }
+                }
+            });
+        }
+        this.off('mousemove', this._cursorSyncMove, this);
+        this.off('mouseout', this._cursorSyncOut, this);
+
+        return this;
+    },
+
+    // Checks if the maps is synced with anything
+    isSynced: function() {
+        return (this.hasOwnProperty('_syncMaps') && Object.keys(this._syncMaps).length > 0);
+    },
+
+    // overload methods on originalMap to replay interactions on _syncMaps;
+    _initSync: function() {
+        if (this._syncMaps) {
+            return;
+        }
+        let originalMap = this;
+
+        this._syncMaps = [];
+        this._cursors = [];
+
+        L.extend(originalMap, {
+            setView: function(center, zoom, options, sync) {
+                if (!sync) {
+                    originalMap._syncMaps.forEach(function(toSync) {
+                        toSync.setView(center, zoom, options, true);
+                    });
+                }
+                return L.Map.prototype.setView.call(this, center, zoom, options);
+            },
+
+            panBy: function(offset, options, sync) {
+                if (!sync) {
+                    originalMap._syncMaps.forEach(function(toSync) {
+                        toSync.panBy(offset, options, true);
+                    });
+                }
+                return L.Map.prototype.panBy.call(this, offset, options);
+            },
+
+            _onResize: function(event, sync) {
+                if (!sync) {
+                    originalMap._syncMaps.forEach(function(toSync) {
+                        toSync._onResize(event, true);
+                    });
+                }
+                return L.Map.prototype._onResize.call(this, event);
+            }
+        });
+
+        originalMap.on('zoomend', function() {
+            originalMap._syncMaps.forEach(function(toSync) {
+                toSync.setView(originalMap.getCenter(), originalMap.getZoom(), NO_ANIMATION);
+            });
+        }, this);
+
+        originalMap.dragging._draggable._updatePosition = function() {
+            L.Draggable.prototype._updatePosition.call(this);
+            let self = this;
+            originalMap._syncMaps.forEach(function(toSync) {
+                L.DomUtil.setPosition(toSync.dragging._draggable._element, self._newPos);
+                toSync.eachLayer(function(layer) {
+                    if (layer._google !== undefined) {
+                        layer._google.setCenter(originalMap.getCenter());
+                    }
+                });
+                toSync.fire('moveend');
+            });
+        };
+    }
+});
 
 export default L

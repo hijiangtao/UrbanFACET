@@ -80,10 +80,10 @@ const userpanel = new Vue({
 					let obj = objs[i],
 						city = obj.city;
 
-					document.getElementById(obj.id.map).classList.add('loading');
+					document.getElementById(obj.id.map).parentNode.classList.add('loading');
 
 					getOverviewDatasets(obj).then(function(res) {
-						document.getElementById(obj.id.map).classList.remove('loading');
+						document.getElementById(obj.id.map).parentNode.classList.remove('loading');
 
 						obj.scales = res['prop']['scales'];
 
@@ -114,12 +114,12 @@ const userpanel = new Vue({
 				let sels = self.sels.objs[index],
 					city = sels.city;
 
-				document.getElementById(sels.id.map).classList.add('loading');
+				document.getElementById(sels.id.map).parentNode.classList.add('loading');
 				console.log('Connecting server.');
 
 				getOverviewDatasets(sels).then(function(res) {
 					console.log('Got server data.');
-					document.getElementById(sels.id.map).classList.remove('loading');
+					document.getElementById(sels.id.map).parentNode.classList.remove('loading');
 
 					sels.scales = res['prop']['scales'];
 
@@ -318,13 +318,17 @@ const userpanel = new Vue({
 			switch (currentSize) {
 				// 删除两个对象
 				case 4:
-				removeMaps(2);
+				// removeMaps(2);
 				self.updateSels(2, 'del');
+				maps.splice(-2,2);
+				charts.splice(-2,2);
 				break;
 				// 删除一个对象
 				case 2:
-				removeMaps(1);
+				// removeMaps(1);
 				self.updateSels(1, 'del');
+				maps.splice(-1,1);
+				charts.splice(-1,1);
 				break;
 				case 1:
 				alert('No more objects can be removed, one object should be reserved in the page.');
@@ -333,10 +337,10 @@ const userpanel = new Vue({
 				break;
 			}
 
-			for (let i = currentSize*2 - 1; i >= currentSize; i--) {
-				maps.splice(-1,1);
-				charts.splice(-1,1);
-			}
+			// for (let i = currentSize - 1; i >= Number.parseInt( currentSize/2 ); i--) {
+			// 	maps.splice(-1,1);
+			// 	charts.splice(-1,1);
+			// }
 
 			this.sels.lstindex = 0;
 		},

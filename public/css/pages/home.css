@@ -2,103 +2,215 @@
 /**
  * home.css
  * @authors Joe Jiang (hijiangtao@gmail.com)
- * @date    2017-01-05 21:34:44
+ * @date    2017-03-17 09:59:18
  * @version $Id$
  */
 
-#map {
-    height: 100vh;
-    width: 100vw;
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
 }
+
+/*MAP STYLESHEETS*/
+#mappanel {
+    height: 93vh;
+    width: 74vw;
+    left: 26vw;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+}
+
+#mappanel>div {
+    float: left;
+    margin: 0;
+    padding: 0;
+    border-radius: 2px;
+}
+
+.onemap {
+    height: 100%;
+    width: 100%;
+}
+.twomap {
+    height: 100%;
+    width: 50%;
+}
+.formap {
+    height: 50%;
+    width: 50%;
+}
+
+.vamap {
+    width: 100%;
+    height: 100%;
+}
+
+.cursor {
+    cursor:pointer;
+}
+
+/*MAP STYLESHEETS*/
+
+#titlemenu {
+    height: 7vh;
+    margin: 0;
+    border-radius: 0;
+}
+
 
 /*user panel background stylesheets*/
 #userpanel {
-    top: 0;
-    width: 25vw;
+    /*top: 9vh;*/
+    width: 26vw;
     position: absolute;
-    padding: .5rem;
+    /*padding: .5rem;*/
     margin: 0;
-    height: 100vh;
-    z-index: 9;
-    background-color: rgba(255, 255, 255, .7);
+    height: 93vh;
+    /*z-index: 9;*/
+    background-color: rgba(255, 255, 255, .8);
+    border-radius: 0;
+}
+#userpanel>div {
+    overflow: hidden;
+    /*height: 100%;*/
 }
 
-.heatmap {
-	position: absolute;
-	bottom: 1em;
-	left: 26vw;
-	width: 23vw;
-	z-index: 3;
+.m-legend {
+    /*position: absolute;*/
+    /*z-index: 11;*/
+    min-height: 0;
 }
 
-#clamatrixheatmap, #compclamatrixheatmap {
-	height: 200px;
-	width: 100%;
+.ui.form select, .field select.roundselect, select.roundselect {
+    border-color: rgb(0,0,0);
+    background-color: white;
+    -webkit-border-radius: .6rem;
+    -moz-border-radius: .6rem;
+    border-radius: .6rem;
+
+    padding: 0.32em 1em;
+    outline: none;
 }
 
-.vcPanelRow.row {
-	padding-bottom: .2rem;
-	padding-top: .2rem;
+img.ui.image {
+    display: inline;
 }
 
-#usageguidance, #panelChart>img {
-	cursor:pointer;
-}
-
-#panelChart {
-	position: absolute;
-	bottom: 0;
-    left: 0;
-    right: 0;
-    width: auto;
-    padding-left: .5rem;
-	padding-right: .5rem;
-}
-
-/*TEST STYLESHEETS FOR MAP OVERLAY LEGEND*/
-#mapviewlegend {
-	position: absolute;
-	left: 26vw;
-	top: 1rem;
-	/*background-color: red;*/
-	z-index: 3;
-}
-
-#infomsg {
-	display: none;
-}
-
-/*CHARTS*/
-#clascatterplot, #expclascatterplot {
+.ui.pointing.secondary.menu {
     width: 100%;
-    position: relative;
-}
-#clascatterplot {
-    height: 15vw;
-}
-#expclascatterplot {
-    height: 450px;
 }
 
-.tooltip {
-  position: absolute;
-  width: 200px;
-  height: 28px;
-  pointer-events: none;
+.cityimg.ui.tiny.image {
+	width: 3rem;
 }
 
-.posabs {
-  position: absolute;
+.ftpimg.ui.tiny.image {
+    width: 2.8rem;
+}
+.toggle.right.icon {
+	font-size: 1.5rem;
 }
 
-svg.posabs {
-  pointer-events: none;
+.designedfontcolor {
+    color: rgba(250,150,30,1);
 }
 
-.hidden {
-  display: none;
+/*CHARTS STYLESHEET*/
+.statcharts>div {
+    margin-top: 5px;
+    width: 100%;
+    /*height: 60px;*/
+}
+.area {
+  fill: rgba(250,150,30,1);
+  clip-path: url(#clip);
 }
 
-.numberinput {
-	width: 7rem !important;
+.zoom {
+  cursor: move;
+  fill: none;
+  pointer-events: all;
 }
+.brush rect.selection {
+    stroke: none;
+    fill: red;
+}
+
+.e-active {
+    display: block !important;
+}
+button.ui.mini.grey.button.s-active {
+	background-color: rgba(250,150,30,1) !important;
+	border-color: rgba(250,150,30,1) !important;
+	box-shadow: 0 !important;
+	color: white !important;
+}
+
+#vctab {
+	margin: 0;
+}
+#vctab>div.item {
+    font-size: 1.5rem;
+    padding: .2rem 1rem;
+    border-bottom-width: 4px;
+}
+
+#test {
+    width: 400px;
+}
+
+.svgtooltip {
+    position: absolute;         
+    text-align: center;         
+    width: 60px;                    
+    height: 28px;                   
+    padding: 2px;              
+    background: white; 
+    border: 0px;        
+    border-radius: 4px;         
+    pointer-events: none;       
+}
+
+/*CHARTS STYLESHEET*/
+
+/*REWRITE SEMANTIC-UI*/
+
+
+.ui.grid > .column:not(.row) {
+    padding-top: .6rem;
+    padding-bottom: 0;
+}
+
+.ui.grid {
+    margin-top: 0;
+}
+
+.ui.attached.segment {
+    border-top: 0;
+}
+h4.ui.header {
+    color: rgba(250,150,30,1);
+}
+.ui.attached.segment {
+    border-bottom: 0;
+}
+.ui.segment[class*="bottom attached"] {
+    margin-bottom: 0;
+}
+
+.ui.card {
+    position: absolute;
+    z-index: 11;
+    top: 1rem;
+    left: 1rem;
+    border-radius: .5rem;
+    width: 210px;
+    border-radius: 4px;
+    z-index: 11;
+}
+.ui.card>.image {
+    padding: 1.7rem;
+}
+/*REWRITE SEMANTIC-UI*/

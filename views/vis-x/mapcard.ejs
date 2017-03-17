@@ -1,4 +1,4 @@
-<div v-for="(model, index) in sels.objs" :id="'card' + index" @click="bindTabClick(index)" class="ui card">
+<div :id="'card' + index" @click="bindTabClick(index)" class="ui card">
 	<div class="image">
 		<img v-show="sels.lstindex === index" :src="cals.cimgs[model.city].aurl">
 		<img v-show="sels.lstindex !== index" :src="cals.cimgs[model.city].nurl">

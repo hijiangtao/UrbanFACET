@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 /* GET home page. */
-// router.get('/', function(req, res, next) {
-//   res.render('home', { title: 'VC Homepage', name: 'home' });
-// });
+router.get('/', function(req, res, next) {
+  res.render('home', { title: 'Urban Prism: User-level Visual Analysis of Mobile Big Data', name: 'home' });
+});
 /* GET demo page. */
 // router.get('/demo', function(req, res, next) {
 //   res.render('demo', { title: 'DEMO', name: 'demo' });

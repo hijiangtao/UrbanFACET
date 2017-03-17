@@ -1,470 +1,415 @@
 /**
- * /index.js
+ * home.js
  * @authors Joe Jiang (hijiangtao@gmail.com)
- * @date    2016-12-07 15:28:52
+ * @date    2017-03-17 10:00:09
  * @version $Id$
  */
 
 'use strict'
 
 import Vue from 'vue'
-import mapview from './components/mapview'
-import analysistools from './components/analysistools' 
+import Vuex from 'vuex'
+Vue.use(Vuex)
+
+import mapview from './components/hmap-view'
+import chart from './components/chartview'
 import $ from "jquery"
-window.jQuery = $
-import * as d3 from 'd3'
-require('../../semantic/dist/components/accordion')
-require('../../semantic/dist/components/modal')
-require('../../semantic/dist/components/dimmer')
-require('../../semantic/dist/components/transition')
+// window.jQuery = $
+import { regionRecords, home } from './components/init'
+import { getOverviewDatasets, getDensity, getValRange, objClone } from './components/apis'
+import { appendMap, removeMaps } from './components/events'
+import vueSlider from 'vue-slider-component'
 
-import {indexvuedata} from './components/initdata'
-
-/**
- * LMap instance: hold map view instance and its' related operating approaches
- * @type {LMap}
- */
-let mapins = new mapview('map'),
-    anains = new analysistools('', 'clamatrixheatmap')
-
-
-let featureTypes = ['workday', 'weekend', 'daytime', 'evening', 'wodaytime', 'weevening']
-
-// index page vue instance
-let userpanel = new Vue({
-    el: '#userpanel',
-    data: indexvuedata,
-    methods: {
-        changeEntropyMode(item) {
-            this.selections.entropymodeVal = item.val
-            this.selections.entropymodeName = item.name
-        },
-        changeRegion(val) {
-            this.selections.regionVal = val
-        },
-        changeFeature(name, val) {
-            this.selections.featureName = name
-            this.selections.featureVal = val
-        },
-        changeTheme(name, val) {
-            // console.log(name, val)
-            this.selections.themeName = name
-            this.selections.themeVal = val
-            // this.selections.tmodelVal = this.settings.tmodels[val]
-        },
-        changevcTime(dayname, tpname, dayval, tpval) {
-            this.selections.vctimeName = `${dayname} - ${tpname}`
-            this.selections.vcdaytypeVal = dayval
-            this.selections.vctimeperiodVal = tpval
-        },
-        changevcMode(item) {
-            this.selections.vcqmodeVal = item.val
-            this.selections.vcqmodeName = item.name
-        },
-        changecaTime(dayname, tpname, dayval, tpval) {
-            this.selections.matimeVal = `${dayname} - ${tpname}`
-            this.selections.madaytypeVal = dayval
-            this.selections.matimeperiodVal = tpval
-        },
-        changecompvcTime(dayname, tpname, dayval, tpval) {
-            this.selections.compvctimeName = `${dayname} - ${tpname}`
-            this.selections.compvcdaytypeVal = dayval
-            this.selections.compvctimeperiodVal = tpval
-        },
-        changeDBScanInp(val) {
-            this.selections.dbscanminptsName = val
-        },
-        changeThemeParam(name, val) {
-            // console.log(name, val)
-            this.selections.modelParamName = name
-            this.selections.modelParamVal = val
-        },
-        changeSelectCla(val) {
-            this.selections.vcclaName = val
-        },
-        showDecomposeImg() {
-            if (this.results.decomposeimgurl !== '') {
-                window.open(this.results.decomposeimgurl, '_blank');    
-            }
-        },
-        changeSelectCompCla(val) {
-            this.selections.compvcclaName = val
-        },
-        usageguidanceShow() {
-            $('.ui.fullscreen.modal').modal('show')
-        },
-        tsneTrain() {
-            let self = this, 
-                regionVal = this.selections.regionVal, 
-                featureVal = this.selections.featureVal, 
-                id = this.states.userid,
-                srate = this.selections.samplerateVal
-
-            if (regionVal !== 'Select Region' && featureVal !== 0) {
-                self.states.tsnetrain = true
-                $.get(`/home/v1/tsnetrain?region=${this.selections.regionVal}&feature=${this.selections.featureVal}&srate=${srate}&id=${id}`, function(res, err) {
-                    if (res['scode']) {
-                        alert('success');
-
-                        if (self.states.userid !== res['id']) {
-                            self.states.userid = res['id']
-                        }
-
-                        self.states.tsnetrain = false
-                        self.states.clusterdisplay = true
-                        self.results.decomposeimgurl = `/img/init/2D-ScatterData_1-in-${srate}_tsne-${featureTypes[featureVal-1]}(byRecNum).png`
-                    } else {
-                        alert('server error')
-                    }
-                })
-            } else {
-                alert('Both region and feature rule should be selected before the t-SNE program runs!');
-            }          
-        },
-        clusterTrain() {
-            let self = this, 
-                minpts = this.selections.dbscanminptsName, 
-                eps = this.selections.dbscaneps, 
-                theme = this.selections.themeName, 
-                regionVal = this.selections.regionVal, 
-                featureVal = this.selections.featureVal, 
-                id = this.states.userid,
-                srate = this.selections.samplerateVal
-
-            if (minpts !== '' && eps !== '') {
-                this.states.clustertrain = true
-
-                let data = {
-                    'eps': eps,
-                    'minpts': minpts,
-                    'pkg': JSON.stringify(self.selections.tmodelVal),
-                    'region': regionVal,
-                    'feature': featureVal,
-                    'srate': srate,
-                    'id': id
-                }
-
-                $.post(`/home/v1/clustertrain`, data, function(res, err) {
-                    if (res['scode'] === 1) {
-                        self.states.clustertrain = false
-
-                        self.states.themesdisplay = true
-                        self.states.clustertrain = false
-                        self.states.anadisplay = true
-                        self.results.clafilename = res['clafilename']
-
-                        if (self.states.userid !== res['id']) {
-                            self.states.userid = res['id']
-                        }
-                        console.log('clustering work complete')
-                        alert('success');
-
-                        // self.results.decomposeimgurl = `/img/cluster/DBScanCluster-1-in-${srate}_tsne-${featureTypes[featureVal-1]}(eps=${eps},minpts=${minpts}).png`
-                        self.results.decomposeimgurl = ''
-                        self.classplot()
-
-                    } else {
-                        alert('cluster work failed, please try again later')
-                    }
-                })
-            } else {
-                alert('all fields must be input.')
-            } 
-        },
-        labelTrain() {
-            let self = this, 
-                theme = this.selections.themeVal, 
-                paramval = this.selections.modelParamVal, 
-                rangeval = this.selections.modelParamRangeVal, 
-                id = this.states.userid
-            
-            if (theme !== '' && paramval !== '' && id !== '-1') {
-                self.states.labeltrain = true
-                $.get(`/home/v1/labeltrain?theme=${theme}&paramval=${paramval}&rangeval=${rangeval}&id=${id}`, function(res, err) {
-                    self.states.labeltrain = false
-                    if (res['scode'] === 1) {
-
-                        self.results.classlist = res['clalist']
-                        self.results.classmatrix = res['matrixlist']
-
-                        self.settings.classes = res['clalist']
-                        self.settings.classes.push('ALL')
-                        alert('success');
-                    } else {
-                        alert('server error, please try again later.')
-                    }
-                })
-            } else {
-                alert('All fields should be filled.')
-            }
-        },
-        /**
-         * [vcQuery description]
-         * @param  {[type]} string refers to the query mode, visual analytics mode ('basic') or visual comparison mode ('comp')
-         * @return {[type]}      [description]
-         */
-        vcQuery(type) {
-            let self = this, 
-                daytype = this.selections.vcdaytypeVal, 
-                timeperiod = this.selections.vctimeperiodVal, 
-                cla = this.selections.vcclaName, 
-                compdaytype = this.selections.compvcdaytypeVal,
-                comptimeperiod = this.selections.compvctimeperiodVal,
-                compcla = this.selections.compvcclaName,
-                clafilename = this.results.clafilename,
-                qmode = this.selections.vcqmodeVal
-
-            // confirm class, daytype and timeperiod
-            let reqcla, reqdaytype, reqtp
-            if (type === 'basic') {
-                // VA MODE
-                if (daytype !== '' && timeperiod !== '' && cla !== 'Select Class') {
-                    reqcla = cla
-                    reqdaytype = daytype
-                    reqtp = timeperiod
-                } else {
-                    alert('All fields should be filled.')
-                    return ;
-                }
-            } else {
-                // VC MODE
-                if (qmode === 1 && compcla !== 'ComparedClass') {
-                    reqcla = compcla
-                    reqdaytype = daytype
-                    reqtp = timeperiod
-                } else if (qmode === 2 && comptimeperiod !== '' && compdaytype !== '') {
-                    reqcla = cla
-                    reqdaytype = compdaytype
-                    reqtp = comptimeperiod
-                } else {
-                    alert('All fields should be filled.')
-                    return ;
-                }
-            }
-
-            // loading effect
-            self.states.vcquery = true
-            document.getElementsByTagName('body')[0].classList.add('loading');
-
-            let data = {
-                'daytype': reqdaytype,
-                'timeperiod': reqtp,
-                'cla': reqcla,
-                'clafilename': clafilename
-            }
-            $.post(`/home/v1/vcquery`, data, function(res, err) {
-                if (res['scode'] === 1) {
-                    self.states.vcquery = false
-                    document.getElementsByTagName('body')[0].classList.remove('loading');
-
-                    // update data in results
-                    if (type === 'basic') {
-                        // VA
-                        self.results['mapresults']['data'][0] = res['data']
-                        self.results['mapresults']['cla'][0] = res['prop']['cla']
-                        self.results['mapresults']['tp'][0] = res['prop']['tp']
-                    } else {
-                        self.results['mapresults']['data'][1] = res['data']
-                        self.results['mapresults']['cla'][1] = res['prop']['cla']
-                        self.results['mapresults']['tp'][1] = res['prop']['tp']
-                    }
-                    
-                    // confirm the render data
-                    let resdata = self.results['mapresults']['data'][0], 
-                        reslist = [self.results['mapresults']['cla'][0]],
-                        resleg = 'cla'
-
-                    let extradata = self.results['mapresults']['data'][1]
-                    if (extradata !== '') {
-                        resdata['features'] = resdata['features'].concat(extradata['features'])
-                        if (qmode === 1) {
-                            reslist = reslist.concat(self.results['mapresults']['cla'][1])
-                        } else {
-                            reslist = self.results['mapresults']['tp']
-                            resleg = 'tp'
-                        }
-                    }
-                    mapins.pointmapDrawing(resdata, reslist, resleg)
-                } else {
-                    alert('server error.')
-                }
-            })
-
-            // if (daytype !== '' && timeperiod !== '' && cla !== 'Select Class' && clafilename !== '') {
-            //     if (qmode === 1 && compcla === '') {
-            //         alert('All fields should be filled.')
-            //         return ;
-            //     }
-
-            //     if (qmode === 2 && (comptimeperiod === '' || compdaytype === '')) {
-            //         alert('All fields should be filled.')
-            //         return ;
-            //     }
-
-            //     self.states.vcquery = true
-            //     document.getElementsByTagName('body')[0].classList.add('loading');
-            //     // judge if class is ALL type
-            //     if (cla === 'ALL') {
-            //         cla = self.results.classlist
-            //     } else {
-            //         cla = [cla]
-            //     }
-
-            //     let data = {
-            //         'qmode': qmode,
-            //         'daytype': daytype,
-            //         'timeperiod': timeperiod,
-            //         'cla': cla,
-            //         'compdaytype': compdaytype,
-            //         'comptimeperiod': comptimeperiod,
-            //         'compcla': compcla,
-            //         'clafilename': clafilename
-            //     }
-            //     $.post(`/home/v1/vcquery`, data, function(res, err) {
-            //         if (res['scode'] === 1) {
-            //             self.states.vcquery = false
-            //             document.getElementsByTagName('body')[0].classList.remove('loading');
-
-            //             mapins.pointmapDrawing(res['data'], res['group'])
-            //             console.log('Color map', res['group'])
-            //         } else {
-            //             alert('server error.')
-            //         }
-            //     })
-            // } else {
-            //     alert('All fields should be filled.')
-            // }
-        },
-        classplot() {
-            let self = this,
-                minpts = this.selections.dbscanminptsName, 
-                eps = this.selections.dbscaneps, 
-                srate = this.selections.samplerateVal,
-                feature = this.selections.featureVal,
-                id = this.states.userid
-
-            $.get(`/home/v1/classplot?feature=${feature}&srate=${srate}&eps=${eps}&minpts=${minpts}&id=${id}`, function(res, err) {
-                if (res['scode'] === 1) {
-                    // remove class btn disabled effect
-                    document.getElementById('vcclaDropdown').classList.remove('disabled')
-                    let compClaDropdown = document.getElementById('compvcclaDropdown')
-                    if (compClaDropdown) {
-                        compClaDropdown.classList.remove('disabled')
-                    }
-
-                    let clalen = res['clalist'].length
-                    self.results['classlist'] = res['clalist'].slice(1, clalen)
-                    self.results['classmatrix'] = res['matrixlist']
-                    self.results['userpoints'] = res['data']
-
-                    self.settings.classes = res['clalist'].slice(1, clalen)
-                    self.settings.classes.push('ALL')   
-
-                    mapins.scatterplotDrawing(res['data'], res['clalist'], 'clascatterplot', self)
-                } else {
-                    alert('server error.')
-                }
-            })
-        },
-        claExpandDisplay() {
-            let self = this,
-                clalist = self.results['classlist'],
-                data = self.results['userpoints']
-
-            $('.ui.small.modal').modal({
-                onVisible: function() {
-                    mapins.scatterplotDrawing(data, ['-1'].concat(clalist), 'expclascatterplot', self)
-                }
-            }).modal('show')  
-        },
-        maDisplayQuery() {
-            let self = this,
-                daytype = self.selections.madaytypeVal,
-                timeperiod = self.selections.matimeperiodVal,
-                id = self.states.userid
-
-            if (daytype && timeperiod) {
-                self.states.madisplayquery = true
-                $.get(`/home/v1/madisplay?daytype=${daytype}&timeperiod=${timeperiod}&id=${id}`, function(res, err) {
-                    if (res['scode'] === 1) {
-                        self.states.madisplayquery = false
-                        mapins.pointmapDrawing(res['data'], res['group'], 'group')
-
-                        if (self.states.userid !== res['id']) {
-                            self.states.userid = res['id']
-                        }
-                    } else {
-                        alert('server error')
-                    }
-                })
-            } else {
-                alert('Please fill in all the fields.')
-            }
-            
-        }
+// Vuex Instance
+const store = new Vuex.Store({
+    state: {
+        init: true
     },
-    computed: {
-        labelbtndisplay: function() {
-            return this.selections.themeVal !== '' && this.selections.modelParamVal !== '' && this.states.themesdisplay
+    mutations: {
+        updateInitState(state) {
+            state.init = !state.init;
         }
-    },
-    watch: {
-        'selections.vcqmodeVal': function(val) {
-            this.$nextTick(function () {
-               if (this.settings.classes.length !== 0) {
-                    document.getElementById('vcclaDropdown').classList.remove('disabled')
-                    let compClaDropdown = document.getElementById('compvcclaDropdown')
-                    if (compClaDropdown) {
-                        compClaDropdown.classList.remove('disabled')
-                    }
-                }
-
-                if (val !== 1) {
-                    document.getElementById('compclamatrixheatmap').innerHTML = ''
-                }
-            }) 
-        },
-        'selections.vcclaName': function(val) {
-            this.$nextTick(function() {
-                if (val === 'ALL') {
-                    alert('ATTENTION: the matrix will not updated.')
-                } else {
-                    anains.drawMatrix(this.results.classmatrix[val], 'clamatrixheatmap', `FeatureMatrix Class${val}`, {
-                        height:'70%',
-                        y:'20%',
-                        left:'16%',
-                        right:'0%'
-                    })
-                }
-            })
-        },
-        'selections.compvcclaName': function(val) {
-            if (this.selections.vcqmodeVal === 1) {
-                this.$nextTick(function() {
-                    anains.drawMatrix(this.results.classmatrix[val], 'compclamatrixheatmap', `FeatureMatrix Class${val}`, {
-                        height:'70%',
-                        y:'20%',
-                        left:'16%',
-                        right:'0%'
-                    })
-                })
-            }
-        }
-    },
-    mounted: function () {
-      this.$nextTick(function () {
-        $('.ui.accordion').accordion()
-        $('.ui.fullscreen.modal').modal()
-        $('.ui.small.modal').modal()
-      })
-      console.log('The vue isntance has mounted.')
-
-      // mapins.map.invalidateSize()
     }
 })
 
-// remove loading effect
-document.addEventListener("DOMContentLoaded", function(event) { 
-  document.getElementsByTagName('body')[0].classList.remove('loading');
-;
+// 判断浏览器是否支持 localStorage
+if (typeof(Storage) === undefined) {
+    alert('Please Update your browser to support localStorage');
+}
+
+let maps = [],
+    charts = [];
+
+const userpanel = new Vue({
+    el: '#main',
+    data: home,
+    store,
+    components: {
+        vueSlider
+    },
+    methods: {
+        /**
+         * 从服务器拉取 entropy 以及 density 数据并显示在相应 map 板块
+         * @param  {[type]} index map 面板编号
+         * @return {[type]}       [description]
+         */
+        'getOverview': function(index) {
+            let self = this,
+                esvals = self.components.eSlider.value;
+
+            index = Number.parseInt(index);
+
+            // 当前 index 不在合法的阈值范围内
+            if (index > 3) {
+                alert('Selected object is out of index.');
+            }
+
+            // 判断是单个对象绘制还是多个对象绘制, 多对象 index 值为 -1
+            if (index === -1) {
+                let objs = self.sels.objs;
+
+                for (let i = objs.length - 1; i >= 0; i--) {
+                    let obj = objs[i],
+                        city = obj.city;
+
+                    document.getElementById(obj.id.map).parentNode.classList.add('loading');
+
+                    getOverviewDatasets(obj).then(function(res) {
+                        document.getElementById(obj.id.map).parentNode.classList.remove('loading');
+
+                        obj.scales = res['prop']['scales'];
+
+                        let valScales = getValRange(obj.scales, esvals, dsvals, self.sels, i);
+                        console.log('valScales', valScales);
+
+                        maps[i].panTo(regionRecords[city]['center']);
+                        switch (self.sels.ctrmap) {
+                            case true:
+                                maps[i].mapcontourCDrawing(res, valScales);
+                                break;
+                            case false:
+                                maps[i].mapgridCDrawing(res, valScales, false, self.sels.splitmap, false);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        charts[i].brushDraw(`#estatChart${i}`, res['chart']['e']);
+                        charts[i].brushDraw(`#dstatChart${i}`, res['chart']['d']);
+                    }).catch(function(err) {
+                        console.error("Failed!", err);
+                    });
+                }
+            } else {
+                
+            }
+
+            // 改变页面初始化状态
+            if (store.state.init) {
+                store.commit('updateInitState');
+            }
+        },
+        'getOverlay': function(index) {
+            index = Number.parseInt(index);
+
+            let prop = {
+                'city': this.sels.objs[index].city,
+                'type': Number.parseInt(this.sels.objs[index].otype)
+            }
+            maps[index].boundaryDrawing({}, prop);
+        },
+        /**
+         * 更新指定 map 面板中选中的 City
+         * @param  {[type]} index [description]
+         * @param  {[type]} val   [description]
+         * @return {[type]}       [description]
+         */
+        'updateSelectRegion': function(val) {
+        	let objs = this.sels.objs;
+            for (let i = objs.length - 1; i >= 0; i--) {
+            	objs[i].city = val;
+            }
+        },
+        /**
+         * 更新指定 map 面板中的时间过滤条件
+         * @param  {[type]} val   [description]
+         * @param  {[type]} index [description]
+         * @return {[type]}       [description]
+         */
+        'updateTPFilter': function(val) {
+            let objs = this.sels.objs;
+
+            // 和之前选择一致,逻辑为取消
+            if (objs[0].ftpval === val) {
+                val = '';
+            }
+
+            console.log(objs[0].ftpval);
+
+            for (let i = objs.length - 1; i >= 0; i--) {
+            	objs[i].ftpval = val;
+            }
+
+            // 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
+            if (!store.state.init) {
+                this.getOverview(-1);
+            }
+        },
+        /**
+         * 更新数据的 display type
+         * @param  {[type]} index [description]
+         * @param  {[type]} val   [description]
+         * @return {[type]}       [description]
+         */
+        'updateDS': function(index, val) {
+            // 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
+            index = Number.parseInt(index);
+            // this.sels.lstindex = index;
+
+            if (store.state.init) {
+                return;
+            }
+
+            let self = this,
+                sels = self.sels.objs[index],
+                esvals = self.components.eSlider.value,
+                dsvals = self.components.dSlider.value,
+                valScales = getValRange(sels.scales, esvals, dsvals, self.sels, index);
+
+            switch (self.sels.ctrmap) {
+                case true:
+                    maps[index].mapcontourCDrawing({}, valScales, true);
+                    break;
+                case false:
+                    maps[index].mapgridCDrawing({}, valScales, true, self.sels.splitmap, false);
+                    break;
+                default:
+                    break;
+            }
+        },
+        /**
+         * 计算与更新 slider 样式, 更新 map
+         * @param  {[type]} type 传入的 slider 类型值, d/e
+         * @return {[type]}      [description]
+         */
+        'updateSlider': function(type, index) {
+            // 定位 slider
+            let v = this.components.eSlider.value;
+            if (type === 'd') {
+                v = this.components.dSlider.value;
+            }
+
+            // 改变背景色
+            document.getElementById(`${type}Slider`).getElementsByClassName('vue-slider')[0].style.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
+
+            // 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
+            index = Number.parseInt(index);
+            // this.sels.lstindex = index;
+            if (store.state.init) {
+                return;
+            }
+
+            let self = this,
+                sels = self.sels.objs[index],
+                esvals = self.components.eSlider.value,
+                dsvals = self.components.dSlider.value,
+                valScales = getValRange(sels.scales, esvals, dsvals, self.sels, index);
+
+            console.log('entropy range', valScales['e']);
+            switch (self.sels.ctrmap) {
+                case true:
+                    maps[index].mapcontourCDrawing({}, valScales, true);
+                    break;
+                case false:
+                    maps[index].mapgridCDrawing({}, valScales, true, self.sels.splitmap, false);
+                    break;
+                default:
+                    break;
+            }
+        },
+
+        'addAnaObj': function() {
+            let self = this,
+                currentSize = self.sels.objs.length;
+            console.log('currentSize', currentSize);
+            self.sels.lstnum = currentSize;
+
+            switch (currentSize) {
+                // 添加一个对象
+                case 1:
+                    appendMap([1]);
+                    self.updateSels(1, 'add');
+                    break;
+                    // 复制现有两个对象并添加
+                case 2:
+                    appendMap([2, 3]);
+                    self.updateSels(2, 'add');
+                    break;
+                case 4:
+                    alert('No more objects can be created, please remove some first.');
+                    break;
+                default:
+                    break;
+            }
+
+        },
+        'delAnaObj': function() {
+            let self = this,
+                currentSize = self.sels.objs.length;
+            self.sels.lstnum = currentSize;
+
+            switch (currentSize) {
+                // 删除两个对象
+                case 4:
+                    // removeMaps(2);
+                    self.updateSels(2, 'del');
+                    maps.splice(-2, 2);
+                    charts.splice(-2, 2);
+                    break;
+                    // 删除一个对象
+                case 2:
+                    // removeMaps(1);
+                    self.updateSels(1, 'del');
+                    maps.splice(-1, 1);
+                    charts.splice(-1, 1);
+                    break;
+                case 1:
+                    alert('No more objects can be removed, one object should be reserved in the page.');
+                    break;
+                default:
+                    break;
+            }
+
+            // for (let i = currentSize - 1; i >= Number.parseInt( currentSize/2 ); i--) {
+            // 	maps.splice(-1,1);
+            // 	charts.splice(-1,1);
+            // }
+
+            this.sels.lstindex = 0;
+        },
+        /**
+         * 更新 vue 实例中存储的 objs 数组, isize 为个数
+         * @param  {[type]} isize [description]
+         * @param  {[type]} type  [description]
+         * @return {[type]}       [description]
+         */
+        'updateSels': function(isize, type) {
+            let self = this;
+
+            for (let i = 0; i < isize; i++) {
+                switch (type) {
+                    case 'add':
+                        self.sels.objs.push(objClone(self.sels.objs[i]));
+                        break;
+                    default:
+                        self.sels.objs.splice(-1, 1);
+                        break;
+                }
+            }
+        },
+        'getTabImg': function(val, type) {
+            let cities = {
+                'bj': 0,
+                'tj': 1,
+                'zjk': 2,
+                'ts': 3
+            }
+
+            return this.params.regions[`${type}url`];
+        },
+        'bindTabClick': function(val) {
+            this.sels.lstindex = val;
+        }
+    },
+    computed: {
+        mapClass: function() {
+            switch (this.sels.objs.length) {
+                case 1:
+                    if (this.sels.otype === -1) {
+                        return 'onemap';
+                    } else {
+                        return 'twomap';
+                    }
+                    break;
+                case 2:
+                    return 'twomap';
+                    break;
+                default:
+                    return 'formap';
+                    break;
+            }
+        }
+    },
+    watch: {
+        /**
+         * 如果展示的数据类型变化,则更新视图
+         */
+        // 'sels.dtype': {
+        //     handler: function(val, OldVal) {
+        //         console.log('dtype changed.');
+        //         // 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
+        //         let index = this.sels.lstindex;
+        //         if (store.state.init) {
+        //             return;
+        //         }
+
+        //         let self = this,
+        //             sels = self.sels.objs[index],
+        //             esvals = self.components.eSlider.value,
+        //             dsvals = self.components.dSlider.value,
+        //             valScales = getValRange(sels.scales, esvals, dsvals, self.sels, index);
+
+        //         console.log('entropy range', valScales['entropy']);
+        //         switch (self.sels.ctrmap) {
+        //             case true:
+        //                 maps[index].mapcontourCDrawing({}, valScales, true);
+        //                 break;
+        //             case false:
+        //                 maps[index].mapgridCDrawing({}, valScales, true, self.sels.splitmap, false);
+        //                 break;
+        //             default:
+        //                 break;
+        //         }
+        //     },
+        //     deep: false
+        // }
+    },
+    mounted() {
+        let self = this;
+        this.$nextTick(function() {
+            maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0');
+            charts[0] = new chart('#estatChart0');
+
+            // maps[0].drawGeojson('tj');
+        });
+    },
+    updated() {
+        let self = this,
+            curnum = self.sels.objs.length,
+            lstnum = self.sels.lstnum;
+
+        // maps[0].panBy([1,1]);
+
+        if (curnum > lstnum) {
+            for (let i = curnum - 1; i >= lstnum; i--) {
+                // 新建 map & chart model view
+                maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`);
+                charts[i] = new chart(`#estatChart${i}`);
+
+                // 更新 objs 中的 id 对象
+                self.sels.objs[i].id.card = `card${i}`;
+                self.sels.objs[i].id.map = `map${i}`;
+                self.sels.objs[i].id.tab = `tab${i}`;
+
+                // 更新视图
+                self.getOverview(i);
+            }
+
+            // 非同步操作: 将视图聚焦切换到最新的 tab 上
+            // iterateTabs(`switch${maps.length-1}`, `tab${maps.length-1}`);
+
+            self.sels.lstnum = curnum;
+            self.sels.lstindex = curnum - 1;
+        }
+    }
 });

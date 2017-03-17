@@ -1,0 +1,96 @@
+<div class="ui grid">
+    
+    <div class="sixteen wide column">
+    	<!-- City -->
+        <div class="ui form">
+            <div class="inline fields">
+                <label><img class="ui mini image" src="/assets/region-icon.png">City</label>
+                <div v-for='item in params.regions' class="field">
+                    <div class="cityimg ui tiny image cursor">
+                        <img v-show="item.val === sels.objs[0].city" :src="item.aurl" @click="updateSelectRegion(item.val)" :title="item.name">
+                        <img v-show="item.val !== sels.objs[0].city" :src="item.nurl" @click="updateSelectRegion(item.val)" :title="item.name">
+                    </div>
+                </div>
+                <div class="field">
+                	<div class="cityimg ui tiny image cursor" title="Comparison Analysis">
+                		<i class="toggle right icon"></i>
+                	</div>
+                </div>
+            </div>
+
+            <div class="inline fields">
+            	<label><img class="ui mini image" src="/assets/time-icon.png">Time</label>
+
+            	<div v-for='item in params.tpfilters2' class="field">
+            		<button :class="{'s-active':item.val === sels.objs[0].ftpval}" class="ui mini grey button" :title="item.name" @click="updateTPFilter(item.val)">{{ item.name }}</button>
+            	</div>
+            </div>
+
+            <div class="inline fields">
+            	<!-- <label><img class="ui mini image" src="/assets/time-icon.png">Timeblocks or Daytype</label> -->
+	            <div v-for='item in params.tpfilters' class="field">
+	            	<div class="ftpimg ui tiny image cursor">
+		                <img v-show="item.val === sels.objs[0].ftpval" :src="item.aurl" @click="updateTPFilter(item.val)" :title="item.name">
+		                <img v-show="item.val !== sels.objs[0].ftpval" :src="item.nurl" @click="updateTPFilter(item.val)" :title="item.name">
+		            </div>
+	            </div>
+
+	            <div class="field">
+                	<div class="ftpimg ui tiny image cursor" title="Dynamic Analysis">
+                		<i class="toggle right icon"></i>
+                	</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="vctab" class="ui pointing secondary menu">
+        <div v-for="(model, index) in sels.objs" :id="'switch'+index" :class="{'active':index === sels.lstindex}" class="tabs item cursor" :data-tab="'tab'+index" @click="bindTabClick(index)">{{ cals.enps[model.etype]}}</div>
+        <!-- <div id="switch0" class="tabs active item cursor" data-tab="tab0">OBJ0</div> -->
+        <div id='addObjBtn' class="item cursor" @click='addAnaObj'><i class="designedfontcolor plus square outline icon"></i></div>
+        <div id='delObjBtn' class="item cursor" @click='delAnaObj'><i class="minus square outline icon"></i></div>
+    </div>
+    <div v-for="(model, index) in sels.objs" :id="'tab' + index" :class="{'e-active':index === sels.lstindex}" class="panels ui bottom attached tab segment" :data-tab="'tab'+index">
+        <!-- <div class="sixteen wide column">
+            <h4 class="designedfontcolor ui header"><i class="right angle icon divider"></i>Data and Parameters</h4>
+        </div> -->
+        <div class="sixteen wide column">
+            <div class="ui form">
+                <div class="inline fields">
+                    <label><img class="ui mini image" src="/assets/type-icon.png">Entropy Type</label>
+                    <div class="field">
+                        <select class="roundselect cursor" v-model='model.etype'>
+                            <option v-for='item in params.etypes' :value="item.val">{{ item.name }}</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <button class="ui tiny primary button" v-on:click="getOverview(-1)">Update Maps</button>
+                    </div>
+                </div>
+
+                <div class="inline fields">
+                    <label><img class="ui mini image" src="/assets/type-icon.png">Overlay Analysis</label>
+                    
+                    <!-- getOverlay -->
+                    <div v-if="sels.objs.length === 1" class="field">
+                        <select class="roundselect cursor" v-model='sels.otype' @change="getOverlay(index)">
+                            <option v-for='item in params.otypes' :value="item.val">{{ item.name }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ui divider"></div>
+        
+		<div class="sixteen wide column">
+			Details (Charts)
+		</div>
+        <!-- <div class="statcharts sixteen wide column">
+            <div :id="'estatChart'+index"></div>
+        </div>
+        <div class="sixteen wide column">
+            <div :id="'dstatChart'+index"></div>
+        </div> -->
+    </div>
+</div>

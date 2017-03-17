@@ -1,0 +1,28 @@
+<div :id="'card' + index" @click="bindTabClick(index)" class="ui card">
+	<div class="image">
+		<img v-show="sels.lstindex === index" :src="cals.cimgs[model.city].aurl">
+		<img v-show="sels.lstindex !== index" :src="cals.cimgs[model.city].nurl">
+	</div>
+	<div class="content">
+		<a class="header">{{'City: ' + cals.cities[model.city]}}</a>
+		<div class="description">
+			<div class="ui grid">
+				<template v-if="model.dtype !== 'd'" >
+					<div class="four wide column">
+						<label for="">Metric</label>
+					</div>
+					<div class="twelve wide column">
+						<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="updateSlider('e', index)" v-model="components.eSlider.value"></vue-slider>
+					</div>
+				</template>
+			</div>
+		</div>
+	</div>
+	<div class="extra content">
+		<div :id="'maplegend'+index" class="m-legend">
+			<svg :id="'gridmaplegend'+index" height='0'></svg>
+			<div :id="'contourmaplegend'+index">
+			</div>
+		</div>
+	</div>
+</div>
