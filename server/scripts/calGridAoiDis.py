@@ -67,11 +67,12 @@ def calGridAoiDis(city):
 					tmpGrid[11] += 1
 
 			if vaildGrid:
-				print "1 POI"
+				
 				tmpGrid[12] = lngcen
 				tmpGrid[13] = latcen
 				grids.append(tmpGrid)		
 
+	print "%s City with valid grids %s" % (city, str(len(grids)))
 	return grids
 
 def main(argv):
