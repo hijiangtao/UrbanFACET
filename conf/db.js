@@ -15,7 +15,7 @@ var localhost = mysql.createPool({
 });
 
 var server = mysql.createPool({
-	host    : 'localhost', 
+	host    : '192.168.1.42', 
 	user    : 'root',
 	password: 'vis_2014',
 	database: 'tdnormal',
@@ -25,4 +25,4 @@ var server = mysql.createPool({
 	multipleStatements: true 
 });
 
-module.exports = localhost;
+module.exports = server;
