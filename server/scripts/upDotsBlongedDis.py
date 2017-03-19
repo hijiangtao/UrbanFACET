@@ -6,17 +6,29 @@
 # @Version : $Id$
 
 import os
+import sys
+import getopt
 import json
 from shapely.geometry import shape, Point
+from CommonFunc import getCityLocs, connectMongo, matrixtofile
 
 def upDotsBlongedDis(city):
 	# 获得 grids 
+	grids = [] # 存储结果
 	conn, db = connectMongo('tdnormal')
 	GRID = db['newgrids_%s' % city]
 
 	grids = list( GRID.find({}, {"properties.uid": 1, "properties.center": 1}) )
 
-	print len(grids)
+	for each in grids:
+		coords = each.properties.center.coordinates
+		point = Point(coords[0], coords[1])
+		index = calDistrictIndex(point)
+
+	return grids
+
+def calDistrictIndex():
+	pass
 
 def main(argv):
 	# 初始化参数

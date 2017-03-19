@@ -110,23 +110,6 @@ let home = {
             processStyle: {
                 'background': settings['whiteToRed']
             }
-        },
-        'dSlider': {
-            width: "auto",
-            tooltip: 'hover',
-            value: [0, 100],
-            disabled: false,
-            clickable: false,
-            tooltipStyle: {
-                "backgroundColor": "#000",
-                "borderColor": "#000"
-            },
-            bgStyle: {
-                'background': settings['whiteToRed']
-            },
-            processStyle: {
-                'background': settings['whiteToRed']
-            }
         }
     },
     'cals': {
@@ -246,6 +229,23 @@ let comp = {
     },
     'components': {
         'eSlider': {
+            width: "auto",
+            tooltip: 'hover',
+            value: [0, 100],
+            disabled: false,
+            clickable: false,
+            tooltipStyle: {
+                "backgroundColor": "#000",
+                "borderColor": "#000"
+            },
+            bgStyle: {
+                'background': settings['whiteToRed']
+            },
+            processStyle: {
+                'background': settings['whiteToRed']
+            }
+        },
+        'dSlider': {
             width: "auto",
             tooltip: 'hover',
             value: [0, 100],
