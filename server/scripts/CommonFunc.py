@@ -17,7 +17,7 @@ def connectMongo(dbname):
 		TYPE: Client, database
 	"""
 	try:
-		conn = pymongo.MongoClient('localhost', 27017) # 192.168.1.42
+		conn = pymongo.MongoClient('192.168.1.42', 27017) # 192.168.1.42
 		mdb = conn[dbname]
 		print "Connected successfully!!!"
 	except pymongo.errors.ConnectionFailure, e:
