@@ -303,6 +303,10 @@ function getOverview(conn, prop) {
     return p;
 }
 
+function getBoundary(city) {
+    return require(`./data/${city}`);
+}
+
 function generateGridsJson(locs, obj) {
     fs.exists('myjsonfile.json', function(exists) {
         if (exists) {
@@ -340,5 +344,6 @@ module.exports = {
     connectMongo: connectMongo,
     mongoQueries: mongoQueries,
     getOverview: getOverview,
-    getExtraInfo: getExtraInfo
+    getExtraInfo: getExtraInfo,
+    getBoundary: getBoundary
 }

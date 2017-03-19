@@ -26,6 +26,16 @@ let apis = {
 			res.json(result);
 		})
 	},
+	'boundaryQuery': function(req, res, next) {
+		let params = req.query,
+			city = params.city,
+			data = EP.getBoundary(city);
+
+		res.json({
+			'scode': 1,
+			'data': data
+		});
+	},
 	'extrainfoQuery': function(req, res, next) {
 		let params = req.query;
 

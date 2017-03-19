@@ -64,7 +64,7 @@
                     </div>
 
                     <div class="field">
-                        <button class="ui tiny primary button" v-on:click="getOverview(-1)">Update Maps</button>
+                        <button class="ui tiny primary button" v-on:click="getOverview(index)">Update Maps</button>
                     </div>
                 </div>
 
@@ -72,15 +72,19 @@
                     <label><img class="ui mini image" src="/assets/type-icon.png">Overlay Analysis</label>
                     
                     <!-- getOverlay -->
-                    <div v-if="sels.objs.length === 1" class="field">
-                        <select class="roundselect cursor" v-model='sels.otype' @change="getOverlay(index)">
+                    <div class="field">
+                        <select class="roundselect cursor" v-model='sels.otype'>
                             <option v-for='item in params.otypes' :value="item.val">{{ item.name }}</option>
                         </select>
+                    </div>
+
+                    <div class="field">
+                        <button class="ui tiny button" :class="areaselState" v-on:click="optAreaSelect(index)">Area Select</button>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="ui divider"></div>
         
 		<div class="sixteen wide column">

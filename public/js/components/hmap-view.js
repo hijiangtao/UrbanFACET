@@ -12,7 +12,7 @@ import L from './map'
 import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js'
 import * as d3 from 'd3'
 import { legendColor } from 'd3-svg-legend'
-import { getSubGrids, getLinearNum, getRandomCenter, outOfRange, getPropName } from './apis'
+import { getSubGrids, getLinearNum, getRandomCenter, outOfRange, getPropName, extraInfoIndex } from './apis'
 import { stats } from './init'
 import * as coordtransform from 'coordtransform';
 
@@ -43,6 +43,8 @@ class mapview {
             });
         this.heatmapLayer = null;
         this.gridmapLayer = null;
+        this.areaSelector = null;
+        this.aAreaSelector = null;
         this.map = new L.map(id, {
             center: L.latLng(39.9120, 116.3907),
             zoom: 11,
@@ -55,6 +57,10 @@ class mapview {
         this.map.on('resize', function(argument) {
             console.log('resize');
         })
+    }
+
+    invalidateSize() {
+    	this.map.invalidateSize();
     }
 
     getGridData() {
@@ -75,7 +81,15 @@ class mapview {
         return this;
     }
 
+    getMap() {
+    	return this.map;
+    }
+    getAreaSelect() {
+    	return this.areaSelector;
+    }
+
     syncmap(map) {
+    	console.log(this.map.isSynced());
         if (!this.map.isSynced()) {
             this.map.sync(map);
         }
@@ -89,6 +103,54 @@ class mapview {
         }
 
         return ;
+    }
+
+    optAreaSelector(add) {
+    	if (add) {
+    		this.areaSelector = L.areaSelect({width: 300, height: 200});
+	    	this.areaSelector.addTo(this.map);
+    	} else {
+    		if (this.areaSelector) {
+	        	// this.map.removeLayer(this.areaSelector);
+	            this.areaSelector.remove();
+	        }
+    	}
+    	
+    }
+
+    bindAreaSelect(areaselect) {
+    	let self = this;
+    	this.aAreaSelector = areaselect;
+
+    	this.areaSelector.on("change", function() {
+    		let w1 = self.areaSelector.getDimensions().width,
+    			h1 = self.areaSelector.getDimensions().height,
+    			w2 = self.aAreaSelector.getDimensions().width,
+    			h2 = self.aAreaSelector.getDimensions().height;
+
+    		if (w1 !== w2 && h1 !== h2) {
+    			self.aAreaSelector.setDimensions(self.areaSelector.getDimensions());
+    		}
+		    
+		});
+		this.aAreaSelector.on("change", function() {
+		    let w1 = self.areaSelector.getDimensions().width,
+    			h1 = self.areaSelector.getDimensions().height,
+    			w2 = self.aAreaSelector.getDimensions().width,
+    			h2 = self.aAreaSelector.getDimensions().height;
+
+    		if (w1 !== w2 && h1 !== h2) {
+    			self.areaSelector.setDimensions(self.aAreaSelector.getDimensions());
+    		}
+		});
+    }
+
+    updateAreaSelector(dims=0) {
+    	if (dims === 0) {
+    		return this.areaSelector.getDimensions();
+    	} else {
+    		this.areaSelector.setDimensions(dims);
+    	}
     }
 
     /**
@@ -169,88 +231,108 @@ class mapview {
 
     boundaryDrawing(data, prop) {
         let self = this,
-            city = prop['city'] || 'bj',
-            type = prop['type'] || 0,
-            statsdata = stats[city];
+            city = prop['city'],
+            type = extraInfoIndex(prop['etype']),
+            onlyBound = prop['boundary'],
+            statsdata = stats[city],
+            numid = self.ides.mapid.slice(-1),
+            svgid = `${self.ides.mapid}boundarySVG`;
 
-        d3.select('#boundarySVG').remove();
-        if (type === -1) {
-        	return ;
+        d3.select(`#${svgid}`).remove();
+        if (!onlyBound) {
+        	this.clearLayers();
         }
 
         let range = d3.extent(Object.values(statsdata).map((val) => {
                 return val[type];
             })),
             color = d3.scaleLinear().domain(range)
-            .range(["rgba(255,255,255,0.5)", "rgba(251, 0, 128, 0.5)"]);
-
-        let svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', 'boundarySVG'),
+            .range(["rgba(255,255,255,0.5)", "rgba(255, 0, 0, 0.9)"]),
+            svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', svgid),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-        let div = d3.select("#boundarySVG").append("div")
-		    .attr("class", "svgtooltip")
-		    .style("opacity", 0);
+        let transform = d3.geoTransform({ point: projectPoint }),
+            path = d3.geoPath().projection(transform);
 
-        d3.json(`/${city}.json`, function(error, collection) {
-            if (error) throw error;
+        let feature = g.selectAll("path")
+            .data(data.features)
+            .enter().append("path")
+            .attr('fill', function(d) {
+                let name = d.properties.name;
+                return onlyBound? 'none':color(statsdata[name][type]);
+            })
+            .attr('stroke', 'white')
+            .attr("stroke-width", 1.2);
 
-            let transform = d3.geoTransform({ point: projectPoint }),
-                path = d3.geoPath().projection(transform);
+        if (!onlyBound) {
+        	feature.on("mouseover", function(d) {
+            	let name = d.properties.name;
 
-            let feature = g.selectAll("path")
-                .data(collection.features)
-                .enter().append("path")
-                .attr('fill', function(d) {
-                    let name = d.properties.name;
-                    // let val = 200 + Math.floor(Math.random()*55);
-                    return color(statsdata[name][type]);
-                })
-                .attr('stroke', 'white')
-                .attr("stroke-width", 1.2)
-                .on("mouseover", function(d) {
-                	let name = d.properties.name;
+                d3.select(`#carddistrict${numid}`).html(name);
+                d3.select(`#cardenps${numid}`).html(statsdata[name][type]);
+            })
+            .on("mouseout", function(d) {
+            	d3.select(`#carddistrict${numid}`).html('Null');
+                d3.select(`#cardenps${numid}`).html('Null');
+            });
+        }
+            
 
-                    div.transition()
-                        .duration(200)
-                        .style("opacity", .9);
-                    div.html(name + "<br/>" + statsdata[name][type])
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px");
-                })
-                .on("mouseout", function(d) {
-                    div.transition()
-                        .duration(500)
-                        .style("opacity", 0);
-                });
+        let text = g.selectAll('text')
+        	.data(data.features)
+        	.enter().append('text')
+        	.text(function(d) {
+        		return d['properties']['name'];
+        	})
+        	.attr('x', function(d) {
+        		let p = d['properties']['cp'];
+        		return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).x;
+        	})
+        	.attr('y', function(d) {
+        		let p = d['properties']['cp'];
+        		return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y;
+        	});
 
-            self.map.on("viewreset", reset);
-            reset();
+        self.map.on("viewreset", reset);
+        reset();
 
-            // Reposition the SVG to cover the features.
-            function reset() {
-                let bounds = path.bounds(collection),
-                    topLeft = bounds[0],
-                    bottomRight = bounds[1];
+        self.drawGridLegend(`Content`, color);
 
-                svg.attr("width", bottomRight[0] - topLeft[0])
-                    .attr("height", bottomRight[1] - topLeft[1])
-                    .style("left", topLeft[0] + "px")
-                    .style("top", topLeft[1] + "px");
+        // Reposition the SVG to cover the features.
+        function reset() {
+            let bounds = path.bounds(data),
+                topLeft = bounds[0],
+                bottomRight = bounds[1];
 
-                g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+            svg.attr("width", bottomRight[0] - topLeft[0])
+                .attr("height", bottomRight[1] - topLeft[1])
+                .style("left", topLeft[0] + "px")
+                .style("top", topLeft[1] + "px");
 
-                feature.attr("d", path);
-            }
+            g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
-            // Use Leaflet to implement a D3 geometric transformation.
-            function projectPoint(x, y) {
-                let p2 = coordtransform.gcj02towgs84(x, y);
-                // p2 = coordtransform.gcj02towgs84(p[0], p[1]);
+            feature.attr("d", path);
+            text.data(data.features)
+	        	.attr('x', function(d) {
+	        		let p = d['properties']['cp'];
+	        		return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).x;
+	        	})
+	        	.attr('y', function(d) {
+	        		let p = d['properties']['cp'];
+	        		return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y;
+	        	});
+        }
 
-                let point = self.map.latLngToLayerPoint(new L.LatLng(p2[1], p2[0]));
-                this.stream.point(point.x, point.y);
-            }
-        });
+        // Use Leaflet to implement a D3 geometric transformation.
+        function projectPoint(x, y) {
+            let point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
+            this.stream.point(point.x, point.y);
+        }
+    }
+
+    boundaryRemove() {
+    	let svgid = `${this.ides.mapid}boundarySVG`;
+        d3.select(`#${svgid}`).remove();
     }
 
     /**
@@ -361,13 +443,12 @@ class mapview {
             this.setGridData(data);
         } else {
             data = this.getGridData();
-            // prop['prop']['type'] = this.getGridDataType();
         }
-        this.setGridDataType(prop['prop']['type']);
+        this.setGridDataType(prop['prop']['drawtype']);
 
         console.log('Contour props: ', prop, 'Update: ', update);
 
-        const drawtype = prop['prop']['type'],
+        const drawtype = prop['prop']['drawtype'],
             resprop = data['prop'],
             SPLITNUMBER = 4;
 
@@ -392,6 +473,15 @@ class mapview {
             thrqVal = 0.85 * judRate,
             forqVal = judRate;
 
+        // 根据绘制类型判断筛选条件最小值
+        let emin = 0,
+            dmin = 0;
+        if (drawtype === 'e') {
+        	emin = prop['e']['min'];
+        } else {
+        	dmin = prop['d']['min'];
+        }
+
         if (forqVal > 1.0) {
             forqVal = 1.0;
         }
@@ -401,7 +491,8 @@ class mapview {
         for (let i = len - 1; i >= 0; i--) {
             let feature = data.features[i],
                 evalue = feature['prop']['e'],
-                dvalue = feature['prop']['d'];
+                dvalue = feature['prop']['d'],
+                center = data.features[i]['prop']['c'];
 
             // 根据 filter 值及选中类型进行过滤
             if (outOfRange(drawtype, evalue, dvalue, prop['e']['min'], prop['d']['min'])) {
@@ -409,28 +500,8 @@ class mapview {
             }
             countVal += 1;
 
-            let center = data.features[i]['prop']['c'],
-                val = data.features[i]['prop']['e'],
-                renderNum = getLinearNum(dvalue, minVal, maxVal, 1, SPLITNUMBER);
-
             // 为 hdata 注入数据
-            switch (drawtype) {
-                case 'm': // density based
-                    for (let i = 0; i < renderNum; i++) {
-                        let random = getRandomCenter(center, -SPLIT / 2, SPLIT)
-                        hdata.data.push({ 'lat': random[1], 'lng': random[0], 'c': val })
-                    }
-                    break;
-                case 'd': // density
-                    for (let i = 0; i < renderNum; i++) {
-                        let random = getRandomCenter(center, -SPLIT / 2, SPLIT)
-                        hdata.data.push({ 'lat': random[1], 'lng': random[0], 'c': hdata.max * 0.5 })
-                    }
-                    break;
-                default: // entropy
-                    hdata.data.push({ 'lat': center[1], 'lng': center[0], 'c': val })
-                    break;
-            }
+            hdata.data.push({ 'lat': center[1], 'lng': center[0], 'c': feature['prop'][drawtype] })
         }
         console.log('Contourmap Used point number', countVal);
 
@@ -441,44 +512,23 @@ class mapview {
             "maxOpacity": .9,
             // scales the radius based on map zoom
             "scaleRadius": true,
-            // if set to false the heatmap uses the global maximum for colorization
-            // if activated: uses the data maximum within the current map boundaries
-            gradient: {},
+            "gradient": {},
             //   (there will always be a red spot with useLocalExtremas true)
             "useLocalExtrema": prop['prop']['useLocalExtrema'],
-            // which field name in your data represents the latitude - default "lat"
             "latField": 'lat',
-            // which field name in your data represents the longitude - default "lng"
             "lngField": 'lng',
-            // which field name in your data represents the data value - default "value"
             "valueField": 'c'
         };
 
         let gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(0,0,255)', 'rgb(0,255,0)', 'yellow', 'rgb(255,0,0)'];
-        if (prop['prop']['maprev']) {
-            gradients = ['rgba(255,0,0,1)', 'rgba(255,255,255,0)', 'rgb(255,0,0)', 'yellow', 'rgb(0,255,0)', 'rgb(0,0,255)'];
-        }
 
-        // console.log(prop['prop']);
-        if (!prop['prop']['multiColorSchema']) {
-            cfg.gradient = {
-                // enter n keys between 0 and 1 here
-                // for gradient color customization
-                '0': gradients[0],
-                '1.0': gradients[1]
-            }
-            if (judRate !== 1.0) {
-                cfg.gradient[maxRate] = gradients[1];
-            }
-        } else {
-            cfg.gradient[oneqVal.toString()] = gradients[2];
-            cfg.gradient[twoqVal.toString()] = gradients[3];
-            cfg.gradient[thrqVal.toString()] = gradients[4];
-            cfg.gradient[forqVal.toString()] = gradients[5];
+        cfg.gradient[oneqVal.toString()] = gradients[2];
+        cfg.gradient[twoqVal.toString()] = gradients[3];
+        cfg.gradient[thrqVal.toString()] = gradients[4];
+        cfg.gradient[forqVal.toString()] = gradients[5];
 
-            if (judRate < 1.0) {
-                cfg.gradient['1.0'] = gradients[5];
-            }
+        if (judRate < 1.0) {
+            cfg.gradient['1.0'] = gradients[5];
         }
 
         // draw legends
@@ -504,19 +554,19 @@ class mapview {
         d3.select(id).selectAll('*').remove();
         let svg = d3.select(id).attr('height', 50);
 
-        // svg.append('text')
-        // 	.attr('y', 23)
-        // 	.attr('x', 2)
-        // 	.text(title);
-
         svg.append("g")
             .attr("class", "legendLinear")
             .attr("transform", "translate(10,10)");
 
         let legendLinear = legendColor()
             .labelFormat(function(d) {
-                return `${Number.parseInt(d*100)}%`
+                if (d<=1) {
+                	return `${Number.parseInt(d*100)}%`
+                } else {
+                	return `${(d/1000.0).toFixed(1)}K`;
+                }
             })
+            .cells(5)
             .shapeWidth(30)
             .orient('horizontal')
             .scale(linear);
@@ -542,13 +592,8 @@ class mapview {
 
         svg.selectAll('*').remove();
         let g = svg.append('svg')
-            .attr('height', 20)
-            // .attr("transform", "translate(10,10)");
+            .attr('height', 20);
 
-        // g.append('text')
-        // 	.attr('y', 13)
-        // 	.attr('x', 2)
-        // 	.text(title);
         g.append('text')
             .attr('y', 13)
             .attr('x', 2)
@@ -570,8 +615,6 @@ class mapview {
         legCtx.fillRect(0, 0, 180, 15);
 
         gradientImg.src = legCanvas.toDataURL();
-        // gradientImg.style.position = 'absolute';
-        // gradientImg.style.left = '10px';
         container.insertBefore(gradientImg, container.childNodes[0]);
     }
 
@@ -604,6 +647,10 @@ class mapview {
         if (this.gridmapLayer) {
             this.map.removeLayer(this.gridmapLayer);
             this.gridmapLayer = null;
+        }
+        if (this.areaSelector) {
+        	this.map.removeLayer(this.areaSelector);
+            this.areaSelector = null;
         }
     }
 

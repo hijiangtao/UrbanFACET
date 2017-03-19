@@ -18,6 +18,10 @@ router.get('/overviewQuery', function(req, res, next) {
 router.get('/filterviewQuery', function(req, res, next) {
 	apis.overviewQuery(req, res, next);
 });
+router.get('/boundaryQuery', function(req, res, next) {
+	apis.boundaryQuery(req, res, next);
+});
+
 router.get('/getJsonSum', function(req, res, next) {
 	apis.getJsonSum(req, res, next);
 });

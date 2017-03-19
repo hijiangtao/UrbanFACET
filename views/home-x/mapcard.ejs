@@ -19,6 +19,8 @@
 		</div>
 	</div>
 	<div class="extra content">
+		<a>District: <span :id="'carddistrict'+index">Null</span></a>
+		<a>{{ cals.enps[ sels.objs[index].etype ]+ ": " }}<span :id="'cardenps'+index">Null</span></a>
 		<div :id="'maplegend'+index" class="m-legend">
 			<svg :id="'gridmaplegend'+index" height='0'></svg>
 			<div :id="'contourmaplegend'+index">

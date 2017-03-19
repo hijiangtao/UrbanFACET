@@ -16,11 +16,18 @@ import $ from "jquery"
  * @param  {[type]} vuesels [vue instance 中存储的 selections object]
  * @return {[type]}         [description]
  */
-let getValRange = function(scales, esels, dsels, vuesels, index) {
-	let sels = vuesels.objs[index],
-		emin = Math.exp( Math.log(scales.e+1) * parseFloat(esels[0]) / 100.0 )-1,
-		emax = Math.exp( Math.log(scales.e+1) * parseFloat(esels[1]) / 100.0 )-1,
-		escales = scales.e;
+let getDrawProps = function(scales, sels, ctrsets, etype) {
+	let emin = Math.exp( Math.log(scales.e+1) * parseFloat(sels[0]) / 100.0 )-1,
+		emax = Math.exp( Math.log(scales.e+1) * parseFloat(sels[1]) / 100.0 )-1,
+		escales = scales.e,
+		dmin = Math.exp( Math.log(scales.d) * parseFloat(sels[0]) / 100.0 ),
+		dmax = Math.exp( Math.log(scales.d) * parseFloat(sels[1]) / 100.0 ),
+		dscales = scales.d,
+		drawtype = 'e';
+
+	if (etype === 'de') {
+		drawtype = 'd';
+	}
 
 	return {
 		'e': { // entropy
@@ -28,21 +35,14 @@ let getValRange = function(scales, esels, dsels, vuesels, index) {
 			'max': emax,
 			'scales': escales
 		},
-		'm': { // entropy
-			'min': emin,
-			'max': emax,
-			'scales': escales
-		},
 		'd': { // density
-			'min': Math.exp( Math.log(scales.d) * parseFloat(dsels[0]) / 100.0 ),
-			'max': Math.exp( Math.log(scales.d) * parseFloat(dsels[1]) / 100.0 ),
-			'scales': scales.d
+			'min': dmin,
+			'max': dmax,
+			'scales': dscales
 		},
-		'prop': {
-			'type': sels.dtype,
-			'maprev': sels.maprev,
-			'multiColorSchema': vuesels.ctrsets.multiColorSchema,
-			'useLocalExtrema': vuesels.ctrsets.useLocalExtrema,
+		'prop': { // prop
+			'drawtype': drawtype,
+			'useLocalExtrema': ctrsets.useLocalExtrema,
 		}
 	}
 };
@@ -85,6 +85,20 @@ let getOverviewDatasets = function(sels) {
 
 	return p;
 };
+
+let getBoundaryDatasets = function(city) {
+	let p = new Promise(function(resolve, reject) {
+		$.get(`/comp/boundaryQuery?city=${city}`, function(res, err) {
+			if (res['scode']) {
+				resolve(res['data']);
+			} else {
+				reject(err);
+			}
+		})
+	});
+
+	return p;
+}
 
 let getLinearNum = function(target, minVal, maxVal, minNum, maxNum) {
 	if (target < minVal) {
@@ -147,13 +161,27 @@ let getPropName = function (argument) {
 	}
 }
 
+let extraInfoIndex = function(val) {
+	if (val === 'tg') {
+		return 0;
+	} else if (val === 'ag') {
+		return 3;
+	} else if (val === 'po') {
+		return 1;
+	} else {
+		return 4;
+	}
+}
+
 export {
 	getOverviewDatasets,
-	getValRange,
+	getBoundaryDatasets,
+	getDrawProps,
 	getSubGrids,
 	getLinearNum,
 	getRandomCenter,
 	outOfRange,
 	objClone,
-	getPropName
+	getPropName,
+	extraInfoIndex
 }
