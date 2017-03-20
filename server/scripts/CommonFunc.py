@@ -29,7 +29,7 @@ def connectMYSQL(dbname):
 	"""Connect MySQL
 	
 	Returns:
-	    TYPE: db, cursor
+		TYPE: db, cursor
 	"""
 	db = MySQLdb.connect(host="192.168.1.42",    	# your host, usually localhost
 						user="root",         	# your username
@@ -137,11 +137,11 @@ def getMatrixSumbyDim(data, mode):
 	"""Sum results by given dimension name
 	
 	Args:
-	    data (MATRIX): Description
-	    mode (STRING): Description
+		data (MATRIX): Description
+		mode (STRING): Description
 	
 	Returns:
-	    TYPE: Sum array
+		TYPE: Sum array
 	"""
 	inputData = np.matrix(data)
 	pVecSum = inputData.sum(dtype='float')
@@ -288,12 +288,12 @@ def gaussian2D(source, target, sigma):
 	"""Gaussian distribution function
 	
 	Args:
-	    source (object): A geojson object
-	    target (object): A geojson object
-	    sigma (float): sigma parameter
+		source (object): A geojson object
+		target (object): A geojson object
+		sigma (float): sigma parameter
 	
 	Returns:
-	    float: Distance between two points
+		float: Distance between two points
 	"""
 	# from scipy import stats
 	# from geopy.distance import great_circle
@@ -427,10 +427,10 @@ def getTimePeriod(time):
 	"""计算当小时所属时间段
 	
 	Args:
-	    time (TYPE): String
+		time (TYPE): String
 	
 	Returns:
-	    TYPE: Int
+		TYPE: Int
 	"""
 	time = int(time)
 	if time >= 6 and time < 9:
@@ -452,10 +452,10 @@ def getAdminNumber(admin):
 	"""计算当前行政区划所属编号
 	
 	Args:
-	    admin (TYPE): String
+		admin (TYPE): String
 	
 	Returns:
-	    TYPE: Int
+		TYPE: Int
 	"""
 	districts = {
 		# beijing 
@@ -514,11 +514,11 @@ def addTwoArray(a, b):
 	"""Add two array and return array result, and sum result of two arrays' elements
 	
 	Args:
-	    a (TYPE): Description
-	    b (TYPE): Description
+		a (TYPE): Description
+		b (TYPE): Description
 	
 	Returns:
-	    TYPE: Description
+		TYPE: Description
 	"""
 	arraylen = len(a)
 	arraysum = 0
@@ -551,69 +551,69 @@ def getAbbName(city):
 
 def getDistrictsNum(district):
 	cases = {
-		"东城区": 1,
-        "西城区": 2,
-        "丰台区": 3,
-        "海淀区": 4,
-        "石景山区": 5,
-        "门头沟区": 6,
-        "顺义区": 7,
-        "通州区": 8,
-        "朝阳区": 9,
-        "大兴区": 10,
-        "昌平区": 11,
-        "平谷区": 12,
-        "怀柔区": 13,
-        "延庆区": 14,
-        "房山区": 15,
-        "密云区": 16,
-        "蓟州区": 17,
-        "和平区": 18,
-        "河西区": 19,
-        "南开区": 20,
-        "河东区": 21,
-        "河北区": 22,
-        "西青区": 23,
-        "津南区": 24,
-        "北辰区": 25,
-        "武清区": 26,
-        "宁河区": 27,
-        "静海区": 28,
-        "宝坻区": 29,
-        "东丽区": 30,
-        "滨海新区": 31,
-        "红桥区": 32,
-        "古冶区": 33,
-        "路南区": 34,
-        "开平区": 35,
-        "路北区": 36,
-        "丰润区": 37,
-        "滦南县": 38,
-        "曹妃甸区": 39,
-        "迁西县": 40,
-        "滦县": 41,
-        "乐亭县": 42,
-        "玉田县": 43,
-        "迁安市": 44,
-        "遵化市": 45,
-        "丰南区": 46,
-        "崇礼县": 47,
-        "赤城县": 48,
-        "沽源县": 49,
-        "怀安县": 50,
-        "怀来县": 51,
-        "康保县": 52,
-        "桥东区": 53,
-        "桥西区": 54,
-        "尚义县": 55,
-        "万全县": 56,
-        "蔚县": 57,
-        "下花园区": 58,
-        "宣化区": 59,
-        "宣化县": 60,
-        "阳原县": 61,
-        "张北县": 62,
-        "涿鹿县": 63
+		u"东城区": 1,
+		u"西城区": 2,
+		u"丰台区": 3,
+		u"海淀区": 4,
+		u"石景山区": 5,
+		u"门头沟区": 6,
+		u"顺义区": 7,
+		u"通州区": 8,
+		u"朝阳区": 9,
+		u"大兴区": 10,
+		u"昌平区": 11,
+		u"平谷区": 12,
+		u"怀柔区": 13,
+		u"延庆区": 14,
+		u"房山区": 15,
+		u"密云区": 16,
+		u"蓟州区": 17,
+		u"和平区": 18,
+		u"河西区": 19,
+		u"南开区": 20,
+		u"河东区": 21,
+		u"河北区": 22,
+		u"西青区": 23,
+		u"津南区": 24,
+		u"北辰区": 25,
+		u"武清区": 26,
+		u"宁河区": 27,
+		u"静海区": 28,
+		u"宝坻区": 29,
+		u"东丽区": 30,
+		u"滨海新区": 31,
+		u"红桥区": 32,
+		u"古冶区": 33,
+		u"路南区": 34,
+		u"开平区": 35,
+		u"路北区": 36,
+		u"丰润区": 37,
+		u"滦南县": 38,
+		u"曹妃甸区": 39,
+		u"迁西县": 40,
+		u"滦县": 41,
+		u"乐亭县": 42,
+		u"玉田县": 43,
+		u"迁安市": 44,
+		u"遵化市": 45,
+		u"丰南区": 46,
+		u"崇礼县": 47,
+		u"赤城县": 48,
+		u"沽源县": 49,
+		u"怀安县": 50,
+		u"怀来县": 51,
+		u"康保县": 52,
+		u"桥东区": 53,
+		u"桥西区": 54,
+		u"尚义县": 55,
+		u"万全县": 56,
+		u"蔚县": 57,
+		u"下花园区": 58,
+		u"宣化区": 59,
+		u"宣化县": 60,
+		u"阳原县": 61,
+		u"张北县": 62,
+		u"涿鹿县": 63
 	}
 
 	return cases[district]
