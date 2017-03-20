@@ -48,8 +48,9 @@ def upDotsBlongedDis(city, dic):
 
 				grids.append([each['properties']['uid'], index])
 		except Exception as e:
-			print each['properties']['center'], each['properties']['uid']
-			raise e
+			print each
+			print e
+			continue
 		finally:
 			pass
 
