@@ -57,9 +57,9 @@ let apis = {
 		for (let i=0; i<30; i++ ) {
 			sql += sqlstr;
 		}
-		let tablearr = ['tjEmatrix', 'tjEmatrix', 'tsEmatrix', 'tsEmatrix', 'zjkEmatrix', 'zjkEmatrix'];
+		let tablearr = ['bjEmatrix', 'bjEmatrix', 'tjEmatrix', 'tjEmatrix', 'tsEmatrix', 'tsEmatrix', 'zjkEmatrix', 'zjkEmatrix'];
 		for (var i = 0; i < 9; i++) {
-			tablearr.push(`tjF${i}mat`, `tjF${i}mat`, `tsF${i}mat`, `tsF${i}mat`, `zjkF${i}mat`, `zjkF${i}mat` );
+			tablearr.push(`bjF${i}mat`, `bjF${i}mat`, `tjF${i}mat`, `tjF${i}mat`, `tsF${i}mat`, `tsF${i}mat`, `zjkF${i}mat`, `zjkF${i}mat` );
 		}
 
 		lib.connectMySQL().then(function(conn) {
@@ -89,9 +89,9 @@ let apis = {
 		for (let i=0; i<30; i++ ) {
 			sql += sqlstr;
 		}
-		let tablearr = ['tjEmatrix', 'tjEmatrix', 'tsEmatrix', 'tsEmatrix', 'zjkEmatrix', 'zjkEmatrix'];
+		let tablearr = ['bjEmatrix', 'bjEmatrix', 'tjEmatrix', 'tjEmatrix', 'tsEmatrix', 'tsEmatrix', 'zjkEmatrix', 'zjkEmatrix'];
 		for (var i = 0; i < 9; i++) {
-			tablearr.push(`tjF${i}mat`, `tjF${i}mat`, `tsF${i}mat`, `tsF${i}mat`, `zjkF${i}mat`, `zjkF${i}mat` );
+			tablearr.push(`bjF${i}mat`, `bjF${i}mat`, `tjF${i}mat`, `tjF${i}mat`, `tsF${i}mat`, `tsF${i}mat`, `zjkF${i}mat`, `zjkF${i}mat` );
 		}
 
 		lib.connectMySQL().then(function(conn) {
