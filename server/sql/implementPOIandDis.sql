@@ -5,8 +5,8 @@
 -- ALTER TABLE `tsEmatrix` ADD `dis` TINYINT UNSIGNED NOT NULL DEFAULT '0' AFTER `apsval`;
 
 -- Temp Table
-CREATE TABLE `tdnormal`.`tempDis` ( `id` MEDIUMINT NOT NULL , `dis` TINYINT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
-ALTER TABLE `tempDis` ADD INDEX( `id`, `dis`);
+-- CREATE TABLE `tdnormal`.`tempDis` ( `id` MEDIUMINT NOT NULL , `dis` TINYINT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+-- ALTER TABLE `tempDis` ADD INDEX( `id`, `dis`);
 -- Beijing
 LOAD DATA LOCAL INFILE "/enigma/tao.jiang/datasets/JingJinJi/records/disinfo/beijing/grids" INTO TABLE tempDis COLUMNS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '' ESCAPED BY '"' LINES TERMINATED BY '\n' (@col1,@col2) set id=@col1,dis=@col2;
 UPDATE bjEmatrix
