@@ -24,7 +24,6 @@ tianjin
 start: 2017/2/9 16:56:17
 end: 2017/2/9 21:13:10
 
-mysqldump -uusername -ppassword -database databasename > backupfile.sql
 mysql -uroot -p tdnormal < tdnormal.no-tj-bj.sql
 
 mysqldump -hhostname -uusername -ppassword databasename | gzip > backupfile.sql.gz
