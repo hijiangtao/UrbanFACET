@@ -25,7 +25,7 @@ def upDotsBlongedDis(city, dic):
 	disobjs = []
 	with open(os.path.join(dic, getAbbName(city)+'.json')) as f:
 		data = json.load(f)
-		features = data.features
+		features = data['features']
 
 		for each in features:
 			disobjs.append({
@@ -35,11 +35,11 @@ def upDotsBlongedDis(city, dic):
 		# 处理围栏数据
 
 	for each in grids:
-		coords = each.properties.center.coordinates
+		coords = each['properties']['center']['coordinates']
 		point = Point(coords[0], coords[1])
 		index = getDisIndex(point, disobjs)
 		if index != -1:
-			grids.append([each.properties.uid, index])
+			grids.append([each['properties']['uid'], index])
 
 	print "City %s owns valid distict grids %d" % (city, len(grids))
 	return grids
