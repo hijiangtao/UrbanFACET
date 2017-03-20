@@ -36,16 +36,22 @@ def upDotsBlongedDis(city, dic):
 		# 处理围栏数据
 
 	for each in grids:
-		coords = each['properties']['center']['coordinates']
-		point = Point(coords[0], coords[1])
-		index = getDisIndex(point, disobjs)
-		count += 1
-		if index != -1:
-			validcount += 1
-			if validcount % 10000 == 0:
-				print 'Valid Grids num: %d, Total Grids num: %d' % (validcount, count)
+		try:
+			coords = each['properties']['center']['coordinates']
+			point = Point(coords[0], coords[1])
+			index = getDisIndex(point, disobjs)
+			count += 1
+			if index != -1:
+				validcount += 1
+				if validcount % 10000 == 0:
+					print 'Valid Grids num: %d, Total Grids num: %d' % (validcount, count)
 
-			grids.append([each['properties']['uid'], index])
+				grids.append([each['properties']['uid'], index])
+		except Exception as e:
+			print each['properties']['center'], each['properties']['uid']
+			raise e
+		finally:
+			pass
 
 	print "City %s owns valid distict grids %d" % (city, len(grids))
 	return grids
