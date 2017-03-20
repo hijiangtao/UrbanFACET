@@ -15,6 +15,7 @@ from CommonFunc import getCityLocs, connectMongo, matrixtofile, getAbbName, getD
 def upDotsBlongedDis(city, dic):
 	# 获得 grids 
 	grids = [] # 存储结果
+	count, validcount = 0, 0
 	conn, db = connectMongo('tdnormal')
 	GRID = db['newgrids_%s' % city]
 
@@ -38,7 +39,12 @@ def upDotsBlongedDis(city, dic):
 		coords = each['properties']['center']['coordinates']
 		point = Point(coords[0], coords[1])
 		index = getDisIndex(point, disobjs)
+		count += 1
 		if index != -1:
+			validcount += 1
+			if validcount % 10000 == 0:
+				print 'Valid Grids num: %d, Total Grids num: %d' % (validcount, count)
+
 			grids.append([each['properties']['uid'], index])
 
 	print "City %s owns valid distict grids %d" % (city, len(grids))
