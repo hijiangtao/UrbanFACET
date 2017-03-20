@@ -8,9 +8,11 @@
 import os
 import sys
 import getopt
-from CommonFunc import getCityLocs, connectMongo, matrixtofile
+import json
+from shapely.geometry import shape, Point
+from CommonFunc import getCityLocs, connectMongo, matrixtofile, getAbbName, getDisIndex
 
-# calGridAoiDis
+# 计算城市 grids 中存在的 POI 数量以及各自类别的数量统计,包含经纬度等信息
 def calGridAoiDis(city):
 	# 初始化网格,构建 POI 类别档案
 	locs = getCityLocs(city)
@@ -23,12 +25,25 @@ def calGridAoiDis(city):
 
 	conn, db = connectMongo('tdnormal')
 	POIs = db['pois_%s' % city]
+
+	# 构建栅栏数组
+	disobjs = []
+	with open(os.path.join('/home/taojiang/git/living-modes-visual-comparison/conf/data', getAbbName(city)+'.json')) as f:
+		stream = json.load(f)
+		features = stream['features']
+
+		for each in features:
+			disobjs.append({
+				'name': each['properties']['name'],
+				'geo': shape(each['geometry'])
+			})
+	f.close()
 		
 	# 遍历查询网格周围 POI 并更新
 	for latind in xrange(0, latnum):
 		for lngind in xrange(0, lngnum):
 			# 前11元素均为分类别统计数量,最后一个元素为POI总量
-			tmpGrid = [0 for x in xrange(0,14)]
+			tmpGrid = [0 for x in xrange(0,15)]
 			vaildGrid = False
 
 			lat = round(locs['south'] + latind * split, 3)
@@ -70,7 +85,15 @@ def calGridAoiDis(city):
 				
 				tmpGrid[12] = lngcen
 				tmpGrid[13] = latcen
-				grids.append(tmpGrid)		
+
+				point = Point(lngcen, latcen)
+				index = getDisIndex(point, disobjs)
+				tmpGrid[14] = index
+				if index == -1:
+					print 'Invalid Grid Found.'
+
+				grids.append(tmpGrid)	
+
 
 	print "%s City with valid grids %s" % (city, str(len(grids)))
 	return grids
