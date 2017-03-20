@@ -307,6 +307,28 @@ function getBoundary(city) {
     return require(`./data/${city}`);
 }
 
+function getAoi(conn, prop) {
+    let city = prop['city'],
+        p = new Promise(function(resolve, reject) {
+        let sql = $sql.getAoiVal,
+            param = ['total', `${city}CPOI`];
+
+        conn.query(sql, param, function(err, result) {
+            conn.release();
+
+            if (err) {
+                reject(err);
+            } else {
+                
+
+                resolve({})
+            }
+        })
+    })
+
+    return p;
+}
+
 function generateGridsJson(locs, obj) {
     fs.exists('myjsonfile.json', function(exists) {
         if (exists) {

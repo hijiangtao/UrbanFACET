@@ -100,6 +100,20 @@ let getBoundaryDatasets = function(city) {
 	return p;
 }
 
+let getAOIDatasets = function(city) {
+	let p = new Promise(function(resolve, reject) {
+		$.get(`/comp/aoiQuery?city=${city}`, function(res, err) {
+			if (res['scode']) {
+				resolve(res['data']);
+			} else {
+				reject(err);
+			}
+		})
+	});
+
+	return p;
+}
+
 let getLinearNum = function(target, minVal, maxVal, minNum, maxNum) {
 	if (target < minVal) {
 		return 0;
@@ -176,6 +190,7 @@ let extraInfoIndex = function(val) {
 export {
 	getOverviewDatasets,
 	getBoundaryDatasets,
+	getAOIDatasets,
 	getDrawProps,
 	getSubGrids,
 	getLinearNum,

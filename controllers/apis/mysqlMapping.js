@@ -26,6 +26,7 @@ let mapping = {
 		'sum': "SELECT id, ?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;",
 		'ave': "SELECT id, ??/?? AS 'eval', ?? AS 'dval' FROM ?? WHERE ?? >= 0 AND ?? > 0;"
 	},
+	getAoiVal: "SELECT ?? AS 'num', lat, lng, dis FROM ?? WHERE dis != 0;",
 	getDistribute: function(mtype, sMax) {
 		if (mtype === 'sum') {
 			return `SELECT ROUND(LOG(??+1)*100/LOG(${sMax+1})) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY ROUND(LOG(??+1)*100/LOG(${sMax+1}));`;

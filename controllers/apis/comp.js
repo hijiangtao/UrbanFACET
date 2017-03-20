@@ -36,6 +36,19 @@ let apis = {
 			'data': data
 		});
 	},
+	'aoiQuery': function(req, res, next) {
+		let params = req.query;
+
+		lib.connectMySQL().then(function(db) {
+			return EP.getAoi(db, params);
+		}, function(err) {
+			console.error('error: ', err);
+		}).catch(function(error) {
+			console.error('error: ', err);
+		}).then(function(result) {
+			res.json(result);
+		})
+	},
 	'extrainfoQuery': function(req, res, next) {
 		let params = req.query;
 

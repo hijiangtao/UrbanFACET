@@ -16,7 +16,7 @@ import chart from './components/chartview'
 import $ from "jquery"
 // window.jQuery = $
 import { regionRecords, home } from './components/init'
-import { getOverviewDatasets, getBoundaryDatasets, getDensity, getDrawProps, objClone } from './components/apis'
+import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getDrawProps, objClone } from './components/apis'
 import { appendMap, removeMaps } from './components/events'
 import vueSlider from 'vue-slider-component'
 
@@ -311,7 +311,7 @@ const userpanel = new Vue({
 			}
 		},
 		'optAreaSelect': function(index) {
-			let state = this.sels.areaselect,
+			tlet state = this.sels.areaselect,
 				objs = this.sels.objs;
 			if (!state) {
 				for (let i = objs.length - 1; i >= 0; i--) {
@@ -395,7 +395,16 @@ const userpanel = new Vue({
 				
 				// POI
 				if (val === 0) {
+					getAOIDatasets(objs[0].city).then(function(res) {
+						for (let i = objs.length - 1; i >= 0; i--) {
+							let city = objs[i].city,
+								etype = objs[i].etype;
 
+							document.getElementById(objs[i].id.map).parentNode.classList.remove('loading');
+						}
+					}).catch(function(err) {
+						console.error("Failed!", err);
+					})
 				}
 
 				// Districts
