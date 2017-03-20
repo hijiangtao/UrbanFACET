@@ -69,7 +69,7 @@ let apis = {
 
 				let size = result.length, response = {};
 				for (let i=0; i<size; i++) {
-					response[ tablearr[i*2] ] = result[i];
+					response[ tablearr[i*2] ] = result[i][0];
 				}
 
 				res.json( response );
@@ -102,7 +102,7 @@ let apis = {
 				// console.log(err, result);
 				let size = result.length, response = {};
 				for (let i=0; i<size; i++) {
-					response[ tablearr[i*2] ] = result[i];
+					response[ tablearr[i*2] ] = result[i][0];
 				}
 
 				res.json( response );

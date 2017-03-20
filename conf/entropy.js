@@ -200,7 +200,7 @@ function getOverview(conn, prop) {
         eMax = Number.parseFloat(sqldoc[etable][entropyattr]),
         dMax = Number.parseFloat(sqldoc[etable][densityattr]);
 
-    // console.log('Query table name: ', etable);
+    console.log('Query table name: ', etable, 'eMax', eMax, 'dMax', dMax);
 
     let p = new Promise(function(resolve, reject) {
         let sql = $sql.getValScale[mtype] + $sql.getOverviewVal[mtype] + $sql.getDistribute(mtype, eMax) + $sql.getDistribute('sum', dMax),

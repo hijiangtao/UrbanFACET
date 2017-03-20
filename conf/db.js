@@ -21,7 +21,7 @@ var server = mysql.createPool({
 	database: 'tdnormal',
 	port    : 3306,
 	timezone: 'GMT',
-	debug	: true,
+	debug	: false,
 	multipleStatements: true 
 });
 

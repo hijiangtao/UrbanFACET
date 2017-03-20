@@ -9,7 +9,7 @@
 
 let objs = {
 	'sum': {
-		"bjEmatrix": [{
+		"bjEmatrix": {
 			"name": "bjEmatrix",
 			"wpnumber": 104327369,
 			"vpnumber": 104327369,
@@ -21,8 +21,8 @@ let objs = {
 			"ppsval": 4079055.5,
 			"tpsval": 203740160,
 			"apsval": 944340.75
-		}],
-		"tjEmatrix": [{
+		},
+		"tjEmatrix": {
 			"name": "tjEmatrix",
 			"wpnumber": 2103939,
 			"vpnumber": 2103939,
@@ -34,8 +34,8 @@ let objs = {
 			"ppsval": 2147860,
 			"tpsval": 4550720,
 			"apsval": 1424090
-		}],
-		"tsEmatrix": [{
+		},
+		"tsEmatrix": {
 			"name": "tsEmatrix",
 			"wpnumber": 1117485,
 			"vpnumber": 1117485,
@@ -47,8 +47,8 @@ let objs = {
 			"ppsval": 1565380,
 			"tpsval": 2395000,
 			"apsval": 480708
-		}],
-		"zjkEmatrix": [{
+		},
+		"zjkEmatrix": {
 			"name": "zjkEmatrix",
 			"wpnumber": 512232,
 			"vpnumber": 512232,
@@ -60,8 +60,8 @@ let objs = {
 			"ppsval": 255381,
 			"tpsval": 1060100,
 			"apsval": 144264
-		}],
-		"bjF0mat": [{
+		},
+		"bjF0mat": {
 			"name": "bjF0mat",
 			"wpnumber": 5954689,
 			"vpnumber": 5954689,
@@ -73,8 +73,8 @@ let objs = {
 			"ppsval": 316752.71875,
 			"tpsval": 12742791,
 			"apsval": 69280.3671875
-		}],
-		"tjF0mat": [{
+		},
+		"tjF0mat": {
 			"name": "tjF0mat",
 			"wpnumber": 219537,
 			"vpnumber": 209818,
@@ -86,8 +86,8 @@ let objs = {
 			"ppsval": 217953,
 			"tpsval": 482002,
 			"apsval": 101570
-		}],
-		"tsF0mat": [{
+		},
+		"tsF0mat": {
 			"name": "tsF0mat",
 			"wpnumber": 121097,
 			"vpnumber": 121097,
@@ -99,8 +99,8 @@ let objs = {
 			"ppsval": 161905,
 			"tpsval": 269659,
 			"apsval": 46899.30078125
-		}],
-		"zjkF0mat": [{
+		},
+		"zjkF0mat": {
 			"name": "zjkF0mat",
 			"wpnumber": 87168,
 			"vpnumber": 55903,
@@ -112,8 +112,8 @@ let objs = {
 			"ppsval": 25792.5,
 			"tpsval": 185506,
 			"apsval": 18539.099609375
-		}],
-		"bjF1mat": [{
+		},
+		"bjF1mat": {
 			"name": "bjF1mat",
 			"wpnumber": 16138549,
 			"vpnumber": 16138549,
@@ -125,8 +125,8 @@ let objs = {
 			"ppsval": 643538.125,
 			"tpsval": 30855088,
 			"apsval": 157942.453125
-		}],
-		"tjF1mat": [{
+		},
+		"tjF1mat": {
 			"name": "tjF1mat",
 			"wpnumber": 360854,
 			"vpnumber": 360854,
@@ -138,8 +138,8 @@ let objs = {
 			"ppsval": 309065,
 			"tpsval": 758087,
 			"apsval": 245299
-		}],
-		"tsF1mat": [{
+		},
+		"tsF1mat": {
 			"name": "tsF1mat",
 			"wpnumber": 173660,
 			"vpnumber": 173660,
@@ -151,8 +151,8 @@ let objs = {
 			"ppsval": 227552,
 			"tpsval": 359452,
 			"apsval": 88183.1015625
-		}],
-		"zjkF1mat": [{
+		},
+		"zjkF1mat": {
 			"name": "zjkF1mat",
 			"wpnumber": 102557,
 			"vpnumber": 72698,
@@ -164,8 +164,8 @@ let objs = {
 			"ppsval": 42964.5,
 			"tpsval": 221607,
 			"apsval": 25491.099609375
-		}],
-		"bjF2mat": [{
+		},
+		"bjF2mat": {
 			"name": "bjF2mat",
 			"wpnumber": 12612023,
 			"vpnumber": 12612023,
@@ -177,8 +177,8 @@ let objs = {
 			"ppsval": 441445.34375,
 			"tpsval": 24136966,
 			"apsval": 111203.2265625
-		}],
-		"tjF2mat": [{
+		},
+		"tjF2mat": {
 			"name": "tjF2mat",
 			"wpnumber": 253755,
 			"vpnumber": 253755,
@@ -190,8 +190,8 @@ let objs = {
 			"ppsval": 231507,
 			"tpsval": 536329,
 			"apsval": 173767
-		}],
-		"tsF2mat": [{
+		},
+		"tsF2mat": {
 			"name": "tsF2mat",
 			"wpnumber": 133085,
 			"vpnumber": 133085,
@@ -203,8 +203,8 @@ let objs = {
 			"ppsval": 173275,
 			"tpsval": 277202,
 			"apsval": 66826.703125
-		}],
-		"zjkF2mat": [{
+		},
+		"zjkF2mat": {
 			"name": "zjkF2mat",
 			"wpnumber": 62433,
 			"vpnumber": 53066,
@@ -216,8 +216,8 @@ let objs = {
 			"ppsval": 29580.80078125,
 			"tpsval": 123632,
 			"apsval": 17336
-		}],
-		"bjF3mat": [{
+		},
+		"bjF3mat": {
 			"name": "bjF3mat",
 			"wpnumber": 20481598,
 			"vpnumber": 20481598,
@@ -229,8 +229,8 @@ let objs = {
 			"ppsval": 891052.5,
 			"tpsval": 38596024,
 			"apsval": 214198.1875
-		}],
-		"tjF3mat": [{
+		},
+		"tjF3mat": {
 			"name": "tjF3mat",
 			"wpnumber": 409126,
 			"vpnumber": 409126,
@@ -242,8 +242,8 @@ let objs = {
 			"ppsval": 398347,
 			"tpsval": 860896,
 			"apsval": 298641
-		}],
-		"tsF3mat": [{
+		},
+		"tsF3mat": {
 			"name": "tsF3mat",
 			"wpnumber": 225061,
 			"vpnumber": 225061,
@@ -255,8 +255,8 @@ let objs = {
 			"ppsval": 295384,
 			"tpsval": 463104,
 			"apsval": 112876
-		}],
-		"zjkF3mat": [{
+		},
+		"zjkF3mat": {
 			"name": "zjkF3mat",
 			"wpnumber": 82101,
 			"vpnumber": 73237,
@@ -268,8 +268,8 @@ let objs = {
 			"ppsval": 44483.19921875,
 			"tpsval": 173259,
 			"apsval": 27704.19921875
-		}],
-		"bjF4mat": [{
+		},
+		"bjF4mat": {
 			"name": "bjF4mat",
 			"wpnumber": 24662833,
 			"vpnumber": 24662833,
@@ -281,8 +281,8 @@ let objs = {
 			"ppsval": 995901.75,
 			"tpsval": 47253948,
 			"apsval": 309871.5625
-		}],
-		"tjF4mat": [{
+		},
+		"tjF4mat": {
 			"name": "tjF4mat",
 			"wpnumber": 526727,
 			"vpnumber": 526727,
@@ -294,8 +294,8 @@ let objs = {
 			"ppsval": 519490,
 			"tpsval": 1107860,
 			"apsval": 395818
-		}],
-		"tsF4mat": [{
+		},
+		"tsF4mat": {
 			"name": "tsF4mat",
 			"wpnumber": 239576,
 			"vpnumber": 239576,
@@ -307,8 +307,8 @@ let objs = {
 			"ppsval": 330554,
 			"tpsval": 504068,
 			"apsval": 120340
-		}],
-		"zjkF4mat": [{
+		},
+		"zjkF4mat": {
 			"name": "zjkF4mat",
 			"wpnumber": 112640,
 			"vpnumber": 106252,
@@ -320,8 +320,8 @@ let objs = {
 			"ppsval": 56396.30078125,
 			"tpsval": 219267,
 			"apsval": 33040
-		}],
-		"bjF5mat": [{
+		},
+		"bjF5mat": {
 			"name": "bjF5mat",
 			"wpnumber": 12461240,
 			"vpnumber": 12461240,
@@ -333,8 +333,8 @@ let objs = {
 			"ppsval": 620612.5625,
 			"tpsval": 24941702,
 			"apsval": 174845.265625
-		}],
-		"tjF5mat": [{
+		},
+		"tjF5mat": {
 			"name": "tjF5mat",
 			"wpnumber": 357098,
 			"vpnumber": 357098,
@@ -346,8 +346,8 @@ let objs = {
 			"ppsval": 381985,
 			"tpsval": 763389,
 			"apsval": 194731
-		}],
-		"tsF5mat": [{
+		},
+		"tsF5mat": {
 			"name": "tsF5mat",
 			"wpnumber": 219014,
 			"vpnumber": 219014,
@@ -359,8 +359,8 @@ let objs = {
 			"ppsval": 310528,
 			"tpsval": 465218,
 			"apsval": 79133.3984375
-		}],
-		"zjkF5mat": [{
+		},
+		"zjkF5mat": {
 			"name": "zjkF5mat",
 			"wpnumber": 119708,
 			"vpnumber": 89407,
@@ -372,8 +372,8 @@ let objs = {
 			"ppsval": 49459.80078125,
 			"tpsval": 229275,
 			"apsval": 24941.30078125
-		}],
-		"bjF6mat": [{
+		},
+		"bjF6mat": {
 			"name": "bjF6mat",
 			"wpnumber": 12016437,
 			"vpnumber": 12016437,
@@ -385,8 +385,8 @@ let objs = {
 			"ppsval": 520107.9375,
 			"tpsval": 25213646,
 			"apsval": 176911.125
-		}],
-		"tjF6mat": [{
+		},
+		"tjF6mat": {
 			"name": "tjF6mat",
 			"wpnumber": 338686,
 			"vpnumber": 338686,
@@ -398,8 +398,8 @@ let objs = {
 			"ppsval": 346796,
 			"tpsval": 734920,
 			"apsval": 145502
-		}],
-		"tsF6mat": [{
+		},
+		"tsF6mat": {
 			"name": "tsF6mat",
 			"wpnumber": 139305,
 			"vpnumber": 139305,
@@ -411,8 +411,8 @@ let objs = {
 			"ppsval": 197938,
 			"tpsval": 302448,
 			"apsval": 52591.80078125
-		}],
-		"zjkF6mat": [{
+		},
+		"zjkF6mat": {
 			"name": "zjkF6mat",
 			"wpnumber": 64207,
 			"vpnumber": 61669,
@@ -424,8 +424,8 @@ let objs = {
 			"ppsval": 42520.1015625,
 			"tpsval": 142394,
 			"apsval": 18102.599609375
-		}],
-		"bjF7mat": [{
+		},
+		"bjF7mat": {
 			"name": "bjF7mat",
 			"wpnumber": 72627903,
 			"vpnumber": 72627903,
@@ -437,8 +437,8 @@ let objs = {
 			"ppsval": 3140331.75,
 			"tpsval": 139127696,
 			"apsval": 772634.75
-		}],
-		"tjF7mat": [{
+		},
+		"tjF7mat": {
 			"name": "tjF7mat",
 			"wpnumber": 1544250,
 			"vpnumber": 1544250,
@@ -450,8 +450,8 @@ let objs = {
 			"ppsval": 1525970,
 			"tpsval": 3231220,
 			"apsval": 1054860
-		}],
-		"tsF7mat": [{
+		},
+		"tsF7mat": {
 			"name": "tsF7mat",
 			"wpnumber": 780349,
 			"vpnumber": 780349,
@@ -463,8 +463,8 @@ let objs = {
 			"ppsval": 1093400,
 			"tpsval": 1667900,
 			"apsval": 346804
-		}],
-		"zjkF7mat": [{
+		},
+		"zjkF7mat": {
 			"name": "zjkF7mat",
 			"wpnumber": 357901,
 			"vpnumber": 357901,
@@ -476,8 +476,8 @@ let objs = {
 			"ppsval": 177517,
 			"tpsval": 740677,
 			"apsval": 101459
-		}],
-		"bjF8mat": [{
+		},
+		"bjF8mat": {
 			"name": "bjF8mat",
 			"wpnumber": 31699466,
 			"vpnumber": 31699466,
@@ -489,8 +489,8 @@ let objs = {
 			"ppsval": 1531164,
 			"tpsval": 64612464,
 			"apsval": 279873.78125
-		}],
-		"tjF8mat": [{
+		},
+		"tjF8mat": {
 			"name": "tjF8mat",
 			"wpnumber": 625705,
 			"vpnumber": 625705,
@@ -502,8 +502,8 @@ let objs = {
 			"ppsval": 621897,
 			"tpsval": 1367740,
 			"apsval": 374558
-		}],
-		"tsF8mat": [{
+		},
+		"tsF8mat": {
 			"name": "tsF8mat",
 			"wpnumber": 337136,
 			"vpnumber": 337136,
@@ -515,8 +515,8 @@ let objs = {
 			"ppsval": 471986,
 			"tpsval": 727099,
 			"apsval": 133904
-		}],
-		"zjkF8mat": [{
+		},
+		"zjkF8mat": {
 			"name": "zjkF8mat",
 			"wpnumber": 154331,
 			"vpnumber": 154331,
@@ -528,10 +528,10 @@ let objs = {
 			"ppsval": 77864.1015625,
 			"tpsval": 319419,
 			"apsval": 44193.3984375
-		}]
+		}
 	},
 	'ave': {
-		"bjEmatrix": [{
+		"bjEmatrix": {
 			"name": "bjEmatrix",
 			"wpnumber": 104327369,
 			"vpnumber": 104327369,
@@ -543,8 +543,8 @@ let objs = {
 			"ppsval": 2.10282874107361,
 			"tpsval": 2.59344506263733,
 			"apsval": 2.56651973724365
-		}],
-		"tjEmatrix": [{
+		},
+		"tjEmatrix": {
 			"name": "tjEmatrix",
 			"wpnumber": 2103939,
 			"vpnumber": 2103939,
@@ -556,8 +556,8 @@ let objs = {
 			"ppsval": 1.95552003383636,
 			"tpsval": 2.5921199798584,
 			"apsval": 2.23423743247986
-		}],
-		"tsEmatrix": [{
+		},
+		"tsEmatrix": {
 			"name": "tsEmatrix",
 			"wpnumber": 1117485,
 			"vpnumber": 1117485,
@@ -569,8 +569,8 @@ let objs = {
 			"ppsval": 2.1335599899292,
 			"tpsval": 2.59102988243103,
 			"apsval": 2.41933751106262
-		}],
-		"zjkEmatrix": [{
+		},
+		"zjkEmatrix": {
 			"name": "zjkEmatrix",
 			"wpnumber": 512232,
 			"vpnumber": 512232,
@@ -582,8 +582,8 @@ let objs = {
 			"ppsval": 1.78929245471954,
 			"tpsval": 2.61073575701032,
 			"apsval": 2.35743999481201
-		}],
-		"bjF0mat": [{
+		},
+		"bjF0mat": {
 			"name": "bjF0mat",
 			"wpnumber": 5954689,
 			"vpnumber": 5954689,
@@ -595,8 +595,8 @@ let objs = {
 			"ppsval": 2.17646741867065,
 			"tpsval": 2.61537599563599,
 			"apsval": 2.56651973724365
-		}],
-		"tjF0mat": [{
+		},
+		"tjF0mat": {
 			"name": "tjF0mat",
 			"wpnumber": 219537,
 			"vpnumber": 209818,
@@ -608,8 +608,8 @@ let objs = {
 			"ppsval": 1.85357999801636,
 			"tpsval": 2.60998010635376,
 			"apsval": 2.41548752784729
-		}],
-		"tsF0mat": [{
+		},
+		"tsF0mat": {
 			"name": "tsF0mat",
 			"wpnumber": 121097,
 			"vpnumber": 121097,
@@ -621,8 +621,8 @@ let objs = {
 			"ppsval": 2.1335599899292,
 			"tpsval": 2.60618011474609,
 			"apsval": 2.43806927020733
-		}],
-		"zjkF0mat": [{
+		},
+		"zjkF0mat": {
 			"name": "zjkF0mat",
 			"wpnumber": 87168,
 			"vpnumber": 55903,
@@ -634,8 +634,8 @@ let objs = {
 			"ppsval": 1.78928995132446,
 			"tpsval": 2.61831998825073,
 			"apsval": 2.29651260375977
-		}],
-		"bjF1mat": [{
+		},
+		"bjF1mat": {
 			"name": "bjF1mat",
 			"wpnumber": 16138549,
 			"vpnumber": 16138549,
@@ -647,8 +647,8 @@ let objs = {
 			"ppsval": 2.12960958480835,
 			"tpsval": 2.60599088668823,
 			"apsval": 2.56308307647705
-		}],
-		"tjF1mat": [{
+		},
+		"tjF1mat": {
 			"name": "tjF1mat",
 			"wpnumber": 360854,
 			"vpnumber": 360854,
@@ -660,8 +660,8 @@ let objs = {
 			"ppsval": 1.87350499629974,
 			"tpsval": 2.61048007011414,
 			"apsval": 2.41548252105713
-		}],
-		"tsF1mat": [{
+		},
+		"tsF1mat": {
 			"name": "tsF1mat",
 			"wpnumber": 173660,
 			"vpnumber": 173660,
@@ -673,8 +673,8 @@ let objs = {
 			"ppsval": 2.07604450649685,
 			"tpsval": 2.60651993751526,
 			"apsval": 2.48688006401062
-		}],
-		"zjkF1mat": [{
+		},
+		"zjkF1mat": {
 			"name": "zjkF1mat",
 			"wpnumber": 102557,
 			"vpnumber": 72698,
@@ -686,8 +686,8 @@ let objs = {
 			"ppsval": 1.78928995132446,
 			"tpsval": 2.61073324415419,
 			"apsval": 2.32158756256104
-		}],
-		"bjF2mat": [{
+		},
+		"bjF2mat": {
 			"name": "bjF2mat",
 			"wpnumber": 12612023,
 			"vpnumber": 12612023,
@@ -699,8 +699,8 @@ let objs = {
 			"ppsval": 2.11580486297607,
 			"tpsval": 2.61537599563599,
 			"apsval": 2.5517783164978
-		}],
-		"tjF2mat": [{
+		},
+		"tjF2mat": {
 			"name": "tjF2mat",
 			"wpnumber": 253755,
 			"vpnumber": 253755,
@@ -712,8 +712,8 @@ let objs = {
 			"ppsval": 1.89128255844116,
 			"tpsval": 2.6041624546051,
 			"apsval": 2.46469993591309
-		}],
-		"tsF2mat": [{
+		},
+		"tsF2mat": {
 			"name": "tsF2mat",
 			"wpnumber": 133085,
 			"vpnumber": 133085,
@@ -725,8 +725,8 @@ let objs = {
 			"ppsval": 2.07604002952576,
 			"tpsval": 2.61392732100053,
 			"apsval": 2.41353336970011
-		}],
-		"zjkF2mat": [{
+		},
+		"zjkF2mat": {
 			"name": "zjkF2mat",
 			"wpnumber": 62433,
 			"vpnumber": 53066,
@@ -738,8 +738,8 @@ let objs = {
 			"ppsval": 1.78928995132446,
 			"tpsval": 2.61073756217957,
 			"apsval": 2.30799007415771
-		}],
-		"bjF3mat": [{
+		},
+		"bjF3mat": {
 			"name": "bjF3mat",
 			"wpnumber": 20481598,
 			"vpnumber": 20481598,
@@ -751,8 +751,8 @@ let objs = {
 			"ppsval": 2.17646741867065,
 			"tpsval": 2.60683917999268,
 			"apsval": 2.52238035202026
-		}],
-		"tjF3mat": [{
+		},
+		"tjF3mat": {
 			"name": "tjF3mat",
 			"wpnumber": 409126,
 			"vpnumber": 409126,
@@ -764,8 +764,8 @@ let objs = {
 			"ppsval": 2.06479001045227,
 			"tpsval": 2.59409999847412,
 			"apsval": 2.35379505157471
-		}],
-		"tsF3mat": [{
+		},
+		"tsF3mat": {
 			"name": "tsF3mat",
 			"wpnumber": 225061,
 			"vpnumber": 225061,
@@ -777,8 +777,8 @@ let objs = {
 			"ppsval": 2.0550000667572,
 			"tpsval": 2.60682511329651,
 			"apsval": 2.45960006713867
-		}],
-		"zjkF3mat": [{
+		},
+		"zjkF3mat": {
 			"name": "zjkF3mat",
 			"wpnumber": 82101,
 			"vpnumber": 73237,
@@ -790,8 +790,8 @@ let objs = {
 			"ppsval": 1.78928995132446,
 			"tpsval": 2.61831998825073,
 			"apsval": 2.35743999481201
-		}],
-		"bjF4mat": [{
+		},
+		"bjF4mat": {
 			"name": "bjF4mat",
 			"wpnumber": 24662833,
 			"vpnumber": 24662833,
@@ -803,8 +803,8 @@ let objs = {
 			"ppsval": 2.12852001190186,
 			"tpsval": 2.58396458625793,
 			"apsval": 2.55164546966553
-		}],
-		"tjF4mat": [{
+		},
+		"tjF4mat": {
 			"name": "tjF4mat",
 			"wpnumber": 526727,
 			"vpnumber": 526727,
@@ -816,8 +816,8 @@ let objs = {
 			"ppsval": 1.95552003383636,
 			"tpsval": 2.58037118813426,
 			"apsval": 2.58688998222351
-		}],
-		"tsF4mat": [{
+		},
+		"tsF4mat": {
 			"name": "tsF4mat",
 			"wpnumber": 239576,
 			"vpnumber": 239576,
@@ -829,8 +829,8 @@ let objs = {
 			"ppsval": 2.13689994812012,
 			"tpsval": 2.60122990608215,
 			"apsval": 2.43807506561279
-		}],
-		"zjkF4mat": [{
+		},
+		"zjkF4mat": {
 			"name": "zjkF4mat",
 			"wpnumber": 112640,
 			"vpnumber": 106252,
@@ -842,8 +842,8 @@ let objs = {
 			"ppsval": 1.78929245471954,
 			"tpsval": 2.61831998825073,
 			"apsval": 2.32220005989075
-		}],
-		"bjF5mat": [{
+		},
+		"bjF5mat": {
 			"name": "bjF5mat",
 			"wpnumber": 12461240,
 			"vpnumber": 12461240,
@@ -855,8 +855,8 @@ let objs = {
 			"ppsval": 2.11433839797974,
 			"tpsval": 2.60025191307068,
 			"apsval": 2.56651992797852
-		}],
-		"tjF5mat": [{
+		},
+		"tjF5mat": {
 			"name": "tjF5mat",
 			"wpnumber": 357098,
 			"vpnumber": 357098,
@@ -868,8 +868,8 @@ let objs = {
 			"ppsval": 1.87691802978516,
 			"tpsval": 2.60416194370815,
 			"apsval": 2.58689999580383
-		}],
-		"tsF5mat": [{
+		},
+		"tsF5mat": {
 			"name": "tsF5mat",
 			"wpnumber": 219014,
 			"vpnumber": 219014,
@@ -881,8 +881,8 @@ let objs = {
 			"ppsval": 2.07604002952576,
 			"tpsval": 2.60682988166809,
 			"apsval": 2.44337005615234
-		}],
-		"zjkF5mat": [{
+		},
+		"zjkF5mat": {
 			"name": "zjkF5mat",
 			"wpnumber": 119708,
 			"vpnumber": 89407,
@@ -894,8 +894,8 @@ let objs = {
 			"ppsval": 1.78928995132446,
 			"tpsval": 2.61073811848958,
 			"apsval": 2.32220005989075
-		}],
-		"bjF6mat": [{
+		},
+		"bjF6mat": {
 			"name": "bjF6mat",
 			"wpnumber": 12016437,
 			"vpnumber": 12016437,
@@ -907,8 +907,8 @@ let objs = {
 			"ppsval": 2.17289328575134,
 			"tpsval": 2.59044596354167,
 			"apsval": 2.52238035202026
-		}],
-		"tjF6mat": [{
+		},
+		"tjF6mat": {
 			"name": "tjF6mat",
 			"wpnumber": 338686,
 			"vpnumber": 338686,
@@ -920,8 +920,8 @@ let objs = {
 			"ppsval": 1.90562999248505,
 			"tpsval": 2.6100800037384,
 			"apsval": 2.46468758583069
-		}],
-		"tsF6mat": [{
+		},
+		"tsF6mat": {
 			"name": "tsF6mat",
 			"wpnumber": 139305,
 			"vpnumber": 139305,
@@ -933,8 +933,8 @@ let objs = {
 			"ppsval": 2.07604002952576,
 			"tpsval": 2.61031498321115,
 			"apsval": 2.45960998535156
-		}],
-		"zjkF6mat": [{
+		},
+		"zjkF6mat": {
 			"name": "zjkF6mat",
 			"wpnumber": 64207,
 			"vpnumber": 61669,
@@ -946,8 +946,8 @@ let objs = {
 			"ppsval": 1.88860499858856,
 			"tpsval": 2.61073591124337,
 			"apsval": 2.35743999481201
-		}],
-		"bjF7mat": [{
+		},
+		"bjF7mat": {
 			"name": "bjF7mat",
 			"wpnumber": 72627903,
 			"vpnumber": 72627903,
@@ -959,8 +959,8 @@ let objs = {
 			"ppsval": 2.16156959533691,
 			"tpsval": 2.59344506263733,
 			"apsval": 2.56651973724365
-		}],
-		"tjF7mat": [{
+		},
+		"tjF7mat": {
 			"name": "tjF7mat",
 			"wpnumber": 1544250,
 			"vpnumber": 1544250,
@@ -972,8 +972,8 @@ let objs = {
 			"ppsval": 1.95552003383636,
 			"tpsval": 2.5978000164032,
 			"apsval": 2.27688002586365
-		}],
-		"tsF7mat": [{
+		},
+		"tsF7mat": {
 			"name": "tsF7mat",
 			"wpnumber": 780349,
 			"vpnumber": 780349,
@@ -985,8 +985,8 @@ let objs = {
 			"ppsval": 2.13355255126953,
 			"tpsval": 2.59102988243103,
 			"apsval": 2.4135272286155
-		}],
-		"zjkF7mat": [{
+		},
+		"zjkF7mat": {
 			"name": "zjkF7mat",
 			"wpnumber": 357901,
 			"vpnumber": 357901,
@@ -998,8 +998,8 @@ let objs = {
 			"ppsval": 1.78928995132446,
 			"tpsval": 2.61073575701032,
 			"apsval": 2.35743999481201
-		}],
-		"bjF8mat": [{
+		},
+		"bjF8mat": {
 			"name": "bjF8mat",
 			"wpnumber": 31699466,
 			"vpnumber": 31699466,
@@ -1011,8 +1011,8 @@ let objs = {
 			"ppsval": 2.20869088172913,
 			"tpsval": 2.60683917999268,
 			"apsval": 2.56308307647705
-		}],
-		"tjF8mat": [{
+		},
+		"tjF8mat": {
 			"name": "tjF8mat",
 			"wpnumber": 625705,
 			"vpnumber": 625705,
@@ -1024,8 +1024,8 @@ let objs = {
 			"ppsval": 2.06479001045227,
 			"tpsval": 2.5921199798584,
 			"apsval": 2.48155999183655
-		}],
-		"tsF8mat": [{
+		},
+		"tsF8mat": {
 			"name": "tsF8mat",
 			"wpnumber": 337136,
 			"vpnumber": 337136,
@@ -1037,8 +1037,8 @@ let objs = {
 			"ppsval": 2.1335599899292,
 			"tpsval": 2.6139300664266,
 			"apsval": 2.44336748123169
-		}],
-		"zjkF8mat": [{
+		},
+		"zjkF8mat": {
 			"name": "zjkF8mat",
 			"wpnumber": 154331,
 			"vpnumber": 154331,
@@ -1050,8 +1050,8 @@ let objs = {
 			"ppsval": 1.78929245471954,
 			"tpsval": 2.6107349395752,
 			"apsval": 2.35743761062622
-		}]
+		}
 	}
-}
+};
 
 module.exports = objs
