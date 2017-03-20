@@ -52,7 +52,7 @@ def main(argv):
 		print str(err)
 		sys.exit(2)
 
-	city, poifiles, dic = 'beijing', '/home/tao.jiang/git/living-modes-visual-comparison/conf/data', '/enigma/tao.jiang/datasets/JingJinJi/records/disinfo'
+	city, poifiles, dic = 'beijing', '/home/taojiang/git/living-modes-visual-comparison/conf/data', '/enigma/tao.jiang/datasets/JingJinJi/records/disinfo'
 	for opt, arg in opts:
 		if opt == '-h':
 			print 'No Doc Now.'
