@@ -20,7 +20,7 @@ def upDotsBlongedDis(city, dic):
 	GRID = db['newgrids_%s' % city]
 
 	# 获取所有 grids 结果
-	grids = list( GRID.find({}, {"properties.uid": 1, "properties.center": 1}) )
+	dbgrids = list( GRID.find({}, {"properties.uid": 1, "properties.center": 1}) )
 
 	# 构建栅栏数组
 	disobjs = []
@@ -35,7 +35,7 @@ def upDotsBlongedDis(city, dic):
 			})
 		# 处理围栏数据
 
-	for each in grids:
+	for each in dbgrids:
 		try:
 			coords = each['properties']['center']['coordinates']
 			point = Point(coords[0], coords[1])
