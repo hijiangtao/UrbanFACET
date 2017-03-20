@@ -54,7 +54,7 @@ let apis = {
 
 		let sqlstr = "SELECT ? AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval) AS 'prsval', MAX(trsval) AS 'trsval', MAX(arsval) AS 'arsval', MAX(ppsval) AS 'ppsval', MAX(tpsval) AS 'tpsval', MAX(apsval) AS 'apsval' FROM ?? WHERE 1;", sql = "";
 
-		for (let i=0; i<30; i++ ) {
+		for (let i=0; i<40; i++ ) {
 			sql += sqlstr;
 		}
 		let tablearr = ['bjEmatrix', 'bjEmatrix', 'tjEmatrix', 'tjEmatrix', 'tsEmatrix', 'tsEmatrix', 'zjkEmatrix', 'zjkEmatrix'];
@@ -86,7 +86,7 @@ let apis = {
 
 		let sqlstr = "SELECT ? AS 'name', MAX(wpnumber) AS 'wpnumber', MAX(vpnumber) AS 'vpnumber', MAX(wrnumber) AS 'wrnumber', MAX(vrnumber) AS 'vrnumber', MAX(prsval/vrnumber) AS 'prsval', MAX(trsval/wrnumber) AS 'trsval', MAX(arsval/wrnumber) AS 'arsval', MAX(ppsval/vpnumber) AS 'ppsval', MAX(tpsval/wpnumber) AS 'tpsval', MAX(apsval/wpnumber) AS 'apsval' FROM ?? WHERE 1;", sql='';
 
-		for (let i=0; i<30; i++ ) {
+		for (let i=0; i<40; i++ ) {
 			sql += sqlstr;
 		}
 		let tablearr = ['bjEmatrix', 'bjEmatrix', 'tjEmatrix', 'tjEmatrix', 'tsEmatrix', 'tsEmatrix', 'zjkEmatrix', 'zjkEmatrix'];
