@@ -52,7 +52,7 @@ def main(argv):
 		print str(err)
 		sys.exit(2)
 
-	city, dic = 'beijing', '/home/tao.jiang/git/living-modes-visual-comparison/conf/data'
+	city, poifiles, dic = 'beijing', '/home/tao.jiang/git/living-modes-visual-comparison/conf/data', '/enigma/tao.jiang/datasets/JingJinJi/records/disinfo'
 	for opt, arg in opts:
 		if opt == '-h':
 			print 'No Doc Now.'
@@ -62,7 +62,7 @@ def main(argv):
 		elif opt in ("-d", "--direcotry"):
 			dic = os.path.join(arg, city)
 
-	grids = upDotsBlongedDis(city, dic)
+	grids = upDotsBlongedDis(city, poifiles)
 	matrixtofile(grids, os.path.join(dic, 'grids'))
 
 if __name__ == '__main__':
