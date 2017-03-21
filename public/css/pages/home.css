@@ -13,6 +13,14 @@ body {
 }
 
 /*MAP STYLESHEETS*/
+#dynamicview {
+    background-color: black;
+    height: 93vh;
+    width: 100vw;
+    position: absolute;
+    z-index: 1001;
+}
+
 #mappanel {
     height: 93vh;
     width: 74vw;

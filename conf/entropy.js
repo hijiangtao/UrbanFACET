@@ -309,22 +309,30 @@ function getBoundary(city) {
 
 function getAoi(conn, prop) {
     let city = prop['city'],
+        poiattr = 'total',
+        // poiattr = prop['class'] === '11' ? 'total':`poi${prop['class']}`,
         p = new Promise(function(resolve, reject) {
         let sql = $sql.getAoiVal,
-            param = ['total', `${city}CPOI`];
+            param = [poiattr, `${city}CPOI`];
 
+        // console.log('params', param)
         conn.query(sql, param, function(err, result) {
             conn.release();
 
             if (err) {
                 reject(err);
             } else {
-                
-
-                resolve({})
+                let res = [];
+                for (let i = result.length - 1; i >= 0; i--) {
+                    res.push({
+                        'geo': [result[i]['lat'], result[i]['lng']],
+                        'num': result[i]['num']
+                    })
+                }
+                resolve({'scode':1, 'data': res});
             }
         })
-    })
+    });
 
     return p;
 }
@@ -367,5 +375,6 @@ module.exports = {
     mongoQueries: mongoQueries,
     getOverview: getOverview,
     getExtraInfo: getExtraInfo,
-    getBoundary: getBoundary
+    getBoundary: getBoundary,
+    getAoi: getAoi
 }

@@ -137,6 +137,20 @@ const userpanel = new Vue({
 			}
 		},
 		/**
+		 * time 动态分析
+		 * @return {[type]} [description]
+		 */
+		'tda': function() {
+			
+		},
+		/**
+		 * city 动态分析
+		 * @return {[type]} [description]
+		 */
+		'cda': function() {
+			
+		},
+		/**
 		 * 更新指定 map 面板中的时间过滤条件
 		 * @param  {[type]} val   [description]
 		 * @param  {[type]} index [description]
@@ -201,12 +215,9 @@ const userpanel = new Vue({
 		'updateSlider': function(type, index) {
 			// 定位 slider
 			let v = this.components.eSlider.value;
-			if (type === 'd') {
-				v = this.components.dSlider.value;
-			}
 
 			// 改变背景色
-			document.getElementById(`${type}Slider`).getElementsByClassName('vue-slider')[0].style.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
+			document.getElementById('eSlider').getElementsByClassName('vue-slider')[0].style.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
 
 			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
 			index = Number.parseInt(index);
@@ -217,21 +228,7 @@ const userpanel = new Vue({
 
 			let self = this,
 				sels = self.sels.objs[index],
-				esvals = self.components.eSlider.value,
-				dsvals = self.components.dSlider.value,
-				valScales = getDrawProps(sels.scales, esvals, dsvals, self.sels, index);
-
-			console.log('entropy range', valScales['e']);
-			switch (self.sels.ctrmap) {
-				case true:
-					maps[index].mapcontourCDrawing({}, valScales, true);
-					break;
-				case false:
-					maps[index].mapgridCDrawing({}, valScales, true, self.sels.splitmap, false);
-					break;
-				default:
-					break;
-			}
+				esvals = self.components.eSlider.value;
 		},
 
 		'addAnaObj': function() {
@@ -311,7 +308,7 @@ const userpanel = new Vue({
 			}
 		},
 		'optAreaSelect': function(index) {
-			tlet state = this.sels.areaselect,
+			let state = this.sels.areaselect,
 				objs = this.sels.objs;
 			if (!state) {
 				for (let i = objs.length - 1; i >= 0; i--) {
@@ -401,6 +398,9 @@ const userpanel = new Vue({
 								etype = objs[i].etype;
 
 							document.getElementById(objs[i].id.map).parentNode.classList.remove('loading');
+
+							// 每个窗口均填充上AOI点分布
+							maps[i].aoisDrawing(res);
 						}
 					}).catch(function(err) {
 						console.error("Failed!", err);

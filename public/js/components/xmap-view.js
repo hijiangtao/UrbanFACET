@@ -98,38 +98,34 @@ class mapview {
      * @param  {[type]} legend [description]
      * @return {[type]}        [description]
      */
-    pointmapCDrawing(data, idlist, legend) {
-        const LEDINTERVAL = 20,
-            RADIUS = 1,
-            colorSchema = ['#F3E500', '#F7B20F', '#EE7D1D', '#E74A21', '#D9051B', '#A0077C', '#4F2577', '#172C85'],
-            colorJudge = idlist.length < 8 && idlist.length > 2
-        let self = this
+    pointmapCDrawing(data, prop) {
+        const RADIUS = 1,
+              colorSchema = '#FF0000'
 
-        this.clearLayers()
+        let self = this,
+            overlay = d3.select(self.map.getPanes().overlayPane);
 
-        if (data.features.length === 0) {
+        // 暂时只处理一个视图下的可视化实现
+        d3.select('#aoiCanvas').remove();
+        d3.select('#boundarySVG').remove();
+
+        if (data.length === 0) {
             alert('No records found!')
             return;
         }
 
-        let width = Math.max(960, window.innerWidth),
-            height = Math.max(500, window.innerHeight)
+        let width = Math.max(960, overlay.style('width')),
+            height = Math.max(500, overlay.style('height'));
 
         let projection = d3.geoMercator()
             .scale((1 << 24) / 2 / Math.PI)
             .translate([-width / 2, -height / 2]);
 
-        // let zoom = d3.zoom()
-        //  .scale(projection.scale() * 2 * Math.PI)
-        //  .scaleExtent([1 << 9, 1 << 25])
-        //  .translate(projection([-73.975536, 40.691674]).map(function(x) { return -x; }))
-        //  .on("zoom", zoomed);
-
-        let canvas = d3.select(self.map.getPanes().overlayPane).append("canvas")
+        let canvas = overlay.append("canvas")
             .attr("width", width)
             .attr("height", height)
             .attr('class', 'layer')
-            .attr('id', 'F_SVG')
+            .attr('id', 'aoiCanvas')
 
         let context = canvas.node().getContext("2d");
 
@@ -174,6 +170,7 @@ class mapview {
             statsdata = stats[city];
 
         d3.select('#boundarySVG').remove();
+        d3.select('#aoiCanvas').remove();
         if (type === -1) {
         	return ;
         }

@@ -72,7 +72,7 @@ let home = {
      */
     'sels': {
         'objs': [{
-            'city': 'tj',
+            'city': 'bj',
             'etype': 'pp',
             'ftpval': '',
             'scales': {
