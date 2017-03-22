@@ -91,7 +91,9 @@ let home = {
             'useLocalExtrema': false
         },
         'lstnum': 1, // 页面在本次操作之前存在的标签个数(包括额外overlay图层)
-        'lstindex': 0 // 存储上次操作的页面标签
+        'lstindex': 0, // 存储上次操作的页面标签
+        'tda': false,
+        'cda': false
     },
     'components': {
         'eSlider': {

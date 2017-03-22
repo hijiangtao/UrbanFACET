@@ -36,7 +36,7 @@ class mapview {
         };
         this.baseLayer = L.tileLayer(
             'https://api.mapbox.com/styles/v1/{uid}/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
-                attribution: 'Urban Mobility Map &copy; 2017',
+                attribution: 'Urban FACET &copy; 2017',
                 maxZoom: 18,
                 uid: 'hijiangtao',
                 accessToken: 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'

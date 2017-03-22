@@ -3,7 +3,7 @@ const router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('home', { title: 'Urban Prism: User-level Visual Analysis of Mobile Big Data', name: 'home' });
+  res.render('home', { title: 'Urban FACET: Visually Profiling Cities from Mobile Phone Recorded Movement Data of Millions of City Residents', name: 'home' });
 });
 /* GET demo page. */
 // router.get('/demo', function(req, res, next) {

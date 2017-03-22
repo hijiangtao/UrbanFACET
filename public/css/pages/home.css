@@ -14,7 +14,7 @@ body {
 
 /*MAP STYLESHEETS*/
 #dynamicview {
-    background-color: black;
+    /*background-color: black;*/
     height: 93vh;
     width: 100vw;
     position: absolute;
@@ -37,6 +37,7 @@ body {
     border-radius: 2px;
 }
 
+/*MAPVIEW STYLESHEETS*/
 .onemap {
     height: 100%;
     width: 100%;
@@ -49,11 +50,30 @@ body {
     height: 50%;
     width: 50%;
 }
+.sixmap {
+    height: 50%;
+    width: 33.33%;
+}
 
 .vamap {
     width: 100%;
     height: 100%;
 }
+
+.cdacontainer, .tdacontainer {
+    width: 100%;
+    height: 100%;
+}
+.cdacontainer>div, .tdacontainer>div {
+    float: left;
+    /*border: 2px solid black;*/
+}
+
+.sixmap.ui.segment, .formap.ui.segment {
+    margin: 0;
+    padding: 0;
+}
+/*MAPVIEW STYLESHEETS*/
 
 .cursor {
     cursor:pointer;
@@ -83,6 +103,10 @@ body {
 #userpanel>div {
     overflow: hidden;
     /*height: 100%;*/
+}
+
+#closeIcon {
+    float: right;
 }
 
 .m-legend {

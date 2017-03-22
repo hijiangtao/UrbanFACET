@@ -1,0 +1,56 @@
+<div class="cdacontainer" v-if="sels.cda">
+	<div v-for="(item, index) in params.regions" class="formap ui segment">
+		<div class="onemap" :id="item.val+'cdamap'">
+			<div :id="item.val+'card'" class="ui card">
+				<div class="image">
+					<img :src="item.aurl">
+				</div>
+				<div class="content">
+					<a class="header">{{'Item: ' + item.name}}</a>
+					<div class="description">
+						{{ cals.enps[ sels.objs[0].etype ] }}
+					</div>
+
+					<div :id="'cmleg'+index" class="m-legend">
+						<svg :id="'cgridleg'+index" height='0'></svg>
+						<div :id="'cctrleg'+index">
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div :id="'cdadim' + index" class="ui dimmer">
+            <div class="ui medium text loader">Loading Data</div>
+        </div>
+
+	</div>	
+</div>
+<div class="tdacontainer" v-if="sels.tda">
+	<div v-for="(item, index) in params.tpfilters" class="sixmap ui segment">
+		<div class="onemap" :id="item.val+'tdamap'">
+			<div :id="item.val+'card'" class="ui card">
+				<div class="image">
+					<img :src="item.aurl">
+				</div>
+				<div class="content">
+					<a class="header">{{'Item: ' + item.name}}</a>
+					<div class="description">
+						{{ cals.enps[ sels.objs[0].etype ] }}
+					</div>
+
+					<div :id="'tmleg'+index" class="m-legend">
+						<svg :id="'tgridleg'+index" height='0'></svg>
+						<div :id="'tctrleg'+index">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div :id="'tdadim' + index" class="ui dimmer">
+            <div class="ui medium text loader">Loading Data</div>
+        </div>
+	</div>	
+</div>

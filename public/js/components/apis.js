@@ -70,11 +70,10 @@ let getSubGrids = function(poly, center, num=4) {
 let getOverviewDatasets = function(sels) {
 	let city = sels.city,
 		etype = sels.etype,
-		dtype = sels.dtype,
 		ftpval = sels.ftpval;
 	
 	let p = new Promise(function(resolve, reject) {
-		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&dtype=${dtype}&ftpval=${ftpval}`, function(res, err) {
+		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ftpval=${ftpval}`, function(res, err) {
 			if (res['scode']) {
 				resolve(res['data']);
 			} else {

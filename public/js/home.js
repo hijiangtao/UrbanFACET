@@ -17,7 +17,7 @@ import $ from "jquery"
 // window.jQuery = $
 import { regionRecords, home } from './components/init'
 import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getDrawProps, objClone } from './components/apis'
-import { appendMap, removeMaps } from './components/events'
+import { appendMap, removeMaps, changeLoadState } from './components/events'
 import vueSlider from 'vue-slider-component'
 
 // Vuex Instance
@@ -77,15 +77,14 @@ const userpanel = new Vue({
 					etype = obj.etype;
 
 				// 添加 loading 效果 & 移动地图
-				document.getElementById(obj.id.map).parentNode.classList.add('loading');
+				changeLoadState(`dimmer${i}`, true);
 				maps[i].panTo(regionRecords[city]['center']);
 
-				console.log(etype in ['pp', 'pd', 'rp', 'rd', 'de']);
 				// 根据用户所选 metric 类型进行相应数据提取操作
 				if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
 					// 获取 entropy 和 density 资源
 					getOverviewDatasets(obj).then(function(res) {
-						document.getElementById(obj.id.map).parentNode.classList.remove('loading');
+						changeLoadState(`dimmer${i}`, false);
 
 						// 更新最大值域范围
 						obj.scales = res['prop']['scales'];
@@ -100,7 +99,7 @@ const userpanel = new Vue({
 					});
 				} else {
 					getBoundaryDatasets(city).then(function(res) {
-						document.getElementById(obj.id.map).parentNode.classList.remove('loading');
+						changeLoadState(`dimmer${i}`, false);
 
 						let prop = {
 							'city': city,
@@ -141,14 +140,20 @@ const userpanel = new Vue({
 		 * @return {[type]} [description]
 		 */
 		'tda': function() {
-			
+			this.sels.cda = false;
+			this.sels.tda = true;
 		},
 		/**
 		 * city 动态分析
 		 * @return {[type]} [description]
 		 */
 		'cda': function() {
-			
+			this.sels.cda = true;
+			this.sels.tda = false;
+		},
+		'closeDynamic': function() {
+			this.sels.cda = false;
+			this.sels.tda = false;	
 		},
 		/**
 		 * 更新指定 map 面板中的时间过滤条件
@@ -299,7 +304,14 @@ const userpanel = new Vue({
 			for (let i = 0; i < isize; i++) {
 				switch (type) {
 					case 'add':
-						self.sels.objs.push(objClone(self.sels.objs[i]));
+						let index = self.sels.objs.length,
+							obj = objClone(self.sels.objs[i]);
+						// 更新 objs 中的 id 对象
+						obj.id.card = `card${index}`;
+						obj.id.map = `map${index}`;
+						obj.id.tab = `tab${index}`;
+
+						self.sels.objs.push(obj);
 						break;
 					default:
 						self.sels.objs.splice(-1, 1);
@@ -345,11 +357,6 @@ const userpanel = new Vue({
 		mapClass: function() {
 			switch (this.sels.objs.length) {
 				case 1:
-					// if (this.sels.otype === -1) {
-					//     return 'onemap';
-					// } else {
-					//     return 'twomap';
-					// }
 					return 'onemap';
 					break;
 				case 2:
@@ -380,6 +387,7 @@ const userpanel = new Vue({
 
 				// 删除覆盖层
 				if (val === -1) {
+					// 只删除了boundary没考虑其他类型图层
 					for (let i = objs.length - 1; i >= 0; i--) {
 						maps[i].boundaryRemove();
 					}
@@ -387,7 +395,7 @@ const userpanel = new Vue({
 				}
 
 				for (let i = objs.length - 1; i >= 0; i--) {
-					document.getElementById(objs[i].id.map).parentNode.classList.add('loading');
+					changeLoadState(`dimmer${i}`, true);
 				}
 				
 				// POI
@@ -397,7 +405,7 @@ const userpanel = new Vue({
 							let city = objs[i].city,
 								etype = objs[i].etype;
 
-							document.getElementById(objs[i].id.map).parentNode.classList.remove('loading');
+							changeLoadState(`dimmer${i}`, false);
 
 							// 每个窗口均填充上AOI点分布
 							maps[i].aoisDrawing(res);
@@ -414,7 +422,7 @@ const userpanel = new Vue({
 							let city = objs[i].city,
 								etype = objs[i].etype;
 
-							document.getElementById(objs[i].id.map).parentNode.classList.remove('loading');
+							changeLoadState(`dimmer${i}`, false);
 
 							let prop = {
 								'city': city,
@@ -433,7 +441,7 @@ const userpanel = new Vue({
 
 				// Density
 				if (val === 2) {
-
+					alert('TBD');
 				}
 			}
 		}
@@ -441,30 +449,27 @@ const userpanel = new Vue({
 	mounted() {
 		let self = this;
 		this.$nextTick(function() {
-			maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0');
+			let firstcity = this.sels.objs[0].city;
+			maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0', firstcity);
 			charts[0] = new chart('#estatChart0');
 		});
 	},
 	updated() {
 		let self = this,
 			curnum = self.sels.objs.length,
-			lstnum = self.sels.lstnum;
+			lstnum = self.sels.lstnum,
+			svals = self.components.eSlider.value,
+			objs = self.sels.objs,
+			etype = objs[0].etype; // 批量化使用的 etype 熵类型;
 
-		// maps[0].panBy([1,1]);
-
-		if (curnum !== 4 && curnum !== 6 && curnum > lstnum) {
+		if (curnum !== 4 && curnum !== 6 && curnum > lstnum && !this.sels.cda && !this.sels.tda) {
 			for (let i = curnum - 1; i >= lstnum; i--) {
 				// 新建 map & chart model view
-				maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`);
+				maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`, self.sels.objs[i].city);
 				maps[i].syncmap(maps[0].getMap());
 				maps[0].syncmap(maps[i].getMap());
 
 				charts[i] = new chart(`#estatChart${i}`);
-
-				// 更新 objs 中的 id 对象
-				self.sels.objs[i].id.card = `card${i}`;
-				self.sels.objs[i].id.map = `map${i}`;
-				self.sels.objs[i].id.tab = `tab${i}`;
 
 				// 更新视图
 				self.getOverview(i);
@@ -476,6 +481,80 @@ const userpanel = new Vue({
 
 			self.sels.lstnum = curnum;
 			self.sels.lstindex = curnum - 1;
+		} else if (this.sels.cda) {
+			// city dynamic analysis
+			let cities = this.params.regions,
+				daviews = new Array(4);
+			
+			for (let i = 0; i < 4; i++) {
+				// 初始化子模块并添加遮罩层
+				changeLoadState(`cdadim${i}`, true);
+				daviews[i] = new mapview(`${cities[i].val}cdamap`, `cgridleg${i}`, `cctrleg${i}`, cities[i].val);
+
+				let obj = {
+					'city': cities[i].val,
+		            'etype': objs[0].etype,
+		            'ftpval': '',
+		            'boundary': false
+				};
+
+				// 根据用户所选 metric 类型进行相应数据提取操作
+				if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
+					// 获取 entropy 和 density 资源
+					getOverviewDatasets(obj).then(function(res) {
+						changeLoadState(`cdadim${i}`, false);
+						// 获取 slider 情况下的配置值域以及用户其余选项
+						let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, etype);
+						daviews[i].mapcontourCDrawing(res, drawProps);
+					}).catch(function(err) {
+						console.error("Failed!", err);
+					});
+				} else {
+					getBoundaryDatasets(obj.city).then(function(res) {
+						changeLoadState(`cdadim${i}`, false);
+						daviews[i].boundaryDrawing(res, obj);
+					}).catch(function(err) {
+						console.error("Failed!", err);
+					});
+				}
+			}
+		} else if (this.sels.tda) {
+			// time periods dynamic analysis
+			let tps = this.params.tpfilters,
+				daviews = new Array(6);
+			
+			for (let i = 0; i < 6; i++) {
+				changeLoadState(`tdadim${i}`, true);
+				daviews[i] = new mapview(`${tps[i].val}tdamap`, `tgridleg${i}`, `tctrleg${i}`, objs[0].city);
+
+				let obj = {
+					'city': objs[0].city,
+		            'etype': tps[i].val,
+		            'ftpval': i,
+		            'boundary': false
+				};
+
+				// 根据用户所选 metric 类型进行相应数据提取操作
+				if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
+					// 获取 entropy 和 density 资源
+					getOverviewDatasets(obj).then(function(res) {
+						changeLoadState(`tdadim${i}`, false);
+						// 获取 slider 情况下的配置值域以及用户其余选项
+						let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, etype);
+						daviews[i].mapcontourCDrawing(res, drawProps);
+					}).catch(function(err) {
+						console.error("Failed!", err);
+					});
+				} else {
+					getBoundaryDatasets(obj.city).then(function(res) {
+						changeLoadState(`tdadim${i}`, false);
+						daviews[i].boundaryDrawing(res, obj);
+					}).catch(function(err) {
+						console.error("Failed!", err);
+					});
+				}
+				
+			}
 		}
 	}
 });

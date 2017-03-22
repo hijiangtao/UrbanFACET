@@ -48,23 +48,10 @@ let appendMap = function(indexs) {
 	let tcontainer = document.getElementById('vctab'),
 		mcontainer = document.getElementById('mappanel'),
 		isize = indexs.length;
-		// preclass = isize === 1? 'onemap':'twomap',
-		// curclass = isize === 1? 'twomap':'formap';
 
 	for (var i = 0; i < isize; i++) {
 		let index = indexs[i],
 			tab = document.createElement('div');
-
-		// 添加 tab 标签项
-		// tab.setAttribute('data-tab', `tab${index}`);
-		// tab.setAttribute('id', `switch${index}`);
-		// tab.classList.add('tabs', 'item', 'cursor');
-		// tab.innerHTML = `OBJ${index}`;
-
-		// tcontainer.insertBefore(tab, document.getElementById("addObjBtn"));
-
-		// // 绑定点击事件
-		// tab.addEventListener('click', bindTabClick);
 	}
 	
 	return isize*2;
@@ -104,9 +91,18 @@ let removeMaps = function(number) {
 	return isize-number;
 };
 
+let changeLoadState = function(id, type) {
+	if (type) {
+		document.getElementById(id).classList.add('active');
+	} else {
+		document.getElementById(id).classList.remove('active');
+	}
+};
+
 export {
 	appendMap,
 	removeMaps,
 	bindTabClick,
-	iterateTabs
+	iterateTabs,
+	changeLoadState
 };

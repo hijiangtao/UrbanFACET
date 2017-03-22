@@ -16,28 +16,35 @@
 </head>
 
 <body>
-    <div id="titlemenu" class="ui inverted menu">
-        <div class="header item"><h2>Urban Prism: User-level Visual Analysis of Mobile Big Data</h2></div>
-    </div>
-
-    <div class="ui row" id="main">
-        <div id="dynamicview"></div>    
-        <div id="userpanel" class="ui segment">
-            <% include home-x/panel %>
+    <div id="main">
+        <div id="titlemenu" class="ui inverted menu">
+            <div class="header item"><h2>Urban FACET: Visually Profiling Cities from Mobile Phone Recorded Movement Data of Millions of City Residents</h2></div>
+            <div class="header item" id="closeIcon"><h2><i class="compress icon cursor" @click="closeDynamic"></i></h2></div>
         </div>
-        <div id="mappanel" class="ui segment">
-            
-            <div v-for="(model, index) in sels.objs" :class="mapClass" class="ui segment">
-                <div :id="'map' + index" class="vamap"></div>
-                <% include home-x/mapcard %>
 
-                <div class="ui dimmer">
-                    <div class="ui medium text loader">Loading Data</div>
+        <div class="ui row" >
+            <div id="dynamicview" v-if="sels.cda || sels.tda">
+                <% include home-x/dynamic %>
+            </div>
+            <div id="userpanel" class="ui segment">
+                <% include home-x/panel %>
+            </div>
+            
+            <div id="mappanel" class="ui segment">
+                <div v-for="(model, index) in sels.objs" :class="mapClass" class="ui segment">
+                    <div :id="'map' + index" class="vamap"></div>
+                    <% include home-x/mapcard %>
+
+                    <div :id="'dimmer' + index" class="ui dimmer">
+                        <div class="ui medium text loader">Loading Data</div>
+                    </div>
                 </div>
             </div>
+                
         </div>
-            
+
     </div>
+    
     
     <script src="/dist/<%= name %>.js"></script>
 </body>
