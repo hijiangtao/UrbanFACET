@@ -372,7 +372,8 @@ const userpanel = new Vue({
 	watch: {
 		'sels.otype': {
 			handler: function(val) {
-				let index = this.sels.lstindex,
+				let scale = this.components.eSlider.value,
+					index = this.sels.lstindex,
 					objs = this.sels.objs;
 
 				// 删除覆盖层
@@ -417,7 +418,8 @@ const userpanel = new Vue({
 							let prop = {
 								'city': city,
 								'etype': etype,
-								'boundary': true
+								'boundary': true,
+								'scale': scale
 							};
 
 							maps[i].boundaryDrawing(res, prop);
