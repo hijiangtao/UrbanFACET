@@ -438,6 +438,11 @@ L.AreaSelect = L.Class.extend({
         
         var topBottomHeight = Math.round((size.y-this._height)/2);
         var leftRightWidth = Math.round((size.x-this._width)/2);
+        // 
+        // var handleOffset = this._nwHandle.offsetWidth/2;
+        
+        // var topBottomHeight = (size.y-this._height)/2;
+        // var leftRightWidth = (size.x-this._width)/2;
         
         function setDimensions(element, dimension) {
             element.style.width = dimension.width + "px";

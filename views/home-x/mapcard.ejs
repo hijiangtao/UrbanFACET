@@ -12,14 +12,14 @@
 						<label for="">Metric</label>
 					</div>
 					<div class="twelve wide column">
-						<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="updateSlider('e', index)" v-model="components.eSlider.value"></vue-slider>
+						<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="updateSlider(index)" v-model="components.eSlider.value"></vue-slider>
 					</div>
 				</template>
 			</div>
 		</div>
 	</div>
 	<div class="extra content">
-		<a>District: <span :id="'carddistrict'+index">Null</span></a>
+		<a>District: <span :id="'carddistrict'+index">Null</span></a><br>
 		<a>{{ cals.enps[ sels.objs[index].etype ]+ ": " }}<span :id="'cardenps'+index">Null</span></a>
 		<div :id="'maplegend'+index" class="m-legend">
 			<svg :id="'gridmaplegend'+index" height='0'></svg>

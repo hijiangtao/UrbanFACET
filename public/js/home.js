@@ -17,7 +17,7 @@ import $ from "jquery"
 // window.jQuery = $
 import { regionRecords, home } from './components/init'
 import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getDrawProps, objClone } from './components/apis'
-import { appendMap, removeMaps, changeLoadState } from './components/events'
+import { changeLoadState } from './components/events'
 import vueSlider from 'vue-slider-component'
 
 // Vuex Instance
@@ -104,7 +104,8 @@ const userpanel = new Vue({
 						let prop = {
 							'city': city,
 							'etype': etype,
-							'boundary': false
+							'boundary': false,
+							'scale': svals
 						};
 
 						maps[i].boundaryDrawing(res, prop);
@@ -181,61 +182,50 @@ const userpanel = new Vue({
 			}
 		},
 		/**
-		 * 更新数据的 display type
-		 * @param  {[type]} index [description]
-		 * @param  {[type]} val   [description]
-		 * @return {[type]}       [description]
-		 */
-		'updateDS': function(index, val) {
-			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
-			index = Number.parseInt(index);
-			// this.sels.lstindex = index;
-
-			if (store.state.init) {
-				return;
-			}
-
-			let self = this,
-				sels = self.sels.objs[index],
-				esvals = self.components.eSlider.value,
-				dsvals = self.components.dSlider.value,
-				valScales = getDrawProps(sels.scales, esvals, dsvals, self.sels, index);
-
-			switch (self.sels.ctrmap) {
-				case true:
-					maps[index].mapcontourCDrawing({}, valScales, true);
-					break;
-				case false:
-					maps[index].mapgridCDrawing({}, valScales, true, self.sels.splitmap, false);
-					break;
-				default:
-					break;
-			}
-		},
-		/**
 		 * 计算与更新 slider 样式, 更新 map
-		 * @param  {[type]} type 传入的 slider 类型值, d/e
-		 * @return {[type]}      [description]
+		 * @return {[index]}      [description]
 		 */
-		'updateSlider': function(type, index) {
+		'updateSlider': function(index) {
 			// 定位 slider
 			let v = this.components.eSlider.value;
 
 			// 改变背景色
-			document.getElementById('eSlider').getElementsByClassName('vue-slider')[0].style.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
+			this.components.eSlider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
 
 			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
-			index = Number.parseInt(index);
-			// this.sels.lstindex = index;
 			if (store.state.init) {
 				return;
 			}
 
 			let self = this,
-				sels = self.sels.objs[index],
-				esvals = self.components.eSlider.value;
-		},
+				objs = self.sels.objs;
 
+			for (let i = objs.length - 1; i >= 0; i--) {
+				let obj = objs[i],
+					city = obj.city,
+					etype = obj.etype;
+
+				// 根据用户所选 metric 类型进行相应数据提取操作
+				if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
+					// 获取 slider 情况下的配置值域以及用户其余选项
+					let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, etype);
+					maps[i].mapcontourCDrawing({}, drawProps, true);
+				} else {
+					let prop = {
+						'city': city,
+						'etype': etype,
+						'boundary': false,
+						'scale': v
+					};
+
+					maps[i].boundaryDrawing({}, prop, true);
+				}
+			}
+		},
+		/**
+		 * 添加分析对象
+		 * @return {[type]} [description]
+		 */
 		'addAnaObj': function() {
 			let self = this,
 				currentSize = self.sels.objs.length;
@@ -245,12 +235,12 @@ const userpanel = new Vue({
 			switch (currentSize) {
 				// 添加一个对象
 				case 1:
-					appendMap([1]);
+					// appendMap([1]);
 					self.updateSels(1, 'add');
 					break;
 					// 复制现有两个对象并添加
 				case 2:
-					appendMap([2, 3]);
+					// appendMap([2, 3]);
 					self.updateSels(2, 'add');
 					break;
 				case 4:
@@ -269,19 +259,19 @@ const userpanel = new Vue({
 			switch (currentSize) {
 				// 删除两个对象
 				case 4:
-					// removeMaps(2);
 					self.updateSels(2, 'del');
 					maps.splice(-2, 2);
 					charts.splice(-2, 2);
+					self.sels.lstnum = 2;
 					break;
 					// 删除一个对象
 				case 2:
-					// removeMaps(1);
-					self.updateSels(1, 'del');
 					maps[1].unsyncmap(maps[0].getMap());
-					maps[0].unsyncmap(maps[1].getMap())
+					maps[0].unsyncmap(maps[1].getMap());
 					maps.splice(-1, 1);
 					charts.splice(-1, 1);
+					self.updateSels(1, 'del');
+					self.sels.lstnum = 1;
 					break;
 				case 1:
 					alert('No more objects can be removed, one object should be reserved in the page.');
@@ -462,6 +452,8 @@ const userpanel = new Vue({
 			objs = self.sels.objs,
 			etype = objs[0].etype; // 批量化使用的 etype 熵类型;
 
+		console.log('curnum', curnum, 'lstnum', lstnum);
+
 		if (curnum !== 4 && curnum !== 6 && curnum > lstnum && !this.sels.cda && !this.sels.tda) {
 			for (let i = curnum - 1; i >= lstnum; i--) {
 				// 新建 map & chart model view
@@ -474,10 +466,6 @@ const userpanel = new Vue({
 				// 更新视图
 				self.getOverview(i);
 			}
-
-			// 非同步操作: 将视图聚焦切换到最新的 tab 上
-			maps[0].invalidateSize();
-			maps[1].invalidateSize();
 
 			self.sels.lstnum = curnum;
 			self.sels.lstindex = curnum - 1;
@@ -495,7 +483,8 @@ const userpanel = new Vue({
 					'city': cities[i].val,
 		            'etype': objs[0].etype,
 		            'ftpval': '',
-		            'boundary': false
+		            'boundary': false,
+		            'scale': svals
 				};
 
 				// 根据用户所选 metric 类型进行相应数据提取操作
@@ -523,19 +512,18 @@ const userpanel = new Vue({
 			let tps = this.params.tpfilters,
 				daviews = new Array(6);
 			
-			for (let i = 0; i < 6; i++) {
-				changeLoadState(`tdadim${i}`, true);
-				daviews[i] = new mapview(`${tps[i].val}tdamap`, `tgridleg${i}`, `tctrleg${i}`, objs[0].city);
+			if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
+				for (let i = 0; i < 6; i++) {
+					changeLoadState(`tdadim${i}`, true);
+					daviews[i] = new mapview(`${tps[i].val}tdamap`, `tgridleg${i}`, `tctrleg${i}`, objs[0].city);
 
-				let obj = {
-					'city': objs[0].city,
-		            'etype': tps[i].val,
-		            'ftpval': i,
-		            'boundary': false
-				};
+					let obj = {
+						'city': objs[0].city,
+			            'etype': tps[i].val,
+			            'ftpval': i,
+			            'boundary': false
+					};
 
-				// 根据用户所选 metric 类型进行相应数据提取操作
-				if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
 					// 获取 entropy 和 density 资源
 					getOverviewDatasets(obj).then(function(res) {
 						changeLoadState(`tdadim${i}`, false);
@@ -545,16 +533,15 @@ const userpanel = new Vue({
 					}).catch(function(err) {
 						console.error("Failed!", err);
 					});
-				} else {
-					getBoundaryDatasets(obj.city).then(function(res) {
-						changeLoadState(`tdadim${i}`, false);
-						daviews[i].boundaryDrawing(res, obj);
-					}).catch(function(err) {
-						console.error("Failed!", err);
-					});
+					
 				}
-				
+			} else {
+				alert('Not able to deal with different cities in different time periods.');
 			}
 		}
+
+		// 更新 map 内绘制规格
+		// 非同步操作: 将视图聚焦切换到最新的 tab 上
+		maps[0].invalidateSize();
 	}
 });

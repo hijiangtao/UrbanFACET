@@ -53,6 +53,7 @@ class mapview {
             layers: self.baseLayer
         });
         this.map.zoomControl.setPosition('topright');
+        this.boundData = {};
         this.gridData = {};
         this.gridDataType = '';
 
@@ -63,6 +64,15 @@ class mapview {
 
     invalidateSize() {
         this.map.invalidateSize();
+    }
+
+    getBoundData() {
+    	return this.boundData;
+    }
+
+    setBoundData(data) {
+    	this.boundData = data;
+    	return this;
     }
 
     getGridData() {
@@ -172,8 +182,8 @@ class mapview {
             });
 
         const colorSchema = '#FF0000',
-            aoiid = `${self.ides.mapid}aoiCanvas`,
-            boundid = `${self.ides.mapid}boundarySVG`,
+            aoiid = `aoiCanvas${self.ides.mapid}`,
+            boundid = `boundSVG${self.ides.mapid}`,
             radius = d3.scaleLinear().domain(d3.extent(data.map((v) => {
                 return v['num'];
             }))).range([0, 100]);
@@ -270,8 +280,8 @@ class mapview {
             overlay = d3.select(self.map.getPanes().overlayPane);
 
         const colorSchema = '#FF0000',
-            aoiid = `${self.ides.mapid}aoiCanvas`,
-            boundid = `${self.ides.mapid}boundarySVG`,
+            aoiid = `aoiCanvas${self.ides.mapid}`,
+            boundid = `boundSVG${self.ides.mapid}`,
             radius = d3.scaleLinear().domain(d3.extent(data.map((v) => {
                 return v['num'];
             }))).range([2, 20]);
@@ -324,18 +334,27 @@ class mapview {
         }
     }
 
-    boundaryDrawing(data, prop) {
+    boundaryDrawing(data, prop, update=false) {
         let self = this,
             city = prop['city'],
             type = extraInfoIndex(prop['etype']),
             onlyBound = prop['boundary'],
             statsdata = stats[city],
             numid = self.ides.mapid.slice(-1),
-            svgid = `${self.ides.mapid}boundarySVG`,
-            aoiid = `${self.ides.mapid}aoiCanvas`;
+            svgid = `boundSVG${self.ides.mapid}`,
+            aoiid = `aoiCanvas${self.ides.mapid}`;
+
+        if (!update) {
+        	this.setBoundData(data);
+        } else {
+        	data = this.getBoundData();
+        }
 
         d3.select(`#${svgid}`).remove();
-        d3.select(`#${aoiid}`).remove();
+        if (onlyBound) {
+        	d3.select(`#${aoiid}`).remove();
+        }
+        
         if (!onlyBound) {
             this.clearLayers();
         }
@@ -343,10 +362,14 @@ class mapview {
         let range = d3.extent(Object.values(statsdata).map((val) => {
                 return val[type];
             })),
-            color = d3.scaleLinear().domain(range)
-            .range(["rgba(255,255,255,0.5)", "rgba(255, 0, 0, 0.9)"]),
+        	vmin = range[1] * prop['scale'][0] / 100.0,
+        	vmax = range[1] * prop['scale'][1] / 100.0,
+            color = d3.scaleLinear().domain([vmin, vmax, range[1]])
+            .range(["rgba(255,255,255,0.5)", "rgba(255, 0, 0, 0.9)", "rgba(255, 0, 0, 0.9)"]),
             svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', svgid),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
+
+        console.log('vmin', vmin, 'vmax', vmax);
 
         let transform = d3.geoTransform({ point: projectPoint }),
             path = d3.geoPath().projection(transform);
@@ -355,8 +378,9 @@ class mapview {
             .data(data.features)
             .enter().append("path")
             .attr('fill', function(d) {
-                let name = d.properties.name;
-                return onlyBound ? 'none' : color(statsdata[name][type]);
+                let name = d.properties.name,
+                	val = statsdata[name][type];
+                return onlyBound || val < vmin ? 'none' : color(val);
             })
             .attr('stroke', 'white')
             .attr("stroke-width", 1.2);
@@ -428,7 +452,7 @@ class mapview {
     }
 
     boundaryRemove() {
-        let svgid = `${this.ides.mapid}boundarySVG`;
+        let svgid = `boundSVG${this.ides.mapid}`;
         d3.select(`#${svgid}`).remove();
     }
 
