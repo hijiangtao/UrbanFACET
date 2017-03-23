@@ -82,6 +82,23 @@
                         <button class="ui tiny button" :class="areaselState" v-on:click="optAreaSelect(index)">Area Select</button>
                     </div>
                 </div>
+
+                <div class="inline fields">
+                    <label>ContourRadius</label>
+                    
+                    <div id="hrsliContainer" class="field">
+                        <vue-slider id="hrSlider" ref="hrSlider" v-bind="components.hrSlider" v-model="sels.ctrsets.radius"></vue-slider>
+                    </div>
+
+                    <div class="field">
+                        <div id="opaContainer" class="ui mini labeled input">
+                          <div class="ui label">
+                            Opacity
+                          </div>
+                          <input type="number" v-model="sels.ctrsets.opacity" placeholder="...">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

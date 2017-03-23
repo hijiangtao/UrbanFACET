@@ -29,6 +29,8 @@ let getDrawProps = function(scales, sels, ctrsets, etype) {
 		drawtype = 'd';
 	}
 
+	// console.log('radius', radius);
+
 	return {
 		'e': { // entropy
 			'min': emin,
@@ -42,6 +44,8 @@ let getDrawProps = function(scales, sels, ctrsets, etype) {
 		},
 		'prop': { // prop
 			'drawtype': drawtype,
+			'radius': ctrsets.radius * 0.003,
+			'opacity': ctrsets.opacity,
 			'useLocalExtrema': ctrsets.useLocalExtrema,
 		}
 	}

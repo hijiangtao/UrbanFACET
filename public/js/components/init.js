@@ -88,7 +88,9 @@ let home = {
         'otype': -1,
         'areaselect': false,
         'ctrsets': {
-            'useLocalExtrema': false
+            'useLocalExtrema': false,
+            'opacity': 0.5,
+            'radius': 1
         },
         'lstnum': 1, // 页面在本次操作之前存在的标签个数(包括额外overlay图层)
         'lstindex': 0, // 存储上次操作的页面标签
@@ -111,6 +113,19 @@ let home = {
             },
             processStyle: {
                 'background': settings['whiteToRed']
+            }
+        },
+        'hrSlider': {
+            width: "auto",
+            tooltip: 'hover',
+            min: 1,
+            max: 10,
+            interval: 0.01,
+            disabled: false,
+            clickable: false,
+            tooltipStyle: {
+                "backgroundColor": "#000",
+                "borderColor": "#000"
             }
         }
     },

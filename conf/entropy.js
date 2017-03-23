@@ -274,11 +274,6 @@ function getOverview(conn, prop) {
                     })
                 }
 
-                // 规整 distribution 
-                // while (result[2].length > 100) {
-                // 	result[2][99]['v'] += result[2][]
-                // }
-
                 resolve({
                     'scode': 1,
                     'data': {

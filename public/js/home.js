@@ -90,6 +90,8 @@ const userpanel = new Vue({
 						obj.scales = res['prop']['scales'];
 
 						// 获取 slider 情况下的配置值域以及用户其余选项
+						// svals.push(self.components.hrSlider.value);
+						// console.log(self.components.hrSlider.value);
 						let drawProps = getDrawProps(obj.scales, svals, self.sels.ctrsets, etype);
 						console.log('drawProps', drawProps);
 
@@ -208,6 +210,7 @@ const userpanel = new Vue({
 				// 根据用户所选 metric 类型进行相应数据提取操作
 				if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
 					// 获取 slider 情况下的配置值域以及用户其余选项
+					// v.push(self.components.hrSlider.value);
 					let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, etype);
 					maps[i].mapcontourCDrawing({}, drawProps, true);
 				} else {
@@ -495,6 +498,7 @@ const userpanel = new Vue({
 					getOverviewDatasets(obj).then(function(res) {
 						changeLoadState(`cdadim${i}`, false);
 						// 获取 slider 情况下的配置值域以及用户其余选项
+						// svals.push(self.components.hrSlider.value);
 						let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, etype);
 						daviews[i].mapcontourCDrawing(res, drawProps);
 					}).catch(function(err) {
@@ -530,12 +534,12 @@ const userpanel = new Vue({
 					getOverviewDatasets(obj).then(function(res) {
 						changeLoadState(`tdadim${i}`, false);
 						// 获取 slider 情况下的配置值域以及用户其余选项
+						// svals.push(self.components.hrSlider.value);
 						let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, etype);
 						daviews[i].mapcontourCDrawing(res, drawProps);
 					}).catch(function(err) {
 						console.error("Failed!", err);
 					});
-					
 				}
 			} else {
 				alert('Not able to deal with different cities in different time periods.');

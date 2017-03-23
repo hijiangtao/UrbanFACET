@@ -79,6 +79,13 @@ body {
     cursor:pointer;
 }
 
+#hrsliContainer {
+    width: 13rem;
+}
+#opaContainer {
+    width: 4rem;
+}
+
 /*MAP STYLESHEETS*/
 
 #titlemenu {

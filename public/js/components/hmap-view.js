@@ -469,10 +469,10 @@ class mapview {
         } else {
             data = this.getGridData();
         }
-        this.setGridDataType(prop['prop']['type']);
+        this.setGridDataType(prop['prop']['drawtype']);
 
         let self = this;
-        const drawtype = prop['prop']['type'],
+        const drawtype = prop['prop']['drawtype'],
             resprop = data['prop'],
             SPLITNUMBER = 4;
 
@@ -566,7 +566,7 @@ class mapview {
         }
         this.setGridDataType(prop['prop']['drawtype']);
 
-        console.log('Contour props: ', prop, 'Update: ', update);
+        console.log('Drawtype: ', prop['prop']['drawtype'], 'Update: ', update);
 
         const drawtype = prop['prop']['drawtype'],
             resprop = data['prop'],
@@ -623,14 +623,14 @@ class mapview {
             // 为 hdata 注入数据
             hdata.data.push({ 'lat': center[1], 'lng': center[0], 'c': feature['prop'][drawtype] })
         }
-        console.log('Contourmap Used point number', countVal);
+        console.log('Drawtype: ', drawtype, 'Contourmap Used point number', countVal);
 
         let cfg = {
             // radius should be small ONLY if scaleRadius is true (or small radius is intended)
             // if scaleRadius is false it will be the constant radius used in pixels
-            "radius": .0055,
-            "maxOpacity": .9,
-            "minOpacity": .1,
+            "radius": prop['prop']['radius'],
+            "maxOpacity": prop['prop']['opacity'],
+            "minOpacity": prop['prop']['opacity'],
             // scales the radius based on map zoom
             "scaleRadius": true,
             "gradient": {},
