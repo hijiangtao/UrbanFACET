@@ -481,7 +481,8 @@ const userpanel = new Vue({
 		console.log('curnum', curnum, 'lstnum', lstnum);
 
 		if (curnum !== 4 && curnum !== 6 && curnum > lstnum && !this.sels.cda && !this.sels.tda) {
-			self.sels.objs[1].slider.value = [0,100];
+			// self.sels.objs[1].slider.refresh();
+			// document.getElementById(`eSlider1`).refresh();
 			for (let i = curnum - 1; i >= lstnum; i--) {
 				// 新建 map & chart model view
 				maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`, self.sels.objs[i].city);

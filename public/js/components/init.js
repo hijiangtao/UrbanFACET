@@ -75,7 +75,7 @@ let home = {
     'sels': {
         'objs': [{
             'city': 'bj',
-            'etype': 'pp',
+            'etype': 'de',
             'ftpval': '',
             'reverse': false,
             'scales': {
@@ -137,7 +137,7 @@ let home = {
             tooltip: 'hover',
             min: 1,
             max: 4,
-            interval: 0.001,
+            interval: 0.005,
             disabled: false,
             clickable: false,
             tooltipStyle: {
