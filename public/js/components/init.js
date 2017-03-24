@@ -8,7 +8,9 @@
 'use strict'
 
 const settings = {
-    'whiteToRed': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
+    // 'whiteToRed': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
+    // 与实际设置不同,因为有遮挡所以微调过
+    'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#0000ff 25%,#00ff00 45%,#ffff00 70%,#ff0000 100%)'
 }
 
 let home = {
@@ -27,8 +29,8 @@ let home = {
          */
         'etypes': [
             { 'name': 'Vibrancy', 'val': 'pp' },
-            { 'name': 'Mobility', 'val': 'pd' },
-            { 'name': 'Variation', 'val': 'rp' },
+            { 'name': 'Commutation', 'val': 'pd' },
+            { 'name': 'Diversity', 'val': 'rp' },
             { 'name': 'Fluidity', 'val': 'rd' },
             { 'name': 'Density', 'val': 'de' },
             { 'name': 'Total GDP', 'val': 'tg' },
@@ -75,6 +77,7 @@ let home = {
             'city': 'bj',
             'etype': 'pp',
             'ftpval': '',
+            'reverse': false,
             'scales': {
                 'e': 1,
                 'd': 100
@@ -83,6 +86,22 @@ let home = {
                 'card': 'card0',
                 'map': 'map0',
                 'tab': 'tab0'
+            },
+            'slider': {
+                // width: 140,
+                tooltip: 'hover',
+                value: [0, 100],
+                clickable: false,
+                tooltipStyle: {
+                    "backgroundColor": "#000",
+                    "borderColor": "#000"
+                },
+                bgStyle: {
+                    'background': settings['whiteToRed']
+                },
+                processStyle: {
+                    'background': settings['whiteToRed']
+                }
             }
         }],
         'otype': -1,
@@ -99,10 +118,8 @@ let home = {
     },
     'components': {
         'eSlider': {
-            width: "auto",
             tooltip: 'hover',
             value: [0, 100],
-            disabled: false,
             clickable: false,
             tooltipStyle: {
                 "backgroundColor": "#000",
@@ -119,8 +136,8 @@ let home = {
             width: "auto",
             tooltip: 'hover',
             min: 1,
-            max: 10,
-            interval: 0.01,
+            max: 4,
+            interval: 0.001,
             disabled: false,
             clickable: false,
             tooltipStyle: {
@@ -138,8 +155,8 @@ let home = {
         },
         'enps': {
             'pp': 'Vibrancy',
-            'pd': 'Mobility',
-            'rp': 'Variation',
+            'pd': 'Commutation',
+            'rp': 'Diversity',
             'rd': 'Fluidity',
             'de': 'Density',
             'tg': 'Total GDP',

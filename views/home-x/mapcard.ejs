@@ -7,12 +7,18 @@
 		<a class="header">{{'City: ' + cals.cities[model.city]}}</a>
 		<div class="description">
 			<div class="ui grid">
-				<template v-if="model.dtype !== 'd'" >
-					<div class="four wide column">
-						<label for="">Metric</label>
+				<div class="sixteen wide column">
+					<div class="ui checkbox">
+					  <input type="checkbox" :name="'reverseColor'+index" v-model="sels.objs[index].reverse">
+					  <label>Reverse</label>
 					</div>
-					<div class="twelve wide column">
-						<vue-slider id="eSlider" ref="eSlider" v-bind="components.eSlider" @drag-end="updateSlider(index)" v-model="components.eSlider.value"></vue-slider>
+				</div>
+				<template v-if="model.dtype !== 'd'" >
+					<!-- <div class="four wide column">
+						<label for="">Metric</label>
+					</div> -->
+					<div class="sixteen wide column">
+						<vue-slider :id="'eSlider'+index" :ref="'eSlider'+index" v-bind="sels.objs[index].slider" @drag-end="updateSlider(index)" v-model="sels.objs[index].slider.value"></vue-slider>
 					</div>
 				</template>
 			</div>

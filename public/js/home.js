@@ -55,7 +55,7 @@ const userpanel = new Vue({
 		 */
 		'getOverview': function(index) {
 			let self = this,
-				svals = self.components.eSlider.value;
+				svals = null;
 
 			index = Number.parseInt(index);
 
@@ -71,10 +71,16 @@ const userpanel = new Vue({
 				if (index !== -1) {
 					i = Number.parseInt(index);
 				}
+				svals = self.sels.objs[i].slider.value;
 
 				let obj = objs[i],
 					city = obj.city,
-					etype = obj.etype;
+					etype = obj.etype,
+					rev = obj.reverse,
+					drawprop = {
+						'etype': etype,
+						'rev': rev
+					};
 
 				// 添加 loading 效果 & 移动地图
 				changeLoadState(`dimmer${i}`, true);
@@ -92,7 +98,7 @@ const userpanel = new Vue({
 						// 获取 slider 情况下的配置值域以及用户其余选项
 						// svals.push(self.components.hrSlider.value);
 						// console.log(self.components.hrSlider.value);
-						let drawProps = getDrawProps(obj.scales, svals, self.sels.ctrsets, etype);
+						let drawProps = getDrawProps(obj.scales, svals, self.sels.ctrsets, drawprop);
 						console.log('drawProps', drawProps);
 
 						maps[i].mapcontourCDrawing(res, drawProps);
@@ -189,8 +195,10 @@ const userpanel = new Vue({
 		 */
 		'updateSlider': function(index) {
 			// 定位 slider
-			let v = this.components.eSlider.value;
+			let i = Number.parseInt(index),
+				v = this.sels.objs[i].slider.value;
 
+			console.log('v', v);
 			// 改变背景色
 			this.components.eSlider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
 
@@ -205,13 +213,18 @@ const userpanel = new Vue({
 			for (let i = objs.length - 1; i >= 0; i--) {
 				let obj = objs[i],
 					city = obj.city,
-					etype = obj.etype;
+					etype = obj.etype,
+					rev = obj.reverse,
+					drawprop = {
+						'etype': etype,
+						'rev': rev
+					};
 
 				// 根据用户所选 metric 类型进行相应数据提取操作
 				if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
 					// 获取 slider 情况下的配置值域以及用户其余选项
 					// v.push(self.components.hrSlider.value);
-					let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, etype);
+					let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
 					maps[i].mapcontourCDrawing({}, drawProps, true);
 				} else {
 					let prop = {
@@ -375,7 +388,7 @@ const userpanel = new Vue({
 	watch: {
 		'sels.otype': {
 			handler: function(val) {
-				let scale = this.components.eSlider.value,
+				let scale = null,
 					index = this.sels.lstindex,
 					objs = this.sels.objs;
 
@@ -416,13 +429,15 @@ const userpanel = new Vue({
 							let city = objs[i].city,
 								etype = objs[i].etype;
 
+							svals = self.sels.objs[i].slider.value;
+
 							changeLoadState(`dimmer${i}`, false);
 
 							let prop = {
 								'city': city,
 								'etype': etype,
 								'boundary': true,
-								'scale': scale
+								'scale': svals
 							};
 
 							maps[i].boundaryDrawing(res, prop);
@@ -447,19 +462,26 @@ const userpanel = new Vue({
 			let firstcity = this.sels.objs[0].city;
 			maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0', firstcity);
 			charts[0] = new chart('#estatChart0');
+			self.getOverview(0);
 		});
 	},
 	updated() {
 		let self = this,
+			pIndex = this.sels.lstindex,
 			curnum = self.sels.objs.length,
 			lstnum = self.sels.lstnum,
-			svals = self.components.eSlider.value,
+			svals = self.sels.objs[pIndex].slider.value,
 			objs = self.sels.objs,
-			etype = objs[0].etype; // 批量化使用的 etype 熵类型;
+			etype = objs[pIndex].etype,
+			drawprop = {
+				'etype': etype,
+				'rev': false
+			};; // 批量化使用的 etype 熵类型;
 
 		console.log('curnum', curnum, 'lstnum', lstnum);
 
 		if (curnum !== 4 && curnum !== 6 && curnum > lstnum && !this.sels.cda && !this.sels.tda) {
+			self.sels.objs[1].slider.value = [0,100];
 			for (let i = curnum - 1; i >= lstnum; i--) {
 				// 新建 map & chart model view
 				maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`, self.sels.objs[i].city);
@@ -499,7 +521,7 @@ const userpanel = new Vue({
 						changeLoadState(`cdadim${i}`, false);
 						// 获取 slider 情况下的配置值域以及用户其余选项
 						// svals.push(self.components.hrSlider.value);
-						let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, etype);
+						let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, drawprop);
 						daviews[i].mapcontourCDrawing(res, drawProps);
 					}).catch(function(err) {
 						console.error("Failed!", err);
@@ -535,7 +557,7 @@ const userpanel = new Vue({
 						changeLoadState(`tdadim${i}`, false);
 						// 获取 slider 情况下的配置值域以及用户其余选项
 						// svals.push(self.components.hrSlider.value);
-						let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, etype);
+						let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, drawprop);
 						daviews[i].mapcontourCDrawing(res, drawProps);
 					}).catch(function(err) {
 						console.error("Failed!", err);

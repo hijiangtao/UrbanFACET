@@ -16,7 +16,7 @@ import $ from "jquery"
  * @param  {[type]} vuesels [vue instance 中存储的 selections object]
  * @return {[type]}         [description]
  */
-let getDrawProps = function(scales, sels, ctrsets, etype) {
+let getDrawProps = function(scales, sels, ctrsets, props) {
 	let emin = Math.exp( Math.log(scales.e+1) * parseFloat(sels[0]) / 100.0 )-1,
 		emax = Math.exp( Math.log(scales.e+1) * parseFloat(sels[1]) / 100.0 )-1,
 		escales = scales.e,
@@ -25,7 +25,7 @@ let getDrawProps = function(scales, sels, ctrsets, etype) {
 		dscales = scales.d,
 		drawtype = 'e';
 
-	if (etype === 'de') {
+	if (props['etype'] === 'de') {
 		drawtype = 'd';
 	}
 
@@ -43,8 +43,9 @@ let getDrawProps = function(scales, sels, ctrsets, etype) {
 			'scales': dscales
 		},
 		'prop': { // prop
+			'rev': props['rev'],
 			'drawtype': drawtype,
-			'radius': ctrsets.radius * 0.003,
+			'radius': ctrsets.radius * 0.0025,
 			'opacity': ctrsets.opacity,
 			'useLocalExtrema': ctrsets.useLocalExtrema,
 		}

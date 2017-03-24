@@ -633,7 +633,9 @@ class mapview {
             "minOpacity": prop['prop']['opacity'],
             // scales the radius based on map zoom
             "scaleRadius": true,
-            "gradient": {},
+            "gradient": {
+                '0': 'rgba(255,255,255,0)'
+            },
             //   (there will always be a red spot with useLocalExtremas true)
             "useLocalExtrema": prop['prop']['useLocalExtrema'],
             "latField": 'lat',
@@ -641,7 +643,11 @@ class mapview {
             "valueField": 'c'
         };
 
-        let gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(0,0,255)', 'rgb(0,255,0)', 'yellow', 'rgb(255,0,0)'];
+        let gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(0,0,255)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(255,0,0)'];
+
+        if (prop['prop']['rev']) {
+            gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,0,0)', 'rgb(255,255,0)', 'rgb(0,255,0)','rgb(0,0,255)'];
+        }
 
         cfg.gradient[oneqVal.toString()] = gradients[2];
         cfg.gradient[twoqVal.toString()] = gradients[3];
@@ -653,7 +659,7 @@ class mapview {
         }
 
         // draw legends
-        this.drawContourLegend(`Content ${getPropName(drawtype)}`, cfg.gradient);
+        // this.drawContourLegend(`Content ${getPropName(drawtype)}`, cfg.gradient);
 
         this.heatmapLayer = new HeatmapOverlay(cfg);
         this.map.addLayer(this.heatmapLayer);
@@ -708,7 +714,7 @@ class mapview {
         let container = document.getElementById(this.ides.ctrleg),
             svg = d3.select(`#${this.ides.ctrleg}`),
             legCanvas = document.createElement('canvas');
-        legCanvas.width = 180;
+        legCanvas.width = 125;
         legCanvas.height = 15;
 
         svg.selectAll('*').remove();
@@ -721,7 +727,7 @@ class mapview {
             .text('0%');
         g.append('text')
             .attr('y', 13)
-            .attr('x', 145)
+            .attr('x', 105)
             .text('100%');
 
         let gradientImg = document.createElement("img"),
@@ -729,11 +735,11 @@ class mapview {
             gradient = legCtx.createLinearGradient(0, 0, 100, 1);
 
         for (let key in gradientCfg) {
-            gradient.addColorStop(key, gradientCfg[key]);
+            gradient.addColorStop(Number.parseFloat(key), gradientCfg[key]);
         }
 
         legCtx.fillStyle = gradient;
-        legCtx.fillRect(0, 0, 180, 15);
+        legCtx.fillRect(0, 0, 125, 15);
 
         gradientImg.src = legCanvas.toDataURL();
         container.insertBefore(gradientImg, container.childNodes[0]);

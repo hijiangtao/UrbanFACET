@@ -149,7 +149,10 @@ img.ui.image {
     width: 2.8rem;
 }
 .toggle.right.icon {
-	font-size: 1.5rem;
+	font-size: 2.5rem;
+}
+.ui.form .inline.fields .field>div.dynamicbtn {
+    margin-bottom: -1rem;
 }
 
 .designedfontcolor {
@@ -245,7 +248,7 @@ h4.ui.header {
     top: 1rem;
     left: 1rem;
     border-radius: .5rem;
-    width: 210px;
+    width: 150px;
     border-radius: 4px;
     z-index: 11;
 }
