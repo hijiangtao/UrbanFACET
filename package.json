@@ -33,7 +33,7 @@
     "shelljs": "^0.7.5",
     "vue": "^2.2.4",
     "vue-router": "^2.1.1",
-    "vue-slider-component": "^2.1.2",
+    "vue-slider-component": "^2.2.2",
     "vuex": "^2.1.2"
   },
   "devDependencies": {

@@ -18,7 +18,7 @@
 						<label for="">Metric</label>
 					</div> -->
 					<div class="sixteen wide column">
-						<vue-slider :id="'eSlider'+index" :ref="'eSlider'+index" :real-time="true" v-bind="sels.objs[index].slider" @drag-end="updateSlider(index)" v-model="sels.objs[index].slider.value"></vue-slider>
+						<vue-slider :id="'slider'+index" :ref="'eSlider'+index" v-bind="sels.objs[index].slider" @drag-end="updateSlider(index)" v-model="sels.objs[index].slider.value"></vue-slider>
 					</div>
 				</template>
 			</div>

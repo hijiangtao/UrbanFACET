@@ -210,32 +210,30 @@ const userpanel = new Vue({
 			let self = this,
 				objs = self.sels.objs;
 
-			for (let i = objs.length - 1; i >= 0; i--) {
-				let obj = objs[i],
-					city = obj.city,
-					etype = obj.etype,
-					rev = obj.reverse,
-					drawprop = {
-						'etype': etype,
-						'rev': rev
-					};
+			let obj = objs[i],
+				city = obj.city,
+				etype = obj.etype,
+				rev = obj.reverse,
+				drawprop = {
+					'etype': etype,
+					'rev': rev
+				};
 
-				// 根据用户所选 metric 类型进行相应数据提取操作
-				if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
-					// 获取 slider 情况下的配置值域以及用户其余选项
-					// v.push(self.components.hrSlider.value);
-					let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
-					maps[i].mapcontourCDrawing({}, drawProps, true);
-				} else {
-					let prop = {
-						'city': city,
-						'etype': etype,
-						'boundary': false,
-						'scale': v
-					};
+			// 根据用户所选 metric 类型进行相应数据提取操作
+			if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
+				// 获取 slider 情况下的配置值域以及用户其余选项
+				// v.push(self.components.hrSlider.value);
+				let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
+				maps[i].mapcontourCDrawing({}, drawProps, true);
+			} else {
+				let prop = {
+					'city': city,
+					'etype': etype,
+					'boundary': false,
+					'scale': v
+				};
 
-					maps[i].boundaryDrawing({}, prop, true);
-				}
+				maps[i].boundaryDrawing({}, prop, true);
 			}
 		},
 		/**
@@ -476,13 +474,19 @@ const userpanel = new Vue({
 			drawprop = {
 				'etype': etype,
 				'rev': false
-			};; // 批量化使用的 etype 熵类型;
+			}; // 批量化使用的 etype 熵类型;
 
+		// if (curnum > 1) {
+		// 	self.$refs['eSlider1'][0].refresh();	
+		// }
+		
 		console.log('curnum', curnum, 'lstnum', lstnum);
 
 		if (curnum !== 4 && curnum !== 6 && curnum > lstnum && !this.sels.cda && !this.sels.tda) {
-			// self.sels.objs[1].slider.refresh();
-			// document.getElementById(`eSlider1`).refresh();
+			// 更新 map 内绘制规格
+			// 非同步操作: 将视图聚焦切换到最新的 tab 上
+			maps[0].invalidateSize();
+			
 			for (let i = curnum - 1; i >= lstnum; i--) {
 				// 新建 map & chart model view
 				maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`, self.sels.objs[i].city);
@@ -492,11 +496,15 @@ const userpanel = new Vue({
 				charts[i] = new chart(`#estatChart${i}`);
 
 				// 更新视图
+				self.$refs[`eSlider${i}`][0].refresh();
 				self.getOverview(i);
+
 			}
 
 			self.sels.lstnum = curnum;
 			self.sels.lstindex = curnum - 1;
+
+			
 		} else if (this.sels.cda) {
 			// city dynamic analysis
 			let cities = this.params.regions,
@@ -569,8 +577,6 @@ const userpanel = new Vue({
 			}
 		}
 
-		// 更新 map 内绘制规格
-		// 非同步操作: 将视图聚焦切换到最新的 tab 上
-		maps[0].invalidateSize();
+		
 	}
 });

@@ -159,16 +159,24 @@ let outOfRange = function(t, evalue, dvalue, emin, dmin) {
 let objClone = function (obj) {
     let res = {};
 
-    for (let attr in obj) {
-        if (obj.hasOwnProperty(attr)) {
-            if (typeof(obj[attr]) !== "object") {
-                res[attr] = obj[attr];
-            } else {
-            	res[attr] = objClone(obj[attr]);
-            }
-        }
-    }
-    return res;
+    // for (let attr in obj) {
+    //     if (obj.hasOwnProperty(attr)) {
+    //         if (typeof(obj[attr]) !== "object") {
+    //             res[attr] = obj[attr];
+    //         } else if (typeof(obj[attr]) === "array") {
+    //         	let tmp = [],
+    //         		tmplen = obj[attr].length;
+    //         	for (let i = 0; i < tmplen; i++) {
+    //         		tmp.push(obj[attr][i]);
+    //         	}
+    //         	res[attr] = tmp;
+    //         } else {
+    //         	res[attr] = objClone(obj[attr]);
+    //         }
+    //     }
+    // }
+    
+    return JSON.parse(JSON.stringify(obj));;
 };
 
 let getPropName = function (argument) {
