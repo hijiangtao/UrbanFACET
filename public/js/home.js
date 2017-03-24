@@ -488,7 +488,7 @@ const userpanel = new Vue({
 			let firstcity = this.sels.objs[0].city;
 			maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0', firstcity);
 			charts[0] = new chart('#estatChart0');
-			// self.getOverview(0);
+			self.getOverview(0);
 		});
 	},
 	updated() {
