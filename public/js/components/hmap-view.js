@@ -102,9 +102,10 @@ class mapview {
 
     syncmap(map) {
         console.log(this.map.isSynced());
-        if (!this.map.isSynced()) {
-            this.map.sync(map);
-        }
+        // if (!this.map.isSynced()) {
+        //     this.map.sync(map);
+        // }
+        this.map.sync(map);
 
         return;
     }
@@ -362,8 +363,8 @@ class mapview {
         let range = d3.extent(Object.values(statsdata).map((val) => {
                 return val[type];
             })),
-        	vmin = range[1] * prop['scale'][0] / 100.0,
-        	vmax = range[1] * prop['scale'][1] / 100.0,
+        	vmin = range[1] * prop['slider'][0] / 100.0,
+        	vmax = range[1] * prop['slider'][1] / 100.0,
             color = d3.scaleLinear().domain([vmin, vmax, range[1]])
             .range(["rgba(255,255,255,0.5)", "rgba(255, 0, 0, 0.9)", "rgba(255, 0, 0, 0.9)"]),
             svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', svgid),

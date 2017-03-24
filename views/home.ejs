@@ -23,9 +23,6 @@
         </div>
 
         <div class="ui row" >
-            <div id="dynamicview" v-if="sels.cda || sels.tda">
-                <% include home-x/dynamic %>
-            </div>
             <div id="userpanel" class="ui segment">
                 <% include home-x/panel %>
             </div>
@@ -39,10 +36,12 @@
                         <div class="ui medium text loader">Loading Data</div>
                     </div>
                 </div>
-            </div>
-                
+            </div>    
         </div>
+    </div>
 
+    <div id="dynamicview">
+        <% include home-x/dynamic %>
     </div>
     
     

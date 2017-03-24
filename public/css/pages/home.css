@@ -17,8 +17,10 @@ body {
     /*background-color: black;*/
     height: 93vh;
     width: 100vw;
+    top: 7vh;
     position: absolute;
     z-index: 1001;
+    display: none;
 }
 
 #mappanel {
@@ -254,5 +256,19 @@ h4.ui.header {
 }
 .ui.card>.image {
     padding: 1.7rem;
+}
+
+.dcard.ui.card {
+    position: absolute;
+    z-index: 11;
+    top: 1rem;
+    left: 1rem;
+    border-radius: .5rem;
+    width: 115px;
+    border-radius: 4px;
+    z-index: 11;
+}
+.dcard.ui.card>.image {
+    padding: .8rem;
 }
 /*REWRITE SEMANTIC-UI*/

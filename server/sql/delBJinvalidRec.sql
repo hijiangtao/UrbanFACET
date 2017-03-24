@@ -1,0 +1,19 @@
+DELETE FROM `bjF0mat` WHERE `bjF0mat`.`id` = 107116;
+DELETE FROM `bjF0mat` WHERE `bjF0mat`.`id` = 98051;
+
+DELETE FROM `bjF1mat` WHERE `bjF1mat`.`id` = 107116;
+DELETE FROM `bjF1mat` WHERE `bjF1mat`.`id` = 98051;
+DELETE FROM `bjF2mat` WHERE `bjF2mat`.`id` = 107116;
+DELETE FROM `bjF2mat` WHERE `bjF2mat`.`id` = 98051;
+DELETE FROM `bjF3mat` WHERE `bjF3mat`.`id` = 107116;
+DELETE FROM `bjF3mat` WHERE `bjF3mat`.`id` = 98051;
+DELETE FROM `bjF4mat` WHERE `bjF4mat`.`id` = 107116;
+DELETE FROM `bjF4mat` WHERE `bjF4mat`.`id` = 98051;
+DELETE FROM `bjF5mat` WHERE `bjF5mat`.`id` = 107116;
+DELETE FROM `bjF5mat` WHERE `bjF5mat`.`id` = 98051;
+DELETE FROM `bjF6mat` WHERE `bjF6mat`.`id` = 107116;
+DELETE FROM `bjF6mat` WHERE `bjF6mat`.`id` = 98051;
+DELETE FROM `bjF7mat` WHERE `bjF7mat`.`id` = 107116;
+DELETE FROM `bjF7mat` WHERE `bjF7mat`.`id` = 98051;
+DELETE FROM `bjF8mat` WHERE `bjF8mat`.`id` = 107116;
+DELETE FROM `bjF8mat` WHERE `bjF8mat`.`id` = 98051;

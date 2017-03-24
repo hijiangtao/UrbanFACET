@@ -19,6 +19,7 @@ import { regionRecords, home } from './components/init'
 import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getDrawProps, objClone } from './components/apis'
 import { changeLoadState } from './components/events'
 import vueSlider from 'vue-slider-component'
+import dynamicView from './dynamic'
 
 // Vuex Instance
 const store = new Vuex.Store({
@@ -38,7 +39,8 @@ if (typeof(Storage) === undefined) {
 }
 
 let maps = [],
-	charts = [];
+	charts = [],
+	daview = null;
 
 const userpanel = new Vue({
 	el: '#main',
@@ -113,7 +115,7 @@ const userpanel = new Vue({
 							'city': city,
 							'etype': etype,
 							'boundary': false,
-							'scale': svals
+							'slider': svals
 						};
 
 						maps[i].boundaryDrawing(res, prop);
@@ -144,25 +146,52 @@ const userpanel = new Vue({
 				objs[i].city = val;
 			}
 		},
-		/**
-		 * time 动态分析
-		 * @return {[type]} [description]
-		 */
-		'tda': function() {
-			this.sels.cda = false;
-			this.sels.tda = true;
-		},
-		/**
-		 * city 动态分析
-		 * @return {[type]} [description]
-		 */
-		'cda': function() {
-			this.sels.cda = true;
-			this.sels.tda = false;
+		// /**
+		//  * time 动态分析
+		//  * @return {[type]} [description]
+		//  */
+		// 'tda': function() {
+		// 	this.sels.cda = false;
+		// 	this.sels.tda = true;
+		// },
+		// /**
+		//  * city 动态分析
+		//  * @return {[type]} [description]
+		//  */
+		// 'cda': function() {
+		// 	this.sels.cda = true;
+		// 	this.sels.tda = false;
+		// },
+		'openDynamic': function(val) {
+			document.getElementById('dynamicview').style.display = "block";
+			let i = this.sels.lstindex,
+				self = this,
+				model = this.sels.objs[i],
+				props = {
+					'cda': true,
+					'tda': false,
+					'etype': model.etype,
+					'city': model.city,
+					'boundary': this.sels.otype === 1,
+					'ftpval': model.ftpval,
+					'scale': model.scales,
+					'radius': this.sels.ctrsets.radius,
+					'opacity': this.sels.ctrsets.opacity,
+					'useLocalExtrema': this.sels.ctrsets.useLocalExtrema,
+					'rev': model.reverse
+				};
+
+			// 默认使用 city 作为 props 初始化配置选项, 若 val 为 t, 那么更新为 timeperiods 选项
+			if (val === 't') {
+				props.cda = false;
+				props.tda = true;
+			}
+			daview = new dynamicView('dynamicview', props);
 		},
 		'closeDynamic': function() {
-			this.sels.cda = false;
-			this.sels.tda = false;	
+			document.getElementById('dynamicview').style.display = "none";
+			daview.destroy();
+			daview = null;	
 		},
 		/**
 		 * 更新指定 map 面板中的时间过滤条件
@@ -200,7 +229,7 @@ const userpanel = new Vue({
 
 			console.log('v', v);
 			// 改变背景色
-			this.components.eSlider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
+			this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
 
 			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
 			if (store.state.init) {
@@ -230,7 +259,7 @@ const userpanel = new Vue({
 					'city': city,
 					'etype': etype,
 					'boundary': false,
-					'scale': v
+					'slider': v
 				};
 
 				maps[i].boundaryDrawing({}, prop, true);
@@ -263,7 +292,6 @@ const userpanel = new Vue({
 				default:
 					break;
 			}
-
 		},
 		'delAnaObj': function() {
 			let self = this,
@@ -435,7 +463,7 @@ const userpanel = new Vue({
 								'city': city,
 								'etype': etype,
 								'boundary': true,
-								'scale': svals
+								'slider': svals
 							};
 
 							maps[i].boundaryDrawing(res, prop);
@@ -460,7 +488,7 @@ const userpanel = new Vue({
 			let firstcity = this.sels.objs[0].city;
 			maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0', firstcity);
 			charts[0] = new chart('#estatChart0');
-			self.getOverview(0);
+			// self.getOverview(0);
 		});
 	},
 	updated() {
@@ -476,17 +504,13 @@ const userpanel = new Vue({
 				'rev': false
 			}; // 批量化使用的 etype 熵类型;
 
-		// if (curnum > 1) {
-		// 	self.$refs['eSlider1'][0].refresh();	
-		// }
-		
 		console.log('curnum', curnum, 'lstnum', lstnum);
 
 		if (curnum !== 4 && curnum !== 6 && curnum > lstnum && !this.sels.cda && !this.sels.tda) {
 			// 更新 map 内绘制规格
 			// 非同步操作: 将视图聚焦切换到最新的 tab 上
 			maps[0].invalidateSize();
-			
+
 			for (let i = curnum - 1; i >= lstnum; i--) {
 				// 新建 map & chart model view
 				maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`, self.sels.objs[i].city);
@@ -505,78 +529,77 @@ const userpanel = new Vue({
 			self.sels.lstindex = curnum - 1;
 
 			
-		} else if (this.sels.cda) {
-			// city dynamic analysis
-			let cities = this.params.regions,
-				daviews = new Array(4);
+		} 
+		// else if (this.sels.cda) {
+		// 	// city dynamic analysis
+		// 	let cities = this.params.regions,
+		// 		daviews = new Array(4);
 			
-			for (let i = 0; i < 4; i++) {
-				// 初始化子模块并添加遮罩层
-				changeLoadState(`cdadim${i}`, true);
-				daviews[i] = new mapview(`${cities[i].val}cdamap`, `cgridleg${i}`, `cctrleg${i}`, cities[i].val);
+		// 	for (let i = 0; i < 4; i++) {
+		// 		// 初始化子模块并添加遮罩层
+		// 		changeLoadState(`cdadim${i}`, true);
+		// 		daviews[i] = new mapview(`${cities[i].val}cdamap`, `cgridleg${i}`, `cctrleg${i}`, cities[i].val);
 
-				let obj = {
-					'city': cities[i].val,
-		            'etype': objs[0].etype,
-		            'ftpval': '',
-		            'boundary': false,
-		            'scale': svals
-				};
+		// 		let obj = {
+		// 			'city': cities[i].val,
+		//             'etype': objs[0].etype,
+		//             'ftpval': '',
+		//             'boundary': false,
+		//             'slider': svals
+		// 		};
 
-				// 根据用户所选 metric 类型进行相应数据提取操作
-				if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
-					// 获取 entropy 和 density 资源
-					getOverviewDatasets(obj).then(function(res) {
-						changeLoadState(`cdadim${i}`, false);
-						// 获取 slider 情况下的配置值域以及用户其余选项
-						// svals.push(self.components.hrSlider.value);
-						let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, drawprop);
-						daviews[i].mapcontourCDrawing(res, drawProps);
-					}).catch(function(err) {
-						console.error("Failed!", err);
-					});
-				} else {
-					getBoundaryDatasets(obj.city).then(function(res) {
-						changeLoadState(`cdadim${i}`, false);
-						daviews[i].boundaryDrawing(res, obj);
-					}).catch(function(err) {
-						console.error("Failed!", err);
-					});
-				}
-			}
-		} else if (this.sels.tda) {
-			// time periods dynamic analysis
-			let tps = this.params.tpfilters,
-				daviews = new Array(6);
+		// 		// 根据用户所选 metric 类型进行相应数据提取操作
+		// 		if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
+		// 			// 获取 entropy 和 density 资源
+		// 			getOverviewDatasets(obj).then(function(res) {
+		// 				changeLoadState(`cdadim${i}`, false);
+		// 				// 获取 slider 情况下的配置值域以及用户其余选项
+		// 				// svals.push(self.components.hrSlider.value);
+		// 				let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, drawprop);
+		// 				daviews[i].mapcontourCDrawing(res, drawProps);
+		// 			}).catch(function(err) {
+		// 				console.error("Failed!", err);
+		// 			});
+		// 		} else {
+		// 			getBoundaryDatasets(obj.city).then(function(res) {
+		// 				changeLoadState(`cdadim${i}`, false);
+		// 				daviews[i].boundaryDrawing(res, obj);
+		// 			}).catch(function(err) {
+		// 				console.error("Failed!", err);
+		// 			});
+		// 		}
+		// 	}
+		// } else if (this.sels.tda) {
+		// 	// time periods dynamic analysis
+		// 	let tps = this.params.tpfilters,
+		// 		daviews = new Array(6);
 			
-			if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
-				for (let i = 0; i < 6; i++) {
-					changeLoadState(`tdadim${i}`, true);
-					daviews[i] = new mapview(`${tps[i].val}tdamap`, `tgridleg${i}`, `tctrleg${i}`, objs[0].city);
+		// 	if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
+		// 		for (let i = 0; i < 6; i++) {
+		// 			changeLoadState(`tdadim${i}`, true);
+		// 			daviews[i] = new mapview(`${tps[i].val}tdamap`, `tgridleg${i}`, `tctrleg${i}`, objs[0].city);
 
-					let obj = {
-						'city': objs[0].city,
-			            'etype': tps[i].val,
-			            'ftpval': i,
-			            'boundary': false
-					};
+		// 			let obj = {
+		// 				'city': objs[0].city,
+		// 	            'etype': tps[i].val,
+		// 	            'ftpval': i,
+		// 	            'boundary': false
+		// 			};
 
-					// 获取 entropy 和 density 资源
-					getOverviewDatasets(obj).then(function(res) {
-						changeLoadState(`tdadim${i}`, false);
-						// 获取 slider 情况下的配置值域以及用户其余选项
-						// svals.push(self.components.hrSlider.value);
-						let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, drawprop);
-						daviews[i].mapcontourCDrawing(res, drawProps);
-					}).catch(function(err) {
-						console.error("Failed!", err);
-					});
-				}
-			} else {
-				alert('Not able to deal with different cities in different time periods.');
-			}
-		}
-
-		
+		// 			// 获取 entropy 和 density 资源
+		// 			getOverviewDatasets(obj).then(function(res) {
+		// 				changeLoadState(`tdadim${i}`, false);
+		// 				// 获取 slider 情况下的配置值域以及用户其余选项
+		// 				// svals.push(self.components.hrSlider.value);
+		// 				let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, drawprop);
+		// 				daviews[i].mapcontourCDrawing(res, drawProps);
+		// 			}).catch(function(err) {
+		// 				console.error("Failed!", err);
+		// 			});
+		// 		}
+		// 	} else {
+		// 		alert('Not able to deal with different cities in different time periods.');
+		// 	}
+		// }
 	}
 });
