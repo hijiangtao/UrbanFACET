@@ -259,7 +259,8 @@ let comp = {
         },
         'splitmap': false,
         'lstnum': 1,
-        'lstindex': 0
+        'lstindex': 0,
+        'card': true
     },
     'components': {
         'eSlider': {
