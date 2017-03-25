@@ -42,7 +42,8 @@ let home = {
             { 'name': 'Null', 'val': -1 },
             { 'name': 'POI', 'val': 0 },
             { 'name': 'Districts', 'val': 1 },
-            { 'name': 'Density', 'val': 2 }
+            { 'name': 'Density', 'val': 2 },
+            { 'name': 'Metrics', 'val': 3 }
         ],
         /**
          * timeblock filters object
@@ -56,7 +57,7 @@ let home = {
             { 'name': 'Night', 'val': '5', 'aurl': '/assets/tp5-aicon.png', 'nurl': '/assets/tp5-icon.png' }
         ],
         'tpfilters2': [
-            { 'name': 'Workday', 'val': '7', 'aurl': '/assets/tp7-aicon.png', 'nurl': '/assets/tp7-icon.png' },
+            { 'name': 'Weekday', 'val': '7', 'aurl': '/assets/tp7-aicon.png', 'nurl': '/assets/tp7-icon.png' },
             { 'name': 'Weekend', 'val': '8', 'aurl': '/assets/tp8-aicon.png', 'nurl': '/assets/tp8-icon.png' }
         ]
     },
@@ -218,7 +219,7 @@ let comp = {
             { 'name': 'Afternoon', 'val': '3', 'aurl': '/assets/tp3-aicon.png', 'nurl': '/assets/tp3-icon.png' },
             { 'name': 'Evening', 'val': '4', 'aurl': '/assets/tp4-aicon.png', 'nurl': '/assets/tp4-icon.png' },
             { 'name': 'Night', 'val': '5', 'aurl': '/assets/tp5-aicon.png', 'nurl': '/assets/tp5-icon.png' },
-            { 'name': 'Workday', 'val': '7', 'aurl': '/assets/tp7-aicon.png', 'nurl': '/assets/tp7-icon.png' },
+            { 'name': 'Weekday', 'val': '7', 'aurl': '/assets/tp7-aicon.png', 'nurl': '/assets/tp7-icon.png' },
             { 'name': 'Weekend', 'val': '8', 'aurl': '/assets/tp8-aicon.png', 'nurl': '/assets/tp8-icon.png' }
         ]
     },
@@ -417,9 +418,29 @@ let stats = {
     }
 };
 
+let smecMax = {
+    'bj': {
+        'm': 1.4111167395551567,
+        'd': 836201452
+    },
+    'tj': {
+        'm': 1.1312344388511115,
+        'd': 489343792
+    },
+    'ts': {
+        'm': 1.017137606550299,
+        'd': 161914965
+    },
+    'zjk': {
+        'm': 0.617922305906725,
+        'd': 63151878
+    } 
+}
+
 export {
     regionRecords,
     home,
     comp,
-    stats
+    stats,
+    smecMax
 }

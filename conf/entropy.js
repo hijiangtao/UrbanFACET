@@ -16,6 +16,7 @@ const path = require('path');
 const data = require('./data');
 const $sql = require('../controllers/apis/mysqlMapping');
 const iMax = require('./eMax');
+const sMec = require('./data/metrics');
 
 function readIdlistMongo(dbname, queryrate, minVal, maxVal, prop) {
     let promise = new Promise(function(resolve, reject) {
@@ -302,6 +303,11 @@ function getBoundary(city) {
     return require(`./data/${city}`);
 }
 
+function getMecStat(city) {
+    console.log(city);
+    return sMec[city];
+}
+
 function getAoi(conn, prop) {
     let city = prop['city'],
         poiattr = 'total',
@@ -371,5 +377,6 @@ module.exports = {
     getOverview: getOverview,
     getExtraInfo: getExtraInfo,
     getBoundary: getBoundary,
-    getAoi: getAoi
+    getAoi: getAoi,
+    getMecStat: getMecStat
 }

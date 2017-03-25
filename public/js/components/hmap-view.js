@@ -13,8 +13,9 @@ import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.j
 import * as d3 from 'd3'
 import { legendColor } from 'd3-svg-legend'
 import { getSubGrids, getLinearNum, getRandomCenter, outOfRange, getPropName, extraInfoIndex } from './apis'
-import { stats, regionRecords } from './init'
+import { stats, regionRecords, smecMax } from './init'
 import * as coordtransform from 'coordtransform';
+import { RadarChart } from './RadarChart';
 
 // 临时变量 
 import $ from "jquery"
@@ -27,7 +28,7 @@ class mapview {
      * LMap class constructor
      * @return {[type]} [description]
      */
-    constructor(id, grdleg, ctrleg, city="bj") {
+    constructor(id, grdleg, ctrleg, city = "bj") {
         let self = this;
         this.ides = {
             'mapid': id,
@@ -59,7 +60,6 @@ class mapview {
 
         // this.map.on('click', function(e) {
         //     alert(e.latlng.lng.toFixed(8)+","+e.latlng.lat.toFixed(8))
-
         // })
     }
 
@@ -68,12 +68,12 @@ class mapview {
     }
 
     getBoundData() {
-    	return this.boundData;
+        return this.boundData;
     }
 
     setBoundData(data) {
-    	this.boundData = data;
-    	return this;
+        this.boundData = data;
+        return this;
     }
 
     getGridData() {
@@ -119,6 +119,7 @@ class mapview {
         return;
     }
 
+    // areaselect 选择/取消
     optAreaSelector(add) {
         if (add) {
             this.areaSelector = L.areaSelect({ width: 300, height: 200 });
@@ -132,6 +133,7 @@ class mapview {
 
     }
 
+    // areaselect 双向绑定函数
     bindAreaSelect(areaselect) {
         let self = this;
         this.aAreaSelector = areaselect;
@@ -167,6 +169,78 @@ class mapview {
         }
     }
 
+    smecDrawing(data, prop = {}) {
+        let self = this,
+            overlay = d3.select(self.map.getPanes().overlayPane),
+            width = 100,
+            height = 100,
+            ExtraLen = 50,
+            rdata = [
+                [{
+                    'area': 'Commutation',
+                    'value': data['ap'],
+                    'name': data['name'],
+                    'd': data['d'],
+                    'data': data
+                }, {
+                    'area': 'Fluidity',
+                    'value': data['ar'],
+                    'name': data['name'],
+                    'd': data['d'],
+                    'data': data
+                }, {
+                    'area': 'Diversity',
+                    'value': data['pr'],
+                    'name': data['name'],
+                    'd': data['d'],
+                    'data': data
+                }, {
+                    'area': 'Vibrancy',
+                    'value': data['pp'],
+                    'name': data['name'],
+                    'd': data['d'],
+                    'data': data
+                }]
+            ];
+
+        let s = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),
+            speColor = d3.hsl(0, s, 0.5);
+
+        console.log("speColor", speColor, "val", s);
+
+        let svg = overlay.append("svg").attr('id', prop['id'])
+            .attr("width", width)
+            .attr("height", height),
+            config = {
+                w: width,
+                h: height,
+                maxValue: smecMax[prop['city']]['m'],
+                levels: 5,
+                speColor: speColor,
+                TranslateX: ExtraLen*1.8 / 2,
+                TranslateY: ExtraLen / 2,
+                ExtraWidthX: ExtraLen*1.8,
+                ExtraWidthY: ExtraLen
+            }
+
+        RadarChart.draw(`#${prop['id']}`, rdata, config);
+
+        self.map.on("viewreset", reset);
+        reset();
+
+        function reset() {
+            let point = self.map.latLngToLayerPoint(new L.LatLng(data['c'][1], data['c'][0]));
+            svg.style("left", (point.x - width / 2 - ExtraLen / 2) + "px")
+                .style("top", (point.y - height / 2 - ExtraLen / 2) + "px");
+        }
+    }
+
+    /**
+     * AOI 绘制函数
+     * @param  {[type]} data [description]
+     * @param  {Object} prop [description]
+     * @return {[type]}      [description]
+     */
     aoisDrawing(data, prop = {}) {
         let self = this,
             overlay = d3.select(self.map.getPanes().overlayPane),
@@ -199,7 +273,7 @@ class mapview {
         }
 
         let svg = overlay.append("svg").attr('id', aoiid),
-            g = svg.append("g").attr("class", "leaflet-zoom-hide"),
+            g = svg.append("g").attr("class", "leaflet-zoom-hide leaflet-aois-layer"),
             transform = d3.geoTransform({ point: projectPoint }),
             path = d3.geoPath().projection(transform);
 
@@ -336,7 +410,7 @@ class mapview {
         }
     }
 
-    boundaryDrawing(data, prop, update=false) {
+    boundaryDrawing(data, prop, update = false) {
         let self = this,
             city = prop['city'],
             type = extraInfoIndex(prop['etype']),
@@ -347,16 +421,16 @@ class mapview {
             aoiid = `aoiCanvas${self.ides.mapid}`;
 
         if (!update) {
-        	this.setBoundData(data);
+            this.setBoundData(data);
         } else {
-        	data = this.getBoundData();
+            data = this.getBoundData();
         }
 
         d3.select(`#${svgid}`).remove();
         if (onlyBound) {
-        	d3.select(`#${aoiid}`).remove();
+            d3.select(`#${aoiid}`).remove();
         }
-        
+
         if (!onlyBound) {
             this.clearLayers();
         }
@@ -364,8 +438,8 @@ class mapview {
         let range = d3.extent(Object.values(statsdata).map((val) => {
                 return val[type];
             })),
-        	vmin = range[1] * prop['slider'][0] / 100.0,
-        	vmax = range[1] * prop['slider'][1] / 100.0,
+            vmin = range[1] * prop['slider'][0] / 100.0,
+            vmax = range[1] * prop['slider'][1] / 100.0,
             color = d3.scaleLinear().domain([vmin, vmax, range[1]])
             .range(["rgba(255,255,255,0.5)", "rgba(255, 0, 0, 0.9)", "rgba(255, 0, 0, 0.9)"]),
             svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', svgid),
@@ -381,11 +455,11 @@ class mapview {
             .enter().append("path")
             .attr('fill', function(d) {
                 let name = d.properties.name,
-                	val = statsdata[name][type];
+                    val = statsdata[name][type];
                 return onlyBound || val < vmin ? 'none' : color(val);
             })
-            .attr('stroke', 'white')
-            .attr("stroke-width", 1.2);
+            .attr('stroke', 'black')
+            .attr("stroke-width", 2);
 
         if (!onlyBound) {
             feature.on("mouseover", function(d) {
@@ -454,8 +528,20 @@ class mapview {
     }
 
     boundaryRemove() {
+        // 删除行政边界图层
         let svgid = `boundSVG${this.ides.mapid}`;
         d3.select(`#${svgid}`).remove();
+
+        // 删除 AOI 图层
+        if (this.aoiLayers) {
+            this.map.removeLayer(this.aoiLayers);
+            this.aoiLayers = null;
+        }
+        d3.selectAll('.leaflet-aois-layer').remove();
+
+        // 删除 radar chart 图层
+        d3.selectAll('.leaflet-radarchart').remove();
+        
     }
 
     /**
@@ -648,7 +734,7 @@ class mapview {
         let gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(0,0,255)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(255,0,0)'];
 
         if (prop['prop']['rev']) {
-            gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,0,0)', 'rgb(255,255,0)', 'rgb(0,255,0)','rgb(0,0,255)'];
+            gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,0,0)', 'rgb(255,255,0)', 'rgb(0,255,0)', 'rgb(0,0,255)'];
         }
 
         cfg.gradient[oneqVal.toString()] = gradients[2];

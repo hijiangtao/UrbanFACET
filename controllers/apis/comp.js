@@ -36,6 +36,15 @@ let apis = {
 			'data': data
 		});
 	},
+	'mecStatQuery': function(req, res, next) {
+		let params = req.query,
+			data = EP.getMecStat(params.city);
+
+		res.json({
+			'scode': 1,
+			'data': data
+		})
+	},
 	'aoiQuery': function(req, res, next) {
 		let params = req.query;
 

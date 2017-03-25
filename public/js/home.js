@@ -16,7 +16,7 @@ import chart from './components/chartview'
 import $ from "jquery"
 // window.jQuery = $
 import { regionRecords, home } from './components/init'
-import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getDrawProps, objClone } from './components/apis'
+import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getSMecDatasets, getDrawProps, objClone } from './components/apis'
 import { changeLoadState } from './components/events'
 import vueSlider from 'vue-slider-component'
 import dynamicView from './dynamic'
@@ -133,6 +133,21 @@ const userpanel = new Vue({
 			if (store.state.init) {
 				store.commit('updateInitState');
 			}
+		},
+		'getSMetrics': function(index) {
+			let i = Number.parseInt(index),
+				objs = this.sels.objs,
+				city = objs[i].city,
+				map = this.maps[i];
+
+			getSMecDatasets(city).then(function(res) {
+				for (let i = res.length - 1; i >= 0; i--) {
+					map.smecDrawing(res[i], `${city}-radar${i}`);
+				}
+			}).catch(function(err) {
+				console.error("Failed!", err);
+			});
+
 		},
 		/**
 		 * 更新指定 map 面板中选中的 City
@@ -479,6 +494,27 @@ const userpanel = new Vue({
 				if (val === 2) {
 					alert('TBD');
 				}
+
+				// Metrics
+				if (val === 3) {
+					// 只处理一个页面下的绘制逻辑
+					let city = objs[index].city,
+						map = maps[index];
+
+					getSMecDatasets(city).then(function(res) {
+						for (let i = res.length - 1; i >= 0; i--) {
+							let prop = {
+								'id': `${city}-radar${i}`,
+								'city': city
+							}
+							map.smecDrawing(res[i], prop);
+						}
+
+						changeLoadState(`dimmer${index}`, false);
+					}).catch(function(err) {
+						console.error("Failed!", err);
+					});
+				}
 			}
 		}
 	},
@@ -488,7 +524,7 @@ const userpanel = new Vue({
 			let firstcity = this.sels.objs[0].city;
 			maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0', firstcity);
 			charts[0] = new chart('#estatChart0');
-			self.getOverview(0);
+			// self.getOverview(0);
 		});
 	},
 	updated() {
