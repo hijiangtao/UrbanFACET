@@ -38,6 +38,7 @@ var RadarChart = {
         let htmlStr = d[0].map((v)=>{
             return `<span>${v['area']}: ${v['value'].toFixed(6)}</span>`
         }).join('<br>');
+        htmlStr = `${d[0][0]['name']}<br>${htmlStr}<br>Density: ${d[0][0]['data']['d']}`;
 
         var allAxis = (d[0].map(function(i, j) {
             return i.area }));
