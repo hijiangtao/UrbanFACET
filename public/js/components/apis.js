@@ -8,6 +8,36 @@
 'use strict'
 import $ from "jquery"
 
+let rvalinComp = function(scales, esels, dsels, vuesels, index) {
+    let sels = vuesels.objs[index],
+        emin = Math.exp( Math.log(scales.e+1) * parseFloat(esels[0]) / 100.0 )-1,
+        emax = Math.exp( Math.log(scales.e+1) * parseFloat(esels[1]) / 100.0 )-1,
+        escales = scales.e;
+    return {
+        'e': { // entropy
+            'min': emin,
+            'max': emax,
+            'scales': escales
+        },
+        'm': { // entropy
+            'min': emin,
+            'max': emax,
+            'scales': escales
+        },
+        'd': { // density
+            'min': Math.exp( Math.log(scales.d) * parseFloat(dsels[0]) / 100.0 ),
+            'max': Math.exp( Math.log(scales.d) * parseFloat(dsels[1]) / 100.0 ),
+            'scales': scales.d
+        },
+        'prop': {
+            'type': sels.dtype,
+            'maprev': sels.maprev,
+            'multiColorSchema': vuesels.ctrsets.multiColorSchema,
+            'useLocalExtrema': vuesels.ctrsets.useLocalExtrema,
+        }
+    }
+};
+
 /**
  * 根据传回的数据确定当前 filter 以及 map 中的 value 范围
  * @param  {[type]} scales  [description]
@@ -210,5 +240,6 @@ export {
 	outOfRange,
 	objClone,
 	getPropName,
-	extraInfoIndex
+	extraInfoIndex,
+	rvalinComp
 }

@@ -57,8 +57,9 @@ class mapview {
         this.gridData = {};
         this.gridDataType = '';
 
-        this.map.on('resize', function(argument) {
-            console.log('resize');
+        this.map.on('click', function(e) {
+            alert(e.latlng.lng.toFixed(8)+","+e.latlng.lat.toFixed(8))
+
         })
     }
 

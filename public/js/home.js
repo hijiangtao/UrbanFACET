@@ -414,7 +414,8 @@ const userpanel = new Vue({
 	watch: {
 		'sels.otype': {
 			handler: function(val) {
-				let scale = null,
+				let self = this,
+					scale = null,
 					index = this.sels.lstindex,
 					objs = this.sels.objs;
 
@@ -453,9 +454,8 @@ const userpanel = new Vue({
 					getBoundaryDatasets(objs[0].city).then(function(res) {
 						for (let i = objs.length - 1; i >= 0; i--) {
 							let city = objs[i].city,
-								etype = objs[i].etype;
-
-							svals = self.sels.objs[i].slider.value;
+								etype = objs[i].etype,
+								svals = objs[i].slider.value;
 
 							changeLoadState(`dimmer${i}`, false);
 
@@ -488,7 +488,7 @@ const userpanel = new Vue({
 			let firstcity = this.sels.objs[0].city;
 			maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0', firstcity);
 			charts[0] = new chart('#estatChart0');
-			self.getOverview(0);
+			// self.getOverview(0);
 		});
 	},
 	updated() {

@@ -16,7 +16,7 @@ import chart from './components/chartview'
 import $ from "jquery"
 // window.jQuery = $
 import { regionRecords, comp } from './components/init'
-import { getOverviewDatasets, getDensity, getValRange, objClone } from './components/apis'
+import { getOverviewDatasets, getDensity, rvalinComp, objClone } from './components/apis'
 import { appendMap, removeMaps } from './components/events'
 import vueSlider from 'vue-slider-component'
 
@@ -87,7 +87,7 @@ const userpanel = new Vue({
 
 						obj.scales = res['prop']['scales'];
 
-						let valScales = getValRange(obj.scales, esvals, dsvals, self.sels, i);
+						let valScales = rvalinComp(obj.scales, esvals, dsvals, self.sels, i);
 						console.log('valScales', valScales);
 
 						maps[i].panTo(regionRecords[city]['center']);
@@ -123,7 +123,7 @@ const userpanel = new Vue({
 
 					sels.scales = res['prop']['scales'];
 
-					let valScales = getValRange(sels.scales, esvals, dsvals, self.sels, index);
+					let valScales = rvalinComp(sels.scales, esvals, dsvals, self.sels, index);
 					console.log('valScales', valScales);
 
 					maps[index].panTo(regionRecords[city]['center']);
@@ -214,7 +214,7 @@ const userpanel = new Vue({
 				sels = self.sels.objs[index],
 				esvals = self.components.eSlider.value,
 				dsvals = self.components.dSlider.value,
-				valScales = getValRange(sels.scales, esvals, dsvals, self.sels, index);
+				valScales = rvalinComp(sels.scales, esvals, dsvals, self.sels, index);
 
 			switch (self.sels.ctrmap) {
 				case true:
@@ -253,7 +253,7 @@ const userpanel = new Vue({
 				sels = self.sels.objs[index],
 				esvals = self.components.eSlider.value,
 				dsvals = self.components.dSlider.value,
-				valScales = getValRange(sels.scales, esvals, dsvals, self.sels, index);
+				valScales = rvalinComp(sels.scales, esvals, dsvals, self.sels, index);
 
 			console.log('entropy range', valScales['e']);
 			switch (self.sels.ctrmap) {
@@ -410,7 +410,7 @@ const userpanel = new Vue({
 					sels = self.sels.objs[index],
 					esvals = self.components.eSlider.value,
 					dsvals = self.components.dSlider.value,
-					valScales = getValRange(sels.scales, esvals, dsvals, self.sels, index);
+					valScales = rvalinComp(sels.scales, esvals, dsvals, self.sels, index);
 
 				console.log('entropy range', valScales['entropy']);
 				switch (self.sels.ctrmap) {
