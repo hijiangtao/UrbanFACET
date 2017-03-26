@@ -22,6 +22,9 @@ import $ from "jquery"
 window.jQuery = $
 
 const SPLIT = 0.003
+const mapattr = 'Urban FACET &copy; 2017'
+const mapuid = 'hijiangtao'
+const accessToken = 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'
 
 class mapview {
     /**
@@ -35,13 +38,38 @@ class mapview {
             'grdleg': grdleg,
             'ctrleg': ctrleg
         };
-        this.baseLayer = L.tileLayer(
-            'https://api.mapbox.com/styles/v1/{uid}/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
-                attribution: 'Urban FACET &copy; 2017',
+        this.baseLayers = {
+            'FACET': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
+                attribution: mapattr,
                 maxZoom: 18,
-                uid: 'hijiangtao',
-                accessToken: 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'
-            });
+                uid: mapuid
+            }),
+            'Mapbox': L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                id: 'mapbox.streets',   
+                attribution: mapattr,
+                uid: mapuid
+            }),
+            'Streets': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cj0q1lwz7005y2rnytkweyyaj/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
+                attribution: mapattr,
+                uid: mapuid
+            }),
+            'Bright': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cj0q10t7r005v2rnydps4lal8/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
+                attribution: mapattr,
+                uid: mapuid
+            }),
+            'Dark': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cj0q17od300iq2rt8yqnc4om8/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
+                attribution: mapattr,
+                uid: mapuid
+            }),
+            'Outdoors': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cj0q1lew5005x2rny7fyswvfr/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
+                attribution: mapattr,
+                uid: mapuid
+            }),
+            'SatelliteStreets': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cj0q1yc4h003t2rta3qp2z72a/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
+                attribution: mapattr,
+                uid: mapuid
+            }),
+        }
         this.heatmapLayer = null;
         this.gridmapLayer = null;
         this.areaSelector = null;
@@ -51,9 +79,13 @@ class mapview {
         this.map = new L.map(id, {
             center: L.latLng(regionRecords[city]['center']),
             zoom: 11,
-            layers: self.baseLayer
+            layers: self.baseLayers['FACET']
         });
         this.map.zoomControl.setPosition('topright');
+        this.control = L.control.layers(self.baseLayers, null, {
+            'position': 'bottomleft'
+        });
+        this.map.addControl(this.control);
         this.boundData = {};
         this.gridData = {};
         this.gridDataType = '';

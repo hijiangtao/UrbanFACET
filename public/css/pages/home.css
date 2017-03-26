@@ -255,7 +255,7 @@ h4.ui.header {
     z-index: 11;
 }
 .ui.card>.image {
-    padding: 1.7rem;
+    padding: 1.2rem;
 }
 
 .dcard.ui.card {
@@ -270,5 +270,13 @@ h4.ui.header {
 }
 .dcard.ui.card>.image {
     padding: .8rem;
+}
+.ui.table thead th {
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+}
+.ui.table td {
+    padding-top: 0.38em;
+    padding-bottom: 0.38em;
 }
 /*REWRITE SEMANTIC-UI*/
