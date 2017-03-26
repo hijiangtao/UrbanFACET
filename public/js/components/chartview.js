@@ -104,7 +104,7 @@ class chart {
             .attr("x2", width);
 
         focus.append("circle")
-            .attr("r", 7.5);
+            .attr("r", 5);
 
         focus.append("text")
             .attr("x", 15)
