@@ -12,7 +12,7 @@ import { chartTestData } from './initdata'
 class chart {
     constructor(id) {
         this.id = id,
-            this.data = null
+        this.data = null
     }
 
     /**
@@ -24,107 +24,118 @@ class chart {
     lineChartDraw(id, data) {
         d3.select(`#${id}`).select('svg').remove();
 
-        var svg = d3.select("svg"),
-            margin = { top: 20, right: 20, bottom: 30, left: 40 },
+        let svg = d3.select(`#${id}`).append("svg")
+            .attr('width', 395)
+            .attr('height', 180),
+            margin = { top: 20, right: 5, bottom: 30, left: 25 },
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
 
-        var parseTime = d3.timeParse("%Y")
-        bisectDate = d3.bisector(function(d) {
-            return d.year; }).left;
+        let bisectDate = d3.bisector(function(d) {
+                return d.k; }).left,
+        	x = d3.scaleLinear().range([0, width]),
+        	y = d3.scaleLinear().range([height, 0]);
 
-        var x = d3.scaleTime().range([0, width]);
-        var y = d3.scaleLinear().range([height, 0]);
-
-        var line = d3.line()
+        let line = d3.line()
+        	.curve(d3.curveNatural)// .interpolate("monotone")
             .x(function(d) {
-                return x(d.year); })
+                return x(d.k);
+            })
             .y(function(d) {
-                return y(d.value); });
-
-        var g = svg.append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        d3.json("data.json", function(error, data) {
-            if (error) throw error;
-
-            data.forEach(function(d) {
-                d.year = parseTime(d.year);
-                d.value = +d.value;
+                return y(d.v);
             });
 
-            x.domain(d3.extent(data, function(d) {
-                return d.year; }));
-            y.domain([d3.min(data, function(d) {
-                return d.value; }) / 1.005, d3.max(data, function(d) {
-                return d.value; }) * 1.005]);
+        let g = svg.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            g.append("g")
-                .attr("class", "axis axis--x")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
+        x.domain(d3.extent(data, function(d) {
+            return d.k;
+        }));
+        y.domain([d3.min(data, function(d) {
+            return d.v;
+        }) / 1.005, d3.max(data, function(d) {
+            return d.v;
+        }) * 1.005]);
 
-            g.append("g")
-                .attr("class", "axis axis--y")
-                .call(d3.axisLeft(y).ticks(6).tickFormat(function(d) {
-                    return parseInt(d / 1000) + "k"; }))
-                .append("text")
-                .attr("class", "axis-title")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", ".71em")
-                .style("text-anchor", "end")
-                .attr("fill", "#5D6971")
-                .text("Population)");
+        g.append("g")
+            .attr("class", "axis axis--x")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x).tickFormat(function(d) {
+            	return `${d}%`;
+            }));
 
-            g.append("path")
-                .datum(data)
-                .attr("class", "line")
-                .attr("d", line);
+        g.append("g")
+            .attr("class", "axis axis--y")
+            .call(d3.axisLeft(y).ticks(6).tickFormat(function(d) {
+                return parseInt(d / 1000) + "K";
+            }))
+            .append("text")
+            .attr("class", "axis-title")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .attr("fill", "#5D6971")
+            .text("Number");
 
-            var focus = g.append("g")
-                .attr("class", "focus")
-                .style("display", "none");
+        g.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .attr("d", line);
 
-            focus.append("line")
-                .attr("class", "x-hover-line hover-line")
-                .attr("y1", 0)
-                .attr("y2", height);
+        let text = g.append('text')
+        	.attr("transform", "translate(" + (width*0.8) + ",0)")
+        	// .style('position', 'absolute')
+        	// .style('right', 2)
+        	// .style('top', 2);
 
-            focus.append("line")
-                .attr("class", "y-hover-line hover-line")
-                .attr("x1", width)
-                .attr("x2", width);
+        let focus = g.append("g")
+            .attr("class", "focus")
+            .style("display", "none");
 
-            focus.append("circle")
-                .attr("r", 7.5);
+        focus.append("line")
+            .attr("class", "x-hover-line hover-line")
+            .attr("y1", 0)
+            .attr("y2", height);
 
-            focus.append("text")
-                .attr("x", 15)
-                .attr("dy", ".31em");
+        focus.append("line")
+            .attr("class", "y-hover-line hover-line")
+            .attr("x1", 0)
+            .attr("x2", width);
 
-            svg.append("rect")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                .attr("class", "overlay")
-                .attr("width", width)
-                .attr("height", height)
-                .on("mouseover", function() { focus.style("display", null); })
-                .on("mouseout", function() { focus.style("display", "none"); })
-                .on("mousemove", mousemove);
+        focus.append("circle")
+            .attr("r", 7.5);
 
-            function mousemove() {
-                var x0 = x.invert(d3.mouse(this)[0]),
-                    i = bisectDate(data, x0, 1),
-                    d0 = data[i - 1],
-                    d1 = data[i],
-                    d = x0 - d0.year > d1.year - x0 ? d1 : d0;
-                focus.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")");
-                focus.select("text").text(function() {
-                    return d.value; });
-                focus.select(".x-hover-line").attr("y2", height - y(d.value));
-                focus.select(".y-hover-line").attr("x2", width + width);
-            }
-        });
+        focus.append("text")
+            .attr("x", 15)
+            .attr("dy", ".31em");
+
+        svg.append("rect")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .attr("class", "overlay")
+            .attr("width", width)
+            .attr("height", height)
+            .on("mouseover", function() { focus.style("display", null); })
+            .on("mouseout", function() { 
+            	focus.style("display", "none");
+            	text.text(''); 
+            })
+            .on("mousemove", mousemove);
+
+        function mousemove() {
+            let x0 = x.invert(d3.mouse(this)[0]),
+                i = bisectDate(data, x0, 1),
+                d0 = data[i - 1],
+                d1 = data[i],
+                d = x0 - d0.k > d1.k - x0 ? d1 : d0;
+            focus.attr("transform", "translate(" + x(d.k) + "," + y(d.v) + ")");
+            // focus.select("text").text(function() {
+            //     return `k: ${d.k}, v: ${d.v}`;
+            // });
+            text.text(`k: ${d.k}, v: ${d.v}`);
+            focus.select(".x-hover-line").attr("y2", height - y(d.v));
+            focus.select(".y-hover-line").attr("x2", -x(d.k));
+        }
     }
 
     /**
@@ -172,10 +183,12 @@ class chart {
         let area2 = d3.area()
             .curve(d3.curveMonotoneX)
             .x(function(d) {
-                return x2(d.k); })
+                return x2(d.k);
+            })
             .y0(height2)
             .y1(function(d) {
-                return y2(d.v); });
+                return y2(d.v);
+            });
 
         svg.append("defs").append("clipPath")
             .attr("id", "clip")
@@ -194,13 +207,17 @@ class chart {
         data = data.map(type);
 
         x.domain(d3.extent(data, function(d) {
-            return d.k; }));
+            return d.k;
+        }));
         y.domain([0, d3.max(data, function(d) {
-            return d.v; })]);
+            return d.v;
+        })]);
         x2.domain(d3.extent(data, function(d) {
-            return d.k; }));
+            return d.k;
+        }));
         y2.domain([0, d3.max(data, function(d) {
-            return d.v; })]);
+            return d.v;
+        })]);
 
         context.append("g")
             .attr("class", "axis axis--y")

@@ -32,6 +32,7 @@ let mapping = {
 			return `SELECT ROUND(LOG(??+1)*100/LOG(${sMax+1})) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY ROUND(LOG(??+1)*100/LOG(${sMax+1}));`;
 		} else if (mtype === 'ave') {
 			return `SELECT ROUND(LOG(??/??+1)*100/LOG(${sMax+1})) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? > 0 GROUP BY ROUND(LOG(??/??+1)*100/LOG(${sMax+1}));`;
+			// return `SELECT ROUND(100*??/??/${sMax}) AS 'k', COUNT(1) AS 'v' FROM ?? WHERE ?? >= 0 AND ?? >= 0 GROUP BY ROUND(100*??/??/${sMax});`
 		}
 	},
 };

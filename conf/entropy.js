@@ -275,6 +275,13 @@ function getOverview(conn, prop) {
                     })
                 }
 
+                // Remove the last element
+                let lste = result[2].pop(),
+                    lstd = result[3].pop();
+
+                result[2][ result[2].length-1 ]['v'] += lste['v'];
+                result[3][ result[3].length-1 ]['v'] += lstd['v'];
+
                 resolve({
                     'scode': 1,
                     'data': {

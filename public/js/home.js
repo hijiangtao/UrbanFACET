@@ -103,7 +103,13 @@ const userpanel = new Vue({
 						let drawProps = getDrawProps(obj.scales, svals, self.sels.ctrsets, drawprop);
 						console.log('drawProps', drawProps);
 
+						// 绘图函数
 						maps[i].mapcontourCDrawing(res, drawProps);
+						if (etype === 'de') {
+							charts[i].lineChartDraw(`estatChart${i}`, res['chart']['d']);
+						} else {
+							charts[i].lineChartDraw(`estatChart${i}`, res['chart']['e']);
+						}
 					}).catch(function(err) {
 						console.error("Failed!", err);
 					});
