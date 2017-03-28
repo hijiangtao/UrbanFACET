@@ -1,10 +1,11 @@
 <div :id="'card' + index" @click="bindTabClick(index)" class="ui card">
 	<div class="image">
+		<h3 class="mapcardtitle ui header">{{ cals.cities[model.city] }}</h3>
 		<img v-show="sels.lstindex === index" :src="cals.cimgs[model.city].aurl">
 		<img v-show="sels.lstindex !== index" :src="cals.cimgs[model.city].nurl">
 	</div>
 	<div class="content">
-		<a class="header">{{'City: ' + cals.cities[model.city]}}</a>
+		
 		<div class="description">
 			<div class="ui grid">
 				<div class="sixteen wide column">

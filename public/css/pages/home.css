@@ -88,6 +88,13 @@ body {
     width: 4rem;
 }
 
+.mapcardtitle {
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    left: 50%;
+    transform: translateX(-50%);
+}
 /*MAP STYLESHEETS*/
 
 #titlemenu {
@@ -300,7 +307,7 @@ h4.ui.header {
     z-index: 11;
 }
 .ui.card>.image {
-    padding: 1.2rem;
+    padding: 5%;
 }
 
 .dcard.ui.card {
