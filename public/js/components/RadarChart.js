@@ -54,46 +54,46 @@ var RadarChart = {
             .append("g")
             .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
 
-        //Circular segments
-        for (var j = 0; j < cfg.levels; j++) {
-            var levelFactor = cfg.factor * radius * ((j + 1) / cfg.levels);
-            g.selectAll(".levels")
-                .data(allAxis)
-                .enter()
-                .append("svg:line")
-                .attr("x1", function(d, i) {
-                    return levelFactor * (1 - cfg.factor * Math.sin(i * cfg.radians / total)); })
-                .attr("y1", function(d, i) {
-                    return levelFactor * (1 - cfg.factor * Math.cos(i * cfg.radians / total)); })
-                .attr("x2", function(d, i) {
-                    return levelFactor * (1 - cfg.factor * Math.sin((i + 1) * cfg.radians / total)); })
-                .attr("y2", function(d, i) {
-                    return levelFactor * (1 - cfg.factor * Math.cos((i + 1) * cfg.radians / total)); })
-                .attr("class", "line")
-                .style("stroke", "grey")
-                .style("stroke-opacity", "0.75")
-                .style("stroke-width", "0.3px")
-                .attr("transform", "translate(" + (cfg.w / 2 - levelFactor) + ", " + (cfg.h / 2 - levelFactor) + ")");
-        }
+        // //Circular segments
+        // for (var j = 0; j < cfg.levels; j++) {
+        //     var levelFactor = cfg.factor * radius * ((j + 1) / cfg.levels);
+        //     g.selectAll(".levels")
+        //         .data(allAxis)
+        //         .enter()
+        //         .append("svg:line")
+        //         .attr("x1", function(d, i) {
+        //             return levelFactor * (1 - cfg.factor * Math.sin(i * cfg.radians / total)); })
+        //         .attr("y1", function(d, i) {
+        //             return levelFactor * (1 - cfg.factor * Math.cos(i * cfg.radians / total)); })
+        //         .attr("x2", function(d, i) {
+        //             return levelFactor * (1 - cfg.factor * Math.sin((i + 1) * cfg.radians / total)); })
+        //         .attr("y2", function(d, i) {
+        //             return levelFactor * (1 - cfg.factor * Math.cos((i + 1) * cfg.radians / total)); })
+        //         .attr("class", "line")
+        //         .style("stroke", "grey")
+        //         .style("stroke-opacity", "0.75")
+        //         .style("stroke-width", "0.3px")
+        //         .attr("transform", "translate(" + (cfg.w / 2 - levelFactor) + ", " + (cfg.h / 2 - levelFactor) + ")");
+        // }
 
-        //Text indicating at what % each level is
-        for (var j = 0; j < cfg.levels; j++) {
-            var levelFactor = cfg.factor * radius * ((j + 1) / cfg.levels);
-            g.selectAll(".levels")
-                .data([1]) //dummy data
-                .enter()
-                .append("svg:text")
-                .attr("x", function(d) {
-                    return levelFactor * (1 - cfg.factor * Math.sin(0)); })
-                .attr("y", function(d) {
-                    return levelFactor * (1 - cfg.factor * Math.cos(0)); })
-                .attr("class", "legend")
-                .style("font-family", "sans-serif")
-                .style("font-size", "10px")
-                .attr("transform", "translate(" + (cfg.w / 2 - levelFactor + cfg.ToRight) + ", " + (cfg.h / 2 - levelFactor) + ")")
-                .attr("fill", "#737373")
-                .text((j + 1) * 100 / cfg.levels);
-        }
+        // //Text indicating at what % each level is
+        // for (var j = 0; j < cfg.levels; j++) {
+        //     var levelFactor = cfg.factor * radius * ((j + 1) / cfg.levels);
+        //     g.selectAll(".levels")
+        //         .data([1]) //dummy data
+        //         .enter()
+        //         .append("svg:text")
+        //         .attr("x", function(d) {
+        //             return levelFactor * (1 - cfg.factor * Math.sin(0)); })
+        //         .attr("y", function(d) {
+        //             return levelFactor * (1 - cfg.factor * Math.cos(0)); })
+        //         .attr("class", "legend")
+        //         .style("font-family", "sans-serif")
+        //         .style("font-size", "10px")
+        //         .attr("transform", "translate(" + (cfg.w / 2 - levelFactor + cfg.ToRight) + ", " + (cfg.h / 2 - levelFactor) + ")")
+        //         .attr("fill", "#737373")
+        //         .text((j + 1) * 100 / cfg.levels);
+        // }
 
         series = 0;
 
@@ -126,10 +126,19 @@ var RadarChart = {
             .attr("transform", function(d, i) {
                 return "translate(0, -10)" })
             .attr("x", function(d, i) {
-                return cfg.w / 2 * (1 - cfg.factorLegend * Math.sin(i * cfg.radians / total)) - 30 * Math.sin(i * cfg.radians / total); })
+                return cfg.w / 2 * (1 - cfg.factorLegend * Math.sin(i * cfg.radians / total)) - 15 * Math.sin(i * cfg.radians / total); })
             .attr("y", function(d, i) {
-                return cfg.h / 2 * (1 - Math.cos(i * cfg.radians / total)) - 10 * Math.cos(i * cfg.radians / total) - 5; });
+                return cfg.h / 2 * (1 - Math.cos(i * cfg.radians / total)) - 10 * Math.cos(i * cfg.radians / total) - 2; });
 
+        let densityLabel = axis.append('text')
+            .attr("class", "legend")
+            .style("font-family", "sans-serif")
+            .style("font-size", "11px")
+            .attr("text-anchor", "middle")
+            .attr("dy", "1.5em")
+            .attr('x', cfg.w/2)
+            .attr('y', cfg.h/2-12)
+            .text('T');
 
         d.forEach(function(y, x) {
             dataValues = [];
@@ -168,8 +177,8 @@ var RadarChart = {
                         .transition(200)
                         .style("fill-opacity", .9);
                     
-                    tooltip.style("left", d3.event.pageX - 40 + "px")
-                        .style("top", d3.event.pageY - 80 + "px")
+                    tooltip.style("left", d3.event.pageX + 30 + "px")
+                        .style("top", d3.event.pageY - 160 + "px")
                         .style("display", "inline-block")
                         .html(htmlStr);
                     // console.log(d);
@@ -222,7 +231,7 @@ var RadarChart = {
                 .attr("data-id", function(j) {
                     return j.area })
                 .style("fill", "#fff")
-                .style("stroke-width", "2px")
+                .style("stroke-width", "1.2px")
                 .style('stroke', cfg.speColor)
                 // .style("stroke", cfg.color(series))
                 .style("fill-opacity", .9)

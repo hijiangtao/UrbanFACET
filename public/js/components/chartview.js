@@ -21,12 +21,17 @@ class chart {
      * @param  {[type]} data [description]
      * @return {[type]}      [description]
      */
-    lineChartDraw(id, data) {
-        d3.select(`#${id}`).select('svg').remove();
+    lineChartDraw(id, data, prop) {
+    	let container = d3.select(`#${id}`),
+    		cWidth = container.node().getBoundingClientRect().width,
+    		cHeight = container.node().getBoundingClientRect().height,
+    		xname = prop['xname'];
+        container.select('svg').remove();
 
-        let svg = d3.select(`#${id}`).append("svg")
-            .attr('width', 395)
-            .attr('height', 180),
+        console.log('Container', d3.select(`#${id}`), 'cWidth', cWidth, 'cHeight', cHeight);
+        let svg = container.append("svg")
+            .attr('width', cWidth)
+            .attr('height', cHeight),
             margin = { top: 20, right: 5, bottom: 30, left: 25 },
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
@@ -62,7 +67,15 @@ class chart {
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x).tickFormat(function(d) {
             	return `${d}%`;
-            }));
+            }))
+            .append("text")
+            .attr("class", "axis-title")
+            .attr("y", -16)
+            .attr("x", width)
+            .attr("dy", ".95em")
+            .style("text-anchor", "end")
+            .attr("fill", "#5D6971")
+            .text(xname);
 
         g.append("g")
             .attr("class", "axis axis--y")
@@ -73,10 +86,10 @@ class chart {
             .attr("class", "axis-title")
             .attr("transform", "rotate(-90)")
             .attr("y", 6)
-            .attr("dy", ".71em")
+            .attr("dy", ".95em")
             .style("text-anchor", "end")
             .attr("fill", "#5D6971")
-            .text("Number");
+            .text("Count");
 
         g.append("path")
             .datum(data)

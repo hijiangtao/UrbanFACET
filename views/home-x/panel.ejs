@@ -11,15 +11,19 @@
                     </div>
                 </div>
                 <div class="field">
-                    <div class="dynamicbtn cityimg ui tiny image cursor" title="Comparison Analysis">
-                        <i class="toggle right icon" @click="openDynamic('c')"></i>
+                    <div class="cityimg ui tiny image cursor">
+                        <img title="Comparison Analysis" src="/assets/compare-icon.png" @click="openDynamic('c')">
                     </div>
                 </div>
             </div>
             <div class="inline fields">
                 <label><img class="ui mini image" src="/assets/time-icon.png">Time</label>
-                <div v-for='item in params.tpfilters2' class="field">
-                    <button :class="{'s-active':item.val === sels.objs[0].ftpval}" class="ui mini grey button" :title="item.name" @click="updateTPFilter(item.val)">{{ item.name }}</button>
+                <div v-for='item in params.tpfilters2' class="ftp2filed field">
+                    <div class="ftp2img ui tiny image cursor">
+                        <img v-show="item.val === sels.objs[0].ftpval" :src="item.aurl" @click="updateTPFilter(item.val)" :title="item.name">
+                        <img v-show="item.val !== sels.objs[0].ftpval" :src="item.nurl" @click="updateTPFilter(item.val)" :title="item.name">
+                    </div>
+
                 </div>
             </div>
             <div class="inline fields">
@@ -31,8 +35,8 @@
                     </div>
                 </div>
                 <div class="field">
-                    <div class="dynamicbtn ftpimg ui tiny image cursor" title="Dynamic Analysis">
-                        <i class="toggle right icon" @click="openDynamic('t')"></i>
+                    <div class="ftpimg ui tiny image cursor">
+                        <img title="Dynamic Analysis" src="/assets/compare-icon.png" @click="openDynamic('t')">
                     </div>
                 </div>
             </div>
@@ -51,27 +55,46 @@
         <div class="sixteen wide column">
             <div class="ui form">
                 <div class="inline fields">
-                    <label><img class="ui mini image" src="/assets/type-icon.png">Entropy Type</label>
+                    <label><img class="ui mini image" src="/assets/type-icon.png">Metric Layer</label>
                     <div class="field">
-                        <select class="roundselect cursor" v-model='model.etype'>
-                            <option v-for='item in params.etypes' :value="item.val">{{ item.name }}</option>
-                        </select>
+                        <div class="ui compact menu">
+                          <div class="ui simple dropdown item">
+                            <span>{{ cals.enps[ model.etype ] }}</span>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                              <div class="item" v-for='item in params.etypes' @click="enpsDropdown(item.val)">{{ item.name }}</div>
+                            </div>
+                          </div>
+                        </div>
                     </div>
-                    <div class="field">
-                        <button class="ui tiny primary button" v-on:click="getOverview(index)">Update Maps</button>
-                    </div>
-                </div>
-                <div class="inline fields">
-                    <label><img class="ui mini image" src="/assets/type-icon.png">Overlay Analysis</label>
-                    <!-- getOverlay -->
-                    <div class="field">
-                        <select class="roundselect cursor" v-model='sels.otype'>
-                            <option v-for='item in params.otypes' :value="item.val">{{ item.name }}</option>
-                        </select>
-                    </div>
+
                     <div class="field">
                         <button class="ui tiny button" :class="areaselState" v-on:click="optAreaSelect(index)">Area Select</button>
                     </div>
+
+                    <!-- <div class="field">
+                        <button class="ui tiny primary button" v-on:click="getOverview(index)">Update Maps</button>
+                    </div> -->
+                </div>
+                <div class="inline fields">
+                    <label><img class="ui mini image" src="/assets/type-icon.png">Reference Layer</label>
+                    <!-- getOverlay -->
+                    <div class="field">
+                        <div class="ui compact menu">
+                          <div class="ui simple dropdown item">
+                            <span>{{ cals.ops[ sels.otype ] }}</span>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                              <div class="item" v-for='item in params.otypes' @click="refsDropdown(item.val)">{{ item.name }}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- <select class="roundselect cursor" v-model='sels.otype'>
+                            <option v-for='item in params.otypes' :value="item.val">{{ item.name }}</option>
+                        </select> -->
+                    </div>
+                    
                 </div>
                 <div class="inline fields">
                     <label>ContourRadius</label>
@@ -141,8 +164,8 @@
                 </tbody>
             </table>
         </div>
-        <div class="statcharts sixteen wide column">
-            <div :id="'estatChart'+index"></div>
+        <div class="sixteen wide column">
+            <div class="statcharts" :id="'estatChart'+index"></div>
         </div>
         <!-- <div class="statcharts sixteen wide column">
             <div :id="'estatChart'+index"></div>

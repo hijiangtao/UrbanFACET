@@ -13,6 +13,12 @@
 
 import L from 'leaflet'
 
+L.CRS.CustomZoom = L.extend({}, L.CRS.EPSG3857, {
+    scale: function (zoom) {
+        return Math.round(256 * Math.pow(2, zoom));
+    }
+});
+
 L.CanvasOverlay = L.Class.extend({
 
     initialize: function(userDrawFunc, options) {

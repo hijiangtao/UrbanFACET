@@ -44,7 +44,7 @@ class mapview {
                 maxZoom: 18,
                 uid: mapuid
             }),
-            'Mapbox': L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+            'Outdoors': L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
                 id: 'mapbox.streets',   
                 attribution: mapattr,
                 uid: mapuid
@@ -61,11 +61,11 @@ class mapview {
                 attribution: mapattr,
                 uid: mapuid
             }),
-            'Outdoors': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cj0q1lew5005x2rny7fyswvfr/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
-                attribution: mapattr,
-                uid: mapuid
-            }),
-            'SatelliteStreets': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cj0q1yc4h003t2rta3qp2z72a/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
+            // 'Outdoors': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cj0q1lew5005x2rny7fyswvfr/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
+            //     attribution: mapattr,
+            //     uid: mapuid
+            // }),
+            'Satellite': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cj0q1yc4h003t2rta3qp2z72a/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
                 attribution: mapattr,
                 uid: mapuid
             }),
@@ -79,7 +79,8 @@ class mapview {
         this.map = new L.map(id, {
             center: L.latLng(regionRecords[city]['center']),
             zoom: 11,
-            layers: self.baseLayers['FACET']
+            layers: self.baseLayers['FACET'],
+            crs: L.CRS.CustomZoom
         });
         this.map.zoomControl.setPosition('topright');
         this.control = L.control.layers(self.baseLayers, null, {
@@ -90,9 +91,19 @@ class mapview {
         this.gridData = {};
         this.gridDataType = '';
 
-        // this.map.on('click', function(e) {
-        //     alert(e.latlng.lng.toFixed(8)+","+e.latlng.lat.toFixed(8))
-        // })
+        this.map.on('zoomend', function(e) {
+            console.log('Current Zoom Level', self.map.getZoom());
+            if (true) {
+                // 如果存在contour map 则根据zoom level重绘
+                // zoom 9: 2.5
+                // 10: 2.25
+                // 11: 2
+                // 12: 1.75
+                // 13: 1.5
+                // 14: 1.25
+                // 15: 1
+            }
+        })
     }
 
     invalidateSize() {
@@ -209,25 +220,25 @@ class mapview {
             ExtraLen = 50,
             rdata = [
                 [{
-                    'area': 'Commutation',
-                    'value': data['ap'],
-                    'name': data['name'],
-                    'd': data['d'],
-                    'data': data
-                }, {
-                    'area': 'Fluidity',
+                    'area': 'F',
                     'value': data['ar'],
                     'name': data['name'],
                     'd': data['d'],
                     'data': data
                 }, {
-                    'area': 'Diversity',
+                    'area': 'E',
                     'value': data['pr'],
                     'name': data['name'],
                     'd': data['d'],
                     'data': data
                 }, {
-                    'area': 'Vibrancy',
+                    'area': 'C',
+                    'value': data['ap'],
+                    'name': data['name'],
+                    'd': data['d'],
+                    'data': data
+                }, {
+                    'area': 'A',
                     'value': data['pp'],
                     'name': data['name'],
                     'd': data['d'],
@@ -491,7 +502,8 @@ class mapview {
                 return onlyBound || val < vmin ? 'none' : color(val);
             })
             .attr('stroke', 'black')
-            .attr("stroke-width", 2);
+            .style("stroke-dasharray", "4 5")
+            .attr("stroke-width", 1.5);
 
         if (!onlyBound) {
             feature.on("mouseover", function(d) {
@@ -512,6 +524,9 @@ class mapview {
         let text = g.selectAll('text')
             .data(data.features)
             .enter().append('text')
+            .style("font-family", "sans-serif")
+            .style("font-size", "1.5rem")
+            .attr("text-anchor", "middle")
             .text(function(d) {
                 return d['properties']['name'];
             })
@@ -802,8 +817,7 @@ class mapview {
         let svg = d3.select(id).attr('height', 50);
 
         svg.append("g")
-            .attr("class", "legendLinear")
-            .attr("transform", "translate(10,10)");
+            .attr("class", "legendLinear");
 
         let legendLinear = legendColor()
             .labelFormat(function(d) {

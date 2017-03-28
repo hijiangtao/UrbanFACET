@@ -124,7 +124,7 @@ body {
     min-height: 0;
 }
 
-.ui.form select, .field select.roundselect, select.roundselect {
+.ui.form select, .field select.roundselect, select.roundselect, .ui.compact.menu {
     border-color: rgb(0,0,0);
     background-color: white;
     -webkit-border-radius: .6rem;
@@ -146,10 +146,16 @@ img.ui.image {
 .cityimg.ui.tiny.image {
 	width: 3rem;
 }
-
-.ftpimg.ui.tiny.image {
-    width: 2.8rem;
+.ftp2img.ui.tiny.image {
+    width: 8.5rem;
 }
+.ftpimg.ui.tiny.image {
+    width: 2.9rem;
+}
+.ui.form .inline.fields .field.ftp2filed {
+    padding-right: .2rem;
+}
+
 .toggle.right.icon {
 	font-size: 2.5rem;
 }
@@ -201,10 +207,10 @@ img.ui.image {
 /*CHARTS STYLESHEET*/
 
 
-.statcharts>div {
+.statcharts {
     margin-top: 5px;
     width: 100%;
-    /*height: 60px;*/
+    height: 160px;
 }
 .area {
   fill: rgba(250,150,30,1);
@@ -317,5 +323,21 @@ h4.ui.header {
 .ui.table td {
     padding-top: 0.38em;
     padding-bottom: 0.38em;
+}
+
+.ui.compact.menu {
+    border-color: rgb(0,0,0);
+    background-color: white;
+    -webkit-border-radius: .6rem;
+    -moz-border-radius: .6rem;
+    border-radius: .6rem;
+
+    padding: 0;
+    min-height: inherit;
+    /*outline: none;*/
+}
+.ui.menu .item {
+    padding: 0.78em 1.5em 0.78em;
+    font-size: 0.85714286rem;
 }
 /*REWRITE SEMANTIC-UI*/

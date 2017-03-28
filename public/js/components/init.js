@@ -33,17 +33,16 @@ let home = {
             { 'name': 'Diversity', 'val': 'rp' },
             { 'name': 'Fluidity', 'val': 'rd' },
             { 'name': 'Density', 'val': 'de' },
-            { 'name': 'Total GDP', 'val': 'tg' },
-            { 'name': 'Ave GDP', 'val': 'ag' },
+            { 'name': 'GDP', 'val': 'ag' },
             { 'name': 'Population', 'val': 'po' },
             { 'name': 'House Price', 'val': 'hp' }
         ],
         'otypes': [
-            { 'name': 'Null', 'val': -1 },
-            { 'name': 'POI', 'val': 0 },
-            { 'name': 'Districts', 'val': 1 },
-            { 'name': 'Density', 'val': 2 },
-            { 'name': 'Metrics', 'val': 3 }
+            { 'name': 'Empty', 'val': 'e' },
+            { 'name': 'POI', 'val': 'p' },
+            { 'name': 'District', 'val': 'd' },
+            // { 'name': 'Density', 'val': 2 },
+            { 'name': 'FACET', 'val': 'f' }
         ],
         /**
          * timeblock filters object
@@ -54,11 +53,13 @@ let home = {
             { 'name': 'Noon', 'val': '2', 'aurl': '/assets/tp2-aicon.png', 'nurl': '/assets/tp2-icon.png' },
             { 'name': 'Afternoon', 'val': '3', 'aurl': '/assets/tp3-aicon.png', 'nurl': '/assets/tp3-icon.png' },
             { 'name': 'Evening', 'val': '4', 'aurl': '/assets/tp4-aicon.png', 'nurl': '/assets/tp4-icon.png' },
-            { 'name': 'Night', 'val': '5', 'aurl': '/assets/tp5-aicon.png', 'nurl': '/assets/tp5-icon.png' }
+            { 'name': 'Night', 'val': '5', 'aurl': '/assets/tp5-aicon.png', 'nurl': '/assets/tp5-icon.png' },
+            { 'name': 'Allday', 'val': '9', 'aurl': '/assets/tp9-aicon.png', 'nurl': '/assets/tp9-icon.png' }
         ],
         'tpfilters2': [
             { 'name': 'Weekday', 'val': '7', 'aurl': '/assets/tp7-aicon.png', 'nurl': '/assets/tp7-icon.png' },
-            { 'name': 'Weekend', 'val': '8', 'aurl': '/assets/tp8-aicon.png', 'nurl': '/assets/tp8-icon.png' }
+            { 'name': 'Weekend', 'val': '8', 'aurl': '/assets/tp8-aicon.png', 'nurl': '/assets/tp8-icon.png' },
+            { 'name': 'Allday', 'val': '10', 'aurl': '/assets/tp10-aicon.png', 'nurl': '/assets/tp10-icon.png' }
         ]
     },
     /**
@@ -116,7 +117,7 @@ let home = {
                 }
             }
         }],
-        'otype': -1,
+        'otype': 'e',
         'areaselect': false,
         'ctrsets': {
             'useLocalExtrema': false,
@@ -175,6 +176,12 @@ let home = {
             'ag': 'Ave GDP',
             'po': 'Population',
             'hp': 'House Price'
+        },
+        'ops': {
+            'e': 'Empty',
+            'p': 'POI',
+            'd': 'District',
+            'f': 'FACET'
         },
         'cimgs': {
             'bj': { 'aurl': '/assets/bj-aicon.png', 'nurl': '/assets/bj-icon.png' },

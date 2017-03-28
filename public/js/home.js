@@ -50,6 +50,15 @@ const userpanel = new Vue({
 		vueSlider
 	},
 	methods: {
+		'enpsDropdown': function(val) {
+			let index = this.sels.lstindex;
+			this.sels.objs[ index ]['etype'] = val;
+			this.getOverview(index);
+		},
+		'refsDropdown': function(val) {
+			this.sels['otype'] = val;
+		},
+
 		/**
 		 * 从服务器拉取 entropy 以及 density 数据并显示在相应 map 板块
 		 * @param  {[type]} index map 面板编号
@@ -105,10 +114,13 @@ const userpanel = new Vue({
 
 						// 绘图函数
 						maps[i].mapcontourCDrawing(res, drawProps);
+						let prop = {
+							'xname': self.cals.enps[ obj.etype ]
+						}
 						if (etype === 'de') {
-							charts[i].lineChartDraw(`estatChart${i}`, res['chart']['d']);
+							charts[i].lineChartDraw(`estatChart${i}`, res['chart']['d'], prop);
 						} else {
-							charts[i].lineChartDraw(`estatChart${i}`, res['chart']['e']);
+							charts[i].lineChartDraw(`estatChart${i}`, res['chart']['e'], prop);
 						}
 					}).catch(function(err) {
 						console.error("Failed!", err);
@@ -441,7 +453,7 @@ const userpanel = new Vue({
 					objs = this.sels.objs;
 
 				// 删除覆盖层
-				if (val === -1) {
+				if (val === 'e') {
 					// 只删除了boundary没考虑其他类型图层
 					for (let i = objs.length - 1; i >= 0; i--) {
 						maps[i].boundaryRemove();
@@ -454,7 +466,7 @@ const userpanel = new Vue({
 				}
 				
 				// POI
-				if (val === 0) {
+				if (val === 'p') {
 					getAOIDatasets(objs[0].city).then(function(res) {
 						for (let i = objs.length - 1; i >= 0; i--) {
 							let city = objs[i].city,
@@ -471,7 +483,7 @@ const userpanel = new Vue({
 				}
 
 				// Districts
-				if (val === 1) {
+				if (val === 'd') {
 					getBoundaryDatasets(objs[0].city).then(function(res) {
 						for (let i = objs.length - 1; i >= 0; i--) {
 							let city = objs[i].city,
@@ -496,13 +508,8 @@ const userpanel = new Vue({
 					});
 				}
 
-				// Density
-				if (val === 2) {
-					alert('TBD');
-				}
-
-				// Metrics
-				if (val === 3) {
+				// FACET
+				if (val === 'f') {
 					// 只处理一个页面下的绘制逻辑
 					let city = objs[index].city,
 						map = maps[index];
