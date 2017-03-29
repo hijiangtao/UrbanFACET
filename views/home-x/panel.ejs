@@ -92,7 +92,7 @@
     </div> -->
     <div id="vctab" class="ui pointing secondary menu">
         <div v-for="(model, index) in sels.objs" :id="'switch'+index" :class="{'active':index === sels.lstindex}" class="tabs item cursor" :data-tab="'tab'+index" @click="bindTabClick(index)">{{ cals.enps[model.etype]}}</div>
-        <!-- <div id="switch0" class="tabs active item cursor" data-tab="tab0">OBJ0</div> -->
+
         <div id='addObjBtn' class="item cursor" @click='addAnaObj'><i class="designedfontcolor plus square outline icon"></i></div>
         <div id='delObjBtn' class="item cursor" @click='delAnaObj'><i class="minus square outline icon"></i></div>
     </div>
@@ -177,10 +177,6 @@
             </h4>
         </div>
         <div class="sixteen wide column">
-            <p>
-                <a>District: <span :id="'carddistrict'+index">Null</span></a><br>
-                    <a>{{ cals.enps[ sels.objs[index].etype ]+ ": " }}<span :id="'cardenps'+index">Null</span></a>
-            </p>
             <table class="ui small celled table">
                 <thead>
                     <tr>
@@ -225,6 +221,10 @@
                     </tr> -->
                 </tbody>
             </table>
+        </div>
+        <div class="sixteen wide column">
+            <p>District: <span :id="'carddistrict'+index">Null</span></p>
+            <p>{{ cals.enps[ sels.objs[index].etype ]+ ": " }}<span :id="'cardenps'+index">Null</span></p>
         </div>
         <div class="sixteen wide column">
             <div class="statcharts" :id="'estatChart'+index"></div>

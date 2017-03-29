@@ -137,7 +137,7 @@ let home = {
                 }
             }
         }],
-        'otype': 'e', //display type
+        'otype': 'e', //overlay type
         'ptype': 0, //pois type
         'stype': 0, //scales type
         'areaselect': false, //是否选中区域

@@ -31,12 +31,13 @@ class mapview {
      * LMap class constructor
      * @return {[type]} [description]
      */
-    constructor(id, grdleg, ctrleg, city = "bj") {
+    constructor(id, grdleg, ctrleg, baselyr, city = "bj") {
         let self = this;
         this.ides = {
             'mapid': id,
             'grdleg': grdleg,
-            'ctrleg': ctrleg
+            'ctrleg': ctrleg,
+            'baselyr': baselyr
         };
         this.baseLayers = {
             'FACET': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
@@ -83,7 +84,7 @@ class mapview {
             crs: L.CRS.CustomZoom
         });
         this.map.zoomControl.setPosition('topright');
-        this.control = L.control.layers(self.baseLayers, null, {
+        this.control = L.control.activeLayers(self.baseLayers, null, {
             'position': 'bottomleft'
         });
         this.map.addControl(this.control);
@@ -106,8 +107,14 @@ class mapview {
         });
 
         this.map.on('click', function(e) {
-            console.log(e);
-        })
+            // console.log(e);
+        });
+
+        this.map.on('baselayerchange', function(e) {
+            let name = self.control.getActiveBaseLayer().name;
+            document.getElementById(self.ides.baselyr).innerText = name;
+            console.log(name);
+        });
     }
 
     invalidateSize() {

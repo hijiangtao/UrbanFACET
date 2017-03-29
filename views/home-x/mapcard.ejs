@@ -1,6 +1,6 @@
 <div :id="'card' + index" @click="bindTabClick(index)" class="ui card">
 	<div class="image">
-		<h3 class="mapcardtitle ui header">{{ cals.cities[model.city] }}</h3>
+		<h2 class="mapcardtitle ui header">{{ cals.cities[model.city] }}</h2>
 		<img v-show="sels.lstindex === index" :src="cals.cimgs[model.city].aurl">
 		<img v-show="sels.lstindex !== index" :src="cals.cimgs[model.city].nurl">
 	</div>
@@ -8,6 +8,11 @@
 		
 		<div class="description">
 			<div class="ui grid">
+				<div class="sixteen wide column">
+					<p>MetricLayer-{{ cals.enps[ model.etype ] }}</p>
+					<p>ReferenceLayer-{{ cals.ops[ sels.otype ] }}</p>
+					<p>BaseLayer-<span :id="'baselyrtext'+index">FACET</span></p>
+				</div>
 				<div class="sixteen wide column">
 					<div class="c-halfwidth">
 						<button class="ui mini button" :class="areaselState" v-on:click="optAreaSelect(index)">Selection</button>

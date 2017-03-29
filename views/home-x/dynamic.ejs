@@ -1,57 +1,42 @@
 <div class="cdacontainer" v-if="states.cda">
-	<div v-for="(item, index) in regions" class="formap ui segment">
-		<div class="onemap" :id="item.val+'cdamap'"></div>
-		<div :id="item.val+'card'" class="dcard ui card">
-			<div class="image">
-				<h3 class="mapcardtitle ui header">{{ item.name }}</h3>
-				<div class="dynamicmetric">
-					{{ valnames[ models[0].etype ] }}
-				</div>
-				<img :src="item.aurl">
-			</div>
-			<div class="content">
-				<div class="description">
-					<div class="ui grid">
-						<div class="sixteen wide column">
-							<vue-slider :id="'cdasli'+index" :ref="'cdasli'+index" v-bind="component[index]" @drag-end="updateSlider(index)" v-model="models[index].slider"></vue-slider>
-						</div>
-					</div>
-				</div>
-
-			</div>
-		</div>
-
-		<div :id="'cdadim' + index" class="ui dimmer">
+    <div v-for="(item, index) in regions" class="formap ui segment">
+        <div class="onemap" :id="item.val+'cdamap'"></div>
+        <div :id="item.val+'card'" class="dcard ui card">
+            <div class="image">
+                <h3 class="mapcardtitle ui header">{{ item.name }}</h3>
+                <div class="dynamicmetric">
+                    {{ valnames[ models[0].etype ] }}
+                </div>
+                <img :src="item.aurl">
+            </div>
+            <div class="content">
+                <div class="description">
+                    <vue-slider :id="'cdasli'+index" :ref="'cdasli'+index" v-bind="component[index]" @drag-end="updateSlider(index)" v-model="models[index].slider"></vue-slider>
+                </div>
+            </div>
+        </div>
+        <div :id="'cdadim' + index" class="ui dimmer">
             <div class="ui medium text loader">Loading Data</div>
         </div>
-
-	</div>	
+    </div>
 </div>
 <div class="tdacontainer" v-if="states.tda">
-	<div v-for="(item, index) in tpfilters" class="sixmap ui segment">
-		<div class="onemap" :id="item.val+'tdamap'"></div>
-		<div :id="item.val+'card'" class="dcard ui card">
-			<div class="image">
-				<img :src="item.aurl">
-			</div>
-			<div class="content">
-				<a class="header">{{item.name}}</a>
-				<div class="description">
-					<div class="ui grid">
-						<div class="sixteen wide column">
-							{{ valnames[ models[0].etype ] }}
-						</div>
-						<div class="sixteen wide column">
-							<vue-slider :id="'tdasli'+index" :ref="'tdasli'+index" v-bind="component[index]" @drag-end="updateSlider(index)" v-model="models[index].slider"></vue-slider>
-						</div>
-					</div>
-				</div>
-
-			</div>
-		</div>
-
-		<div :id="'tdadim' + index" class="ui dimmer">
+    <div v-for="(item, index) in tpfilters" class="sixmap ui segment">
+        <div class="onemap" :id="item.val+'tdamap'"></div>
+        <div :id="item.val+'card'" class="dcard ui card">
+            <div class="image">
+                <h3 class="mapcardtitle ui header">{{ item.name }}</h3>
+                <div class="dynamicmetric">
+                    {{ valnames[ models[0].etype ] }}
+                </div>
+                <img :src="item.aurl">
+            </div>
+            <div class="content">
+                <vue-slider :id="'tdasli'+index" :ref="'tdasli'+index" v-bind="component[index]" @drag-end="updateSlider(index)" v-model="models[index].slider"></vue-slider>
+            </div>
+        </div>
+        <div :id="'tdadim' + index" class="ui dimmer">
             <div class="ui medium text loader">Loading Data</div>
         </div>
-	</div>	
+    </div>
 </div>
