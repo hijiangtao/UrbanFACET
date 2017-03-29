@@ -105,8 +105,19 @@ let getSubGrids = function(poly, center, num=4) {
 let getOverviewDatasets = function(sels) {
 	let city = sels.city,
 		etype = sels.etype,
-		ftpval = sels.ftpval;
+		ftpval1 = sels.ftpval,
+		ftpval2 = sels.ftpval2,
+		ftpval = ftpval1;
 	
+	// 以时间段最为主要依据, 只有时间段在allday的时候才考虑日期类型信息,两者都在all的时候后台传送给服务器数据为空
+	if (ftpval1 === '9') {
+		if (ftpval2 === '10') {
+			ftpval = '';
+		} else {
+			ftpval = ftpval2;
+		}
+	}
+
 	let p = new Promise(function(resolve, reject) {
 		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ftpval=${ftpval}`, function(res, err) {
 			if (res['scode']) {

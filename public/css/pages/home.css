@@ -296,9 +296,9 @@ img.ui.image {
 }
 
 .statcharts {
-    margin-top: 5px;
+    /*margin-top: 5px;*/
     width: 100%;
-    height: 160px;
+    height: 150px;
 }
 .area {
   fill: rgba(250,150,30,1);
@@ -442,5 +442,13 @@ h4.ui.header {
 
 .ui.menu .utem {
     margin: 0em 0.35714286em -0.2em 0em;
+}
+
+.ui.small.celled.table {
+    margin: 1rem 0;
+}
+
+.ui.card > .content p {
+    margin-bottom: .2em;
 }
 /*REWRITE SEMANTIC-UI*/

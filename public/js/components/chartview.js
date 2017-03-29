@@ -12,7 +12,7 @@ import { chartTestData } from './initdata'
 class chart {
     constructor(id) {
         this.id = id,
-        this.data = null
+            this.data = null
     }
 
     /**
@@ -22,10 +22,10 @@ class chart {
      * @return {[type]}      [description]
      */
     lineChartDraw(id, data, prop) {
-    	let container = d3.select(`#${id}`),
-    		cWidth = container.node().getBoundingClientRect().width,
-    		cHeight = container.node().getBoundingClientRect().height,
-    		xname = prop['xname'];
+        let container = d3.select(`#${id}`),
+            cWidth = container.node().getBoundingClientRect().width,
+            cHeight = container.node().getBoundingClientRect().height,
+            xname = prop['xname'];
         container.select('svg').remove();
 
         console.log('Container', d3.select(`#${id}`), 'cWidth', cWidth, 'cHeight', cHeight);
@@ -37,12 +37,13 @@ class chart {
             height = +svg.attr("height") - margin.top - margin.bottom;
 
         let bisectDate = d3.bisector(function(d) {
-                return d.k; }).left,
-        	x = d3.scaleLinear().range([0, width]),
-        	y = d3.scaleLinear().range([height, 0]);
+                return d.k;
+            }).left,
+            x = d3.scaleLinear().range([0, width]),
+            y = d3.scaleLinear().range([height, 0]);
 
         let line = d3.line()
-        	.curve(d3.curveNatural)// .interpolate("monotone")
+            .curve(d3.curveNatural) // .interpolate("monotone")
             .x(function(d) {
                 return x(d.k);
             })
@@ -66,7 +67,7 @@ class chart {
             .attr("class", "axis axis--x")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x).tickFormat(function(d) {
-            	return `${d}%`;
+                return `${d}%`;
             }))
             .append("text")
             .attr("class", "axis-title")
@@ -97,10 +98,10 @@ class chart {
             .attr("d", line);
 
         let text = g.append('text')
-        	.attr("transform", "translate(" + (width*0.7) + ",0)")
-        	// .style('position', 'absolute')
-        	// .style('right', 2)
-        	// .style('top', 2);
+            .attr("transform", "translate(" + (width * 0.6) + ",0)")
+            // .style('position', 'absolute')
+            // .style('right', 2)
+            // .style('top', 2);
 
         let focus = g.append("g")
             .attr("class", "focus")
@@ -129,9 +130,9 @@ class chart {
             .attr("width", width)
             .attr("height", height)
             .on("mouseover", function() { focus.style("display", null); })
-            .on("mouseout", function() { 
-            	focus.style("display", "none");
-            	text.text(''); 
+            .on("mouseout", function() {
+                focus.style("display", "none");
+                text.text('');
             })
             .on("mousemove", mousemove);
 
@@ -149,6 +150,86 @@ class chart {
             focus.select(".x-hover-line").attr("y2", height - y(d.v));
             focus.select(".y-hover-line").attr("x2", -x(d.k));
         }
+    }
+
+    /**
+     * 带 tooltip bar chart 绘制方法
+     * @param  {[type]} id   [description]
+     * @param  {[type]} data [description]
+     * @return {[type]}      [description]
+     */
+    barChartDraw(id, data, prop) {
+        let container = d3.select(`#${id}`),
+            cWidth = container.node().getBoundingClientRect().width,
+            cHeight = container.node().getBoundingClientRect().height,
+            xname = prop['xname'];
+        container.select('svg').remove();
+
+        console.log('Container', d3.select(`#${id}`), 'cWidth', cWidth, 'cHeight', cHeight);
+        let svg = container.append("svg")
+            .attr('width', cWidth)
+            .attr('height', cHeight),
+            margin = { top: 20, right: 5, bottom: 30, left: 25 },
+            width = +svg.attr("width") - margin.left - margin.right,
+            height = +svg.attr("height") - margin.top - margin.bottom;
+
+        /**
+         * Begin of D3 V4 Codes
+         * @type {[type]}
+         */
+        let tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+        let x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+            y = d3.scaleLinear().rangeRound([height, 0]);
+
+        let colours = d3.scaleOrdinal()
+            .range(["#6F257F", "#CA0D59"]);
+
+        let g = svg.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        x.domain(data.map(function(d) {
+                return d.area; }));
+        y.domain([0, d3.max(data, function(d) {
+            return d.value; })]);
+
+        g.append("g")
+            .attr("class", "axis axis--x")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
+        g.append("g")
+            .attr("class", "axis axis--y")
+            .call(d3.axisLeft(y).ticks(5).tickFormat(function(d) {
+                return parseInt(d / 1000) + "K"; }).tickSizeInner([-width]))
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", "0.71em")
+            .attr("text-anchor", "end")
+            .attr("fill", "#5D6971")
+            .text("Average House Price - (£)");
+
+        g.selectAll(".bar")
+            .data(data)
+            .enter().append("rect")
+            .attr("x", function(d) {
+                return x(d.area); })
+            .attr("y", function(d) {
+                return y(d.value); })
+            .attr("width", x.bandwidth())
+            .attr("height", function(d) {
+                return height - y(d.value); })
+            .attr("fill", function(d) {
+                return colours(d.area); })
+            .on("mousemove", function(d) {
+                tooltip
+                    .style("left", d3.event.pageX - 50 + "px")
+                    .style("top", d3.event.pageY - 70 + "px")
+                    .style("display", "inline-block")
+                    .html((d.area) + "<br>" + "£" + (d.value));
+            })
+            .on("mouseout", function(d) { tooltip.style("display", "none"); });
     }
 
     /**

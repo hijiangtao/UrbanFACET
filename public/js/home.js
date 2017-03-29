@@ -15,7 +15,7 @@ import mapview from './components/hmap-view'
 import chart from './components/chartview'
 import $ from "jquery"
 // window.jQuery = $
-import { regionRecords, home } from './components/init'
+import { regionRecords, home, smecAve } from './components/init'
 import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getSMecDatasets, getDrawProps, objClone } from './components/apis'
 import { changeLoadState } from './components/events'
 import vueSlider from 'vue-slider-component'
@@ -197,6 +197,7 @@ const userpanel = new Vue({
 			let objs = this.sels.objs;
 			for (let i = objs.length - 1; i >= 0; i--) {
 				objs[i].city = val;
+				objs[i].data.smec = smecAve[val];
 			}
 		},
 		/**
@@ -247,14 +248,18 @@ const userpanel = new Vue({
 			let objs = this.sels.objs;
 
 			// 和之前选择一致,逻辑为取消
-			if (objs[0].ftpval === val) {
-				val = '';
-			}
-
-			console.log(objs[0].ftpval);
+			// if (objs[0].ftpval === val) {
+			// 	val = '';
+			// }
+			
+			let intVal = Number.parseInt(val);
 
 			for (let i = objs.length - 1; i >= 0; i--) {
-				objs[i].ftpval = val;
+				if ( intVal<6 || intVal===9 ) {
+					objs[i].ftpval = val;
+				} else {
+					objs[i].ftpval2 = val;
+				}
 			}
 
 			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作

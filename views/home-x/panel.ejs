@@ -179,20 +179,20 @@
         <div class="sixteen wide column">
             <table class="ui small celled table">
                 <thead>
-                    <tr>
+                    <!-- <tr>
                         <th>Metric</th>
                         <th>Value</th>
-                    </tr>
-                    <!-- <tr>
-                        <th>Fluidity</th>
-                        <th>Virancy</th>
-                        <th>Commutation</th>
-                        <th>Diversity</th>
-                        <th>Density</th>
                     </tr> -->
+                    <tr>
+                        <th>F</th>
+                        <th>A</th>
+                        <th>C</th>
+                        <th>E</th>
+                        <th>T</th>
+                    </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <!-- <tr>
                         <td>Fluidity</td>
                         <td>{{sels.objs[index].data.smec['ar']}}</td>
                     </tr>
@@ -211,23 +211,28 @@
                     <tr>
                         <td>Density</td>
                         <td>{{sels.objs[index].data.smec['d']}}</td>
-                    </tr>
-                    <!-- <tr>
-                        <td>{{sels.objs[index].data.smec['ar']}}</td>
-                        <td>{{sels.objs[index].data.smec['pp']}}</td>
-                        <td>{{sels.objs[index].data.smec['ap']}}</td>
-                        <td>{{sels.objs[index].data.smec['pr']}}</td>
-                        <td>{{sels.objs[index].data.smec['d']}}</td>
                     </tr> -->
+                    <tr>
+                        <td>{{sels.objs[index].data.smec['ar'].toFixed(4)}}</td>
+                        <td>{{sels.objs[index].data.smec['pp'].toFixed(4)}}</td>
+                        <td>{{sels.objs[index].data.smec['ap'].toFixed(4)}}</td>
+                        <td>{{sels.objs[index].data.smec['pr'].toFixed(4)}}</td>
+                        <td>{{sels.objs[index].data.smec['d']}}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
         <div class="sixteen wide column">
-            <p>District: <span :id="'carddistrict'+index">Null</span></p>
-            <p>{{ cals.enps[ sels.objs[index].etype ]+ ": " }}<span :id="'cardenps'+index">Null</span></p>
+            <p>Selected District - <span :id="'carddistrict'+index">Null</span>, Used {{ cals.enps[ sels.objs[index].etype ]+ ": " }} - <span :id="'cardenps'+index">Null</span></p>
         </div>
         <div class="sixteen wide column">
             <div class="statcharts" :id="'estatChart'+index"></div>
+        </div>
+        <div class="sixteen wide column">
+            <div class="statcharts" :id="'poiChart'+index"></div>
+        </div>
+        <div class="sixteen wide column">
+            <div class="statcharts" :id="'disChart'+index"></div>
         </div>
         <!-- <div class="statcharts sixteen wide column">
             <div :id="'estatChart'+index"></div>
