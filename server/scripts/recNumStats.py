@@ -35,7 +35,10 @@ def main(argv):
 			if line == '':
 				continue
 			plist = line.strip('\n').split(',')
-			rec = int(plist[5]) / 3
+			num = int(plist[5])-1
+			if num<0:
+				print num
+			rec = num / 3
 			if rec < 2501:
 				arr[rec] += 1
 
@@ -46,7 +49,7 @@ def main(argv):
 	for index, val in enumerate(arr):
 		res.append(str(index)+','+str(val))
 
-	with open(os.path.join(directory, city, 'recnum-stats.csv'), 'w') as target:
+	with open(os.path.join(directory, city, 'recnum-statsNew.csv'), 'w') as target:
 		target.writelines( '\n'.join( res ) )
 
 
