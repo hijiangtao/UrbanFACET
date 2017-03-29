@@ -64,10 +64,11 @@ const userpanel = new Vue({
 			console.log(val);
 
 			if (val === 2) {
+				let i = 0;
+				changeLoadState(`dimmer${i}`, true);
 				getAOIDatasets(this.sels.objs[0].city, val).then(function(res) {
 					console.log('Get AOI data.')
 
-					let i = 0,
 					prop = {
 						'thre': 0
 					};
@@ -132,7 +133,7 @@ const userpanel = new Vue({
 						let drawProps = getDrawProps(obj.scales, svals, self.sels.ctrsets, drawprop);
 						console.log('drawProps', drawProps);
 
-						// 绘图函数
+						// 绘 Metric Distribution 图函数
 						maps[i].mapcontourCDrawing(res, drawProps);
 						let prop = {
 							'xname': self.cals.enps[ obj.etype ]
@@ -142,6 +143,13 @@ const userpanel = new Vue({
 						} else {
 							charts[i].lineChartDraw(`estatChart${i}`, res['chart']['e'], prop);
 						}
+
+						// 绘不同行政区数值分布函数
+						// getSMecDatasets(city).then(function(cres) {
+						// 	charts[i].barChartDraw(`poiChart${i}`, cres, prop);
+						// }).catch(function(err) {
+						// 	console.error("Failed!", err);
+						// });
 					}).catch(function(err) {
 						console.error("Failed!", err);
 					});
