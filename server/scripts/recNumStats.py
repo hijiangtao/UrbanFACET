@@ -6,7 +6,6 @@
 # @Version : $Id$
 
 import os
-import fs
 import gc, getopt, sys, logging
 import numpy as nu
 from CommonFunc import matrixtofile
