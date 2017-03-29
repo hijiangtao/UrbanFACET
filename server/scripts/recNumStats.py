@@ -31,6 +31,9 @@ def main(argv):
 	# 遍历文件统计定位次数
 	with open(os.path.join(directory, city, 'respeo-xxx'), 'rb') as stream:
 		for line in stream:
+			line = line.strip('\n')
+			if line == '':
+				continue
 			plist = line.strip('\n').split(',')
 			rec = int(plist[5]) / 3
 			if rec < 2501:
