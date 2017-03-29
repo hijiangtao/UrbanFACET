@@ -42,7 +42,7 @@ def main(argv):
 	arr.pop(0)
 	res = []
 	for index, val in enumerate(arr):
-    	res.append(str(index)+','+str(val))
+		res.append(str(index)+','+str(val))
 
 	with open(os.path.join(directory, city, 'recnum-stats.csv'), 'w') as target:
 		target.writelines( '\n'.join( res ) )
