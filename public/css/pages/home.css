@@ -77,15 +77,89 @@ body {
 }
 /*MAPVIEW STYLESHEETS*/
 
-.cursor {
-    cursor:pointer;
+/*ICON LAYOUT*/
+.i-label, .i-main {
+    float: left;
+}
+.i-ani {
+    float: right;
+}
+
+.i-label {
+    width: 10%;
+}
+.i-main {
+    width: 78%;
+}
+.i-ani {
+    width: 12%;
+}
+.emptylabel {
+    width: 9%;
+    height: 1px;
+}
+
+.cityimg.ui.tiny.image {
+    width: 17%;
+    margin-right: 10.66%;
+}
+.cityimg.ui.tiny.image:last-child {
+    margin-right: 0;
+}
+.i-ani>.ui.image.cursor {
+    padding-left: 15%;
+}
+.i-ani>.ui.image.cursor.tY10 {
+    transform: translateY(10%);
+}
+.ftp2field {
+    width: 32%;
+    margin-right: 2%;
+    transform: translateY(50%);
+}
+.ftp2field:last-child {
+    margin-right: 0;
+}
+.ftpimg {
+    width: 13%;
+    margin-right: 1.5%;
+}
+.ftpimg:last-child {
+    margin-right: 0;
+}
+
+/*统一menu label宽度*/
+.ui.form .inline.fields > label.l-label {
+    /*width: 30%;*/
+}
+
+#prlabel, {
+    margin-right: 0;
+}
+.ui.form .inline.fields > label {
+    margin-right: 8px;
+}
+/*ICON LAYOUT*/
+
+/*MAP CARD STYLE*/
+.ui.mini.button {
+    padding: 0.58571429em .6em 0.58571429em;
+}
+
+.c-halfwidth {
+    width: 50%;
+    float: left;
+}
+.c-halfwidth>.ui.checkbox {
+    transform: translateY(10%);
 }
 
 #hrsliContainer {
-    width: 13rem;
+    width: 4.5rem;
+    padding-right: 0;
 }
 #opaContainer {
-    width: 4rem;
+    width: 3rem;
 }
 
 .mapcardtitle {
@@ -95,7 +169,12 @@ body {
     left: 50%;
     transform: translateX(-50%);
 }
-/*MAP STYLESHEETS*/
+.dynamicmetric {
+    position: absolute;
+    bottom: 0px;
+    right: 2px;
+}
+/*MAP CARD STYLE*/
 
 #titlemenu {
     height: 7vh;
@@ -103,6 +182,9 @@ body {
     border-radius: 0;
 }
 
+.cursor {
+    cursor:pointer;
+}
 
 /*user panel background stylesheets*/
 #userpanel {
@@ -125,11 +207,6 @@ body {
     float: right;
 }
 
-.m-legend {
-    /*position: absolute;*/
-    /*z-index: 11;*/
-    min-height: 0;
-}
 
 .ui.form select, .field select.roundselect, select.roundselect, .ui.compact.menu {
     border-color: rgb(0,0,0);
@@ -150,10 +227,9 @@ img.ui.image {
     width: 100%;
 }
 
-.cityimg.ui.tiny.image {
-	width: 3rem;
-}
-.ftp2img.ui.tiny.image {
+
+
+/*.ftp2img.ui.tiny.image {
     width: 8.5rem;
 }
 .ftpimg.ui.tiny.image {
@@ -161,7 +237,7 @@ img.ui.image {
 }
 .ui.form .inline.fields .field.ftp2filed {
     padding-right: .2rem;
-}
+}*/
 
 .toggle.right.icon {
 	font-size: 2.5rem;
@@ -212,7 +288,9 @@ img.ui.image {
 /*LINE CHART*/
 
 /*CHARTS STYLESHEET*/
-
+.legendCells text.label {
+    font-size: 10.5px;
+}
 
 .statcharts {
     margin-top: 5px;
@@ -344,7 +422,22 @@ h4.ui.header {
     /*outline: none;*/
 }
 .ui.menu .item {
-    padding: 0.78em 1.5em 0.78em;
+    padding: 0.78em .8em 0.78em;
     font-size: 0.85714286rem;
+}
+.ui.cards > .card > .extra, .ui.card > .extra, .ui.cards > .card > .content, .ui.card > .content {
+    padding: 0.3em 0.45em;
+}
+
+.ui.checkbox label {
+    padding-left: 1.3em;
+}
+
+.ui.form .inline.fields:last-child {
+    margin-bottom: 0;
+}
+
+.ui.menu .utem {
+    margin: 0em 0.35714286em -0.2em 0em;
 }
 /*REWRITE SEMANTIC-UI*/

@@ -59,7 +59,24 @@ const userpanel = new Vue({
 			this.sels['otype'] = val;
 		},
 		'poisDropdown': function(val) {
-			// 
+			val = Number.parseInt(val);
+			this.sels['ptype'] = val;
+			console.log(val);
+
+			if (val === 2) {
+				getAOIDatasets(this.sels.objs[0].city, val).then(function(res) {
+					console.log('Get AOI data.')
+
+					let i = 0,
+					prop = {
+						'thre': 0
+					};
+					changeLoadState(`dimmer${i}`, false);
+					maps[i].aoisDrawing(res, prop);
+				}).catch(function(err) {
+					console.error("Failed!", err);
+				})
+			}
 		},
 
 		/**
@@ -182,24 +199,14 @@ const userpanel = new Vue({
 				objs[i].city = val;
 			}
 		},
-		// /**
-		//  * time 动态分析
-		//  * @return {[type]} [description]
-		//  */
-		// 'tda': function() {
-		// 	this.sels.cda = false;
-		// 	this.sels.tda = true;
-		// },
-		// /**
-		//  * city 动态分析
-		//  * @return {[type]} [description]
-		//  */
-		// 'cda': function() {
-		// 	this.sels.cda = true;
-		// 	this.sels.tda = false;
-		// },
+		/**
+		 * 动态分析
+		 * @param  {[type]} val [description]
+		 * @return {[type]}     [description]
+		 */
 		'openDynamic': function(val) {
 			document.getElementById('dynamicview').style.display = "block";
+			this.sels.dynamic = !this.sels.dynamic;
 			let i = this.sels.lstindex,
 				self = this,
 				model = this.sels.objs[i],
@@ -226,6 +233,7 @@ const userpanel = new Vue({
 		},
 		'closeDynamic': function() {
 			document.getElementById('dynamicview').style.display = "none";
+			this.sels.dynamic = !this.sels.dynamic;
 			daview.destroy();
 			daview = null;	
 		},
@@ -470,15 +478,18 @@ const userpanel = new Vue({
 				
 				// POI
 				if (val === 'p') {
-					getAOIDatasets(objs[0].city).then(function(res) {
+					getAOIDatasets(objs[0].city, '0').then(function(res) {
 						for (let i = objs.length - 1; i >= 0; i--) {
 							let city = objs[i].city,
-								etype = objs[i].etype;
+								etype = objs[i].etype,
+								prop = {
+									'thre': 11
+								};
 
 							changeLoadState(`dimmer${i}`, false);
 
 							// 每个窗口均填充上AOI点分布
-							maps[i].aoisDrawing(res);
+							maps[i].aoisDrawing(res ,prop);
 						}
 					}).catch(function(err) {
 						console.error("Failed!", err);
@@ -579,79 +590,7 @@ const userpanel = new Vue({
 
 			self.sels.lstnum = curnum;
 			self.sels.lstindex = curnum - 1;
-
 			
 		} 
-		// else if (this.sels.cda) {
-		// 	// city dynamic analysis
-		// 	let cities = this.params.regions,
-		// 		daviews = new Array(4);
-			
-		// 	for (let i = 0; i < 4; i++) {
-		// 		// 初始化子模块并添加遮罩层
-		// 		changeLoadState(`cdadim${i}`, true);
-		// 		daviews[i] = new mapview(`${cities[i].val}cdamap`, `cgridleg${i}`, `cctrleg${i}`, cities[i].val);
-
-		// 		let obj = {
-		// 			'city': cities[i].val,
-		//             'etype': objs[0].etype,
-		//             'ftpval': '',
-		//             'boundary': false,
-		//             'slider': svals
-		// 		};
-
-		// 		// 根据用户所选 metric 类型进行相应数据提取操作
-		// 		if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
-		// 			// 获取 entropy 和 density 资源
-		// 			getOverviewDatasets(obj).then(function(res) {
-		// 				changeLoadState(`cdadim${i}`, false);
-		// 				// 获取 slider 情况下的配置值域以及用户其余选项
-		// 				// svals.push(self.components.hrSlider.value);
-		// 				let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, drawprop);
-		// 				daviews[i].mapcontourCDrawing(res, drawProps);
-		// 			}).catch(function(err) {
-		// 				console.error("Failed!", err);
-		// 			});
-		// 		} else {
-		// 			getBoundaryDatasets(obj.city).then(function(res) {
-		// 				changeLoadState(`cdadim${i}`, false);
-		// 				daviews[i].boundaryDrawing(res, obj);
-		// 			}).catch(function(err) {
-		// 				console.error("Failed!", err);
-		// 			});
-		// 		}
-		// 	}
-		// } else if (this.sels.tda) {
-		// 	// time periods dynamic analysis
-		// 	let tps = this.params.tpfilters,
-		// 		daviews = new Array(6);
-			
-		// 	if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
-		// 		for (let i = 0; i < 6; i++) {
-		// 			changeLoadState(`tdadim${i}`, true);
-		// 			daviews[i] = new mapview(`${tps[i].val}tdamap`, `tgridleg${i}`, `tctrleg${i}`, objs[0].city);
-
-		// 			let obj = {
-		// 				'city': objs[0].city,
-		// 	            'etype': tps[i].val,
-		// 	            'ftpval': i,
-		// 	            'boundary': false
-		// 			};
-
-		// 			// 获取 entropy 和 density 资源
-		// 			getOverviewDatasets(obj).then(function(res) {
-		// 				changeLoadState(`tdadim${i}`, false);
-		// 				// 获取 slider 情况下的配置值域以及用户其余选项
-		// 				// svals.push(self.components.hrSlider.value);
-		// 				let drawProps = getDrawProps(res['prop']['scales'], svals, self.sels.ctrsets, drawprop);
-		// 				daviews[i].mapcontourCDrawing(res, drawProps);
-		// 			}).catch(function(err) {
-		// 				console.error("Failed!", err);
-		// 			});
-		// 		}
-		// 	} else {
-		// 		alert('Not able to deal with different cities in different time periods.');
-		// 	}
-		// }
 	}
 });

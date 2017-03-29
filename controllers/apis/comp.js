@@ -43,20 +43,35 @@ let apis = {
 		res.json({
 			'scode': 1,
 			'data': data
-		})
+		});
 	},
 	'aoiQuery': function(req, res, next) {
 		let params = req.query;
 
-		lib.connectMySQL().then(function(db) {
-			return EP.getAoi(db, params);
-		}, function(err) {
-			console.error('error: ', err);
-		}).catch(function(error) {
-			console.error('error: ', err);
-		}).then(function(result) {
-			res.json(result);
-		})
+		if (params.type === '0') {
+			lib.connectMySQL().then(function(db) {
+				return EP.getAoiNum(db, params);
+			}, function(err) {
+				console.error('error: ', err);
+			}).catch(function(error) {
+				console.error('error: ', err);
+			}).then(function(result) {
+				res.json(result);
+			});
+		} else {
+			lib.connectMongo().then(function(db) {
+				return EP.getAoiDetails(db, params);
+			}, function(err) {
+				console.error('error: ', err);
+			}).catch(function(error) {
+				console.error('error: ', err);
+			}).then(function(result) {
+				res.json({
+					'scode': 1,
+					'data': result[0].concat(result[1])
+				});
+			});
+		}
 	},
 	'extrainfoQuery': function(req, res, next) {
 		let params = req.query;

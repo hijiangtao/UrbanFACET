@@ -62,17 +62,23 @@ let home = {
             { 'name': 'Weekend', 'val': '8', 'aurl': '/assets/tp8-aicon.png', 'nurl': '/assets/tp8-icon.png' }
         ],
         'pois': [
-            { 'name': 'All', 'val': 10 },
-            { 'name': 'Food&Supply', 'val': 0 },
-            { 'name': 'Entertainment&Leisure', 'val': 1 },
-            { 'name': 'Education', 'val': 2 },
-            { 'name': 'Transportation', 'val': 3 },
-            { 'name': 'Healthcare&Emergency', 'val': 4 },
-            { 'name': 'Financial&Bank', 'val': 5 },
-            { 'name': 'Accommodation', 'val': 6 },
-            { 'name': 'Office&Commercial', 'val': 7 },
-            { 'name': 'Natural Landscape', 'val': 8 },
-            { 'name': 'Factory&Manufacturer', 'val': 9 }
+            { 'name': 'All', 'val': 0 },
+            { 'name': 'Food&Supply', 'val': 1 },
+            { 'name': 'Entertainment&Leisure', 'val': 2 },
+            { 'name': 'Education', 'val': 3 },
+            { 'name': 'Transportation', 'val': 4 },
+            { 'name': 'Healthcare&Emergency', 'val': 5 },
+            { 'name': 'Financial&Bank', 'val': 6 },
+            { 'name': 'Accommodation', 'val': 7 },
+            { 'name': 'Office&Commercial', 'val': 8 },
+            { 'name': 'Natural Landscape', 'val': 9 },
+            { 'name': 'Factory&Manufacturer', 'val': 10 }
+        ],
+        'scales': [
+            { 'name': 'City', 'val': 0 },
+            { 'name': 'Division', 'val': 1 },
+            { 'name': 'Region', 'val': 2 },
+            { 'name': 'Street', 'val': 3 }
         ]
     },
     /**
@@ -91,7 +97,8 @@ let home = {
         'objs': [{
             'city': 'bj',
             'etype': 'de',
-            'ftpval': '',
+            'ftpval': '9',
+            'ftpval2': '10',
             'reverse': false,
             'scales': {
                 'e': 1,
@@ -130,18 +137,18 @@ let home = {
                 }
             }
         }],
-        'otype': 'e',
-        'ptype': 10,
-        'areaselect': false,
+        'otype': 'e', //display type
+        'ptype': 0, //pois type
+        'stype': 0, //scales type
+        'areaselect': false, //是否选中区域
         'ctrsets': {
             'useLocalExtrema': false,
             'opacity': 0.5,
-            'radius': 1
+            'radius': 2
         },
         'lstnum': 1, // 页面在本次操作之前存在的标签个数(包括额外overlay图层)
         'lstindex': 0, // 存储上次操作的页面标签
-        'tda': false,
-        'cda': false
+        'dynamic': false 
     },
     'components': {
         'eSlider': {
@@ -163,8 +170,8 @@ let home = {
             width: "auto",
             tooltip: 'hover',
             min: 1,
-            max: 4,
-            interval: 0.005,
+            max: 2.6,
+            interval: 0.01,
             disabled: false,
             clickable: false,
             tooltipStyle: {
@@ -197,7 +204,8 @@ let home = {
             'd': 'District',
             'f': 'FACET'
         },
-        'pois': ['Food&Supply', 'Entertainment&Leisure', 'Education', 'Transportation', 'Healthcare&Emergency', 'Financial&Bank', 'Accommodation', 'Office&Commercial', 'Natural Landscape', 'Factory&Manufacturer'],
+        'pois': ['All', 'Food&Supply', 'Entertainment&Leisure', 'Education', 'Transportation', 'Healthcare&Emergency', 'Financial&Bank', 'Accommodation', 'Office&Commercial', 'Natural Landscape', 'Factory&Manufacturer'],
+        'scales': ['City', 'Division', 'Region', 'Street'],
         'cimgs': {
             'bj': { 'aurl': '/assets/bj-aicon.png', 'nurl': '/assets/bj-icon.png' },
             'tj': { 'aurl': '/assets/tj-aicon.png', 'nurl': '/assets/tj-icon.png' },

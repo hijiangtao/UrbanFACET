@@ -9,28 +9,27 @@
 		<div class="description">
 			<div class="ui grid">
 				<div class="sixteen wide column">
-					<div class="ui checkbox">
-					  <input type="checkbox" :name="'reverseColor'+index" v-model="sels.objs[index].reverse">
-					  <label>Reverse</label>
+					<div class="c-halfwidth">
+						<button class="ui mini button" :class="areaselState" v-on:click="optAreaSelect(index)">Selection</button>
+					</div>
+					<div class="c-halfwidth">
+						<div class="ui checkbox">
+						  <input type="checkbox" :name="'reverseColor'+index" v-model="sels.objs[index].reverse">
+						  <label>Reverse</label>
+						</div>
 					</div>
 				</div>
 				<template v-if="model.dtype !== 'd'" >
-					<!-- <div class="four wide column">
-						<label for="">Metric</label>
-					</div> -->
 					<div class="sixteen wide column">
 						<vue-slider :id="'slider'+index" :ref="'eSlider'+index" v-bind="sels.objs[index].slider" @drag-end="updateSlider(index)" v-model="sels.objs[index].slider.value"></vue-slider>
 					</div>
 				</template>
-			</div>
-		</div>
-	</div>
-	<div class="extra content">
-		<a>District: <span :id="'carddistrict'+index">Null</span></a><br>
-		<a>{{ cals.enps[ sels.objs[index].etype ]+ ": " }}<span :id="'cardenps'+index">Null</span></a>
-		<div :id="'maplegend'+index" class="m-legend">
-			<svg :id="'gridmaplegend'+index" height='0'></svg>
-			<div :id="'contourmaplegend'+index">
+
+				<div :id="'maplegend'+index"  class="sixteen wide column">
+					<svg :id="'gridmaplegend'+index" height='0'></svg>
+					<!-- <div :id="'contourmaplegend'+index">
+					</div> -->
+				</div>
 			</div>
 		</div>
 	</div>

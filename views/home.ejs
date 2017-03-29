@@ -19,7 +19,7 @@
     <div id="main">
         <div id="titlemenu" class="ui inverted menu">
             <div class="header item"><h2>Urban FACET: Visually Profiling Cities from Mobile Device Recorded Movement Data of Millions of City Residents</h2></div>
-            <div class="header item" id="closeIcon"><h2><i class="compress icon cursor" @click="closeDynamic"></i></h2></div>
+            <div class="header item" id="closeIcon" v-show="sels.dynamic"><h2><i class="compress icon cursor" @click="closeDynamic"></i></h2></div>
         </div>
 
         <div class="ui row" >

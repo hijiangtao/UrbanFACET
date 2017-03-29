@@ -171,10 +171,22 @@ let getEntropyType = function(type) {
 	return strlist[type]
 }
 
+let getCityFullName = function(city) {
+	let arr = {
+		'bj': 'beijing',
+		'tj': 'tianjin',
+		'zjk': 'zhangjiakou',
+		'ts': 'tangshan'
+	}
+
+	return arr[city];
+}
+
 module.exports = {
 	getValue: getValue,
 	connectMongo: connectMongo,
 	connectMySQL: connectMySQL,
 	getRegionBound: regionRecords,
-	getEntropyType: getEntropyType
+	getEntropyType: getEntropyType,
+	getCityFullName: getCityFullName
 }

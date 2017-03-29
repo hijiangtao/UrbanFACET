@@ -103,6 +103,10 @@ class mapview {
                 // 14: 1.25
                 // 15: 1
             }
+        });
+
+        this.map.on('click', function(e) {
+            console.log(e);
         })
     }
 
@@ -309,6 +313,7 @@ class mapview {
 
         d3.select(`#${boundid}`).remove();
         d3.select(`#${aoiid}`).remove();
+        this.aoiRemove();
 
         if (data.length === 0) {
             alert('No records found!')
@@ -322,7 +327,7 @@ class mapview {
 
         let fdata = [];
         for (let i = data.length - 1; i >= 0; i--) {
-            if (radius(data[i]['num']) <= 10) {
+            if (radius(data[i]['num']) < prop['thre']) {
                 fdata.push({
                     "type": "Feature",
                     "geometry": {
@@ -356,7 +361,7 @@ class mapview {
                 .style('left', (topLeft[0] - 5) + 'px')
                 .style('top', (topLeft[1] - 5) + 'px');
 
-            g.attr('transform', 'translate(' + -topLeft[0] + ',' + -topLeft[1] + ')');
+            g.attr('transform', 'translate(' + (5-topLeft[0]) + ',' + (5-topLeft[1]) + ')');
 
             feature.attr('d', path)
         };
@@ -373,12 +378,12 @@ class mapview {
         for (let i = data.length - 1; i >= 0; i--) {
             let num = data[i]['num'],
                 r = radius(num);
-            if (r < 10) {
+            if (r < prop['thre']) {
                 continue;
             }
 
             let marker = L.marker(new L.LatLng(data[i]['geo'][0], data[i]['geo'][1]), { icon: new Icon() });
-            marker.bindPopup(`<p>AOI Number: ${data[i]['num']}</p>`, {
+            marker.bindPopup(prop['thre']>0? `<p>AOI Number: ${data[i]['num']}</p>`:`<p>POI: ${data[i]['name']}</p>`, {
                 showOnMouseOver: true
             });
             self.aoiLayers.addLayer(marker);
@@ -503,7 +508,7 @@ class mapview {
             })
             .attr('stroke', 'black')
             .style("stroke-dasharray", "4 5")
-            .attr("stroke-width", 1.5);
+            .attr("stroke-width", 1.2);
 
         if (!onlyBound) {
             feature.on("mouseover", function(d) {
@@ -525,9 +530,13 @@ class mapview {
             .data(data.features)
             .enter().append('text')
             .style("font-family", "sans-serif")
-            .style("font-size", "1.5rem")
+            .style("font-size", "1.2rem")
             .attr("text-anchor", "middle")
             .text(function(d) {
+                let name = d['properties']['english'];
+                if (name) {
+                    return name
+                }
                 return d['properties']['name'];
             })
             .attr('x', function(d) {
@@ -827,8 +836,8 @@ class mapview {
                     return `${(d/1000.0).toFixed(1)}K`;
                 }
             })
-            .cells(5)
-            .shapeWidth(30)
+            .cells(4)
+            .shapeWidth(33)
             .orient('horizontal')
             .scale(linear);
 
@@ -928,9 +937,15 @@ class mapview {
 
             let val = this.ides[key];
             if (key !== cfg) {
-                document.getElementById(val).style.display = 'none';
+                let el = document.getElementById(val);
+                if (el) {
+                    el.style.display = 'none';
+                }
             } else {
-                document.getElementById(val).style.display = 'inline';
+                let el = document.getElementById(val);
+                if (el) {
+                    el.style.display = 'inline';
+                }
             }
         }
     }

@@ -134,9 +134,9 @@ let getBoundaryDatasets = function(city) {
 	return p;
 }
 
-let getAOIDatasets = function(city) {
+let getAOIDatasets = function(city, type) {
 	let p = new Promise(function(resolve, reject) {
-		$.get(`/comp/aoiQuery?city=${city}`, function(res, err) {
+		$.get(`/comp/aoiQuery?city=${city}&type=${type}`, function(res, err) {
 			if (res['scode']) {
 				resolve(res['data']);
 			} else {

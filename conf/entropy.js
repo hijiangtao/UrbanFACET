@@ -9,7 +9,7 @@
 
 const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
-const url = 'mongodb://192.168.1.42:27017/tdVC';
+const url = 'mongodb://192.168.1.42:27017/tdnormal';
 
 const fs = require('fs');
 const path = require('path');
@@ -174,8 +174,8 @@ function getTypeVals(val) {
     }
 
     return {
-    	'etype': etype,
-    	'ctype': ctype
+        'etype': etype,
+        'ctype': ctype
     }
 }
 
@@ -279,8 +279,8 @@ function getOverview(conn, prop) {
                 let lste = result[2].pop(),
                     lstd = result[3].pop();
 
-                result[2][ result[2].length-1 ]['v'] += lste['v'];
-                result[3][ result[3].length-1 ]['v'] += lstd['v'];
+                result[2][result[2].length - 1]['v'] += lste['v'];
+                result[3][result[3].length - 1]['v'] += lstd['v'];
 
                 resolve({
                     'scode': 1,
@@ -307,42 +307,125 @@ function getOverview(conn, prop) {
 }
 
 function getBoundary(city) {
-    return require(`./data/${city}`);
+    let data = require(`./data/${city}`);
+    // console.log(data)
+    return data;
 }
 
 function getMecStat(city) {
-    console.log(city);
+    // console.log(city);
     return sMec[city];
 }
 
-function getAoi(conn, prop) {
+function getAoiNum(conn, prop) {
     let city = prop['city'],
         poiattr = 'total',
         // poiattr = prop['class'] === '11' ? 'total':`poi${prop['class']}`,
         p = new Promise(function(resolve, reject) {
-        let sql = $sql.getAoiVal,
-            param = [poiattr, `${city}CPOI`];
+            let sql = $sql.getAoiVal,
+                param = [poiattr, `${city}CPOI`];
 
-        // console.log('params', param)
-        conn.query(sql, param, function(err, result) {
-            conn.release();
+            // console.log('params', param)
+            conn.query(sql, param, function(err, result) {
+                conn.release();
 
-            if (err) {
-                reject(err);
-            } else {
-                let res = [];
-                for (let i = result.length - 1; i >= 0; i--) {
-                    res.push({
-                        'geo': [result[i]['lat'], result[i]['lng']],
-                        'num': result[i]['num']
-                    })
+                if (err) {
+                    reject(err);
+                } else {
+                    let res = [];
+                    for (let i = result.length - 1; i >= 0; i--) {
+                        res.push({
+                            'geo': [result[i]['lat'], result[i]['lng']],
+                            'num': result[i]['num']
+                        })
+                    }
+                    resolve({ 'scode': 1, 'data': res });
                 }
-                resolve({'scode':1, 'data': res});
-            }
-        })
-    });
+            })
+        });
 
     return p;
+}
+
+function getAoiDetails(conn, prop) {
+    let city = prop['city'],
+        poitype = prop['type'];
+
+    let p1 = new Promise(function(resolve, reject) {
+        let table = conn.collection(`pois_${data.getCityFullName(city)}`);
+
+        console.log(data.getCityFullName(city));
+        table.find({
+            'properties.ftype': 2,
+            'properties.center': {
+                '$near': {
+                    '$geometry': {
+                      'type': "Point" ,
+                      'coordinates': [ 116.37914664228447, 40.02479016490592 ]
+                    },
+                    '$maxDistance': 1500
+                }
+            }
+        }, {
+            'properties': 1
+        }).toArray(function(err, docs){
+            // console.log(err, docs);
+            if (err) {
+                reject(err);
+            }
+
+            let res = genGeojson(docs);
+            resolve(res);
+        });
+    });
+
+    let p2 = new Promise(function(resolve, reject) {
+        let table = conn.collection(`pois_${data.getCityFullName(city)}`);
+
+        console.log(data.getCityFullName(city));
+        table.find({
+            'properties.ftype': 2,
+            'properties.radius': { '$gte': 200 },
+            'properties.center': {
+             '$near': {
+               '$geometry': {
+                  'type': "Point",
+                  'coordinates': [ 116.38698591152206, 39.91039840227936 ]
+               },
+               '$maxDistance': 30000
+             }
+            }
+        }, {
+            'properties': 1
+        }).toArray(function(err, docs){
+            // console.log(err, docs);
+            if (err) {
+                reject(err);
+            }
+
+            let res = genGeojson(docs);
+            resolve(res);
+        });
+    });
+
+    function genGeojson(data) {
+        let res = [];
+
+        for (let i = data.length - 1; i >= 0; i--) {
+            let obj = data[i],
+                center = obj['properties']['center']['coordinates'];
+                res.push({
+                    'name': obj['properties']['name'],
+                    'geo': [center[1], center[0]],
+                    'num': 1,
+                    'radius': obj['properties']['radius']
+                });
+        }
+
+        return res;
+    }
+
+    return Promise.all([p1, p2]);
 }
 
 function generateGridsJson(locs, obj) {
@@ -364,8 +447,8 @@ function getExtraInfo(db, params) {
         collection = db.collection('pois_beijing');
 
     // console.log('idlist: ', idlist)
-    collection.find({'properties.ftype': Number.parseInt(ftype)}, { 'properties.center': 1, 'properties.name': 1, 'properties.': 1 }).toArray(function(err, result) {
-        
+    collection.find({ 'properties.ftype': Number.parseInt(ftype) }, { 'properties.center': 1, 'properties.name': 1, 'properties.': 1 }).toArray(function(err, result) {
+
         mongoCallback(err, result, res, {
             "clalist": clalist,
             "idstr": idstr,
@@ -384,6 +467,7 @@ module.exports = {
     getOverview: getOverview,
     getExtraInfo: getExtraInfo,
     getBoundary: getBoundary,
-    getAoi: getAoi,
+    getAoiNum: getAoiNum,
+    getAoiDetails: getAoiDetails,
     getMecStat: getMecStat
 }

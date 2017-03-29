@@ -97,7 +97,7 @@ class chart {
             .attr("d", line);
 
         let text = g.append('text')
-        	.attr("transform", "translate(" + (width*0.8) + ",0)")
+        	.attr("transform", "translate(" + (width*0.7) + ",0)")
         	// .style('position', 'absolute')
         	// .style('right', 2)
         	// .style('top', 2);
@@ -145,7 +145,7 @@ class chart {
             // focus.select("text").text(function() {
             //     return `k: ${d.k}, v: ${d.v}`;
             // });
-            text.text(`k: ${d.k}, v: ${d.v}`);
+            text.text(`${prop['xname']}: ${d.k}, Count: ${d.v}`);
             focus.select(".x-hover-line").attr("y2", height - y(d.v));
             focus.select(".y-hover-line").attr("x2", -x(d.k));
         }

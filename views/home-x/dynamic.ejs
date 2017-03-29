@@ -3,15 +3,15 @@
 		<div class="onemap" :id="item.val+'cdamap'"></div>
 		<div :id="item.val+'card'" class="dcard ui card">
 			<div class="image">
+				<h3 class="mapcardtitle ui header">{{ item.name }}</h3>
+				<div class="dynamicmetric">
+					{{ valnames[ models[0].etype ] }}
+				</div>
 				<img :src="item.aurl">
 			</div>
 			<div class="content">
-				<a class="header">{{item.name}}</a>
 				<div class="description">
 					<div class="ui grid">
-						<div class="sixteen wide column">
-							{{ valnames[ models[0].etype ] }}
-						</div>
 						<div class="sixteen wide column">
 							<vue-slider :id="'cdasli'+index" :ref="'cdasli'+index" v-bind="component[index]" @drag-end="updateSlider(index)" v-model="models[index].slider"></vue-slider>
 						</div>
