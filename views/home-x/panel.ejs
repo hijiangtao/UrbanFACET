@@ -49,9 +49,6 @@
         <div id='delObjBtn' class="item cursor" @click='delAnaObj'><i class="minus square outline icon"></i></div>
     </div>
     <div v-for="(model, index) in sels.objs" :id="'tab' + index" :class="{'e-active':index === sels.lstindex}" class="panels ui bottom attached tab segment" :data-tab="'tab'+index">
-        <!-- <div class="sixteen wide column">
-            <h4 class="designedfontcolor ui header"><i class="right angle icon divider"></i>Data and Parameters</h4>
-        </div> -->
         <div class="sixteen wide column">
             <div class="ui form">
                 <div class="inline fields">
@@ -72,9 +69,6 @@
                         <button class="ui tiny button" :class="areaselState" v-on:click="optAreaSelect(index)">Area Select</button>
                     </div>
 
-                    <!-- <div class="field">
-                        <button class="ui tiny primary button" v-on:click="getOverview(index)">Update Maps</button>
-                    </div> -->
                 </div>
                 <div class="inline fields">
                     <label><img class="ui mini image" src="/assets/type-icon.png">Reference Layer</label>
@@ -90,10 +84,23 @@
                           </div>
                         </div>
 
-                        <!-- <select class="roundselect cursor" v-model='sels.otype'>
-                            <option v-for='item in params.otypes' :value="item.val">{{ item.name }}</option>
-                        </select> -->
                     </div>
+                    
+                    <!-- Specific POI Category -->
+                    <div class="field" v-if="sels.otype === 'p'">
+                        <div class="ui compact menu">
+                          <div class="ui simple dropdown item">
+                            <span>All</span>
+                            <i class="dropdown icon"></i>
+                            <div class="menu">
+                              <div class="item" v-for='item in params.pois' @click="poisDropdown(item.val)">{{ item.name }}</div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                    
+                    <!-- SPecific District Scales -->
+                    <div class="field" v-if="sels.otype === 'd'"></div>
                     
                 </div>
                 <div class="inline fields">

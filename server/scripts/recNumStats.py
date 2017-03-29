@@ -38,6 +38,7 @@ def main(argv):
 			num = int(plist[5])-1
 			if num<0:
 				print num
+				continue
 			rec = num / 3
 			if rec < 2501:
 				arr[rec] += 1

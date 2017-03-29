@@ -48,18 +48,31 @@ let home = {
          * timeblock filters object
          */
         'tpfilters': [
+            { 'name': 'Allday', 'val': '9', 'aurl': '/assets/tp9-aicon.png', 'nurl': '/assets/tp9-icon.png' },
             { 'name': 'Morning', 'val': '0', 'aurl': '/assets/tp0-aicon.png', 'nurl': '/assets/tp0-icon.png' },
             { 'name': 'Forenoon', 'val': '1', 'aurl': '/assets/tp1-aicon.png', 'nurl': '/assets/tp1-icon.png' },
             { 'name': 'Noon', 'val': '2', 'aurl': '/assets/tp2-aicon.png', 'nurl': '/assets/tp2-icon.png' },
             { 'name': 'Afternoon', 'val': '3', 'aurl': '/assets/tp3-aicon.png', 'nurl': '/assets/tp3-icon.png' },
             { 'name': 'Evening', 'val': '4', 'aurl': '/assets/tp4-aicon.png', 'nurl': '/assets/tp4-icon.png' },
-            { 'name': 'Night', 'val': '5', 'aurl': '/assets/tp5-aicon.png', 'nurl': '/assets/tp5-icon.png' },
-            { 'name': 'Allday', 'val': '9', 'aurl': '/assets/tp9-aicon.png', 'nurl': '/assets/tp9-icon.png' }
+            { 'name': 'Night', 'val': '5', 'aurl': '/assets/tp5-aicon.png', 'nurl': '/assets/tp5-icon.png' }
         ],
         'tpfilters2': [
+            { 'name': 'Allday', 'val': '10', 'aurl': '/assets/tp10-aicon.png', 'nurl': '/assets/tp10-icon.png' },
             { 'name': 'Weekday', 'val': '7', 'aurl': '/assets/tp7-aicon.png', 'nurl': '/assets/tp7-icon.png' },
-            { 'name': 'Weekend', 'val': '8', 'aurl': '/assets/tp8-aicon.png', 'nurl': '/assets/tp8-icon.png' },
-            { 'name': 'Allday', 'val': '10', 'aurl': '/assets/tp10-aicon.png', 'nurl': '/assets/tp10-icon.png' }
+            { 'name': 'Weekend', 'val': '8', 'aurl': '/assets/tp8-aicon.png', 'nurl': '/assets/tp8-icon.png' }
+        ],
+        'pois': [
+            { 'name': 'All', 'val': 10 },
+            { 'name': 'Food&Supply', 'val': 0 },
+            { 'name': 'Entertainment&Leisure', 'val': 1 },
+            { 'name': 'Education', 'val': 2 },
+            { 'name': 'Transportation', 'val': 3 },
+            { 'name': 'Healthcare&Emergency', 'val': 4 },
+            { 'name': 'Financial&Bank', 'val': 5 },
+            { 'name': 'Accommodation', 'val': 6 },
+            { 'name': 'Office&Commercial', 'val': 7 },
+            { 'name': 'Natural Landscape', 'val': 8 },
+            { 'name': 'Factory&Manufacturer', 'val': 9 }
         ]
     },
     /**
@@ -118,6 +131,7 @@ let home = {
             }
         }],
         'otype': 'e',
+        'ptype': 10,
         'areaselect': false,
         'ctrsets': {
             'useLocalExtrema': false,
@@ -183,6 +197,7 @@ let home = {
             'd': 'District',
             'f': 'FACET'
         },
+        'pois': ['Food&Supply', 'Entertainment&Leisure', 'Education', 'Transportation', 'Healthcare&Emergency', 'Financial&Bank', 'Accommodation', 'Office&Commercial', 'Natural Landscape', 'Factory&Manufacturer'],
         'cimgs': {
             'bj': { 'aurl': '/assets/bj-aicon.png', 'nurl': '/assets/bj-icon.png' },
             'tj': { 'aurl': '/assets/tj-aicon.png', 'nurl': '/assets/tj-icon.png' },

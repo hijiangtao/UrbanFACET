@@ -58,6 +58,9 @@ const userpanel = new Vue({
 		'refsDropdown': function(val) {
 			this.sels['otype'] = val;
 		},
+		'poisDropdown': function(val) {
+			// 
+		},
 
 		/**
 		 * 从服务器拉取 entropy 以及 density 数据并显示在相应 map 板块
