@@ -312,15 +312,15 @@ img.ui.image {
 .statcharts {
     /*margin-top: 5px;*/
     width: 100%;
-    height: 140px;
+    height: 160px;
 }
 .poischarts {
     width: 100%;
-    height: 160px;
+    height: 175px;
 }
 .discharts {
     width: 100%;
-    height: 175px;
+    height: 190px;
 }
 
 

@@ -309,7 +309,7 @@ function getOverview(conn, prop) {
 
 function getBoundary(city) {
     let data = require(`./data/${city}`);
-    // console.log(data)
+    console.log(data);
     return data;
 }
 
