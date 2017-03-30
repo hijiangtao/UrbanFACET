@@ -431,9 +431,9 @@ function getAoiDetails(conn, prop) {
 
 function getAoiDis(city, type) {
     let data = poidis[city][type],
-        keys = ['Food&Supply', 'Entertainment&Leisure', 'Education', 'Transportation', 'Healthcare&Emergency', 'Financial&Bank', 'Accommodation', 'Office&Commercial', 'Natural Landscape', 'Factory&Manufacturer'];
+        keys = ['Food&Supply', 'Entertainment', 'Education', 'Transportation', 'Healthcare', 'Financial', 'Accommodation', 'Office', 'Landscape', 'Manufacturer'];
 
-    data.pop();
+    // data.pop();
     return { 'k': keys, 'v': data };
 }
 

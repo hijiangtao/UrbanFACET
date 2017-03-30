@@ -259,6 +259,10 @@ img.ui.image {
     margin-top: 1.2rem;
 }
 
+.ui.form .inline.fields > label.disabled {
+    color: gray;
+}
+
 /*LINE CHART*/
 .axis {
     font: 10px sans-serif;
@@ -294,6 +298,10 @@ img.ui.image {
   stroke-width: 1px;
   stroke-dasharray: 3,3;
 }
+
+.redrect:hover {
+    fill: red;
+}
 /*LINE CHART*/
 
 /*CHARTS STYLESHEET*/
@@ -304,8 +312,18 @@ img.ui.image {
 .statcharts {
     /*margin-top: 5px;*/
     width: 100%;
-    height: 150px;
+    height: 140px;
 }
+.poischarts {
+    width: 100%;
+    height: 160px;
+}
+.discharts {
+    width: 100%;
+    height: 175px;
+}
+
+
 .area {
   fill: rgba(250,150,30,1);
   clip-path: url(#clip);

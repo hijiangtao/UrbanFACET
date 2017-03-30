@@ -1,6 +1,6 @@
 <div :id="'card' + index" @click="bindTabClick(index)" class="ui card">
-	<div class="image">
-		<h2 class="mapcardtitle ui header">{{ cals.cities[model.city] }}</h2>
+	<div class="image cursor">
+		<h2 class="mapcardtitle ui header cursor">{{ cals.cities[model.city] }}</h2>
 		<img v-show="sels.lstindex === index" :src="cals.cimgs[model.city].aurl">
 		<img v-show="sels.lstindex !== index" :src="cals.cimgs[model.city].nurl">
 	</div>

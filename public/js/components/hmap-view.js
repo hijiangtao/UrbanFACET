@@ -552,7 +552,7 @@ class mapview {
             })
             .attr('y', function(d) {
                 let p = d['properties']['cp'];
-                return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y;
+                return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 20;
             });
 
         self.map.on("viewreset", reset);

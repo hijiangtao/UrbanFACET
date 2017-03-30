@@ -175,13 +175,13 @@ class chart {
             yprop = getRealProp(prop['yprop']);
         container.select('svg').remove();
 
-        console.log('bar Chart props', prop);
+        // console.log('bar Chart props', prop);
 
-        console.log('Container', d3.select(`#${id}`), 'cWidth', cWidth, 'cHeight', cHeight);
+        // console.log('Container', d3.select(`#${id}`), 'cWidth', cWidth, 'cHeight', cHeight);
         let svg = container.append("svg")
             .attr('width', cWidth)
             .attr('height', cHeight),
-            margin = { top: 5, right: 5, bottom: 45, left: 30 },
+            margin = { top: 5, right: 5, bottom: 55, left: 30 },
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
 
@@ -246,6 +246,7 @@ class chart {
         g.selectAll(".bar")
             .data(data)
             .enter().append("rect")
+            .attr('class', 'redrect')
             .attr("x", function(d) {
                 return x(d[xprop]); })
             .attr("y", function(d) {
@@ -281,12 +282,13 @@ class chart {
             kdata = data['k'],
             vdata = data['v'];
 
+        vdata.pop();
         container.select('svg').remove();
 
         let svg = container.append("svg")
             .attr('width', cWidth)
             .attr('height', cHeight),
-            margin = { top: 10, right: 5, bottom: 55, left: 30 },
+            margin = { top: 10, right: 5, bottom: 60, left: 30 },
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
 
@@ -348,6 +350,7 @@ class chart {
         g.selectAll(".bar")
             .data(vdata)
             .enter().append("rect")
+            .attr('class', 'redrect')
             .attr("x", function(d, i) {
                 return x( kdata[i] ); })
             .attr("y", function(d) {
@@ -361,7 +364,7 @@ class chart {
                     .style("left", d3.event.pageX - 50 + "px")
                     .style("top", d3.event.pageY - 70 + "px")
                     .style("display", "inline-block")
-                    .html(kdata[i] + "<br>" + yname + ": " + d);
+                    .html(kdata[i] + "<br>" + yname + ": " + d.toFixed(1));
             })
             .on("mouseout", function(d) { tooltip.style("display", "none"); });
     }
