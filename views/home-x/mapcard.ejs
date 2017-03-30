@@ -9,29 +9,42 @@
 		<div class="description">
 			<div class="ui grid">
 				<div class="sixteen wide column">
-					<p>MetricLayer-{{ cals.enps[ model.etype ] }}</p>
-					<p>ReferenceLayer-{{ cals.ops[ sels.otype ] }}</p>
-					<p>BaseLayer-<span :id="'baselyrtext'+index">FACET</span></p>
+					<p>Metric: {{ cals.enps[ model.etype ] }} </p>
+					<template v-if="model.dtype !== 'd'" >
+						<div>
+							<vue-slider :id="'slider'+index" :ref="'eSlider'+index" v-bind="sels.objs[index].slider" @drag-end="updateSlider(index)" v-model="sels.objs[index].slider.value"></vue-slider>
+						</div>
+					</template>
+					<p>Reference: {{ cals.ops[ sels.otype ] }}</p>
+					<p>Base: <span :id="'baselyrtext'+index">FACET</span></p>
 				</div>
-				<div class="sixteen wide column">
-					<div class="c-halfwidth">
-						<button class="ui mini button" :class="areaselState" v-on:click="optAreaSelect(index)">Selection</button>
+				<div class="sixteen wide column" style="margin-bottom: .4rem; padding-top: 0;">
+					<button style="float: left;" class="ui tiny button" :class="areaselState" v-on:click="optAreaSelect(index)">Area Select</button>
+					<div style="margin-top: .4rem;" class="ui checkbox">
+					  <input type="checkbox" :name="'reverseColor'+index" v-model="sels.objs[index].reverse">
+					  <label>REV.</label>
+					</div>
+					<!-- <div class="c-halfwidth">
+						<button class="ui tiny button" :class="areaselState" v-on:click="optAreaSelect(index)">Area Select</button>
 					</div>
 					<div class="c-halfwidth">
 						<div class="ui checkbox">
 						  <input type="checkbox" :name="'reverseColor'+index" v-model="sels.objs[index].reverse">
-						  <label>Reverse</label>
+						  <label>REV.</label>
 						</div>
-					</div>
+					</div> -->
 				</div>
-				<template v-if="model.dtype !== 'd'" >
-					<div class="sixteen wide column">
-						<vue-slider :id="'slider'+index" :ref="'eSlider'+index" v-bind="sels.objs[index].slider" @drag-end="updateSlider(index)" v-model="sels.objs[index].slider.value"></vue-slider>
-					</div>
-				</template>
+				<!-- <div class="sixteen wide column">
+					<template v-if="model.dtype !== 'd'" >
+						<div>
+							<vue-slider :id="'slider'+index" :ref="'eSlider'+index" v-bind="sels.objs[index].slider" @drag-end="updateSlider(index)" v-model="sels.objs[index].slider.value"></vue-slider>
+						</div>
+					</template>
+				</div> -->
+				
 
 				<div :id="'maplegend'+index"  class="sixteen wide column">
-					<svg :id="'gridmaplegend'+index" height='0'></svg>
+					<svg :id="'gridmaplegend'+index" style="display: none;" ></svg>
 					<!-- <div :id="'contourmaplegend'+index">
 					</div> -->
 				</div>

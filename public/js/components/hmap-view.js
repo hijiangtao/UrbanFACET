@@ -537,7 +537,7 @@ class mapview {
             .data(data.features)
             .enter().append('text')
             .style("font-family", "sans-serif")
-            .style("font-size", "1.2rem")
+            .style("font-size", "1rem")
             .attr("text-anchor", "middle")
             .text(function(d) {
                 let name = d['properties']['english'];
@@ -710,6 +710,8 @@ class mapview {
      */
     mapcontourCDrawing(data, prop, update = false) {
         // update为false表示当前执行重绘操作, update为true则从实例中调用历史数据进行绘制
+        this.switchLegDisplay('ctrleg');
+        
         if (!update) {
             this.setGridData(data);
         } else {
@@ -938,7 +940,7 @@ class mapview {
      */
     switchLegDisplay(cfg) {
         for (let key in this.ides) {
-            if (key === 'mapid') {
+            if (key === 'mapid' || key === 'baselyr') {
                 continue;
             }
 

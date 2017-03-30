@@ -5,7 +5,7 @@
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
 
-import os, pymongo, math, sys, logging
+import os, pymongo, math, sys, logging, MySQLdb
 import numpy as np
 from scipy import stats
 from geopy.distance import great_circle  # https://pypi.python.org/pypi/geopy/1.11.0

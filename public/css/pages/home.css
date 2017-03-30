@@ -107,7 +107,7 @@ body {
     margin-right: 0;
 }
 .i-ani>.ui.image.cursor {
-    padding-left: 15%;
+    padding-left: 22%;
 }
 .i-ani>.ui.image.cursor.tY10 {
     transform: translateY(10%);
@@ -162,6 +162,7 @@ body {
     width: 3rem;
 }
 
+
 .mapcardtitle {
     position: absolute;
     top: 42%;
@@ -170,7 +171,7 @@ body {
     transform: translateX(-50%);
 }
 .mapcardtitle.ui.header {
-    color: red;
+    color: black;
 }
 .dynamicmetric {
     position: absolute;
@@ -194,7 +195,8 @@ body {
     /*top: 9vh;*/
     width: 26vw;
     position: absolute;
-    /*padding: .5rem;*/
+    padding-top: 0;
+    padding-bottom: 0;
     margin: 0;
     height: 93vh;
     /*z-index: 9;*/
@@ -251,6 +253,10 @@ img.ui.image {
 
 .designedfontcolor {
     color: rgba(250,150,30,1);
+}
+
+.vueslider {
+    margin-top: 1.2rem;
 }
 
 /*LINE CHART*/

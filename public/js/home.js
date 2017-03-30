@@ -16,7 +16,7 @@ import chart from './components/chartview'
 import $ from "jquery"
 // window.jQuery = $
 import { regionRecords, home, smecAve } from './components/init'
-import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getSMecDatasets, getDrawProps, objClone } from './components/apis'
+import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getSMecDatasets, getDrawProps, getAoiDisDatasets, objClone } from './components/apis'
 import { changeLoadState } from './components/events'
 import vueSlider from 'vue-slider-component'
 import dynamicView from './dynamic'
@@ -69,7 +69,7 @@ const userpanel = new Vue({
 				getAOIDatasets(this.sels.objs[0].city, val).then(function(res) {
 					console.log('Get AOI data.')
 
-					prop = {
+					let prop = {
 						'thre': 0
 					};
 					changeLoadState(`dimmer${i}`, false);
@@ -148,6 +148,13 @@ const userpanel = new Vue({
 						// 绘不同行政区数值分布函数
 						getSMecDatasets(city).then(function(cres) {
 							charts[i].barChartDraw(`poiChart${i}`, cres, prop);
+						}).catch(function(err) {
+							console.error("Failed!", err);
+						});
+
+						// 绘不同POI类别概率分布函数
+						getAoiDisDatasets(city, 'TOTAL').then(function(cres) {
+							charts[i].poiBarChartDraw(`disChart${i}`, cres, prop);
 						}).catch(function(err) {
 							console.error("Failed!", err);
 						});
@@ -598,7 +605,7 @@ const userpanel = new Vue({
 
 				// 更新视图
 				self.$refs[`eSlider${i}`][0].refresh();
-				self.getOverview(i);
+				// self.getOverview(i);
 
 			}
 

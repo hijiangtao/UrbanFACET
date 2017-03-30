@@ -32,7 +32,7 @@ class chart {
         let svg = container.append("svg")
             .attr('width', cWidth)
             .attr('height', cHeight),
-            margin = { top: 20, right: 5, bottom: 30, left: 25 },
+            margin = { top: 10, right: 5, bottom: 30, left: 25 },
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
 
@@ -100,6 +100,7 @@ class chart {
         let tooltip = d3.select('#cTipContainer');
         if (tooltip.empty()) {
             tooltip = d3.select("body").append("div").attr("id","cTipContainer")
+            .style('display', 'none')
             .style('background-color', 'white')
             .style('border', '2px solid rgba(250,150,30,1)')
             .style('padding', '4px')
@@ -170,6 +171,7 @@ class chart {
             cWidth = container.node().getBoundingClientRect().width,
             cHeight = container.node().getBoundingClientRect().height,
             xname = prop['xname'],
+            xprop = 'english',
             yprop = getRealProp(prop['yprop']);
         container.select('svg').remove();
 
@@ -179,17 +181,14 @@ class chart {
         let svg = container.append("svg")
             .attr('width', cWidth)
             .attr('height', cHeight),
-            margin = { top: 10, right: 5, bottom: 38, left: 30 },
+            margin = { top: 5, right: 5, bottom: 45, left: 30 },
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
 
-        /**
-         * Begin of D3 V4 Codes
-         * @type {[type]}
-         */
         let tooltip = d3.select('#cTipContainer');
         if (tooltip.empty()) {
             tooltip = d3.select("body").append("div").attr("id","cTipContainer")
+            .style('display', 'none')
             .style('background-color', 'white')
             .style('border', '2px solid rgba(250,150,30,1)')
             .style('padding', '4px')
@@ -201,14 +200,11 @@ class chart {
         let x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
             y = d3.scaleLinear().rangeRound([height, 0]);
 
-        let colours = d3.scaleOrdinal()
-            .range(["#6F257F", "#CA0D59"]);
-
         let g = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         x.domain(data.map(function(d) {
-                return d['name']; }));
+                return d[xprop]; }));
         y.domain([0, d3.max(data, function(d) {
             return d[yprop]; })]);
 
@@ -219,7 +215,7 @@ class chart {
             .selectAll("text")  
             .style("text-anchor", "end")
             .attr("transform", function(d) {
-                return "rotate(-60)" 
+                return "rotate(-40)" 
                 });
         g.select('.axis.axis--x').append("text")
             .attr("class", "axis-title")
@@ -251,7 +247,7 @@ class chart {
             .data(data)
             .enter().append("rect")
             .attr("x", function(d) {
-                return x(d.name); })
+                return x(d[xprop]); })
             .attr("y", function(d) {
                 return y(d[yprop]); })
             .attr("width", x.bandwidth())
@@ -263,7 +259,109 @@ class chart {
                     .style("left", d3.event.pageX - 50 + "px")
                     .style("top", d3.event.pageY - 70 + "px")
                     .style("display", "inline-block")
-                    .html((d.name) + "<br>" + xname + ": " + d[yprop]);
+                    .html((d[xprop]) + "<br>" + xname + ": " + d[yprop]);
+            })
+            .on("mouseout", function(d) { tooltip.style("display", "none"); });
+    }
+
+    /**
+     * 合并两类数据的 POI 分步 bar chart
+     * !!!需要重构!!!
+     * @param  {[type]} id   [description]
+     * @param  {[type]} data [description]
+     * @param  {[type]} prop [description]
+     * @return {[type]}      [description]
+     */
+    poiBarChartDraw(id, data, prop) {
+        let container = d3.select(`#${id}`),
+            cWidth = container.node().getBoundingClientRect().width,
+            cHeight = container.node().getBoundingClientRect().height,
+            xname = 'POI',
+            yname = 'Probability',
+            kdata = data['k'],
+            vdata = data['v'];
+
+        container.select('svg').remove();
+
+        let svg = container.append("svg")
+            .attr('width', cWidth)
+            .attr('height', cHeight),
+            margin = { top: 10, right: 5, bottom: 55, left: 30 },
+            width = +svg.attr("width") - margin.left - margin.right,
+            height = +svg.attr("height") - margin.top - margin.bottom;
+
+        let tooltip = d3.select('#cTipContainer');
+        if (tooltip.empty()) {
+            tooltip = d3.select("body").append("div").attr("id","cTipContainer")
+            .style('display', 'none')
+            .style('background-color', 'white')
+            .style('border', '2px solid rgba(250,150,30,1)')
+            .style('padding', '4px')
+            .style('border-radius', '5px')
+            .style('position', 'absolute')
+            .attr("class", "toolTip");
+        }
+
+        let x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+            y = d3.scaleLinear().rangeRound([height, 0]);
+
+        let g = svg.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        x.domain(kdata.map(function(d) {
+                return d; }));
+        let ymax = d3.max(vdata, function(d) {
+            return d; });
+        y.domain([0, ymax]);
+
+        g.append("g")
+            .attr("class", "axis axis--x")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+            .selectAll("text")  
+            .style("text-anchor", "end")
+            .attr("transform", function(d) {
+                return "rotate(-40)" 
+                });
+        g.select('.axis.axis--x').append("text")
+            .attr("class", "axis-title")
+            .attr("y", -16)
+            .attr("x", width)
+            .attr("dy", ".95em")
+            .style("text-anchor", "end")
+            .attr("fill", "#5D6971")
+            .text(xname);
+
+        g.append("g")
+            .attr("class", "axis axis--y")
+            .call(d3.axisLeft(y).ticks(5).tickFormat(function(d) {
+                return Number.parseInt(d * 100 / ymax) + "%";
+            }).tickSizeInner([-width]))
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", "0.71em")
+            .attr("text-anchor", "end")
+            .attr("fill", "#5D6971")
+            .text(yname);
+
+        g.selectAll(".bar")
+            .data(vdata)
+            .enter().append("rect")
+            .attr("x", function(d, i) {
+                return x( kdata[i] ); })
+            .attr("y", function(d) {
+                return y( d ); })
+            .attr("width", x.bandwidth())
+            .attr("height", function(d) {
+                return height - y(d); })
+            .attr("fill", 'rgba(250,150,30,1)')
+            .on("mousemove", function(d, i) {
+                tooltip
+                    .style("left", d3.event.pageX - 50 + "px")
+                    .style("top", d3.event.pageY - 70 + "px")
+                    .style("display", "inline-block")
+                    .html(kdata[i] + "<br>" + yname + ": " + d);
             })
             .on("mouseout", function(d) { tooltip.style("display", "none"); });
     }

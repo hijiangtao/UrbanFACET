@@ -73,6 +73,16 @@ let apis = {
 			});
 		}
 	},
+	'aoiDisQuery': function(req, res, next) {
+		let params = req.query,
+			city = params.city,
+			type = params.type;
+
+		res.json({
+			'scode': 1,
+			'data': EP.getAoiDis(city, type)
+		});
+	},
 	'extrainfoQuery': function(req, res, next) {
 		let params = req.query;
 

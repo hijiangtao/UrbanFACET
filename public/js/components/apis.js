@@ -174,6 +174,20 @@ let getSMecDatasets = function(city) {
 	return p;
 }
 
+let getAoiDisDatasets = function(city, type) {
+	let p = new Promise(function(resolve, reject) {
+		$.get(`/comp/aoiDisQuery?city=${city}&type=${type}`, function (res, err) {
+			if (res['scode']) {
+				resolve(res['data']);
+			} else {
+				reject(err);
+			}
+		})
+	})
+
+	return p;
+}
+
 let getLinearNum = function(target, minVal, maxVal, minNum, maxNum) {
 	if (target < minVal) {
 		return 0;
@@ -260,6 +274,7 @@ export {
 	getBoundaryDatasets,
 	getAOIDatasets,
 	getSMecDatasets,
+	getAoiDisDatasets,
 	getDrawProps,
 	getSubGrids,
 	getLinearNum,

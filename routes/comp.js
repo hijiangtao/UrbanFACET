@@ -27,6 +27,9 @@ router.get('/aoiQuery', function(req, res, next) {
 router.get('/mecStatQuery',function(req, res, next) {
 	apis.mecStatQuery(req, res, next);
 });
+router.get('/aoiDisQuery',function(req, res, next) {
+	apis.aoiDisQuery(req, res, next);
+});
 
 router.get('/getJsonSum', function(req, res, next) {
 	apis.getJsonSum(req, res, next);

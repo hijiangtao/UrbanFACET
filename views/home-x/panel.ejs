@@ -143,7 +143,7 @@
                     <!-- v-if="sels.otype === 'p'" -->
                     <label>POI</label>
                     <div class="field" >
-                        <div class="ui compact menu">
+                        <div :class="{ 'disabled': sels.otype !== 'p' }" class="ui compact menu">
                             <div class="ui simple dropdown item">
                                 <span>{{ cals.pois[ sels.ptype ] }}</span>
                                 <i class="dropdown icon"></i>
@@ -157,7 +157,7 @@
                     <!-- v-if="sels.otype === 'd'" -->
                     <label>District</label>
                     <div class="field" >
-                        <div class="ui compact menu">
+                        <div :class="{ 'disabled': sels.otype !== 'd' }" class="ui compact menu">
                             <div class="ui simple dropdown item">
                                 <span>{{ cals.scales[ sels.stype ] }}</span>
                                 <i class="dropdown icon"></i>
@@ -184,11 +184,11 @@
                         <th>Value</th>
                     </tr> -->
                     <tr>
-                        <th>F</th>
-                        <th>A</th>
-                        <th>C</th>
-                        <th>E</th>
-                        <th>T</th>
+                        <th>Fluidity</th>
+                        <th>Virancy</th>
+                        <th>Commutation</th>
+                        <th>Diversity</th>
+                        <th>Density</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -222,9 +222,9 @@
                 </tbody>
             </table>
         </div>
-        <div class="sixteen wide column">
+        <!-- <div class="sixteen wide column">
             <p>Selected District - <span :id="'carddistrict'+index">Null</span>, Used {{ cals.enps[ sels.objs[index].etype ]+ ": " }} - <span :id="'cardenps'+index">Null</span></p>
-        </div>
+        </div> -->
         <div class="sixteen wide column">
             <div class="statcharts" :id="'estatChart'+index"></div>
         </div>

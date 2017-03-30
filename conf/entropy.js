@@ -17,6 +17,7 @@ const data = require('./data');
 const $sql = require('../controllers/apis/mysqlMapping');
 const iMax = require('./eMax');
 const sMec = require('./data/metrics');
+const poidis = require('./data/poidis');
 
 function readIdlistMongo(dbname, queryrate, minVal, maxVal, prop) {
     let promise = new Promise(function(resolve, reject) {
@@ -428,6 +429,14 @@ function getAoiDetails(conn, prop) {
     return Promise.all([p1, p2]);
 }
 
+function getAoiDis(city, type) {
+    let data = poidis[city][type],
+        keys = ['Food&Supply', 'Entertainment&Leisure', 'Education', 'Transportation', 'Healthcare&Emergency', 'Financial&Bank', 'Accommodation', 'Office&Commercial', 'Natural Landscape', 'Factory&Manufacturer'];
+
+    data.pop();
+    return { 'k': keys, 'v': data };
+}
+
 function generateGridsJson(locs, obj) {
     fs.exists('myjsonfile.json', function(exists) {
         if (exists) {
@@ -469,5 +478,6 @@ module.exports = {
     getBoundary: getBoundary,
     getAoiNum: getAoiNum,
     getAoiDetails: getAoiDetails,
-    getMecStat: getMecStat
+    getMecStat: getMecStat,
+    getAoiDis: getAoiDis
 }
