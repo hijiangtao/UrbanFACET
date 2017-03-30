@@ -136,7 +136,8 @@ const userpanel = new Vue({
 						// 绘 Metric Distribution 图函数
 						maps[i].mapcontourCDrawing(res, drawProps);
 						let prop = {
-							'xname': self.cals.enps[ obj.etype ]
+							'xname': self.cals.enps[ obj.etype ],
+							'yprop': obj.etype
 						}
 						if (etype === 'de') {
 							charts[i].lineChartDraw(`estatChart${i}`, res['chart']['d'], prop);
@@ -145,11 +146,11 @@ const userpanel = new Vue({
 						}
 
 						// 绘不同行政区数值分布函数
-						// getSMecDatasets(city).then(function(cres) {
-						// 	charts[i].barChartDraw(`poiChart${i}`, cres, prop);
-						// }).catch(function(err) {
-						// 	console.error("Failed!", err);
-						// });
+						getSMecDatasets(city).then(function(cres) {
+							charts[i].barChartDraw(`poiChart${i}`, cres, prop);
+						}).catch(function(err) {
+							console.error("Failed!", err);
+						});
 					}).catch(function(err) {
 						console.error("Failed!", err);
 					});

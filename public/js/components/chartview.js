@@ -7,7 +7,7 @@
 
 'use strict'
 import * as d3 from 'd3'
-import { chartTestData } from './initdata'
+import { getRealProp } from './init'
 
 class chart {
     constructor(id) {
@@ -25,7 +25,7 @@ class chart {
         let container = d3.select(`#${id}`),
             cWidth = container.node().getBoundingClientRect().width,
             cHeight = container.node().getBoundingClientRect().height,
-            xname = prop['xname'];
+            xname = prop['xname']; // x轴内容名字
         container.select('svg').remove();
 
         console.log('Container', d3.select(`#${id}`), 'cWidth', cWidth, 'cHeight', cHeight);
@@ -97,11 +97,16 @@ class chart {
             .attr("class", "line")
             .attr("d", line);
 
-        let text = g.append('text')
-            .attr("transform", "translate(" + (width * 0.6) + ",0)")
-            // .style('position', 'absolute')
-            // .style('right', 2)
-            // .style('top', 2);
+        let tooltip = d3.select('#cTipContainer');
+        if (tooltip.empty()) {
+            tooltip = d3.select("body").append("div").attr("id","cTipContainer")
+            .style('background-color', 'white')
+            .style('border', '2px solid rgba(250,150,30,1)')
+            .style('padding', '4px')
+            .style('border-radius', '5px')
+            .style('position', 'absolute')
+            .attr("class", "toolTip");
+        }
 
         let focus = g.append("g")
             .attr("class", "focus")
@@ -132,7 +137,7 @@ class chart {
             .on("mouseover", function() { focus.style("display", null); })
             .on("mouseout", function() {
                 focus.style("display", "none");
-                text.text('');
+                tooltip.style("display", 'none');
             })
             .on("mousemove", mousemove);
 
@@ -143,10 +148,12 @@ class chart {
                 d1 = data[i],
                 d = x0 - d0.k > d1.k - x0 ? d1 : d0;
             focus.attr("transform", "translate(" + x(d.k) + "," + y(d.v) + ")");
-            // focus.select("text").text(function() {
-            //     return `k: ${d.k}, v: ${d.v}`;
-            // });
-            text.text(`${prop['xname']}: ${d.k}, Count: ${d.v}`);
+
+            tooltip
+                .style("left", d3.event.pageX - 50 + "px")
+                    .style("top", d3.event.pageY - 40 + "px")
+                    .style("display", "inline-block")
+                    .html(`${prop['xname']}: ${d.k}%, Count: ${d.v}`);
             focus.select(".x-hover-line").attr("y2", height - y(d.v));
             focus.select(".y-hover-line").attr("x2", -x(d.k));
         }
@@ -162,14 +169,17 @@ class chart {
         let container = d3.select(`#${id}`),
             cWidth = container.node().getBoundingClientRect().width,
             cHeight = container.node().getBoundingClientRect().height,
-            xname = prop['xname'];
+            xname = prop['xname'],
+            yprop = getRealProp(prop['yprop']);
         container.select('svg').remove();
+
+        console.log('bar Chart props', prop);
 
         console.log('Container', d3.select(`#${id}`), 'cWidth', cWidth, 'cHeight', cHeight);
         let svg = container.append("svg")
             .attr('width', cWidth)
             .attr('height', cHeight),
-            margin = { top: 20, right: 5, bottom: 30, left: 25 },
+            margin = { top: 10, right: 5, bottom: 38, left: 30 },
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
 
@@ -177,7 +187,16 @@ class chart {
          * Begin of D3 V4 Codes
          * @type {[type]}
          */
-        let tooltip = d3.select("body").append("div").attr("class", "toolTip");
+        let tooltip = d3.select('#cTipContainer');
+        if (tooltip.empty()) {
+            tooltip = d3.select("body").append("div").attr("id","cTipContainer")
+            .style('background-color', 'white')
+            .style('border', '2px solid rgba(250,150,30,1)')
+            .style('padding', '4px')
+            .style('border-radius', '5px')
+            .style('position', 'absolute')
+            .attr("class", "toolTip");
+        }
 
         let x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
             y = d3.scaleLinear().rangeRound([height, 0]);
@@ -189,45 +208,62 @@ class chart {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         x.domain(data.map(function(d) {
-                return d.area; }));
+                return d['name']; }));
         y.domain([0, d3.max(data, function(d) {
-            return d.value; })]);
+            return d[yprop]; })]);
 
         g.append("g")
             .attr("class", "axis axis--x")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
+            .call(d3.axisBottom(x))
+            .selectAll("text")  
+            .style("text-anchor", "end")
+            .attr("transform", function(d) {
+                return "rotate(-60)" 
+                });
+        g.select('.axis.axis--x').append("text")
+            .attr("class", "axis-title")
+            .attr("y", -16)
+            .attr("x", width)
+            .attr("dy", ".95em")
+            .style("text-anchor", "end")
+            .attr("fill", "#5D6971")
+            .text('DIV');
 
         g.append("g")
             .attr("class", "axis axis--y")
             .call(d3.axisLeft(y).ticks(5).tickFormat(function(d) {
-                return parseInt(d / 1000) + "K"; }).tickSizeInner([-width]))
+                if (yprop === 'd') {
+                    return Number.parseInt(d / 1000000) + "M";
+                } else {
+                    return d.toFixed(3);
+                }
+            }).tickSizeInner([-width]))
             .append("text")
             .attr("transform", "rotate(-90)")
             .attr("y", 6)
             .attr("dy", "0.71em")
             .attr("text-anchor", "end")
             .attr("fill", "#5D6971")
-            .text("Average House Price - (£)");
+            .text(xname);
 
         g.selectAll(".bar")
             .data(data)
             .enter().append("rect")
             .attr("x", function(d) {
-                return x(d.area); })
+                return x(d.name); })
             .attr("y", function(d) {
-                return y(d.value); })
+                return y(d[yprop]); })
             .attr("width", x.bandwidth())
             .attr("height", function(d) {
-                return height - y(d.value); })
-            .attr("fill", function(d) {
-                return colours(d.area); })
+                return height - y(d[yprop]); })
+            .attr("fill", 'rgba(250,150,30,1)')
             .on("mousemove", function(d) {
                 tooltip
                     .style("left", d3.event.pageX - 50 + "px")
                     .style("top", d3.event.pageY - 70 + "px")
                     .style("display", "inline-block")
-                    .html((d.area) + "<br>" + "£" + (d.value));
+                    .html((d.name) + "<br>" + xname + ": " + d[yprop]);
             })
             .on("mouseout", function(d) { tooltip.style("display", "none"); });
     }
