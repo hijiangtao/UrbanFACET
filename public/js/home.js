@@ -116,7 +116,7 @@ const userpanel = new Vue({
 
                 // 添加 loading 效果 & 移动地图
                 changeLoadState(`dimmer${i}`, true);
-                // maps[i].panTo(regionRecords[city]['center']);
+                maps[i].panTo(regionRecords[city]['center']);
 
                 // 根据用户所选 metric 类型进行相应数据提取操作
                 if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {

@@ -262,6 +262,7 @@ class dynamicView {
 
 								models[i].scale = res['prop']['scales'];
 								let drawProps = getDrawProps(res['prop']['scales'], obj['slider'], self.props, p);
+								self.maps[i].panTo(regionRecords[cities[i].val]['center']);
 								self.maps[i].mapcontourCDrawing(res, drawProps);
 							}).catch(function(err) {
 								console.error("Failed!", err);
