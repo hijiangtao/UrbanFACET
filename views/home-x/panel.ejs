@@ -3,14 +3,14 @@
         <label class="i-label"><img class="ui mini image" src="/assets/region-icon.png">City
         </label>
         <div class="i-main">
-            <div v-for='item in params.regions' class="cityimg ui tiny image cursor">
-                <img v-show="item.val === sels.objs[0].city" :src="item.aurl" @click="updateSelectRegion(item.val)" :title="item.name">
-                <img v-show="item.val !== sels.objs[0].city" :src="item.nurl" @click="updateSelectRegion(item.val)" :title="item.name">
+            <div v-for='item in params.regions' class="cityimg ui tiny image cursor" data-inverted="" :data-tooltip="item.name" data-position="right center" >
+                <img v-show="item.val === sels.objs[0].city" :src="item.aurl" @click="updateSelectRegion(item.val)">
+                <img v-show="item.val !== sels.objs[0].city" :src="item.nurl" @click="updateSelectRegion(item.val)">
             </div>
         </div>
         <div class="i-ani">
             <div class="ui image cursor tY10">
-                <img title="Comparison Analysis" src="/assets/compare-icon.png" @click="openDynamic('c')">
+                <img data-inverted="" data-tooltip="Comparison Analysis" data-position="right center" src="/assets/compare-icon.png" @click="openDynamic('c')">
             </div>
         </div>
     </div>

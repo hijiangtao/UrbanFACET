@@ -393,6 +393,14 @@ class mapview {
             marker.bindPopup(prop['thre']>0? `<p>AOI Number: ${data[i]['num']}</p>`:`<p>POI: ${data[i]['name']}</p>`, {
                 showOnMouseOver: true
             });
+
+            marker.on('mouseover', function(e) {
+                this.openPopup();
+            })
+            marker.on('mouseout', function(e) {
+                this.closePopup();
+            })
+
             self.aoiLayers.addLayer(marker);
         }
 

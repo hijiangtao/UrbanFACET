@@ -364,7 +364,7 @@ class chart {
                     .style("left", d3.event.pageX - 50 + "px")
                     .style("top", d3.event.pageY - 70 + "px")
                     .style("display", "inline-block")
-                    .html(kdata[i] + "<br>" + yname + ": " + d.toFixed(1));
+                    .html(kdata[i] + " POI<br>" + yname + ": " + d.toFixed(1));
             })
             .on("mouseout", function(d) { tooltip.style("display", "none"); });
     }

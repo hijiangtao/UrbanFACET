@@ -265,7 +265,7 @@ const userpanel = new Vue({
 
             // 和之前选择一致,逻辑为取消
             // if (objs[0].ftpval === val) {
-            // 	val = '';
+            //  val = '';
             // }
 
             let intVal = Number.parseInt(val);
@@ -450,44 +450,81 @@ const userpanel = new Vue({
             this.sels.lstindex = val;
         },
         'pradiusUpd': function() {
-        	if (store.state.init) {
-                    return;
+            if (store.state.init) {
+                return;
+            }
+
+            let self = this,
+                objs = self.sels.objs;
+
+            for (let i = objs.length - 1; i >= 0; i--) {
+                let v = this.sels.objs[i].slider.value;
+
+                this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
+
+                let obj = objs[i],
+                    city = obj.city,
+                    etype = obj.etype,
+                    rev = obj.reverse,
+                    drawprop = {
+                        'etype': etype,
+                        'rev': rev
+                    };
+
+                // 根据用户所选 metric 类型进行相应数据提取操作
+                if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
+                    // 获取 slider 情况下的配置值域以及用户其余选项
+                    // v.push(self.components.hrSlider.value);
+                    let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
+                    maps[i].mapcontourCDrawing({}, drawProps, true);
+                } else {
+                    let prop = {
+                        'city': city,
+                        'etype': etype,
+                        'boundary': false,
+                        'slider': v
+                    };
+
+                    maps[i].boundaryDrawing({}, prop, true);
                 }
+            }
+        },
+        'revClick': function(index) {
+            if (store.state.init) {
+                return;
+            }
 
-                let self = this,
-                    objs = self.sels.objs;
+            let self = this,
+                i = Number.parseInt(index),
+                obj = self.sels.objs[i],
+                v = obj.slider.value;
 
-                for (let i = objs.length - 1; i >= 0; i--) {
-                    let v = this.sels.objs[i].slider.value;
+            this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
 
-                    this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
+            let city = obj.city,
+                etype = obj.etype,
+                rev = obj.reverse,
+                drawprop = {
+                    'etype': etype,
+                    'rev': rev
+                };
 
-                    let obj = objs[i],
-                        city = obj.city,
-                        etype = obj.etype,
-                        rev = obj.reverse,
-                        drawprop = {
-                            'etype': etype,
-                            'rev': rev
-                        };
+            // 根据用户所选 metric 类型进行相应数据提取操作
+            if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
+                // 获取 slider 情况下的配置值域以及用户其余选项
+                // v.push(self.components.hrSlider.value);
+                let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
+                maps[i].mapcontourCDrawing({}, drawProps, true);
+            } else {
+                let prop = {
+                    'city': city,
+                    'etype': etype,
+                    'boundary': false,
+                    'slider': v
+                };
 
-                    // 根据用户所选 metric 类型进行相应数据提取操作
-                    if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
-                        // 获取 slider 情况下的配置值域以及用户其余选项
-                        // v.push(self.components.hrSlider.value);
-                        let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
-                        maps[i].mapcontourCDrawing({}, drawProps, true);
-                    } else {
-                        let prop = {
-                            'city': city,
-                            'etype': etype,
-                            'boundary': false,
-                            'slider': v
-                        };
-
-                        maps[i].boundaryDrawing({}, prop, true);
-                    }
-                }
+                maps[i].boundaryDrawing({}, prop, true);
+            }
         }
     },
     computed: {
@@ -646,8 +683,8 @@ const userpanel = new Vue({
                     }
                 }
             },
-            deep: true
-        },
+            deep: false
+        }
     },
     mounted() {
         let self = this;

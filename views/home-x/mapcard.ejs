@@ -21,7 +21,7 @@
 				<div class="sixteen wide column" style="margin-bottom: .4rem; padding-top: 0;">
 					<button style="float: left;" class="ui tiny button" :class="areaselState" v-on:click="optAreaSelect(index)">Area Select</button>
 					<div style="margin-top: .4rem;" class="ui checkbox">
-					  <input type="checkbox" :name="'reverseColor'+index" v-model="sels.objs[index].reverse">
+					  <input type="checkbox" :name="'reverseColor'+index" v-model="sels.objs[index].reverse" @click="revClick(index)">
 					  <label>REV.</label>
 					</div>
 					<!-- <div class="c-halfwidth">
