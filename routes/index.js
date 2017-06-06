@@ -10,9 +10,9 @@ router.get('/', function(req, res, next) {
 //   res.render('demo', { title: 'DEMO', name: 'demo' });
 // });
 /* GET comparison page. */
-router.get('/comp', function(req, res, next) {
-  res.render('comp', { title: 'Information-theoretic visual analysis of big urban check-in data', name: 'comp' });
-});
+// router.get('/comp', function(req, res, next) {
+//   res.render('comp', { title: 'Information-theoretic visual analysis of big urban check-in data', name: 'comp' });
+// });
 
 /* GET stats page. */
 // router.get('/lab', function(req, res, next) {

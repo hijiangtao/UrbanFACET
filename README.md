@@ -10,6 +10,11 @@ Cities are living systems where urban infrastructures and their functions are de
 
 All data analyzing scripts and configuration files are put in `server` folder, `app.js` is the sytem entrance file, `package.json` defines the application and its dependency. Developed in Node.js with `Express` framework. Visualize data with `D3.js`, `leaflet.js` and pure `<canvas>` manipulations.
 
+## Contact
+
+* Github - [hijiangtao](https:github.com/hijiangtao)
+* [Email](mailto:hijiangtao@gmail.com)
+
 ## LICENSE
 
 GNU General Public License v3.0
