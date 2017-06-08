@@ -1,39 +1,34 @@
 ## Current Progress
 ### HTML (FE part)
-#### EJS templates
-* components: 用于 home 页面的展示组件，按照页面拆分分类
-* v-components: 用于 demo 页面的展示组件，按照功能拆分分类
-* demo.ejs: 现有跟进的开发页面，用于实现最新的想法以及相关系统原型
+#### EJS templates (views)
+
+* home-x: 用于 home 页面的展示组件，按照页面拆分分类
 * error.ejs: 404 页面
 * home.ejs: 原有保留的尽可能多的功能展示页面
-* lab.ejs: Cluster Results Analysis of Decomposed User Features, 数据统计与 matrix 分析页面
-* ui.ejs: 纯展示 UI 设计页面，已废弃
 
 #### img/data
+
 * cluster
 * decompose
 * init
 * tmp
 
 ### JS (FE part)
+
 * components/
 	* analysistools.js: 描绘数据统计与 matrix 结果分析的抽象类
 	* initdata.js: 存储页面初始化实例所要用到的 data
 	* lib.js: 通用函数，包括矩阵计算，生成数组等常用函数，用于前端部分
 	* map.js: 基于 Leaflet.js 抽象的 canvas 绘制部分，用于替换采用 svg 绘制海量点的做法
 	* mapview.js: 地图类，用于生成地图实例，以及相关 heatmap, gridmap, pointmap, scatterplot 等绘制函数
-* demo.js: 现有开发页面（主要）
 * home.js: 原有保留的尽可能多的功能展示页面，包括降维、聚类、label、查询及可视化等部分
-* lab.js: Cluster Results Analysis of Decomposed User Features, 数据统计与 matrix 分析页面，包括 scatter plot 选择类别，折线图等对 matrix 在时空两个维度上的统计量呈现
-* ui.js: 最初始 UI 设计，不包含任何实质性内容，纯展示部分
+* dynamic.js: 动态查询页面生成组件
 
 ### ROUTES (middle-ware)
 
-* demo
-* home
+* home: 主页
 * index: 渲染页面路由
-* lab
-* users: 弃用
+* comp: 查询路由 API
 
 ### APIs (backend)
 
