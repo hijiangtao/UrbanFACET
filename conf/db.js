@@ -1,6 +1,7 @@
-// conf/db.js
-// 
-// MySQL数据库联接配置
+/**
+ * MySQL数据库联接配置
+ * 本地/服务器
+ */
 var mysql = require('mysql');
 
 var localhost = mysql.createPool({

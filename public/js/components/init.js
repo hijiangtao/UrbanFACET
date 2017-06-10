@@ -13,6 +13,10 @@ const settings = {
     'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#0000ff 25%,#00ff00 45%,#ffff00 70%,#ff0000 100%)'
 }
 
+/**
+ * 储存四个城市图标及属性信息
+ * @type {Array}
+ */
 const regions = [
     { 'name': 'Beijing', 'val': 'bj', 'aurl': '/assets/bj-aicon.png', 'nurl': '/assets/bj-icon.png' },
     { 'name': 'Tianjin', 'val': 'tj', 'aurl': '/assets/tj-aicon.png', 'nurl': '/assets/tj-icon.png' },
@@ -217,7 +221,7 @@ let home = {
     }
 };
 
-let regionRecords = {
+const regionRecords = {
     'bj': {
         'center': [39.9120, 116.3907]
     },
@@ -232,7 +236,7 @@ let regionRecords = {
     }
 };
 
-let stats = {
+const stats = {
     /**
      * [TotalGDP, Population, Area, AveGDP, HousePrice]
      */

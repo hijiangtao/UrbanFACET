@@ -14,7 +14,6 @@ Vue.use(Vuex)
 import mapview from './components/hmap-view'
 import chart from './components/chartview'
 import $ from "jquery"
-// window.jQuery = $
 import { regionRecords, home, smecAve } from './components/init'
 import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getSMecDatasets, getDrawProps, getAoiDisDatasets, objClone } from './components/apis'
 import { changeLoadState } from './components/events'
@@ -123,8 +122,6 @@ const userpanel = new Vue({
                         obj.scales = res['prop']['scales'];
 
                         // 获取 slider 情况下的配置值域以及用户其余选项
-                        // svals.push(self.components.hrSlider.value);
-                        // console.log(self.components.hrSlider.value);
                         let drawProps = getDrawProps(obj.scales, svals, self.sels.ctrsets, drawprop);
                         console.log('drawProps', drawProps);
 

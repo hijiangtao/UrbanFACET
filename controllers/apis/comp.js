@@ -95,6 +95,13 @@ let apis = {
 			console.error('error: ', err);
 		});
 	},
+	/**
+	 * eMax.js sum 属性生成函数
+	 * @param  {[type]}   req  [description]
+	 * @param  {[type]}   res  [description]
+	 * @param  {Function} next [description]
+	 * @return {[type]}        [description]
+	 */
 	'getJsonSum': function(req, res, next) {
 		let params = req.query,
 			table = params.table;
@@ -127,6 +134,13 @@ let apis = {
 			console.error('error: ', err);
 		});
 	},
+	/**
+	 * eMax.js ave 属性生成函数
+	 * @param  {[type]}   req  [description]
+	 * @param  {[type]}   res  [description]
+	 * @param  {Function} next [description]
+	 * @return {[type]}        [description]
+	 */
 	'getJsonAve': function(req, res, next) {
 		let params = req.query,
 			table = params.table;
