@@ -33,11 +33,6 @@ const store = new Vuex.Store({
     }
 })
 
-// 判断浏览器是否支持 localStorage
-if (typeof(Storage) === undefined) {
-    alert('Please Update your browser to support localStorage');
-}
-
 let maps = [],
     charts = [],
     daview = null;

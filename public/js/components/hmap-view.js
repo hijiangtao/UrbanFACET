@@ -22,7 +22,7 @@ import $ from "jquery"
 window.jQuery = $
 
 const SPLIT = 0.003
-const mapattr = 'Urban FACET &copy; 2017'
+const mapattr = 'UrbanFACET &copy; 2017'
 const mapuid = 'hijiangtao'
 const accessToken = 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'
 
