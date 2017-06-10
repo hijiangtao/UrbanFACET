@@ -24,24 +24,7 @@
 					  <input type="checkbox" :name="'reverseColor'+index" v-model="sels.objs[index].reverse" @click="revClick(index)">
 					  <label>REV.</label>
 					</div>
-					<!-- <div class="c-halfwidth">
-						<button class="ui tiny button" :class="areaselState" v-on:click="optAreaSelect(index)">Area Select</button>
-					</div>
-					<div class="c-halfwidth">
-						<div class="ui checkbox">
-						  <input type="checkbox" :name="'reverseColor'+index" v-model="sels.objs[index].reverse">
-						  <label>REV.</label>
-						</div>
-					</div> -->
 				</div>
-				<!-- <div class="sixteen wide column">
-					<template v-if="model.dtype !== 'd'" >
-						<div>
-							<vue-slider :id="'slider'+index" :ref="'eSlider'+index" v-bind="sels.objs[index].slider" @drag-end="updateSlider(index)" v-model="sels.objs[index].slider.value"></vue-slider>
-						</div>
-					</template>
-				</div> -->
-				
 
 				<div :id="'maplegend'+index"  class="sixteen wide column">
 					<svg :id="'gridmaplegend'+index" style="display: none;" ></svg>

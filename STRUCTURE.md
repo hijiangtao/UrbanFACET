@@ -1,19 +1,41 @@
-## Current Progress
-### HTML (FE part)
-#### EJS templates (views)
+# UrbanFACET Wiki
 
-* home-x: 用于 home 页面的展示组件，按照页面拆分分类
-* error.ejs: 404 页面
-* home.ejs: 原有保留的尽可能多的功能展示页面
+## Outline
 
-#### img/data
+* 页面 | [Pages]
+* 绘制与模型 | [Visualization and Models]
+* 路由 | [Routes]
+* APIs | [APIs]
+* 数据处理脚本 | [Scripts]
+* 批处理与数据库信息 | [Shell and Databases]
 
-* cluster
-* decompose
-* init
-* tmp
+## 页面
 
-### JS (FE part)
+### EJS 模板（视图）
+
+* home: 用于存储组成 home 页面的展示组件，其中 `panel.ejs` 为配置面板展示组件， `dynamic.ejs` 为对比分析展示页面组件， `mapcard.ejs` 为地图信息卡片组件；
+* error.ejs: 404 页面；
+* home.ejs: 主界面入口；
+
+```
+views
+├── error.ejs
+├── home
+│   ├── dynamic.ejs
+│   ├── mapcard.ejs
+│   └── panel.ejs
+└── home.ejs
+
+1 directory, 5 files
+```
+
+### 静态资源（图片）
+
+所有页面所涉及到的自定义设计图标文件均存放在 `/public/assets` 文件夹中。
+
+## 绘制与模型
+
+### 可视化绘制与前台数据处理方法相关
 
 * components/
 	* analysistools.js: 描绘数据统计与 matrix 结果分析的抽象类
@@ -24,7 +46,11 @@
 * home.js: 原有保留的尽可能多的功能展示页面，包括降维、聚类、label、查询及可视化等部分
 * dynamic.js: 动态查询页面生成组件
 
-### ROUTES (middle-ware)
+### 视图模型与状态管理相关
+
+视图模型
+
+## 路由
 
 * home: 主页
 * index: 渲染页面路由

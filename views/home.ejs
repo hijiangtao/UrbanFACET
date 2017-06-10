@@ -7,7 +7,7 @@
     <title>
         <%= title %>
     </title>
-    <meta name="description" content=""Urban Mobility Map: Information-theoretic visual analysis of big user check-in data>
+    <meta name="description" content="UrbanFACET: Visually Profiling Cities from Mobile Device Recorded Movement Data of Millions of City Residents">
     <meta name="keywords" content="Visual Analytics">
     <link href="/favicon.ico" rel="shortcut icon">
     <link rel="stylesheet" type="text/css" href="/css/leaflet.css">
@@ -24,13 +24,13 @@
 
         <div class="ui row" >
             <div id="userpanel" class="ui segment">
-                <% include home-x/panel %>
+                <% include home/panel %>
             </div>
             
             <div id="mappanel" class="ui segment">
                 <div v-for="(model, index) in sels.objs" :class="mapClass" class="ui segment">
                     <div :id="'map' + index" class="vamap"></div>
-                    <% include home-x/mapcard %>
+                    <% include home/mapcard %>
 
                     <div :id="'dimmer' + index" class="ui dimmer">
                         <div class="ui massive text loader">Loading Data</div>
@@ -41,7 +41,7 @@
     </div>
 
     <div id="dynamicview">
-        <% include home-x/dynamic %>
+        <% include home/dynamic %>
     </div>
     
     
