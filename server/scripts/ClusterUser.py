@@ -3,15 +3,17 @@
 # @Date    : 2016-11-28 17:24:32
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# @Version : $Id$
+# 描述     ： 根据采样用户数据，例如 1-in-10_tsne-workday 从 mongodb 或者文件中提取 user matrix 进行分类聚类计算，并将散点图绘制出来存入文件
 
 import os, csv, gc, getopt, sys, logging
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans, DBSCAN 
-import CommonFunc as func
+# import CommonFunc as func
+from Util import func
 import matplotlib.patches as mpatches
 
+# 从文件中取出用户特征
 def getMatrixfromFile(file):
 	rawdata, feature, idlist = [], [], []
 	with open(file, 'rb') as csvfile:
@@ -24,6 +26,7 @@ def getMatrixfromFile(file):
 	csvfile.close()
 	return np.asarray(rawdata), np.asarray(feature), np.asarray(idlist)
 
+# 从 mongodb 数据库取出用户特征
 def getMatrixfromMongo(dbname, collectname, queryrate):
 	conn, db = func.connectMongo(dbname)
 
@@ -180,12 +183,10 @@ def drawScatterPlot(data, prop, labels, lablist, txtCluster, x, type = 'kmeans')
 		fontsize=5)
 
 	img = plt.gcf()
-	filesrc = os.path.join(os.getcwd(), '../../public/img/cluster', '%s.png' % txtCluster)
-	# print 'getcwd', os.getcwd(), 'filesrc', filesrc
+	# 图片保存在 /server/data/cluster 文件夹中
+	filesrc = os.path.join(os.getcwd(), '../data/cluster', '%s.png' % txtCluster)
 	img.savefig( filesrc, dpi=400)
 	plt.close()
-
-	# result = combineArrs(idlist, labels)
 
 	result = []
 	for x in xrange(0, len(rawdata)):
@@ -201,7 +202,6 @@ def main(argv):
 	try:
 		opts, args = getopt.getopt(argv, "hc:m:p:d:w:f:x:y:", ["help", "direcotry=", "city=", "method=", "plotsize=", "pipeway=", "file=", "eps=", "minpts="])
 	except getopt.GetoptError as err:
-		# print help information and exit:
 		print str(err)  # will print something like "option -a not recognized"
 		usage()
 		sys.exit(2)
@@ -222,7 +222,7 @@ def main(argv):
 		'queryrate': 3
 	}
 
-	print 'Python received params: ', opts
+	# print 'Python received params: ', opts
 
 	for opt, arg in opts:
 		if opt == '-h':

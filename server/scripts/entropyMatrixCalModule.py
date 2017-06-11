@@ -3,7 +3,7 @@
 # @Date    : 2017-02-08 18:55:01
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# @Version : $Id$
+# 描述     ： people entropy 计算
 
 import os
 import time

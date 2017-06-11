@@ -3,7 +3,7 @@
 # @Date    : 2017-02-26 16:40:38
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# @Version : $Id$
+# 描述     ： 考虑时间段 daytype 筛选的 people entropy 计算
 
 import os
 import time

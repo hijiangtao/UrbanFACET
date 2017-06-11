@@ -3,7 +3,7 @@
 # @Date    : 2017-03-29 08:40:36
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# @Version : $Id$
+# 统计不同设备定位次数，用于论文贴图分析
 
 import os
 import gc, getopt, sys, logging

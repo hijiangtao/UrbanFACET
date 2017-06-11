@@ -3,7 +3,7 @@
 # @Date    : 2016-09-28 21:55:13
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# @Version : $Id$
+# 描述      : DBScan 处理函数， 从文件读取用户降维后数据进行聚类并画图显示
 
 import os
 import numpy as np
@@ -99,6 +99,13 @@ def dbscan(data, eps, minPts):
 	return clusterResult, clusterId - 1
 
 def plotFeature(data, clusters, clusterNum):
+	"""输入数据集及类别个数，进行散点图绘制
+	
+	Args:
+	    data (TYPE): Description
+	    clusters (TYPE): Description
+	    clusterNum (TYPE): Description
+	"""
 	nPoints = data.shape[1]
 	matClusters = np.mat(clusters).transpose()
 	fig = plt.figure()
@@ -137,9 +144,8 @@ def main():
 
 	for x in mode3:
 		
-		dataSet = loadDataSet('../data/2D-ScatterData_1-in-10_tsne-workday.csv', ',', 0, 1, 2, x["name"])
+		dataSet = loadDataSet('../../data/init/2D-ScatterData_1-in-10_tsne-workday.csv', ',', 0, 1, 2, x["name"])
 		dataSet = np.mat(dataSet).transpose()
-		# print("ing...")
 
 		epsValue = 0.0001
 		minPtsValue = x["minPts"]

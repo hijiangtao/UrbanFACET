@@ -3,7 +3,7 @@
 # @Date    : 2017-02-26 14:30:44
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# @Version : $Id$
+# 描述     ： 考虑时间段 timeperiod 筛选的 record entropy 计算
 
 import os
 import time

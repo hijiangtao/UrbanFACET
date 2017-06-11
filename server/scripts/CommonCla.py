@@ -3,7 +3,7 @@
 # @Date    : 2016-11-29 16:37:06
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# @Version : $Id$
+# 描述      : 计算程序耗时类 
 
 import os, time
 

@@ -3,12 +3,12 @@
 # @Date    : 2016-11-29 23:32:00
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# @Version : $Id$
+# 描述      : 计算不同维度上的用户特征欧拉距离(时间段/POI类别)，更新后存储于 mongodb 数据库 tdVC
 
 import csv
 import numpy as np
 from numpy import linalg as la
-import CommonFunc as func
+from Util import func
 from pprint import pprint
 
 def euclidSimilar(inA, inB):

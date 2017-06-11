@@ -3,7 +3,7 @@
 # @Date    : 2017-02-06 14:16:11
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# @Version : $Id$
+# 描述      : 从原始数据中提取行政区划，时间段等信息并按照用户ID分文件存储 / to idcollection
 
 import threading
 import os
