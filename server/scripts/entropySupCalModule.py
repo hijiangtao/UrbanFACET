@@ -3,7 +3,7 @@
 # @Date    : 2017-02-16 14:13:50
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# 描述     ： record entropy 计算
+# 描述     ： 考虑全时段数据的 record entropy 计算
 
 import os
 import time

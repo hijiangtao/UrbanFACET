@@ -3,7 +3,7 @@
 # @Date    : 2017-02-08 18:55:01
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# 描述     ： people entropy 计算
+# 描述     ： 考虑全时段数据的 people entropy 计算
 
 import os
 import time
@@ -19,7 +19,6 @@ from CommonFunc import connectMongo
 from multiprocessing import Process, Manager, Value, Array, Lock
 from ctypes import c_wchar_p
 from entropy.grids import getGridsFromMongo
-pLock = Lock()
 
 class EntropyMatrixModule(object):
 	"""docstring for EntropyMatrixModule"""
@@ -191,20 +190,20 @@ class EntropyMatrixModule(object):
 	def genSingleEntropyObj(self):
 		return {
 			't1': {
-				'val': -1, # 熵
+				'val': -1, # 地点分类熵
 				'plist': np.array([0.0 for x in xrange(0,11)]), # 存储 POI 下各类型分布概率
 				'psum': 0, # POI 概率分布总和
 				'vsum': 0 # 有效的记录数 (以 valid grid 为准)
 			},
 			't2': {
-				'val': -1, # 熵
+				'val': -1, # 时段划分熵
 				# 'plist': [0 for x in xrange(0,14)],
 				'nlist': np.array([0 for x in xrange(0,14)]), #不同时间段的定位次数
 				# 'psum': 0,
 				'nsum': 0 # 总记录数
 			},
 			't3': {
-				'val': -1, # 熵
+				'val': -1, # 行政区划熵
 				# 'plist': [0 for x in xrange(0, self.CITYDISNUM)],
 				'nlist': np.array([0 for x in xrange(0, self.CITYDISNUM)]), # 不同区划的定位次数
 				# 'psum': 0,
