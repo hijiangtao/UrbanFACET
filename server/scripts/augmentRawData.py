@@ -74,7 +74,7 @@ class augmentRawData (threading.Thread):
 		print time.time()
 
 class augmentRawDatainMultiProcess():
-	def __init__(self, STARTTIME, INDEX, CITY, FILENUM, DIRECTORY, strData, listCount ):
+	def __init__(self, STARTTIME, INDEX, CITY, FILENUM, DIRECTORY, strData, listCount, resfilenum ):
 		self.INDEX = INDEX
 		self.CITY= CITY
 		self.FILENUM = FILENUM
@@ -83,15 +83,16 @@ class augmentRawDatainMultiProcess():
 		self.listCount = listCount
 		self.MAXRECORDS = 100000000
 		self.STARTTIME = STARTTIME
+		self.resfilenum = resfilenum
 
-	def augment(self, inputfile, outputfile, CITY, FILENUM = 1000):
-		reslist = ['' for i in range(FILENUM)]
+	def augment(self, inputfile, outputfile, CITY):
+		reslist = ['' for i in range(self.resfilenum)]
 		resnumber = 0
 		with open(inputfile, 'rb') as stream:
 			for line in stream:
 				resnumber += 1
 				linelist = line.strip('\n').split(',')
-				index = int(linelist[0]) % FILENUM
+				index = int(linelist[0]) % self.resfilenum
 
 				reslist[ index ] += linelist[0] + ',' + formatTime(linelist[1]) + ',' + formatAdmin(linelist[4]) + ',' + formatGridID(getCityLocs(CITY), [linelist[3], linelist[2]]) + '\n'
 		stream.close()
@@ -107,7 +108,7 @@ class augmentRawDatainMultiProcess():
 			if self.listCount.value > self.MAXRECORDS:
 				print "PROCESS ID-%d has one write operation at %s." % (self.INDEX, str(time.time()-self.STARTTIME))
 
-				for x in xrange(0, FILENUM):
+				for x in xrange(0, self.resfilenum):
 					with open('%s/res-%05d' % (outputfile, x), 'ab') as res:
 						res.write( self.strData[x].value + reslist[x] )
 					res.close()
@@ -118,7 +119,7 @@ class augmentRawDatainMultiProcess():
 				self.listCount.value = 0
 				gc.collect()
 			else:
-				for x in xrange(0, FILENUM):
+				for x in xrange(0, self.resfilenum):
 					self.strData[x].value += reslist[x]
 
 	def run(self):
@@ -132,13 +133,13 @@ class augmentRawDatainMultiProcess():
 				break
 
 			logging.info('TASK %d - FILE part-%05d operating...' % (self.INDEX, number))
-			self.augment(os.path.join(rawdatadir, self.CITY, 'part-%05d' % number), os.path.join(idcoldir, self.CITY), self.CITY, 1000)
+			self.augment(os.path.join(rawdatadir, self.CITY, 'part-%05d' % number), os.path.join(idcoldir, self.CITY), self.CITY)
 
 		print "Task %s finished time:" % str(self.INDEX)
 		print time.time()
 
 def formatTime(timestr):
-	"""Summary
+	"""格式化时间戳
 	
 	Args:
 		timestr (TYPE): Description
@@ -156,7 +157,7 @@ def formatTime(timestr):
 	return date + ',' + hourmin + ',' + day + ',' + period
 
 def formatGridID(locs, point):
-	"""Summary
+	"""根据经纬度计算城市网格编号
 	
 	Args:
 		locs (TYPE): Description
@@ -174,15 +175,19 @@ def formatGridID(locs, point):
 	return str(lngind + latind * LNGNUM)
 
 # 多进程情况下处理单个进程的启动
-def processTask(STARTTIME, x, city, number, directory, strdata, countdata):
-	task = augmentRawDatainMultiProcess(STARTTIME, x, city, number, directory, strdata, countdata)
+def processTask(STARTTIME, x, city, number, directory, strdata, countdata, resfilenum):
+	task = augmentRawDatainMultiProcess(STARTTIME, x, city, number, directory, strdata, countdata, resfilenum)
 	task.run()
 
 def usage():
-	print "Not Yet."
+	print '''Usage Guidance
+help	-h	get usage guidance
+city	-c	set the city or region, such as beijing, binhai
+directory	-d	the root directory of records, contains rawdata/idcollection folders, etc
+number	-n	the file number of rawdata
+'''
 
 def main(argv):
-	FILENUM = 1000
 	try:
 		opts, args = getopt.getopt(argv, "hc:d:n:", ["help", "city=", 'directory=', 'number='])
 	except getopt.GetoptError as err:
@@ -192,7 +197,7 @@ def main(argv):
 		sys.exit(2)
 
 	# 处理输入参数
-	city, directory, number = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi/records', 264
+	city, directory, number, resfilenum = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi/records', 264, 1000
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
@@ -214,12 +219,12 @@ def main(argv):
 	listcount = Value('i', 0)
 	taskdata = []
 	# 初始化
-	for x in xrange(0,FILENUM):
+	for x in xrange(0, resfilenum):
 		taskdata.append( manager.Value(c_wchar_p, "") )
 
 	for x in xrange(0,20):
 		# time.sleep(random.random()*2)
-		jobs.append( Process(target=processTask, args=(STARTTIME, x, city, number, directory, taskdata, listcount)) )
+		jobs.append( Process(target=processTask, args=(STARTTIME, x, city, number, directory, taskdata, listcount, resfilenum)) )
 		jobs[x].start()
 
 	# 等待所有进程结束
@@ -227,23 +232,21 @@ def main(argv):
 	    job.join()
 
 	# 处理剩余数据进文件
-	for x in xrange(0, FILENUM):
+	for x in xrange(0, resfilenum):
 		if taskdata[x].value != '':
 			with open('%s/res-%05d' % (os.path.join(directory, 'idcollection', city ), x), 'ab') as res:
 				res.write( taskdata[x].value )
 			res.close()
-
 	# @多进程运行程序 END
 
 	# @多线程运行程序
 	# threads = []
-	# # 多线程运行程序
 	# for x in xrange(0,20):
 	# 	threads.append( augmentRawData(x, city, number, directory) )
 	# 	threads[x].start()
 
-
 	print "Goodbye %s" % time.time()
+	
 if __name__ == '__main__':
 	logging.basicConfig(filename='logger-augmentrawdata.log', level=logging.DEBUG)
 	main(sys.argv[1:])
