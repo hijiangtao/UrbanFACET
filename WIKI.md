@@ -76,17 +76,30 @@
 
 ## 路由
 
+文件夹 `/routes`
+
+```
+├── comp.js
+└── index.js
+```
+
 * index: 渲染页面路由
 * comp: 查询路由 API
 
 ## APIs
 
-* TBD
+文件夹 `controllers`
 
-### conf (backend)
+```
+└── apis
+    ├── comp.js
+    └── mysqlMapping.js
+```
+
+### 服务端配置
 
 * data.js: 储存关键的一些 key-value 描述词-对应查询词，通过 getValue 函数传参的形式获取 value 并返回
-* db.js: MySQL 配置设置
+* db.js: MySQL 配置设置，请根据本地环境或者服务器环境更换相应配置
 * entropy.js: entropy 计算相关函数
 	* readIdlistMongo:从 Mongodb 读取 idlist
     * readIdlistFile: 从文件读取 idlist

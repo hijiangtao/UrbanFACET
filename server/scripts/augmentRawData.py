@@ -22,6 +22,7 @@ from ctypes import c_wchar_p
 tLock = threading.Lock()
 pLock = Lock()
 
+# 多线程扩充类
 class augmentRawData (threading.Thread):
 	def __init__(self, INDEX, CITY, FILENUM, DIRECTORY ):
 		threading.Thread.__init__(self)
@@ -73,6 +74,7 @@ class augmentRawData (threading.Thread):
 		print "Task %s finished time:" % str(self.INDEX)
 		print time.time()
 
+# 多进程扩充类
 class augmentRawDatainMultiProcess():
 	def __init__(self, STARTTIME, INDEX, CITY, FILENUM, DIRECTORY, strData, listCount, resfilenum ):
 		self.INDEX = INDEX
