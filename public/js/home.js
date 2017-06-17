@@ -36,6 +36,7 @@ let maps = [],
     charts = [],
     daview = null;
 
+// 界面实例入口
 const userpanel = new Vue({
     el: '#main',
     data: home,
@@ -44,14 +45,29 @@ const userpanel = new Vue({
         vueSlider
     },
     methods: {
+        /**
+         * Metric Layer 下拉菜单
+         * @param  {[type]} val [description]
+         * @return {[type]}     [description]
+         */
         'enpsDropdown': function(val) {
             let index = this.sels.lstindex;
             this.sels.objs[index]['etype'] = val;
             this.getOverview(index);
         },
+        /**
+         * Reference Layer 下拉菜单
+         * @param  {[type]} val [description]
+         * @return {[type]}     [description]
+         */
         'refsDropdown': function(val) {
             this.sels['otype'] = val;
         },
+        /**
+         * POI 类别选择下拉菜单，未完善
+         * @param  {[type]} val [description]
+         * @return {[type]}     [description]
+         */
         'poisDropdown': function(val) {
             val = Number.parseInt(val);
             this.sels['ptype'] = val;
@@ -180,6 +196,11 @@ const userpanel = new Vue({
                 store.commit('updateInitState');
             }
         },
+        /**
+         * [description]
+         * @param  {[type]} index [description]
+         * @return {[type]}       [description]
+         */
         'getSMetrics': function(index) {
             let i = Number.parseInt(index),
                 objs = this.sels.objs,
