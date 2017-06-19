@@ -8,8 +8,6 @@
 'use strict'
 
 import Vue from 'vue'
-import Vuex from 'vuex'
-Vue.use(Vuex)
 
 import mapview from './components/hmap-view'
 import chart from './components/chartview'
@@ -19,18 +17,7 @@ import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, g
 import { changeLoadState } from './components/events'
 import vueSlider from 'vue-slider-component'
 import dynamicView from './dynamic'
-
-// Vuex Instance
-const store = new Vuex.Store({
-    state: {
-        init: true
-    },
-    mutations: {
-        updateInitState(state) {
-            state.init = !state.init;
-        }
-    }
-})
+import store from './vuex'
 
 let maps = [],
     charts = [],

@@ -81,13 +81,4 @@ app.use(function(err, req, res, next) {
   });
 });
 
-// app.use(function (req, res, next) {
-//   var views = req.session.views
-
-//   if (!views) {
-//     views = req.session.id = Math.random() * 100 + Math.random()
-//   }
-//   next()
-// })
-
 module.exports = app;

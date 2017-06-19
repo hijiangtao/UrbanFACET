@@ -7,7 +7,6 @@
 
 'use strict'
 const lib = require('../../conf/lib');
-const DATA = require('../../conf/data');
 const EP = require('../../conf/entropy');
 
 let apis = {

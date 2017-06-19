@@ -306,13 +306,6 @@ class dynamicView {
 						}
 
 						for (let i = 1; i < 6; i++) {
-							// for (let j = 0; j < 6; j++) {
-							// 	if (i === j) {
-							// 		continue;
-							// 	}
-							// 	self.maps[i].syncmap( self.maps[j].getMap() );
-							// 	console.log('Sync Operation ING...');
-							// }
 							self.maps[0].syncmap( self.maps[i].getMap() );
 						}
 
