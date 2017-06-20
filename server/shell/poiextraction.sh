@@ -1,7 +1,8 @@
-# 
+# 将 poidataclean.sh 脚本执行出的结果添加半径、面积、中心点等信息，存入文件，并导入 mongodb
 
 cd /home/taojiang/git/living-modes-visual-comparison/server/scripts
-# python ./POIExtraction.py -c beijing -d /home/taojiang/datasets/JingJinJi/pois
+
+python ./POIExtraction.py -c beijing -d /home/taojiang/datasets/JingJinJi/pois
 python ./POIExtraction.py -c tianjin -d /home/taojiang/datasets/JingJinJi/pois
 python ./POIExtraction.py -c zhangjiakou -d /home/taojiang/datasets/JingJinJi/pois
 python ./POIExtraction.py -c tangshan -d /home/taojiang/datasets/JingJinJi/pois

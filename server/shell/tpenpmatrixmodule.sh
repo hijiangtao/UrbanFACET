@@ -1,6 +1,7 @@
 
 cd /home/tao.jiang/git/living-modes-visual-comparison/server/scripts
 
+python tpEnpMatrixModule.py -c zhangjiakou -t 0
 python tpEnpMatrixModule.py -c zhangjiakou -t 1
 python tpEnpMatrixModule.py -c zhangjiakou -t 2
 python tpEnpMatrixModule.py -c zhangjiakou -t 3

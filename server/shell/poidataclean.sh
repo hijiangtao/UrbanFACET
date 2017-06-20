@@ -1,3 +1,5 @@
+# 提取四个城市的 OSM 数据并过滤出其中指定 POI 类别的数据，合并至 [city].fPOI.osm 并利用转换工具转成 [city].fPOI.geojson
+
 # Beijing
 cd /home/taojiang/tools
 
