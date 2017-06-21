@@ -338,30 +338,24 @@ const userpanel = new Vue({
             let self = this,
                 currentSize = self.sels.objs.length;
             console.log('currentSize', currentSize);
-            // self.sels.lstnum = currentSize;
 
             switch (currentSize) {
                 // 添加一个对象
                 case 1:
-                    // appendMap([1]);
                     self.updateSels(1, 'add');
                     break;
                     // 复制现有两个对象并添加
                 case 2:
-                    // appendMap([2, 3]);
                     self.updateSels(2, 'add');
                     break;
-                case 4:
-                    alert('No more objects can be created, please remove some first.');
-                    break;
                 default:
+                    alert('No more objects can be created, please remove some first.');
                     break;
             }
         },
         'delAnaObj': function() {
             let self = this,
                 currentSize = self.sels.objs.length;
-            // self.sels.lstnum = currentSize;
 
             switch (currentSize) {
                 // 删除两个对象
@@ -371,7 +365,7 @@ const userpanel = new Vue({
                     charts.splice(-2, 2);
                     self.sels.lstnum = 2;
                     break;
-                    // 删除一个对象
+                // 删除一个对象
                 case 2:
                     maps[1].unsyncmap(maps[0].getMap());
                     maps[0].unsyncmap(maps[1].getMap());
@@ -380,10 +374,8 @@ const userpanel = new Vue({
                     self.updateSels(1, 'del');
                     self.sels.lstnum = 1;
                     break;
-                case 1:
-                    alert('No more objects can be removed, one object should be reserved in the page.');
-                    break;
                 default:
+                    alert('No more objects can be removed, one object should be reserved in the page.');
                     break;
             }
 
@@ -474,7 +466,6 @@ const userpanel = new Vue({
                 // 根据用户所选 metric 类型进行相应数据提取操作
                 if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
                     // 获取 slider 情况下的配置值域以及用户其余选项
-                    // v.push(self.components.hrSlider.value);
                     let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
                     maps[i].mapcontourCDrawing({}, drawProps, true);
                 } else {
@@ -528,28 +519,27 @@ const userpanel = new Vue({
         }
     },
     computed: {
+        /**
+         * 计算 map 的 class name
+         */
         mapClass: function() {
-            switch (this.sels.objs.length) {
-                case 1:
-                    return 'onemap';
-                    break;
-                case 2:
-                    return 'twomap';
-                    break;
-                default:
-                    return 'formap';
-                    break;
+            let mapNumber = this.sels.objs.length;
+            if (mapNumber === 1) {
+                return 'onemap';
+            } else if (mapNumber === 2) {
+                return 'twomap';
+            } else {
+                return 'formap';
             }
         },
-        // 判断是否开启 area select 功能
+        /**
+         * 判断是否开启 area select 功能
+         */
         areaselState: function() {
-            switch (this.sels.areaselect) {
-                case false:
-                    return 'positive';
-                    break;
-                default:
-                    return 'negative';
-                    break;
+            if (this.sels.areaselect) {
+                return 'negative';
+            } else {
+                return 'positive';
             }
         }
     },
@@ -726,12 +716,10 @@ const userpanel = new Vue({
                 // 更新视图
                 self.$refs[`eSlider${i}`][0].refresh();
                 // self.getOverview(i);
-
             }
 
             self.sels.lstnum = curnum;
             self.sels.lstindex = curnum - 1;
-
         }
     }
 });

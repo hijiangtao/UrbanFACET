@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('living-modes-visual-comparison:server');
+var debug = require('debug')('UrbanFACET:server');
 var http = require('http');
 
 /**

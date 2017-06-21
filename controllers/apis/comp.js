@@ -2,7 +2,7 @@
  * comp.js apis
  * @authors Joe Jiang (hijiangtao@gmail.com)
  * @date    2017-02-12 16:22:08
- * @version $Id$
+ * 后端 API 查询的入口
  */
 
 'use strict'

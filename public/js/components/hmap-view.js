@@ -17,7 +17,7 @@ import * as coordtransform from 'coordtransform';
 import { RadarChart } from './RadarChart';
 
 const SPLIT = 0.003
-const mapattr = 'UrbanFACET &copy; 2017'
+const mapattr = 'UrbanFACET &copy; 2016-2017'
 const mapuid = 'hijiangtao'
 const accessToken = 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'
 

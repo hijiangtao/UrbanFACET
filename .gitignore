@@ -31,9 +31,7 @@ node_modules
 
 # Ignore public img and csv
 public/data/*
-public/img/cluster/*
-public/img/decompose/*
-public/img/tmp/*
+public/img/*
 
 # semantic UI dist
 semantic/*

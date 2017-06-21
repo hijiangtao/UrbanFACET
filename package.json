@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "semantic": "cd semantic && gulp build",
-    "test": "mocha"
+    "test": "mocha",
+    "build": ""
   },
   "dependencies": {
     "async": "^2.1.4",

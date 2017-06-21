@@ -394,6 +394,7 @@ let getRealProp = function(prop) {
 export {
     regionRecords,
     home,
+    regions,
     stats,
     smecMax,
     smecAve,

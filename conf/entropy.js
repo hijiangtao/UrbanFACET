@@ -2,14 +2,10 @@
  * entropy.js
  * @authors Joe Jiang (hijiangtao@gmail.com)
  * @date    2017-01-08 20:16:29
- * @version $Id$
+ * 数据库查询接口以及回传数据处理模块
  */
 
 'use strict'
-
-const mongodb = require('mongodb');
-const MongoClient = mongodb.MongoClient;
-const url = 'mongodb://192.168.1.42:27017/tdnormal';
 
 const fs = require('fs');
 const path = require('path');
@@ -18,74 +14,6 @@ const $sql = require('../controllers/apis/mysqlMapping');
 const iMax = require('./eMax');
 const sMec = require('./data/metrics');
 const poidis = require('./data/poidis');
-
-function connectMongo() {
-    let promise = new Promise(function(resolve, reject) {
-        MongoClient.connect(url, function(err, db) {
-            if (err) {
-                reject(err)
-            } else {
-                resolve(db)
-            }
-        })
-    })
-
-    return promise
-}
-
-function mongoQueries(idlist, db, prop) {
-    let collectionFeature = db.collection('features_beijing'),
-        collectionUser = db.collection('users_beijing'),
-        collectionGrid = db.collection('templategrids_beijing'),
-        entropytype = prop['entropytype'],
-        eprop = "entropy." + entropytype
-
-    let q1filter = {}
-    q1filter[eprop] = 1
-        // console.log(eprop)
-
-    let q1 = new Promise(function(resolve, reject) {
-        collectionFeature.find({
-            '_id': { '$in': idlist }
-        }, q1filter).toArray(function(err, data) {
-            if (err) {
-                reject(err)
-            } else {
-                console.log('Idlist length:', data.length)
-                resolve(data)
-            }
-        })
-    });
-    let q2 = new Promise(function(resolve, reject) {
-        collectionUser.find({
-            'id': { '$in': idlist }
-        }, {
-            'geometry': 1,
-            'id': 1
-        }).toArray(function(err, data) {
-            if (err) {
-                reject(err)
-            } else {
-                console.log('Records length:', data.length)
-                resolve(data)
-            }
-        })
-    });
-    let q3 = new Promise(function(resolve, reject) {
-        collectionGrid.find({}).sort({
-            'properties.uid': 1
-        }).toArray(function(err, data) {
-            if (err) {
-                reject(err)
-            } else {
-                console.log('Grid length:', data.length)
-                resolve(data)
-            }
-        })
-    });
-
-    return Promise.all([q1, q2, q3])
-}
 
 function getTypeVals(val) {
     /**
@@ -405,10 +333,6 @@ function getExtraInfo(db, params) {
 }
 
 module.exports = {
-    readIdlistMongo: readIdlistMongo,
-    readIdlistFile: readIdlistFile,
-    connectMongo: connectMongo,
-    mongoQueries: mongoQueries,
     getOverview: getOverview,
     getExtraInfo: getExtraInfo,
     getBoundary: getBoundary,
