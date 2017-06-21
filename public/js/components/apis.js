@@ -8,36 +8,6 @@
 'use strict'
 import $ from "jquery"
 
-let rvalinComp = function(scales, esels, dsels, vuesels, index) {
-    let sels = vuesels.objs[index],
-        emin = Math.exp( Math.log(scales.e+1) * parseFloat(esels[0]) / 100.0 )-1,
-        emax = Math.exp( Math.log(scales.e+1) * parseFloat(esels[1]) / 100.0 )-1,
-        escales = scales.e;
-    return {
-        'e': { // entropy
-            'min': emin,
-            'max': emax,
-            'scales': escales
-        },
-        'm': { // entropy
-            'min': emin,
-            'max': emax,
-            'scales': escales
-        },
-        'd': { // density
-            'min': Math.exp( Math.log(scales.d) * parseFloat(dsels[0]) / 100.0 ),
-            'max': Math.exp( Math.log(scales.d) * parseFloat(dsels[1]) / 100.0 ),
-            'scales': scales.d
-        },
-        'prop': {
-            'type': sels.dtype,
-            'maprev': sels.maprev,
-            'multiColorSchema': vuesels.ctrsets.multiColorSchema,
-            'useLocalExtrema': vuesels.ctrsets.useLocalExtrema,
-        }
-    }
-};
-
 /**
  * 根据传回的数据确定当前 filter 以及 map 中的 value 范围
  * @param  {[type]} scales  [description]
@@ -58,8 +28,6 @@ let getDrawProps = function(scales, sels, ctrsets, props) {
 	if (props['etype'] === 'de') {
 		drawtype = 'd';
 	}
-
-	// console.log('radius', radius);
 
 	return {
 		'e': { // entropy
@@ -226,26 +194,14 @@ let outOfRange = function(t, evalue, dvalue, emin, dmin) {
 	return false;
 }
 
+/**
+ * object 复制函数， 未考虑传入数据的合法性
+ * @param  {[type]} obj [description]
+ * @return {[type]}     [description]
+ */
 let objClone = function (obj) {
     let res = {};
 
-    // for (let attr in obj) {
-    //     if (obj.hasOwnProperty(attr)) {
-    //         if (typeof(obj[attr]) !== "object") {
-    //             res[attr] = obj[attr];
-    //         } else if (typeof(obj[attr]) === "array") {
-    //         	let tmp = [],
-    //         		tmplen = obj[attr].length;
-    //         	for (let i = 0; i < tmplen; i++) {
-    //         		tmp.push(obj[attr][i]);
-    //         	}
-    //         	res[attr] = tmp;
-    //         } else {
-    //         	res[attr] = objClone(obj[attr]);
-    //         }
-    //     }
-    // }
-    
     return JSON.parse(JSON.stringify(obj));;
 };
 
@@ -282,6 +238,5 @@ export {
 	outOfRange,
 	objClone,
 	getPropName,
-	extraInfoIndex,
-	rvalinComp
+	extraInfoIndex
 }

@@ -2,12 +2,11 @@
  * comp.js apis
  * @authors Joe Jiang (hijiangtao@gmail.com)
  * @date    2017-02-12 16:22:08
- * @version $Id$
+ * 后端 API 查询的入口
  */
 
 'use strict'
 const lib = require('../../conf/lib');
-const DATA = require('../../conf/data');
 const EP = require('../../conf/entropy');
 
 let apis = {
@@ -95,6 +94,13 @@ let apis = {
 			console.error('error: ', err);
 		});
 	},
+	/**
+	 * eMax.js sum 属性生成函数
+	 * @param  {[type]}   req  [description]
+	 * @param  {[type]}   res  [description]
+	 * @param  {Function} next [description]
+	 * @return {[type]}        [description]
+	 */
 	'getJsonSum': function(req, res, next) {
 		let params = req.query,
 			table = params.table;
@@ -127,6 +133,13 @@ let apis = {
 			console.error('error: ', err);
 		});
 	},
+	/**
+	 * eMax.js ave 属性生成函数
+	 * @param  {[type]}   req  [description]
+	 * @param  {[type]}   res  [description]
+	 * @param  {Function} next [description]
+	 * @return {[type]}        [description]
+	 */
 	'getJsonAve': function(req, res, next) {
 		let params = req.query,
 			table = params.table;

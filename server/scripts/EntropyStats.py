@@ -36,8 +36,6 @@ def calUsersEntropy(dbName, collectionName):
 		# pVecSum = np.matrix(pVec).sum(dtype='float')
 		pVecColSum, pVecRowSum = getMatrixSumbyDim(pVec, 'column'), getMatrixSumbyDim(pVec, 'row')
 
-		
-
 		if type(pVecColSum) is not int:
 			# Calculates entropy results by temporal or spatial mode
 			colEntropy = sc.entropy(pVecColSum)

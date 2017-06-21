@@ -10,6 +10,28 @@ Cities are living systems where urban infrastructures and their functions are de
 
 All data analyzing scripts and configuration files are put in `server` folder, `app.js` is the sytem entrance file, `package.json` defines the application and its dependency. Developed in Node.js with `Express` framework. Visualize data with `D3.js`, `leaflet.js` and pure `<canvas>` manipulations.
 
+## Installation
+
+```
+git clone repo-url # replace repo-url with actual address
+cd UrbanFACET
+npm install
+npm run start
+```
+
+## Documents
+
+[Wiki](./WIKI.md)
+
+## Dependency
+
+The `semantic` version used in this project is `^2.2.6`, complied file is stored in `/public/js/lib/` folder.
+
+## Contact
+
+* Github - [hijiangtao](https:github.com/hijiangtao)
+* [Email](mailto:hijiangtao@gmail.com)
+
 ## LICENSE
 
 GNU General Public License v3.0

@@ -2,7 +2,7 @@
  * eMax.js
  * @authors Joe Jiang (hijiangtao@gmail.com)
  * @date    2017-03-02 12:00:50
- * @存储不同表中存在的字段的最大值信息
+ * @存储不同表中存在的字段的最大值信息，由两个 GET 请求自动生成
  */
 
 'use strict'

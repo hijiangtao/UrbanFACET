@@ -8,7 +8,6 @@
 'use strict'
 
 import L from './map'
-// import heatmap from 'heatmap.js'
 import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js'
 import * as d3 from 'd3'
 import { legendColor } from 'd3-svg-legend'
@@ -17,12 +16,8 @@ import { stats, regionRecords, smecMax } from './init'
 import * as coordtransform from 'coordtransform';
 import { RadarChart } from './RadarChart';
 
-// 临时变量 
-import $ from "jquery"
-window.jQuery = $
-
 const SPLIT = 0.003
-const mapattr = 'Urban FACET &copy; 2017'
+const mapattr = 'UrbanFACET &copy; 2016-2017'
 const mapuid = 'hijiangtao'
 const accessToken = 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'
 
@@ -39,6 +34,10 @@ class mapview {
             'ctrleg': ctrleg,
             'baselyr': baselyr
         };
+        /**
+         * 地图图层
+         * @type {Object}
+         */
         this.baseLayers = {
             'FACET': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
                 attribution: mapattr,
@@ -62,10 +61,6 @@ class mapview {
                 attribution: mapattr,
                 uid: mapuid
             }),
-            // 'Outdoors': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cj0q1lew5005x2rny7fyswvfr/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
-            //     attribution: mapattr,
-            //     uid: mapuid
-            // }),
             'Satellite': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cj0q1yc4h003t2rta3qp2z72a/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
                 attribution: mapattr,
                 uid: mapuid
@@ -95,6 +90,8 @@ class mapview {
         this.map.on('zoomend', function(e) {
             console.log('Current Zoom Level', self.map.getZoom());
             if (true) {
+                // 待完善
+                // 
                 // 如果存在contour map 则根据zoom level重绘
                 // zoom 9: 2.5
                 // 10: 2.25
@@ -104,10 +101,6 @@ class mapview {
                 // 14: 1.25
                 // 15: 1
             }
-        });
-
-        this.map.on('click', function(e) {
-            // console.log(e);
         });
 
         this.map.on('baselayerchange', function(e) {
@@ -187,7 +180,11 @@ class mapview {
 
     }
 
-    // areaselect 双向绑定函数
+    /**
+     * areaselect 双向绑定函数
+     * @param  {[type]} areaselect [description]
+     * @return {[type]}            [description]
+     */
     bindAreaSelect(areaselect) {
         let self = this;
         this.aAreaSelector = areaselect;
@@ -290,7 +287,7 @@ class mapview {
     }
 
     /**
-     * AOI 绘制函数
+     * AOI 绘制函数（普通）
      * @param  {[type]} data [description]
      * @param  {Object} prop [description]
      * @return {[type]}      [description]
@@ -408,7 +405,7 @@ class mapview {
     }
 
     /**
-     * aois Drawing Function
+     * aois 绘制函数（canvas）
      * @param  {[type]} data   [description]
      * @param  {[type]} idlist [description]
      * @param  {[type]} legend [description]

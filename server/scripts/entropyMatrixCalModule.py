@@ -3,7 +3,7 @@
 # @Date    : 2017-02-08 18:55:01
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# @Version : $Id$
+# 描述     ： 考虑全时段数据的 people entropy 计算
 
 import os
 import time
@@ -19,10 +19,23 @@ from CommonFunc import connectMongo
 from multiprocessing import Process, Manager, Value, Array, Lock
 from ctypes import c_wchar_p
 from entropy.grids import getGridsFromMongo
-pLock = Lock()
 
 class EntropyMatrixModule(object):
-	"""docstring for EntropyMatrixModule"""
+	"""EntropyMatrixModule 类
+	
+	Attributes:
+	    CITY (TYPE): Description
+	    CITYDISIND (TYPE): Description
+	    CITYDISNUM (TYPE): Description
+	    DIRECTORY (TYPE): Description
+	    EMATRIX (TYPE): 当前城市全量 ID 的信息数组，每一个元素包含用户 ID 以及 entropy 相关信息
+	    FILENUM (TYPE): Description
+	    gridsData (TYPE): Description
+	    GRIDSNUM (TYPE): Description
+	    INDEX (TYPE): Description
+	    starttime (TYPE): Description
+	    validIDs (TYPE): Description
+	"""
 	def __init__(self, PROP, DATA):
 		super(EntropyMatrixModule, self).__init__()
 		self.FILENUM = PROP['FILENUM']
@@ -36,17 +49,19 @@ class EntropyMatrixModule(object):
 		self.CITYDISIND = PROP['CITYDISIND']
 		self.starttime = time.time()
 		
-		# self.EMATRIX = DATA['EMATRIX']
 		# all string in EMATRIX
 		self.EMATRIX = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, PROP['GRIDSNUM'])])
 
 	def run(self):
 		logging.info('TASK-%d running in %s' % (self.INDEX, (time.time()-self.starttime)))
 		# print 'TASK-%d running in %s' % (self.INDEX, (time.time()-self.starttime))
+		# 输出文件名
 		ofilename = 'respeo-%03d' % self.INDEX
 
 		idcoldir = os.path.join(self.DIRECTORY, 'records/idcollection', self.CITY )
 		entropyfile = os.path.join(self.DIRECTORY, 'entropy/matrix', self.CITY, ofilename)
+		
+		# 文件遍历 (进程编号： self.INDEX )
 		for x in xrange(0, 10000):
 			number = self.INDEX + 20 * x
 			if number > self.FILENUM:
@@ -54,9 +69,12 @@ class EntropyMatrixModule(object):
 
 			ifilename = 'res-%05d' % number
 			logging.info('TASK-%d operates file %s' % (self.INDEX, ifilename))
+
+			# 抽取文件计算所涉及 ID 的 entropy 值
 			self.calculate(os.path.join(idcoldir, ifilename), os.path.join(self.DIRECTORY, 'entropy/distribution', self.CITY, ofilename))
 
 		# print 'Finished calculate function in %s' % (time.time()-self.starttime)
+		
 		# 处理完数据，将 EMATRIX 信息写入文件
 		with open(entropyfile, 'ab') as res:
 			res.write(self.ematrixToStr(self.EMATRIX))
@@ -66,7 +84,7 @@ class EntropyMatrixModule(object):
 		print "Task-%s finished in %s" % (str(self.INDEX), time.time()-self.starttime)
 
 	def calculate(self, inputfile, outputfile):
-		"""计算当前文件各个设备的 Entropy 信息并更新至 EMATRIX, 同时将该设备的档案信息存入 outputfile
+		"""计算当前文件各个 ID 的 Entropy 信息并更新至 EMATRIX, 同时将该 ID 的档案信息存入 outputfile
 		
 		Args:
 		    inputfile (TYPE): Description
@@ -75,6 +93,7 @@ class EntropyMatrixModule(object):
 		Returns:
 		    TYPE: Description
 		"""
+
 		# 读取文件，遍历每行，获得包含 id 和 grid ID 编号的数组 records、存储每个 id entropy 信息的对象集合 eobjs、设备列表 idlist
 		records, eobjs, idlist = [], {}, []
 		# 临时 GRIDLIST records number 存放数组
@@ -103,12 +122,13 @@ class EntropyMatrixModule(object):
 					eobjs[ devid ] = self.genSingleEntropyObj()
 					idlist.append( devid )
 
+				# 当 GridID 符合范围才处理 POI 熵
 				if devIntGID >= 0 and devIntGID < self.GRIDSNUM:
-					# Update entropy matrix prop - records number
+					# 更新 ID 定位记录数数组，格式 array[ID] = recordNumber
 					enumlist[ devIntGID ] += 1
 					records.append([devid, devIntGID])
 
-					# 处理 POI 熵
+					
 					if devStrGID in self.validIDs:
 						eobjs[ devid ][ 't1' ][ 'plist' ] = np.add(eobjs[ devid ][ 't1' ][ 'plist' ], self.gridsData[ devStrGID ]) 
 						eobjs[ devid ][ 't1' ][ 'vsum' ] += 1
@@ -125,7 +145,7 @@ class EntropyMatrixModule(object):
 		stream.close()
 		# print 'Finished file reading line by line in %s' % (time.time()-self.starttime)
 
-		# P 列表的归一化处理, EOBJ 的更新计算, 熵计算与更新
+		# 概率向量的归一化处理, EOBJ 的更新计算, 熵计算与更新
 		for each in idlist:
 			eobjs[ each ][ 't1' ][ 'psum' ] = np.sum(eobjs[ each ][ 't1' ][ 'plist' ])
 			if eobjs[ each ][ 't1' ][ 'psum' ] != 0.0:
@@ -152,6 +172,8 @@ class EntropyMatrixModule(object):
 		for x in xrange(0, recordslen):
 			# 遍历 record
 			# 维护本进程最大的 entropy-matrix 熵值更新
+			
+			# 设备 ID, 记录所属 GridID
 			devid, devIntGID = records[x][0], records[x][1]
 			
 			# 检查 POI 熵是否有必要算入当前 EMATRIX 的更新逻辑
@@ -175,6 +197,15 @@ class EntropyMatrixModule(object):
 		res.close()
 
 	def aggregate(self, id, obj):
+		"""idInfo 信息聚合成字符串
+		
+		Args:
+		    id (TYPE): Description
+		    obj (TYPE): Description
+		
+		Returns:
+		    TYPE: Description
+		"""
 		valStr = id + ',' + str(obj['t1']['val']) + ',' + str(obj['t2']['val']) + ',' + str(obj['t3']['val']) + ',' + str(obj['t1']['vsum']) + ',' + str(obj['t2']['nsum'])
 		tArrStr = ','.join([str(each) for each in obj['t1']['plist']]) + ',' + ','.join([str(each) for each in obj['t2']['nlist']]) + ',' + ','.join([str(each) for each in obj['t3']['nlist']])
 		return valStr + ',' + tArrStr + '\n'
@@ -191,20 +222,20 @@ class EntropyMatrixModule(object):
 	def genSingleEntropyObj(self):
 		return {
 			't1': {
-				'val': -1, # 熵
+				'val': -1, # 地点分类熵
 				'plist': np.array([0.0 for x in xrange(0,11)]), # 存储 POI 下各类型分布概率
 				'psum': 0, # POI 概率分布总和
 				'vsum': 0 # 有效的记录数 (以 valid grid 为准)
 			},
 			't2': {
-				'val': -1, # 熵
+				'val': -1, # 时段划分熵
 				# 'plist': [0 for x in xrange(0,14)],
 				'nlist': np.array([0 for x in xrange(0,14)]), #不同时间段的定位次数
 				# 'psum': 0,
 				'nsum': 0 # 总记录数
 			},
 			't3': {
-				'val': -1, # 熵
+				'val': -1, # 行政区划熵
 				# 'plist': [0 for x in xrange(0, self.CITYDISNUM)],
 				'nlist': np.array([0 for x in xrange(0, self.CITYDISNUM)]), # 不同区划的定位次数
 				# 'psum': 0,
@@ -216,17 +247,6 @@ def processTask(PROP, DATA):
 	task = EntropyMatrixModule(PROP, DATA)
 	task.run()
 
-# def getGridsFromMongo(city, db):
-# 	res = list( db['grids_%s' % city].find({"properties.vecvalid": True }, {"properties.uid": 1, "properties.vec": 1}) )
-# 	gridsData, validIDs = {}, []
-# 	reslen = len(res)
-# 	for x in xrange(0, reslen):
-# 		id = str(res[x]['properties']['uid'])
-# 		vec = np.array(res[x]['properties']['vec'], dtype='f')
-# 		gridsData[ id ] = vec
-# 		validIDs.append(id)
-
-# 	return gridsData, validIDs
 
 def mergeDistributionFiles(city, directory):
 	"""将不同 ID 的熵信息以及其他档案合并至一个文件,简单追加即并没有涉及复杂操作
@@ -333,48 +353,50 @@ def main(argv):
 	STARTTIME = time.time()
 	print "Start approach at %s" % STARTTIME
 
+	# 连接数据获取网格信息，包括总数，具有有效POI的网格
 	conn, db = connectMongo('tdnormal')
 	GRIDSNUM = db['newgrids_%s' % city].count()
 	gridsData, validIDs = getGridsFromMongo(city, db)
 	conn.close()
 
+	# 获取城市起始区划下标，城市行政区划数目
 	CITYDISIND, CITYDISNUM = getCityDisInfo(city)
 
 	# @多进程运行程序 START
-	# manager = Manager()
-	# jobs = []
+	manager = Manager()
+	jobs = []
 
-	# for x in xrange(0,20):
-	# 	# time.sleep(random.random()*2)
-	# 	PROP = {
-	# 		'INDEX': x,
-	# 		'DIRECTORY': directory,
-	# 		'GRIDSNUM': GRIDSNUM,
-	# 		'CITY': city,
-	# 		'CITYDISIND': CITYDISIND,
-	# 		'CITYDISNUM': CITYDISNUM,
-	# 		'FILENUM': number
-	# 	}
+	for x in xrange(0,20):
+		PROP = {
+			'INDEX': x,
+			'DIRECTORY': directory,
+			'GRIDSNUM': GRIDSNUM,
+			'CITY': city,
+			'CITYDISIND': CITYDISIND,
+			'CITYDISNUM': CITYDISNUM,
+			'FILENUM': number
+		}
 
-	# 	DATA = {
-	# 		'gridsData': gridsData,
-	# 		'validIDs': validIDs
-	# 	}
+		DATA = {
+			'gridsData': gridsData,
+			'validIDs': validIDs
+		}
 
-	# 	jobs.append( Process(target=processTask, args=(PROP, DATA)) )
-	# 	jobs[x].start()
+		jobs.append( Process(target=processTask, args=(PROP, DATA)) )
+		jobs[x].start()
 
-	# # 等待所有进程结束
-	# for job in jobs:
-	#     job.join()
+	# 等待所有进程结束
+	for job in jobs:
+	    job.join()
 
-	# Start to merge result files
+	# 合并结果文件
 	MERGE = time.time()
 	print "Start merge at %s" % MERGE
-	# mergeMatrixFiles(city, GRIDSNUM, directory)
+	mergeMatrixFiles(city, GRIDSNUM, directory)
 	mergeDistributionFiles(city, directory)
 	print "End merge in %s" % str(time.time() - MERGE)
 
+	# 结束
 	ENDTIME = time.time()
 	print "End approach at %s" % ENDTIME
 

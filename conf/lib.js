@@ -13,7 +13,6 @@ const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
 const url = 'mongodb://192.168.1.42:27017/tdnormal';
 const pool = require('./db');
-let $sql = require('../controllers/apis/mysqlMapping');
 
 let ArrayContains = function(obj, val) {
     var i = obj.length;
@@ -22,32 +21,15 @@ let ArrayContains = function(obj, val) {
             return true;
         }
     }
+    
     return false;
 }
 
-let MatrixAdd = function(a, b, times, dim) {
-    let result = [];
-
-    if (dim == 1) {
-        for (let i = 0; i < a.length; i++) {
-            result.push(parseFloat(a[i]) + parseFloat(b[i]));
-        }
-        return result
-    }
-
-    for (let i = 0; i < a.length; i++) {
-
-        let arr = []; // 一般矩陣
-        for (let j = 0; j < a[i].length; j++) {
-            let sum = (parseFloat(a[i][j]) + parseFloat(b[i][j])) * times;
-            arr.push(sum);
-        }
-        result.push(arr);
-    }
-
-    return result
-}
-
+/**
+ * 检查文件是否存在的函数
+ * @param  {[type]} directory [description]
+ * @return {[type]}           [description]
+ */
 let checkDirectory = function(directory) {  
     if (fs.existsSync(directory)) {
         return true
@@ -56,6 +38,10 @@ let checkDirectory = function(directory) {
     return false
 }
 
+/**
+ * 连接 MongoDB 数据库
+ * @return {[type]} [description]
+ */
 let connectMongo = function() {
      let promise = new Promise(function(resolve, reject) {
         MongoClient.connect(url, function(err, db) {
@@ -70,6 +56,10 @@ let connectMongo = function() {
      return promise
 }
 
+/**
+ * 连接 MySQL 数据库
+ * @return {[type]} [description]
+ */
 let connectMySQL = function() {
     let promise = new Promise(function(resolve, reject) {
         pool.getConnection(function(err, connection) {
@@ -84,6 +74,11 @@ let connectMySQL = function() {
     return promise
 }
 
+/**
+ * 从文件中获取数据的函数
+ * @param  {[type]} filename [description]
+ * @return {[type]}          [description]
+ */
 let getDatafromFile = function(filename) {
     let promise = new Promise(function(resolve, reject) {
         fs.readFile(filename, function(err, result) {
@@ -98,34 +93,11 @@ let getDatafromFile = function(filename) {
     return promise
 }
 
-let readIdlistMySQL = function(conn, table) {
-    let promise = new Promise(function(resolve, reject) {
-        let sql = $sql.areaidlistquery,
-            param = [table]
-        conn.query(sql, param, function(err, res) {
-            if(err) {
-                reject(err)
-            } else {
-                let idlist = []
-                console.log('get idlist result')
-                for (let i = res.length - 1; i >= 0; i--) {
-                    idlist.push( Number.parseInt(res[i]['id']) )
-                }
-
-                resolve(idlist)
-            }
-        })
-    })
-
-    return promise
-}
 
 module.exports = {
     ArrayContains: ArrayContains,
-	MatrixAdd: MatrixAdd,
     checkDirectory: checkDirectory,
     connectMongo: connectMongo,
     connectMySQL: connectMySQL,
-    readIdlistMySQL: readIdlistMySQL,
     getDatafromFile: getDatafromFile
 }

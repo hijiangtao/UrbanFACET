@@ -6,9 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-// var lab = require('./routes/lab');
-// var home = require('./routes/home');
-// var demo = require('./routes/demo');
 var comp = require('./routes/comp');
 
 var app = express();
@@ -51,9 +48,6 @@ app.use(require('node-sass-middleware')({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-// app.use('/lab', lab);
-// app.use('/home', home);
-// app.use('/demo', demo);
 app.use('/comp', comp);
 
 // catch 404 and forward to error handler
@@ -86,14 +80,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
-// app.use(function (req, res, next) {
-//   var views = req.session.views
-
-//   if (!views) {
-//     views = req.session.id = Math.random() * 100 + Math.random()
-//   }
-//   next()
-// })
 
 module.exports = app;
