@@ -71,10 +71,10 @@ def main():
 	inpath = '/enigma/tao.jiang/datasets/JingJinJi/records/idcollection/beijing'
 	outpath = '/enigma/tao.jiang/datasets/JingJinJi/records/filter'
 	# 遍历文件获得 ID 以及记录，并写入文件
-	for i in range(0, 4):
+	for i in range(0, 100):
 		print 'Scaning file res-%05d' % i
 		ids, recs = scanRecords(os.path.join(inpath, 'res-%05d' % i))
-		with open(os.path.join(outpath, 'res=%05d' % i), 'ab') as stream:
+		with open(os.path.join(outpath, 'res-%05d' % i), 'ab') as stream:
 			stream.write('\n'.join(recs))
 
 if __name__ == '__main__':

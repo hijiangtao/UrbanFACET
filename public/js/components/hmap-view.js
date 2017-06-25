@@ -10,11 +10,26 @@
 import L from './map'
 import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js'
 import * as d3 from 'd3'
-import { legendColor } from 'd3-svg-legend'
-import { getSubGrids, getLinearNum, getRandomCenter, outOfRange, getPropName, extraInfoIndex } from './apis'
-import { stats, regionRecords, smecMax } from './init'
+import {
+    legendColor
+} from 'd3-svg-legend'
+import {
+    getSubGrids,
+    getLinearNum,
+    getRandomCenter,
+    outOfRange,
+    getPropName,
+    extraInfoIndex
+} from './apis'
+import {
+    stats,
+    regionRecords,
+    smecMax
+} from './init'
 import * as coordtransform from 'coordtransform';
-import { RadarChart } from './RadarChart';
+import {
+    RadarChart
+} from './RadarChart';
 
 const SPLIT = 0.003
 const mapattr = 'UrbanFACET &copy; 2016-2017'
@@ -45,7 +60,7 @@ class mapview {
                 uid: mapuid
             }),
             'Outdoors': L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-                id: 'mapbox.streets',   
+                id: 'mapbox.streets',
                 attribution: mapattr,
                 uid: mapuid
             }),
@@ -87,7 +102,7 @@ class mapview {
         this.gridData = {};
         this.gridDataType = '';
 
-        this.map.on('zoomend', function(e) {
+        this.map.on('zoomend', function (e) {
             console.log('Current Zoom Level', self.map.getZoom());
             if (true) {
                 // 待完善
@@ -103,7 +118,7 @@ class mapview {
             }
         });
 
-        this.map.on('baselayerchange', function(e) {
+        this.map.on('baselayerchange', function (e) {
             let name = self.control.getActiveBaseLayer().name;
             document.getElementById(self.ides.baselyr).innerText = name;
             console.log(name);
@@ -169,7 +184,10 @@ class mapview {
     // areaselect 选择/取消
     optAreaSelector(add) {
         if (add) {
-            this.areaSelector = L.areaSelect({ width: 300, height: 200 });
+            this.areaSelector = L.areaSelect({
+                width: 300,
+                height: 200
+            });
             this.areaSelector.addTo(this.map);
         } else {
             if (this.areaSelector) {
@@ -189,7 +207,7 @@ class mapview {
         let self = this;
         this.aAreaSelector = areaselect;
 
-        this.areaSelector.on("change", function() {
+        this.areaSelector.on("change", function () {
             let w1 = self.areaSelector.getDimensions().width,
                 h1 = self.areaSelector.getDimensions().height,
                 w2 = self.aAreaSelector.getDimensions().width,
@@ -200,7 +218,7 @@ class mapview {
             }
 
         });
-        this.aAreaSelector.on("change", function() {
+        this.aAreaSelector.on("change", function () {
             let w1 = self.areaSelector.getDimensions().width,
                 h1 = self.areaSelector.getDimensions().height,
                 w2 = self.aAreaSelector.getDimensions().width,
@@ -254,7 +272,7 @@ class mapview {
                 }]
             ];
 
-        let s = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),
+        let s = data['d'] / Number.parseFloat(smecMax[prop['city']]['d']),
             speColor = d3.hsl(0, s, 0.5);
 
         console.log("speColor", speColor, "val", s);
@@ -268,9 +286,9 @@ class mapview {
                 maxValue: smecMax[prop['city']]['m'],
                 levels: 5,
                 speColor: speColor,
-                TranslateX: ExtraLen*1.8 / 2,
+                TranslateX: ExtraLen * 1.8 / 2,
                 TranslateY: ExtraLen / 2,
-                ExtraWidthX: ExtraLen*1.8,
+                ExtraWidthX: ExtraLen * 1.8,
                 ExtraWidthY: ExtraLen
             }
 
@@ -326,7 +344,9 @@ class mapview {
 
         let svg = overlay.append("svg").attr('id', aoiid),
             g = svg.append("g").attr("class", "leaflet-zoom-hide leaflet-aois-layer"),
-            transform = d3.geoTransform({ point: projectPoint }),
+            transform = d3.geoTransform({
+                point: projectPoint
+            }),
             path = d3.geoPath().projection(transform);
 
         let fdata = [];
@@ -365,7 +385,7 @@ class mapview {
                 .style('left', (topLeft[0] - 5) + 'px')
                 .style('top', (topLeft[1] - 5) + 'px');
 
-            g.attr('transform', 'translate(' + (5-topLeft[0]) + ',' + (5-topLeft[1]) + ')');
+            g.attr('transform', 'translate(' + (5 - topLeft[0]) + ',' + (5 - topLeft[1]) + ')');
 
             feature.attr('d', path)
         };
@@ -386,15 +406,17 @@ class mapview {
                 continue;
             }
 
-            let marker = L.marker(new L.LatLng(data[i]['geo'][0], data[i]['geo'][1]), { icon: new Icon() });
-            marker.bindPopup(prop['thre']>0? `<p>AOI Number: ${data[i]['num']}</p>`:`<p>POI: ${data[i]['name']}</p>`, {
+            let marker = L.marker(new L.LatLng(data[i]['geo'][0], data[i]['geo'][1]), {
+                icon: new Icon()
+            });
+            marker.bindPopup(prop['thre'] > 0 ? `<p>AOI Number: ${data[i]['num']}</p>` : `<p>POI: ${data[i]['name']}</p>`, {
                 showOnMouseOver: true
             });
 
-            marker.on('mouseover', function(e) {
+            marker.on('mouseover', function (e) {
                 this.openPopup();
             })
-            marker.on('mouseout', function(e) {
+            marker.on('mouseout', function (e) {
                 this.closePopup();
             })
 
@@ -432,7 +454,7 @@ class mapview {
 
         // canvas 图层绘制方法
         let countVal = 0;
-        let drawingOnCanvas = function(canvasOverlay, params) {
+        let drawingOnCanvas = function (canvasOverlay, params) {
             let ctx = params.canvas.getContext('2d');
             ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
 
@@ -507,13 +529,15 @@ class mapview {
 
         console.log('vmin', vmin, 'vmax', vmax);
 
-        let transform = d3.geoTransform({ point: projectPoint }),
+        let transform = d3.geoTransform({
+                point: projectPoint
+            }),
             path = d3.geoPath().projection(transform);
 
         let feature = g.selectAll("path")
             .data(data.features)
             .enter().append("path")
-            .attr('fill', function(d) {
+            .attr('fill', function (d) {
                 let name = d.properties.name,
                     val = statsdata[name][type];
                 return onlyBound || val < vmin ? 'none' : color(val);
@@ -523,13 +547,13 @@ class mapview {
             .attr("stroke-width", 1.2);
 
         if (!onlyBound) {
-            feature.on("mouseover", function(d) {
+            feature.on("mouseover", function (d) {
                     let name = d.properties.name;
 
                     d3.select(`#carddistrict${numid}`).html(name);
                     d3.select(`#cardenps${numid}`).html(statsdata[name][type]);
                 })
-                .on("mouseout", function(d) {
+                .on("mouseout", function (d) {
                     d3.select(`#carddistrict${numid}`).html('Null');
                     d3.select(`#cardenps${numid}`).html('Null');
                 });
@@ -544,18 +568,18 @@ class mapview {
             .style("font-family", "sans-serif")
             .style("font-size", "1rem")
             .attr("text-anchor", "middle")
-            .text(function(d) {
+            .text(function (d) {
                 let name = d['properties']['english'];
                 if (name) {
                     return name
                 }
                 return d['properties']['name'];
             })
-            .attr('x', function(d) {
+            .attr('x', function (d) {
                 let p = d['properties']['cp'];
                 return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).x;
             })
-            .attr('y', function(d) {
+            .attr('y', function (d) {
                 let p = d['properties']['cp'];
                 return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 20;
             });
@@ -578,11 +602,11 @@ class mapview {
 
             feature.attr("d", path);
             text.data(data.features)
-                .attr('x', function(d) {
+                .attr('x', function (d) {
                     let p = d['properties']['cp'];
                     return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).x;
                 })
-                .attr('y', function(d) {
+                .attr('y', function (d) {
                     let p = d['properties']['cp'];
                     return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y;
                 });
@@ -609,7 +633,7 @@ class mapview {
 
         // 删除 radar chart 图层
         d3.selectAll('.leaflet-radarchart').remove();
-        
+
     }
 
     /**
@@ -657,7 +681,7 @@ class mapview {
 
         // canvas 图层绘制方法
         let countVal = 0;
-        let drawingOnCanvas = function(canvasOverlay, params) {
+        let drawingOnCanvas = function (canvasOverlay, params) {
             let ctx = params.canvas.getContext('2d');
             ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
 
@@ -707,6 +731,42 @@ class mapview {
             .addTo(self.map);
     }
 
+    geojsonCDrawing(data, prop) {
+        // update为false表示当前执行重绘操作, update为true则从实例中调用历史数据进行绘制
+        let self = this;
+
+        // updated color scale
+        let colorrange = ['rgba(255,0,0,1)', 'rgba(255,255,255,0)', 'rgba(255,255,255,0)']
+
+        this.clearLayers();
+        console.log('Begin to draw pointmap based on validate data.');
+
+        // canvas 图层绘制方法
+        let drawingOnCanvas = function (canvasOverlay, params) {
+            let ctx = params.canvas.getContext('2d');
+            ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
+
+            let len = data.features.length;
+            for (let i = 0; i < len; i++) {
+                let feature = data.features[i],
+                    poly = feature.geometry.coordinates[0];
+
+                if (params.bounds.contains([poly[0][1], poly[0][0]])) {
+                    let nw = canvasOverlay._map.latLngToContainerPoint([poly[3][1], poly[3][0]]),
+                        se = canvasOverlay._map.latLngToContainerPoint([poly[1][1], poly[1][0]]);
+                    ctx.fillStyle = 'red';
+                    ctx.fillRect(nw.x, nw.y, Math.abs(se.x - nw.x), Math.abs(se.y - nw.y));
+                }
+            }
+        }
+
+        // console.log('Feature Number ', len);
+
+        self.gridmapLayer = L.canvasOverlay()
+            .drawing(drawingOnCanvas)
+            .addTo(self.map);
+    }
+
     /**
      * 利用 contour 方式绘制 heatmap,使绘制出的结果较 gridmap 连续
      * @param  {[type]} data [description]
@@ -716,7 +776,7 @@ class mapview {
     mapcontourCDrawing(data, prop, update = false) {
         // update为false表示当前执行重绘操作, update为true则从实例中调用历史数据进行绘制
         this.switchLegDisplay('ctrleg');
-        
+
         if (!update) {
             this.setGridData(data);
         } else {
@@ -779,7 +839,11 @@ class mapview {
             countVal += 1;
 
             // 为 hdata 注入数据
-            hdata.data.push({ 'lat': center[1], 'lng': center[0], 'c': feature['prop'][drawtype] })
+            hdata.data.push({
+                'lat': center[1],
+                'lng': center[0],
+                'c': feature['prop'][drawtype]
+            })
         }
         console.log('Drawtype: ', drawtype, 'Contourmap Used point number', countVal);
 
@@ -843,7 +907,7 @@ class mapview {
             .attr("class", "legendLinear");
 
         let legendLinear = legendColor()
-            .labelFormat(function(d) {
+            .labelFormat(function (d) {
                 if (d <= 1) {
                     return `${Number.parseInt(d*100)}%`
                 } else {

@@ -16,12 +16,12 @@ import $ from "jquery"
  * @param  {[type]} vuesels [vue instance 中存储的 selections object]
  * @return {[type]}         [description]
  */
-let getDrawProps = function(scales, sels, ctrsets, props) {
-	let emin = Math.exp( Math.log(scales.e+1) * parseFloat(sels[0]) / 100.0 )-1,
-		emax = Math.exp( Math.log(scales.e+1) * parseFloat(sels[1]) / 100.0 )-1,
+let getDrawProps = function (scales, sels, ctrsets, props) {
+	let emin = Math.exp(Math.log(scales.e + 1) * parseFloat(sels[0]) / 100.0) - 1,
+		emax = Math.exp(Math.log(scales.e + 1) * parseFloat(sels[1]) / 100.0) - 1,
 		escales = scales.e,
-		dmin = Math.exp( Math.log(scales.d) * parseFloat(sels[0]) / 100.0 ),
-		dmax = Math.exp( Math.log(scales.d) * parseFloat(sels[1]) / 100.0 ),
+		dmin = Math.exp(Math.log(scales.d) * parseFloat(sels[0]) / 100.0),
+		dmax = Math.exp(Math.log(scales.d) * parseFloat(sels[1]) / 100.0),
 		dscales = scales.d,
 		drawtype = 'e';
 
@@ -50,33 +50,31 @@ let getDrawProps = function(scales, sels, ctrsets, props) {
 	}
 };
 
-let getSubGrids = function(poly, center, num=4) {
+let getSubGrids = function (poly, center, num = 4) {
 	if (num === 4) {
-		return [
-			{
-				'nw': [center[1], poly[0][0]],
-				'se': [poly[0][1], center[0]]
-			},{
-				'nw': [center[1], center[0]],
-				'se': [poly[1][1], poly[1][0]]
-			},{
-				'nw': [poly[2][1], center[0]],
-				'se': [center[1], poly[2][0]]
-			},{
-				'nw': [poly[3][1], poly[3][0]],
-				'se': [center[1], center[0]]
-			},
-		]
+		return [{
+			'nw': [center[1], poly[0][0]],
+			'se': [poly[0][1], center[0]]
+		}, {
+			'nw': [center[1], center[0]],
+			'se': [poly[1][1], poly[1][0]]
+		}, {
+			'nw': [poly[2][1], center[0]],
+			'se': [center[1], poly[2][0]]
+		}, {
+			'nw': [poly[3][1], poly[3][0]],
+			'se': [center[1], center[0]]
+		}, ]
 	}
 };
 
-let getOverviewDatasets = function(sels) {
+let getOverviewDatasets = function (sels) {
 	let city = sels.city,
 		etype = sels.etype,
 		ftpval1 = sels.ftpval,
 		ftpval2 = sels.ftpval2,
 		ftpval = ftpval1;
-	
+
 	// 以时间段最为主要依据, 只有时间段在allday的时候才考虑日期类型信息,两者都在all的时候后台传送给服务器数据为空
 	if (ftpval1 === '9') {
 		if (ftpval2 === '10') {
@@ -86,8 +84,8 @@ let getOverviewDatasets = function(sels) {
 		}
 	}
 
-	let p = new Promise(function(resolve, reject) {
-		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ftpval=${ftpval}`, function(res, err) {
+	let p = new Promise(function (resolve, reject) {
+		$.get(`/comp/overviewQuery?city=${city}&etype=${etype}&ftpval=${ftpval}`, function (res, err) {
 			if (res['scode']) {
 				resolve(res['data']);
 			} else {
@@ -99,9 +97,9 @@ let getOverviewDatasets = function(sels) {
 	return p;
 };
 
-let getBoundaryDatasets = function(city) {
-	let p = new Promise(function(resolve, reject) {
-		$.get(`/comp/boundaryQuery?city=${city}`, function(res, err) {
+let getBoundaryDatasets = function (city) {
+	let p = new Promise(function (resolve, reject) {
+		$.get(`/comp/boundaryQuery?city=${city}`, function (res, err) {
 			if (res['scode']) {
 				resolve(res['data']);
 			} else {
@@ -113,9 +111,9 @@ let getBoundaryDatasets = function(city) {
 	return p;
 }
 
-let getAOIDatasets = function(city, type) {
-	let p = new Promise(function(resolve, reject) {
-		$.get(`/comp/aoiQuery?city=${city}&type=${type}`, function(res, err) {
+let getAOIDatasets = function (city, type) {
+	let p = new Promise(function (resolve, reject) {
+		$.get(`/comp/aoiQuery?city=${city}&type=${type}`, function (res, err) {
 			if (res['scode']) {
 				resolve(res['data']);
 			} else {
@@ -127,10 +125,10 @@ let getAOIDatasets = function(city, type) {
 	return p;
 }
 
-let getSMecDatasets = function(city) {
-	let p = new Promise(function(resolve, reject) {
+let getSMecDatasets = function (city) {
+	let p = new Promise(function (resolve, reject) {
 		console.log(city);
-		$.get(`/comp/mecStatQuery?city=${city}`, function(res, err) {
+		$.get(`/comp/mecStatQuery?city=${city}`, function (res, err) {
 			if (res['scode']) {
 				resolve(res['data']);
 			} else {
@@ -142,8 +140,8 @@ let getSMecDatasets = function(city) {
 	return p;
 }
 
-let getAoiDisDatasets = function(city, type) {
-	let p = new Promise(function(resolve, reject) {
+let getAoiDisDatasets = function (city, type) {
+	let p = new Promise(function (resolve, reject) {
 		$.get(`/comp/aoiDisQuery?city=${city}&type=${type}`, function (res, err) {
 			if (res['scode']) {
 				resolve(res['data']);
@@ -156,39 +154,53 @@ let getAoiDisDatasets = function(city, type) {
 	return p;
 }
 
-let getLinearNum = function(target, minVal, maxVal, minNum, maxNum) {
+let getValidRecs = function () {
+	let p = new Promise(function (resolve, reject) {
+		$.get(`/comp/validQuery`, function (res, err) {
+			if (res['scode']) {
+				resolve(res['data']);
+			} else {
+				reject(err);
+			}
+		})
+	});
+
+	return p;
+}
+
+let getLinearNum = function (target, minVal, maxVal, minNum, maxNum) {
 	if (target < minVal) {
 		return 0;
 	} else if (target > maxVal) {
 		return maxNum;
 	}
 
-	let a = (maxNum-minNum) / Number.parseFloat(maxVal-minVal),
-		b = minNum - minVal*a; 
+	let a = (maxNum - minNum) / Number.parseFloat(maxVal - minVal),
+		b = minNum - minVal * a;
 
-	return Number.parseInt( a * target + b );
+	return Number.parseInt(a * target + b);
 }
 
-let getRandomCenter = function(point, base, scale) {
-	let lng = (point[0]+base) + Math.random()*scale,
-		lat = (point[1]+base) + Math.random()*scale;
+let getRandomCenter = function (point, base, scale) {
+	let lng = (point[0] + base) + Math.random() * scale,
+		lat = (point[1] + base) + Math.random() * scale;
 
 	return [lng, lat]
 }
 
-let outOfRange = function(t, evalue, dvalue, emin, dmin) {
+let outOfRange = function (t, evalue, dvalue, emin, dmin) {
 	if (t === 'e') {
 		if (evalue < emin) {
-    		return true;
-    	}
+			return true;
+		}
 	} else if (t === 'm') {
 		if (evalue < emin || dvalue < dmin) {
-    		return true;
-    	}
+			return true;
+		}
 	} else if (t === 'd') {
 		if (dvalue < dmin) {
-    		return true;
-    	}
+			return true;
+		}
 	}
 
 	return false;
@@ -200,9 +212,9 @@ let outOfRange = function(t, evalue, dvalue, emin, dmin) {
  * @return {[type]}     [description]
  */
 let objClone = function (obj) {
-    let res = {};
+	let res = {};
 
-    return JSON.parse(JSON.stringify(obj));;
+	return JSON.parse(JSON.stringify(obj));;
 };
 
 let getPropName = function (argument) {
@@ -213,7 +225,7 @@ let getPropName = function (argument) {
 	}
 }
 
-let extraInfoIndex = function(val) {
+let extraInfoIndex = function (val) {
 	if (val === 'tg') {
 		return 0;
 	} else if (val === 'ag') {
@@ -235,6 +247,7 @@ export {
 	getSubGrids,
 	getLinearNum,
 	getRandomCenter,
+	getValidRecs,
 	outOfRange,
 	objClone,
 	getPropName,

@@ -68,7 +68,7 @@ function getOverview(conn, prop) {
 
     console.log('Query table name: ', etable, 'eMax', eMax, 'dMax', dMax);
 
-    let p = new Promise(function(resolve, reject) {
+    let p = new Promise(function (resolve, reject) {
         let sql = $sql.getValScale[mtype] + $sql.getOverviewVal[mtype] + $sql.getDistribute(mtype, eMax) + $sql.getDistribute('sum', dMax),
             param = [
                 entropyattr, densityattr, etable,
@@ -86,7 +86,7 @@ function getOverview(conn, prop) {
             ];
         }
 
-        conn.query(sql, param, function(err, result) {
+        conn.query(sql, param, function (err, result) {
             conn.release();
 
             if (err) {
@@ -186,12 +186,12 @@ function getAoiNum(conn, prop) {
     let city = prop['city'],
         poiattr = 'total',
         // poiattr = prop['class'] === '11' ? 'total':`poi${prop['class']}`,
-        p = new Promise(function(resolve, reject) {
+        p = new Promise(function (resolve, reject) {
             let sql = $sql.getAoiVal,
                 param = [poiattr, `${city}CPOI`];
 
             // console.log('params', param)
-            conn.query(sql, param, function(err, result) {
+            conn.query(sql, param, function (err, result) {
                 conn.release();
 
                 if (err) {
@@ -204,7 +204,10 @@ function getAoiNum(conn, prop) {
                             'num': result[i]['num']
                         })
                     }
-                    resolve({ 'scode': 1, 'data': res });
+                    resolve({
+                        'scode': 1,
+                        'data': res
+                    });
                 }
             })
         });
@@ -216,7 +219,7 @@ function getAoiDetails(conn, prop) {
     let city = prop['city'],
         poitype = prop['type'];
 
-    let p1 = new Promise(function(resolve, reject) {
+    let p1 = new Promise(function (resolve, reject) {
         let table = conn.collection(`pois_${data.getCityFullName(city)}`);
 
         console.log(data.getCityFullName(city));
@@ -225,15 +228,15 @@ function getAoiDetails(conn, prop) {
             'properties.center': {
                 '$near': {
                     '$geometry': {
-                      'type': "Point" ,
-                      'coordinates': [ 116.37914664228447, 40.02479016490592 ]
+                        'type': "Point",
+                        'coordinates': [116.37914664228447, 40.02479016490592]
                     },
                     '$maxDistance': 1500
                 }
             }
         }, {
             'properties': 1
-        }).toArray(function(err, docs){
+        }).toArray(function (err, docs) {
             // console.log(err, docs);
             if (err) {
                 reject(err);
@@ -244,25 +247,27 @@ function getAoiDetails(conn, prop) {
         });
     });
 
-    let p2 = new Promise(function(resolve, reject) {
+    let p2 = new Promise(function (resolve, reject) {
         let table = conn.collection(`pois_${data.getCityFullName(city)}`);
 
         console.log(data.getCityFullName(city));
         table.find({
             'properties.ftype': 2,
-            'properties.radius': { '$gte': 200 },
+            'properties.radius': {
+                '$gte': 200
+            },
             'properties.center': {
-             '$near': {
-               '$geometry': {
-                  'type': "Point",
-                  'coordinates': [ 116.38698591152206, 39.91039840227936 ]
-               },
-               '$maxDistance': 30000
-             }
+                '$near': {
+                    '$geometry': {
+                        'type': "Point",
+                        'coordinates': [116.38698591152206, 39.91039840227936]
+                    },
+                    '$maxDistance': 30000
+                }
             }
         }, {
             'properties': 1
-        }).toArray(function(err, docs){
+        }).toArray(function (err, docs) {
             // console.log(err, docs);
             if (err) {
                 reject(err);
@@ -279,12 +284,12 @@ function getAoiDetails(conn, prop) {
         for (let i = data.length - 1; i >= 0; i--) {
             let obj = data[i],
                 center = obj['properties']['center']['coordinates'];
-                res.push({
-                    'name': obj['properties']['name'],
-                    'geo': [center[1], center[0]],
-                    'num': 1,
-                    'radius': obj['properties']['radius']
-                });
+            res.push({
+                'name': obj['properties']['name'],
+                'geo': [center[1], center[0]],
+                'num': 1,
+                'radius': obj['properties']['radius']
+            });
         }
 
         return res;
@@ -298,11 +303,14 @@ function getAoiDis(city, type) {
         keys = ['Food&Supply', 'Entertainment', 'Education', 'Transportation', 'Healthcare', 'Financial', 'Accommodation', 'Office', 'Landscape', 'Manufacturer'];
 
     // data.pop();
-    return { 'k': keys, 'v': data };
+    return {
+        'k': keys,
+        'v': data
+    };
 }
 
 function generateGridsJson(locs, obj) {
-    fs.exists('myjsonfile.json', function(exists) {
+    fs.exists('myjsonfile.json', function (exists) {
         if (exists) {
             console.log("yes file exists");
         } else {
@@ -320,7 +328,13 @@ function getExtraInfo(db, params) {
         collection = db.collection('pois_beijing');
 
     // console.log('idlist: ', idlist)
-    collection.find({ 'properties.ftype': Number.parseInt(ftype) }, { 'properties.center': 1, 'properties.name': 1, 'properties.': 1 }).toArray(function(err, result) {
+    collection.find({
+        'properties.ftype': Number.parseInt(ftype)
+    }, {
+        'properties.center': 1,
+        'properties.name': 1,
+        'properties.': 1
+    }).toArray(function (err, result) {
 
         mongoCallback(err, result, res, {
             "clalist": clalist,
@@ -332,6 +346,83 @@ function getExtraInfo(db, params) {
     });
 }
 
+/**
+ * 获取北京山区用户记录，用于显示在地图上
+ * @param {*} db 
+ * @param {*} params 
+ */
+function getValidPoints(conn, params) {
+    let p = new Promise(function (resolve, reject) {
+        let sql = $sql.getValidPoints;
+
+        console.log('I am going to query data.')
+
+        conn.query(sql, [], function (err, result) {
+            conn.release();
+
+            if (err) {
+                reject(err);
+            } else {
+                let DATA = [],
+                    SPLIT = 0.003,
+                    centerincrement = 0.0015,
+                    locs = data.getRegionBound('bj'),
+                    elist = result,
+                    max = 1
+
+                for (let i = elist.length - 1; i >= 0; i--) {
+                    let id = Number.parseInt(elist[i]['id']),
+                        LNGNUM = parseInt((locs['east'] - locs['west']) / SPLIT + 1),
+                        latind = parseInt(id / LNGNUM),
+                        lngind = id - latind * LNGNUM,
+                        lat = (locs['south'] + latind * SPLIT),
+                        lng = (locs['west'] + lngind * SPLIT),
+                        lnginc = (lng + SPLIT),
+                        latinc = (lat + SPLIT),
+                        lngcen = (lng + centerincrement),
+                        latcen = (lat + centerincrement),
+                        coordsarr = [
+                            [lng, lat],
+                            [lnginc, lat],
+                            [lnginc, latinc],
+                            [lng, latinc],
+                            [lng, lat]
+                        ]
+
+                    let num = elist[i]['num']
+                    if (max < num) {
+                        max = num;
+                    }
+                    DATA.push({
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [coordsarr]
+                        },
+                        "type": "Feature",
+                        "id": id,
+                        "prop": {
+                            'd': num
+                        }
+                    })
+                }
+
+                resolve({
+                    'scode': 1,
+                    'data': {
+                        "type": "FeatureCollection",
+                        "features": DATA,
+                        "prop": {
+                            'scales': max
+                        }
+                    }
+                })
+            }
+        })
+    })
+
+    return p;
+}
+
 module.exports = {
     getOverview: getOverview,
     getExtraInfo: getExtraInfo,
@@ -339,5 +430,6 @@ module.exports = {
     getAoiNum: getAoiNum,
     getAoiDetails: getAoiDetails,
     getMecStat: getMecStat,
-    getAoiDis: getAoiDis
+    getAoiDis: getAoiDis,
+    getValidPoints: getValidPoints
 }
