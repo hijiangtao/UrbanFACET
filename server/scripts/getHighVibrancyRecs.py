@@ -45,7 +45,7 @@ def scanRecords(arg):
 	ids, recs = [], []
 	# recsdict = {}
 	tmpstr, needToSave, lastid = '', False, ''
-	with open(arg) as f:
+	with open(arg, 'rb') as f:
 		for line in f:
 			onerec = line.strip('\n')
 			reclist = onerec.split(',')
@@ -74,7 +74,7 @@ def main():
 	for i in range(0, 4):
 		print 'Scaning file res-%05d' % i
 		ids, recs = scanRecords(os.path.join(inpath, 'res-%05d' % i))
-		with open(outpath, 'res=%05d' % i) as stream:
+		with open(os.path.join(outpath, 'res=%05d' % i), 'ab') as stream:
 			stream.write('\n'.join(recs))
 
 if __name__ == '__main__':
