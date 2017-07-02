@@ -754,7 +754,7 @@ class mapview {
                 if (params.bounds.contains([poly[0][1], poly[0][0]])) {
                     let nw = canvasOverlay._map.latLngToContainerPoint([poly[3][1], poly[3][0]]),
                         se = canvasOverlay._map.latLngToContainerPoint([poly[1][1], poly[1][0]]);
-                    ctx.fillStyle = 'red';
+                    ctx.fillStyle = 'rgba(255,0,0,0.5)';
                     ctx.fillRect(nw.x, nw.y, Math.abs(se.x - nw.x), Math.abs(se.y - nw.y));
                 }
             }
