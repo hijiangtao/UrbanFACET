@@ -109,7 +109,7 @@ def scanRecords(arg):
 			# 		needToSave = judInBox(int(reclist[6]), vibaim)
 			
 			if judInBox(int(reclist[6]), vibaim):
-				count++
+				count += 1
 	
 	# return ids, recs
 	print count
