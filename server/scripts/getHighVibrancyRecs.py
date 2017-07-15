@@ -114,7 +114,7 @@ def countRecords(arg):
 	aim = arg['aim']
 	count = 0
 
-	with open(arg, 'rb') as f:
+	with open(file, 'rb') as f:
 		for line in f:
 			onerec = line.strip('\n')
 			reclist = onerec.split(',')
