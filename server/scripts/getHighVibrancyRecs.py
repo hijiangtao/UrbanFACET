@@ -119,7 +119,7 @@ def countRecords(arg):
 			onerec = line.strip('\n')
 			reclist = onerec.split(',')
 			
-			if judInBox(int(reclist[6]), aim):
+			if judInBox(int(reclist[6]), aim['locs']):
 				count += 1
 
 	return count
