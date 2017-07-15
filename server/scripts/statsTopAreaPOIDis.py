@@ -11,7 +11,6 @@ from CommonFunc import connectMongo
 def getUIDList(file):
 	uid = []
 
-
 	with open(file, 'rb') as f:
 		for line in f:
 			onerec = line.strip('\n')
@@ -30,7 +29,7 @@ def accuPOI(arg, dbname):
 		'properties.uid': {
 			'$in': arg
 		}
-	}, { 'properties.vec': true }))
+	}, { 'properties.vec': True }))
 	conn.close()
 
 	for each in poiDisRes:
@@ -42,7 +41,7 @@ def accuPOI(arg, dbname):
 
 def main():
 	inpath = '/enigma/tao.jiang/datasets/JingJinJi/records/filter'
-	arr = getUIDList(os.path.join(inpath, 'bjF4matTop'))
+	arr = getUIDList(os.path.join(inpath, 'bjEmatrixTop'))
 	res = accuPOI(arr, 'tdnormal')
 	print res
 
