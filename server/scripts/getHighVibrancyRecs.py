@@ -86,45 +86,69 @@ def judInBox(index, aim):
 def scanRecords(arg):
 	ids, recs = [], []
 	# recsdict = {}
-	count = 0
 	tmpstr, needToSave, lastid = '', False, ''
 	with open(arg, 'rb') as f:
 		for line in f:
 			onerec = line.strip('\n')
 			reclist = onerec.split(',')
 			
-			# # 新的 id
-			# if lastid != reclist[0]:
-			# 	if needToSave:
-			# 		recs.append(tmpstr)
-			# 		ids.append(lastid)
-			# 	lastid = reclist[0]
-			# 	tmpstr = onerec + '\n'
-			# 	needToSave = False
+			# 新的 id
+			if lastid != reclist[0]:
+				if needToSave:
+					recs.append(tmpstr)
+					ids.append(lastid)
+				lastid = reclist[0]
+				tmpstr = onerec + '\n'
+				needToSave = False
 
-			# # 延续旧 id 的记录
-			# else:
-			# 	tmpstr += onerec + '\n'
-			# 	if not needToSave:
-			# 		needToSave = judInBox(int(reclist[6]), vibaim)
-			
-			if judInBox(int(reclist[6]), vibaim):
-				count += 1
+			# 延续旧 id 的记录
+			else:
+				tmpstr += onerec + '\n'
+				if not needToSave:
+					needToSave = judInBox(int(reclist[6]), vibaim)
 	
-	# return ids, recs
-	print count
+	return ids, recs
+
+def countRecords(arg):
+	file = arg['file']
+	aim = arg['aim']
+	count = 0
+
+	with open(arg, 'rb') as f:
+		for line in f:
+			onerec = line.strip('\n')
+			reclist = onerec.split(',')
+			
+			if judInBox(int(reclist[6]), aim):
+				count += 1
+
+	return count
 
 def main():
-	inpath = '/enigma/tao.jiang/datasets/JingJinJi/records/idcollection/beijing'
-	outpath = '/enigma/tao.jiang/datasets/JingJinJi/records/filter'
-	# 遍历文件获得 ID 以及记录，并写入文件
-	for i in range(0, 4):
-		print 'Scaning file res-%05d' % i
-		scanRecords(os.path.join(inpath, 'res-%05d' % i))
-		# with open(os.path.join(outpath, 'res-%05d' % i), 'ab') as stream:
-		# 	stream.write('\n'.join(recs))
+	# 逻辑一
+	# inpath = '/enigma/tao.jiang/datasets/JingJinJi/records/idcollection/beijing'
+	# outpath = '/enigma/tao.jiang/datasets/JingJinJi/records/filter'
+	# # 遍历文件获得 ID 以及记录，并写入文件
+	# for i in range(0, 4):
+	# 	print 'Scaning file res-%05d' % i
+	# 	ids, recs = scanRecords(os.path.join(inpath, 'res-%05d' % i))
+	# 	with open(os.path.join(outpath, 'res-%05d' % i), 'ab') as stream:
+	# 		stream.write('\n'.join(recs))
 
-	# inpath = 
+	# 逻辑二
+	count = [0 for x in xrange(0, 5)]
+	inpath = '/enigma/tao.jiang/datasets/JingJinJi/records/filter'
+	for i in xrange(0, 4): # file name
+		print 'Counting file res-%05d' % i
+
+		for x in xrange(0, 5): # area name
+			count[x] += countRecords({
+				'file': os.path.join(inpath, 'res-%05d' % i), 
+				'aim': disaim[x]
+				})
+
+	for x in xrange(0, 5):
+		print '%s area: %d records' (disaim[x]['name'], count[x])
 
 if __name__ == '__main__':
 	main()
