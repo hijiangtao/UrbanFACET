@@ -13,7 +13,7 @@ def getUIDList(file):
 
 
 	with open(file, 'rb') as f:
-		for each in f:
+		for line in f:
 			onerec = line.strip('\n')
 			if onerec == '':
 				continue
