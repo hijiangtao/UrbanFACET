@@ -117,12 +117,15 @@ def countRecords(arg):
 	with open(file, 'rb') as f:
 		for line in f:
 			onerec = line.strip('\n')
+			if onerec == '':
+				continue
 			reclist = onerec.split(',')
-			
+
 			if judInBox(int(reclist[6]), aim['locs']):
 				count += 1
 
 	return count
+
 
 def main():
 	# 逻辑一
