@@ -1,4 +1,4 @@
-#
+# 
 
 cd /home/tao.jiang/git/living-modes-visual-comparison/server/scripts
 

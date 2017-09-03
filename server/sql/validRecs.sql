@@ -1,3 +1,5 @@
+-- 过滤数据导入 validrecs
+
 LOAD DATA LOCAL INFILE "/enigma/tao.jiang/datasets/JingJinJi/records/filter/res-00000" INTO TABLE validrecs COLUMNS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '' ESCAPED BY '"' LINES TERMINATED BY '\n' (@col1,@col2,@col3,@col4,@col5,@col6,@col7) set tdid=@col1,date=@col2,dis=@col6,gridid=@col7;
 LOAD DATA LOCAL INFILE "/enigma/tao.jiang/datasets/JingJinJi/records/filter/res-00001" INTO TABLE validrecs COLUMNS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '' ESCAPED BY '"' LINES TERMINATED BY '\n' (@col1,@col2,@col3,@col4,@col5,@col6,@col7) set tdid=@col1,date=@col2,dis=@col6,gridid=@col7;
 LOAD DATA LOCAL INFILE "/enigma/tao.jiang/datasets/JingJinJi/records/filter/res-00002" INTO TABLE validrecs COLUMNS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '' ESCAPED BY '"' LINES TERMINATED BY '\n' (@col1,@col2,@col3,@col4,@col5,@col6,@col7) set tdid=@col1,date=@col2,dis=@col6,gridid=@col7;

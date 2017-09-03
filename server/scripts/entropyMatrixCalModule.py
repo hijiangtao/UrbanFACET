@@ -143,7 +143,7 @@ class EntropyMatrixModule(object):
 				# 处理 行政区划 熵
 				eobjs[ devid ][ 't3' ][ 'nlist' ][ devdis-self.CITYDISIND ] += 1
 		stream.close()
-		# print 'Finished file reading line by line in %s' % (time.time()-self.starttime)
+		print 'Finished file reading line by line in %s' % (time.time()-self.starttime)
 
 		# 概率向量的归一化处理, EOBJ 的更新计算, 熵计算与更新
 		for each in idlist:
@@ -168,7 +168,8 @@ class EntropyMatrixModule(object):
 			idInfoStr += self.aggregate(each, eobjs[each])
 
 		recordslen = len(records)
-		# print "%d lines data and entropy are aggregated in %s" % (recordslen, (time.time()-self.starttime))
+		print "%d lines data and entropy are aggregated in %s" % (recordslen, (time.time()-self.starttime))
+
 		for x in xrange(0, recordslen):
 			# 遍历 record
 			# 维护本进程最大的 entropy-matrix 熵值更新
@@ -189,7 +190,7 @@ class EntropyMatrixModule(object):
 		for x in xrange(0, self.GRIDSNUM):
 			self.EMATRIX[x][1] += enumlist[x]
 			self.EMATRIX[x][2] += (enumlist[x]-einvalidnumlist[x])
-		# print 'Finished EMATRIX update in %s' % (time.time()-self.starttime)
+		print 'Finished EMATRIX update in %s' % (time.time()-self.starttime)
 
 		# 写入 idInfoStr
 		with open(outputfile, 'ab') as res:
@@ -246,7 +247,6 @@ class EntropyMatrixModule(object):
 def processTask(PROP, DATA):
 	task = EntropyMatrixModule(PROP, DATA)
 	task.run()
-
 
 def mergeDistributionFiles(city, directory):
 	"""将不同 ID 的熵信息以及其他档案合并至一个文件,简单追加即并没有涉及复杂操作
@@ -338,7 +338,7 @@ def main(argv):
 		sys.exit(2)
 
 	# 处理输入参数
-	city, directory, number = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 999
+	city, directory, number = 'beijing', '/enigma/tao.jiang/datasets/JingJinJi', 999
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()

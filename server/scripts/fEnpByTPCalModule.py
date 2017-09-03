@@ -4,6 +4,7 @@
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
+# calculate record entropy based on calculated people entropy of beijing
 
 import os
 import time
@@ -137,8 +138,8 @@ class fEnpByTPCalModule(object):
 				self.EMATRIX[ devIntGID ][2] += 1
 				self.EMATRIX[ devIntGID ][5] += pt1
 
-			self.EMATRIX[ devIntGID ][6] += pt2;
-			self.EMATRIX[ devIntGID ][7] += pt3;
+			self.EMATRIX[ devIntGID ][6] += pt2
+			self.EMATRIX[ devIntGID ][7] += pt3
 			self.EMATRIX[ devIntGID ][9] += rt2 # / self.record[devid]['prop']['wnum']
 			self.EMATRIX[ devIntGID ][10] += rt3 # / self.record[devid]['prop']['wnum']
 

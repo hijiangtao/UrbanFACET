@@ -218,7 +218,7 @@ def mergeDistributionFiles(city, TIMEPERIOD):
 	Returns:
 	    TYPE: Description
 	"""
-	baseurl = '/home/tao.jiang/datasets/JingJinJi/entropy/distribution'
+	baseurl = '/enigma/tao.jiang/datasets/JingJinJi/entropy/distribution'
 	file = os.path.join(baseurl, city, 't%d-respeo-xxx' % TIMEPERIOD)
 	number = 0
 
@@ -247,7 +247,7 @@ def mergeMatrixFiles(city, GRIDSNUM, TIMEPERIOD):
 	    TYPE: Description
 	"""
 	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
-	baseurl = os.path.join('/home/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
+	baseurl = os.path.join('/enigma/tao.jiang/datasets/JingJinJi/entropy/matrix', city)
 
 	for x in xrange(0,20):
 		with open(os.path.join(baseurl, 't%d-respeo-%03d' % (TIMEPERIOD, x)), 'rb') as stream:
@@ -290,7 +290,7 @@ def main(argv):
 		sys.exit(2)
 
 	# 处理输入参数
-	city, directory, number, timeperiod = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi', 999, 0
+	city, directory, number, timeperiod = 'beijing', '/enigma/tao.jiang/datasets/JingJinJi', 999, 0
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()

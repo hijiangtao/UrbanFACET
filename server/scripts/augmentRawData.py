@@ -170,7 +170,7 @@ def formatGridID(locs, point):
 	"""
 	SPLIT = 0.003
 	# LATNUM = int((locs['north'] - locs['south']) / SPLIT + 1)
-	LNGNUM = int((locs['east'] - locs['west']) / SPLIT + 1)
+	LNGNUM = int( (locs['east'] - locs['west']) / SPLIT + 1 )
 	lngind = int( (float(point[0]) - locs['west']) / SPLIT )
 	latind = int( (float(point[1]) - locs['south']) / SPLIT )
 
@@ -199,7 +199,7 @@ def main(argv):
 		sys.exit(2)
 
 	# 处理输入参数
-	city, directory, number, resfilenum = 'zhangjiakou', '/home/tao.jiang/datasets/JingJinJi/records', 264, 1000
+	city, directory, number, resfilenum = 'beijing', '/home/tao.jiang/datasets/JingJinJi/records', 9999, 1000
 	for opt, arg in opts:
 		if opt == '-h':
 			usage()
