@@ -60,7 +60,7 @@ function getOverview(conn, prop) {
         typs = getTypeVals(prop['etype']),
         entropyattr = `${typs['etype']+typs['ctype']}sval`,
         densityattr = `w${typs['ctype']}number`,
-        etable = ftpval !== '' ? `${city}F${ftpval}mat` : `${city}Ematrix`,
+        etable = ftpval !== '' ? `${city==='bj'? 'wbj':city}F${ftpval}mat` : `${city==='bj'? 'wbj':city}Ematrix`,
         mtype = 'ave',
         sqldoc = iMax[mtype],
         eMax = Number.parseFloat(sqldoc[etable][entropyattr]),

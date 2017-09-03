@@ -7,6 +7,7 @@
 
 'use strict'
 
+更新 sum ave 两个查询
 let objs = {
 	'sum': {
 		"bjEmatrix": {
