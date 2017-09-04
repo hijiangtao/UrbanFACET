@@ -4,7 +4,7 @@
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
 # @Version : $Id$
-# calculate record entropy based on calculated people entropy of beijing
+# calculate record entropy based on calculated people entropy of beijing,同时计算 people entropy 和 record entropy
 
 import os
 import time
