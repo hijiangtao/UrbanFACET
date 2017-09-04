@@ -136,7 +136,7 @@ class augmentRawDatainMultiProcess():
 
 			# 为移动硬盘直接挂载运行单写
 			logging.info('TASK %d - FILE part-%05d operating...' % (self.INDEX, number))
-			self.augment('/media/joe/LaCie/TalkingData/Jingjinji/Beijing-FilterRecords/allIndex', 'part-%05d' % number), os.path.join(idcoldir, self.CITY), self.CITY)
+			self.augment(os.path.join('/enigma/tao.jiang/datasets/JingJinJi/records/allIndex1', 'part-%05d' % number), os.path.join(idcoldir, self.CITY), self.CITY)
 
 		print "Task %s finished time:" % str(self.INDEX)
 		print time.time()
