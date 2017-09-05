@@ -29,6 +29,22 @@
 				<div :id="'maplegend'+index"  class="sixteen wide column">
 					<svg :id="'gridmaplegend'+index" style="display: none;" ></svg>
 				</div>
+							
+				<div :id = "'clusterslider'+index"  class="sixteen wide column" style="margin-bottom: 1.5rem; padding-top: 0;">
+					<p>Min-cluster-density:</p>
+					<template v-if="model.dtype !== 'd'" >
+						<div>
+							<vue-slider :id="'slider1'+index"  v-bind="sels.objs[index].slider1" @drag-end="updateSlider1(index)" v-model="sels.objs[index].slider1.value"></vue-slider>
+						</div>
+					</template>
+					<p>Min-cluster-size:</p>
+					<template v-if="model.dtype !== 'd'" >
+						<div>
+							<vue-slider :id="'slider2'+index" v-bind="sels.objs[index].slider2" @drag-end="updateSlider2(index)" v-model="sels.objs[index].slider2.value"></vue-slider>
+						</div>
+					</template>
+				</div>
+				
 			</div>
 		</div>
 	</div>

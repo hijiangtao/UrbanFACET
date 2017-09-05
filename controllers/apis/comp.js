@@ -12,16 +12,33 @@ const EP = require('../../conf/entropy');
 let apis = {
 	'overviewQuery': function(req, res, next) {
 		let params = req.query;
-		// console.info('Going to connect MySQL.');
+		//console.log("params:" + JSON.stringify(params))
+		 //console.info('Going to connect MySQL.');
 		lib.connectMySQL().then(function(db) {
-			// console.info('Got data from MySQL.');
+			console.info('Got data from MySQL.');
 			return EP.getOverview(db, params);
 		}, function(err) {
 			console.error('error: ', err);
 		}).catch(function(error) {
 			console.error('error: ', err);
 		}).then(function(result) {
-			// console.info('Ready to send back result.');
+			 //console.info('Ready to send back result.');
+			res.json(result);
+		})
+	},
+	'compareQuery': function(req, res, next) {
+		let params = req.query;
+		//console.log("params:" + JSON.stringify(params))
+		 //console.info('Going to connect MySQL.');
+		lib.connectMySQL().then(function(db) {
+			console.info('Got data from MySQL.');
+			return EP.getCompareview(db, params);
+		}, function(err) {
+			console.error('error: ', err);
+		}).catch(function(error) {
+			console.error('error: ', err);
+		}).then(function(result) {
+			 //console.info('Ready to send back result.');
 			res.json(result);
 		})
 	},
@@ -30,6 +47,25 @@ let apis = {
 			city = params.city,
 			data = EP.getBoundary(city);
 
+		res.json({
+			'scode': 1,
+			'data': data
+		});
+	},
+	'ClusterboundaryQuery': function(req, res, next) {
+		let params = req.query,
+			city = params.city,
+			data = EP.getClusterBoundary(city);
+		
+		res.json({
+			'scode': 1,
+			'data': data
+		});
+	},
+	'ClusterboundaryQueryUpdate': function(req, res, next) {
+		let params = req.query,
+			data = EP.getClusterBoundaryUpdate(params);
+		
 		res.json({
 			'scode': 1,
 			'data': data

@@ -3,9 +3,11 @@
 # @Date    : 2016-11-26 18:47:13
 # @Author  : Joe Jiang (hijiangtao@gmail.com)
 # @Link    : https://hijiangtao.github.io/
-# 描述      : 通用函数
+# 描述      :
 
-import os, pymongo, math, sys, logging, MySQLdb
+
+import os, pymongo, math, sys, logging#, MySQLdb
+import pymysql as MySQLdb
 import numpy as np
 from scipy import stats
 from geopy.distance import great_circle  # https://pypi.python.org/pypi/geopy/1.11.0

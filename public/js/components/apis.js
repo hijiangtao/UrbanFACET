@@ -16,6 +16,70 @@ import $ from "jquery"
  * @param  {[type]} vuesels [vue instance 中存储的 selections object]
  * @return {[type]}         [description]
  */
+
+let getDrawProps = function(res, sels, ctrsets, props) {
+	let minfeature = null, maxfeature = null;
+	if(sels[0] === sels[1]){
+		if(sels[0] == 0){
+			minfeature = res.features[res.features.length -1],
+			maxfeature = res.features[res.features.length -1];
+		}
+		else if(sels[0] == 100){
+			minfeature = res.features[0],
+			maxfeature = res.features[0];
+		}
+		else{
+			minfeature = res.features[res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[1])+1)/100)],
+			maxfeature = res.features[res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[1])+1)/100)];
+		}
+	}
+	else{
+		//let  minfeature = res.features[res.features.length - Math.floor(res.features.length * parseFloat(sels[0]) / 100) - 1],
+		//	maxfeature = res.features[res.features.length - Math.floor(res.features.length * parseFloat(sels[1]) / 100) ],
+		minfeature = res.features[res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[0])+1)/100)- 1],
+		maxfeature = res.features[res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[1])+1)/100)];
+	}
+	let	min = minfeature['prop']['v'],
+		max = maxfeature['prop']['v'],
+		//escales = res['prop']['scales']['e'],
+		//dscales = res['prop']['scales']['d'],
+		drawtype = 'e';
+   console.log("minva" + sels[0])
+   console.log("maxva" + sels[1])
+   console.log("minscale:" +  (res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[0])+1)/100)))
+   console.log("maxscale:" +  (res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[1])+1)/100)))
+   console.log("min" + min)
+   console.log("max" + max)
+	
+	if (props['etype'] === 'de') {
+		drawtype = 'd';
+	}
+
+	return {
+		'e': { // entropy
+			'min': min,
+			'max': max
+			//'number': sels[0]
+			//'scales': escales
+		},
+		'd': { // density
+			'min': min,
+			'max': max
+			//'number': sels[1]
+			//'scales': dscales
+		},
+		'prop': { // prop
+			'rev': props['rev'],
+			'drawtype': drawtype,
+			'radius': ctrsets.radius * 0.0025,
+			'opacity': ctrsets.opacity,
+			'useLocalExtrema': ctrsets.useLocalExtrema,
+		}
+	}
+};
+
+
+/*
 let getDrawProps = function(scales, sels, ctrsets, props) {
 	let emin = Math.exp( Math.log(scales.e+1) * parseFloat(sels[0]) / 100.0 )-1,
 		emax = Math.exp( Math.log(scales.e+1) * parseFloat(sels[1]) / 100.0 )-1,
@@ -49,6 +113,7 @@ let getDrawProps = function(scales, sels, ctrsets, props) {
 		}
 	}
 };
+*/
 
 let getSubGrids = function(poly, center, num=4) {
 	if (num === 4) {
@@ -99,6 +164,39 @@ let getOverviewDatasets = function(sels) {
 	return p;
 };
 
+let getCompareDatasets = function(sels){
+	let city = sels.city,
+	etype = sels.etype,
+	ftpval1 = sels.ftpval,
+	ftpval2 = sels.ftpval2,
+	ftpval = ftpval1;
+
+// 以时间段最为主要依据, 只有时间段在allday的时候才考虑日期类型信息,两者都在all的时候后台传送给服务器数据为空
+if (ftpval1 === '9') {
+	if (ftpval2 === '10') {
+		ftpval = '';
+	} else {
+		ftpval = ftpval2;
+	}
+}
+
+if (ftpval === ''){
+	city = 'all';
+}
+
+let p = new Promise(function(resolve, reject) {
+	$.get(`/comp/compareQuery?city=${city}&etype=${etype}&ftpval=${ftpval}`, function(res, err) {
+		if (res['scode']) {
+			resolve(res['data']);
+		} else {
+			reject(err);
+		}
+	});
+});
+
+return p;
+}
+
 let getBoundaryDatasets = function(city) {
 	let p = new Promise(function(resolve, reject) {
 		$.get(`/comp/boundaryQuery?city=${city}`, function(res, err) {
@@ -112,6 +210,35 @@ let getBoundaryDatasets = function(city) {
 
 	return p;
 }
+
+let getClusterboundaryDatasets = function(city){
+	let p = new Promise(function(resolve, reject) {
+		$.get(`/comp/ClusterboundaryQuery?city=${city}`, function(res, err) {
+			if (res['scode']) {
+				resolve(res['data']);
+			} else {
+				reject(err);
+			}
+		})
+	});
+
+	return p;
+}
+
+let getClusterboundaryDatasetsUpdate = function(city, s, c){
+	let p = new Promise(function(resolve, reject) {
+		$.get(`/comp/ClusterboundaryQueryUpdate?city=${city}&s=${s}&c=${c}`, function(res, err) {
+			if (res['scode']) {
+				resolve(res['data']);
+			} else {
+				reject(err);
+			}
+		})
+	});
+
+	return p;
+}
+
 
 let getAOIDatasets = function(city, type) {
 	let p = new Promise(function(resolve, reject) {
@@ -176,7 +303,8 @@ let getRandomCenter = function(point, base, scale) {
 	return [lng, lat]
 }
 
-let outOfRange = function(t, evalue, dvalue, emin, dmin) {
+
+ let outOfRange = function(t, evalue, dvalue, emin, dmin) {
 	if (t === 'e') {
 		if (evalue < emin) {
     		return true;
@@ -193,6 +321,7 @@ let outOfRange = function(t, evalue, dvalue, emin, dmin) {
 
 	return false;
 }
+
 
 /**
  * object 复制函数， 未考虑传入数据的合法性
@@ -220,6 +349,10 @@ let extraInfoIndex = function(val) {
 		return 3;
 	} else if (val === 'po') {
 		return 1;
+	} else if (val === 'dd') {
+		return 5;
+	} else if (val === 'cd') {
+		return 6;
 	} else {
 		return 4;
 	}
@@ -227,7 +360,10 @@ let extraInfoIndex = function(val) {
 
 export {
 	getOverviewDatasets,
+	getCompareDatasets,
 	getBoundaryDatasets,
+	getClusterboundaryDatasets,
+	getClusterboundaryDatasetsUpdate,
 	getAOIDatasets,
 	getSMecDatasets,
 	getAoiDisDatasets,
