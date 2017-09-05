@@ -41,3 +41,5 @@ server/data/cluster/*
 server/data/decompose/*
 server/data/label/*
 server/data/tmp/*
+
+*.DS_Store
