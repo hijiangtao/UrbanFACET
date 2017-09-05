@@ -12,9 +12,26 @@ import Vue from 'vue'
 import mapview from './components/hmap-view'
 import chart from './components/chartview'
 import $ from "jquery"
-import { regionRecords, home, smecAve } from './components/init'
-import { getOverviewDatasets, getBoundaryDatasets, getClusterboundaryDatasets, getClusterboundaryDatasetsUpdate, getAOIDatasets, getDensity, getSMecDatasets, getDrawProps, getAoiDisDatasets, objClone } from './components/apis'
-import { changeLoadState } from './components/events'
+import {
+    regionRecords,
+    home,
+    smecAve
+} from './components/init'
+import {
+    getOverviewDatasets,
+    getBoundaryDatasets,
+    getClusterboundaryDatasets,
+    getClusterboundaryDatasetsUpdate,
+    getAOIDatasets,
+    getDensity,
+    getSMecDatasets,
+    getDrawProps,
+    getAoiDisDatasets,
+    objClone
+} from './components/apis'
+import {
+    changeLoadState
+} from './components/events'
 import vueSlider from 'vue-slider-component'
 import dynamicView from './dynamic'
 import store from './vuex'
@@ -22,7 +39,7 @@ import store from './vuex'
 let maps = [],
     charts = [],
     daview = null,
-	resp = null;
+    resp = null;
 
 // 界面实例入口
 const userpanel = new Vue({
@@ -38,7 +55,7 @@ const userpanel = new Vue({
          * @param  {[type]} val [description]
          * @return {[type]}     [description]
          */
-        'enpsDropdown': function(val) {
+        'enpsDropdown': function (val) {
             let index = this.sels.lstindex;
             this.sels.objs[index]['etype'] = val;
             this.getOverview(index);
@@ -48,7 +65,7 @@ const userpanel = new Vue({
          * @param  {[type]} val [description]
          * @return {[type]}     [description]
          */
-        'refsDropdown': function(val) {
+        'refsDropdown': function (val) {
             this.sels['otype'] = val;
         },
         /**
@@ -56,7 +73,7 @@ const userpanel = new Vue({
          * @param  {[type]} val [description]
          * @return {[type]}     [description]
          */
-        'poisDropdown': function(val) {
+        'poisDropdown': function (val) {
             val = Number.parseInt(val);
             this.sels['ptype'] = val;
             console.log(val);
@@ -64,7 +81,7 @@ const userpanel = new Vue({
             if (val === 2) {
                 let i = 0;
                 changeLoadState(`dimmer${i}`, true);
-                getAOIDatasets(this.sels.objs[0].city, val).then(function(res) {
+                getAOIDatasets(this.sels.objs[0].city, val).then(function (res) {
                     console.log('Get AOI data.')
 
                     let prop = {
@@ -72,7 +89,7 @@ const userpanel = new Vue({
                     };
                     changeLoadState(`dimmer${i}`, false);
                     maps[i].aoisDrawing(res, prop);
-                }).catch(function(err) {
+                }).catch(function (err) {
                     console.error("Failed!", err);
                 })
             }
@@ -83,7 +100,7 @@ const userpanel = new Vue({
          * @param  {[type]} index map 面板编号
          * @return {[type]}       [description]
          */
-        'getOverview': function(index) {
+        'getOverview': function (index) {
             let self = this,
                 svals = null;
 
@@ -103,9 +120,9 @@ const userpanel = new Vue({
                     i = Number.parseInt(index);
                 }
                 svals = self.sels.objs[i].slider.value; //滑动条范围
-                
+
                 console.log("vals:" + svals)
-                
+
                 let obj = objs[i],
                     city = obj.city,
                     etype = obj.etype,
@@ -115,19 +132,19 @@ const userpanel = new Vue({
                         'rev': rev
                     };
                 //console.log("etype:" +  JSON.stringify(drawprop))
-                
+
                 // 添加 loading 效果 & 移动地图
                 maps[i].panTo(regionRecords[city]['center']);
-                
+
                 // 根据用户所选 metric 类型进行相应数据提取操作
                 if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
                     // 获取 entropy 和 density 资源
-                    getOverviewDatasets(obj).then(function(res) {
+                    getOverviewDatasets(obj).then(function (res) {
                         changeLoadState(`dimmer${i}`, false);
-                   
+
                         //obj.scales = res['prop']['scales'];
                         resp = res;
-                        
+
                         // 获取 slider 情况下的配置值域以及用户其余选项
                         let drawProps = getDrawProps(res, svals, self.sels.ctrsets, drawprop);
                         //let drawProps = getDrawProps(obj.scales, svals, self.sels.ctrsets, drawprop);
@@ -140,12 +157,12 @@ const userpanel = new Vue({
                             'yprop': obj.etype
                         }
                         if (etype === 'de') {
-                            charts[i].lineChartDraw(`estatChart${i}`, res['chart']['d'], prop);//绘制line图
+                            charts[i].lineChartDraw(`estatChart${i}`, res['chart']['d'], prop); //绘制line图
                         } else {
                             charts[i].lineChartDraw(`estatChart${i}`, res['chart']['e'], prop);
                         }
-                        
-      /*                 
+
+                        /*                 
                         // 更新最大值域范围
                         obj.scales = res['prop']['scales'];
                         //console.log("obj.scales:" + JSON.stringify(obj.scales))
@@ -167,25 +184,25 @@ const userpanel = new Vue({
                         }
 */
                         // 绘不同行政区数值分布函数
-                        getSMecDatasets(city).then(function(cres) {
-                            charts[i].barChartDraw(city,`poiChart${i}`, cres, prop);
-                        }).catch(function(err) {
+                        getSMecDatasets(city).then(function (cres) {
+                            charts[i].barChartDraw(city, `poiChart${i}`, cres, prop);
+                        }).catch(function (err) {
                             console.error("Failed!", err);
                         });
 
                         // 绘不同POI类别概率分布函数
-                        getAoiDisDatasets(city, 'TOTAL').then(function(cres) {
+                        getAoiDisDatasets(city, 'TOTAL').then(function (cres) {
                             charts[i].poiBarChartDraw(`disChart${i}`, cres, prop);
-                        }).catch(function(err) {
+                        }).catch(function (err) {
                             console.error("Failed!", err);
                         });
-                    }).catch(function(err) {
+                    }).catch(function (err) {
                         console.error("Failed!", err);
                     });
                 } else {
-                		self.sels.objs[i].slider.processStyle.background = `-webkit-repeating-linear-gradient(left, #ffffff 0%, #ff0000 100%)`;
-                		self.sels.objs[i].slider.formatter = "{value}%";
-                    getBoundaryDatasets(city).then(function(res) {
+                    self.sels.objs[i].slider.processStyle.background = `-webkit-repeating-linear-gradient(left, #ffffff 0%, #ff0000 100%)`;
+                    self.sels.objs[i].slider.formatter = "{value}%";
+                    getBoundaryDatasets(city).then(function (res) {
                         changeLoadState(`dimmer${i}`, false);
 
                         let prop = {
@@ -196,7 +213,7 @@ const userpanel = new Vue({
                         };
 
                         maps[i].boundaryDrawing(res, prop);
-                    }).catch(function(err) {
+                    }).catch(function (err) {
                         console.error("Failed!", err);
                     });
                 }
@@ -216,17 +233,17 @@ const userpanel = new Vue({
          * @param  {[type]} index [description]
          * @return {[type]}       [description]
          */
-        'getSMetrics': function(index) {
+        'getSMetrics': function (index) {
             let i = Number.parseInt(index),
                 objs = this.sels.objs,
                 city = objs[i].city,
                 map = this.maps[i];
 
-            getSMecDatasets(city).then(function(res) {
+            getSMecDatasets(city).then(function (res) {
                 for (let i = res.length - 1; i >= 0; i--) {
                     map.smecDrawing(res[i], `${city}-radar${i}`);
                 }
-            }).catch(function(err) {
+            }).catch(function (err) {
                 console.error("Failed!", err);
             });
 
@@ -237,7 +254,7 @@ const userpanel = new Vue({
          * @param  {[type]} val   [description]
          * @return {[type]}       [description]
          */
-        'updateSelectRegion': function(val) {
+        'updateSelectRegion': function (val) {
             let objs = this.sels.objs;
             for (let i = objs.length - 1; i >= 0; i--) {
                 objs[i].city = val;
@@ -249,7 +266,7 @@ const userpanel = new Vue({
          * @param  {[type]} val [description]
          * @return {[type]}     [description]
          */
-        'openDynamic': function(val) {
+        'openDynamic': function (val) {
             document.getElementById('dynamicview').style.display = "block";
             this.sels.dynamic = !this.sels.dynamic;
             let i = this.sels.lstindex,
@@ -268,7 +285,7 @@ const userpanel = new Vue({
                     'useLocalExtrema': this.sels.ctrsets.useLocalExtrema,
                     'rev': model.reverse
                 };
-          
+
             // 默认使用 city 作为 props 初始化配置选项, 若 val 为 t, 那么更新为 timeperiods 选项
             if (val === 't') {
                 props.cda = false;
@@ -276,7 +293,7 @@ const userpanel = new Vue({
             }
             daview = new dynamicView('dynamicview', props);
         },
-        'closeDynamic': function() {
+        'closeDynamic': function () {
             document.getElementById('dynamicview').style.display = "none";
             this.sels.dynamic = !this.sels.dynamic;
             daview.destroy();
@@ -288,7 +305,7 @@ const userpanel = new Vue({
          * @param  {[type]} index [description]
          * @return {[type]}       [description]
          */
-        'updateTPFilter': function(val) {
+        'updateTPFilter': function (val) {
             let objs = this.sels.objs;
 
             // 和之前选择一致,逻辑为取消
@@ -315,7 +332,7 @@ const userpanel = new Vue({
          * 计算与更新 slider 样式, 更新 map
          * @return {[index]}      [description]
          */
-        'updateSlider': function(index) {
+        'updateSlider': function (index) {
             // 定位 slider
             let i = Number.parseInt(index),
                 v = this.sels.objs[i].slider.value;
@@ -343,10 +360,10 @@ const userpanel = new Vue({
             if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
                 // 获取 slider 情况下的配置值域以及用户其余选项
                 // v.push(self.components.hrSlider.value);
-            		//console.log("rsp: " + JSON.stringify(resp.features[resp.features.length * 0.8]['prop']['v']))
+                //console.log("rsp: " + JSON.stringify(resp.features[resp.features.length * 0.8]['prop']['v']))
                 let drawProps = getDrawProps(resp, v, self.sels.ctrsets, drawprop);
                 maps[i].mapcontourCDrawing({}, drawProps, true);
-            }else {
+            } else {
                 let prop = {
                     'city': city,
                     'etype': etype,
@@ -357,33 +374,33 @@ const userpanel = new Vue({
                 this.sels.objs[i].slider.formatter = "{value}%";
                 maps[i].boundaryDrawing({}, prop, true);
             }
-    },
-    		'updateSlider1': function(index) {
-    			// 定位 slider
-    			let i = Number.parseInt(index),
-    				s = this.sels.objs[i].slider1.value,
-    				c = this.sels.objs[i].slider2.value;
-    			
-    			 maps[i].boundaryRemove();
-    			 maps[i].modelDrawing();
+        },
+        'updateSlider1': function (index) {
+            // 定位 slider
+            let i = Number.parseInt(index),
+                s = this.sels.objs[i].slider1.value,
+                c = this.sels.objs[i].slider2.value;
 
-    			changeLoadState(`dimmer${i}`, true);
-    			
-    			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
-    			if (store.state.init) {
-    				return;
-    			}
+            maps[i].boundaryRemove();
+            maps[i].modelDrawing();
 
-    			let self = this,
+            changeLoadState(`dimmer${i}`, true);
+
+            // 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
+            if (store.state.init) {
+                return;
+            }
+
+            let self = this,
                 objs = self.sels.objs;
-    			
-    			let obj = objs[i],
-    				city = obj.city,
-    				rev = obj.reverse;
-			
-			//非在线处理方法：
-			getClusterboundaryDatasetsUpdate(objs[i].city, s, c).then(function(res){
-  				 
+
+            let obj = objs[i],
+                city = obj.city,
+                rev = obj.reverse;
+
+            //非在线处理方法：
+            getClusterboundaryDatasetsUpdate(objs[i].city, s, c).then(function (res) {
+
                 let city = objs[i].city,
                     etype = objs[i].etype;
 
@@ -391,172 +408,59 @@ const userpanel = new Vue({
                     'city': city,
                     'boundary': true
                 };
-               changeLoadState(`dimmer${i}`, false);
-               maps[i].ClusterboundaryDrawing(res, prop);
-               maps[i].flowerDrawing(res, city);
-			}).catch(function(err) {
-				console.error("Failed!", err);
-			});		
-			
-			/*
-			  // 在线处理方法： 
-			/////////////////// begin http request
-			/////////////////// sum and num are variables to be send
-			console.log("prepare to send msg to");
-			let hostname = window.location.hostname;
-			if (hostname === ""){
-				hostname = "127.0.0.1";
-			}					
-			hostname = "http://" + hostname + ":18263/?add1=" + s + "&add2=" + c + "&city=" + i;
-			console.log(hostname);
-			let prop = {
-                    'city': city,
-                    'boundary': true
-                };
-			$.ajax({
-				type: 'GET',
-				url: hostname,
-				dataType: 'jsonp', //希望服务器返回json格式的数据
-				jsonp: "callback",
-				jsonpCallback: "successCallback",//回调方法
-				success: function (data) {
-					// data is the json object you get from server
-					//vm.$set(vm.$data.history[0], 'sum', data['ans']);
-					getClusterboundaryDatasetsUpdate(objs[i].city, s, c).then(function(res){
-	       				 
-                        let city = objs[i].city,
-                            etype = objs[i].etype;
+                changeLoadState(`dimmer${i}`, false);
+                maps[i].ClusterboundaryDrawing(res, prop);
+                maps[i].flowerDrawing(res, city);
+            }).catch(function (err) {
+                console.error("Failed!", err);
+            });
 
-                        let prop = {
-                            'city': city,
-                            'boundary': true
-                        };
-                       changeLoadState(`dimmer${i}`, false);
-                       maps[i].ClusterboundaryDrawing(res, prop);
-                       maps[i].flowerDrawing(res, city);
-					}).catch(function(err) {
-						console.error("Failed!", err);
-					});		
-					
-				},
-				error: function (error) {
-					console.log("sth wrong with the server");
-				}
-			});		
-				
-			////////////////// end http request*/
-    		},
-    		'updateSlider2': function(index) {
-    			// 定位 slider
-    			let i = Number.parseInt(index),
-    				s = this.sels.objs[i].slider1.value,//kmeans中k值
-    				c = this.sels.objs[i].slider2.value;
-    			
-    			 maps[i].boundaryRemove();
-    			 maps[i].modelDrawing();
+        },
+        'updateSlider2': function (index) {
+            // 定位 slider
+            let i = Number.parseInt(index),
+                s = this.sels.objs[i].slider1.value, //kmeans中k值
+                c = this.sels.objs[i].slider2.value;
 
-    			changeLoadState(`dimmer${i}`, true);
-    			
-    			// 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
-    			if (store.state.init) {
-    				return;
-    			}
+            maps[i].boundaryRemove();
+            maps[i].modelDrawing();
 
-    			let self = this,
+            changeLoadState(`dimmer${i}`, true);
+
+            // 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
+            if (store.state.init) {
+                return;
+            }
+
+            let self = this,
                 objs = self.sels.objs;
-    			
-    			let obj = objs[i],
-    				city = obj.city,
-    				rev = obj.reverse;
-    			
-    			//非在线处理方法：
-    			getClusterboundaryDatasetsUpdate(objs[i].city, s, c).then(function(res){
-      				 
-                    let city = objs[i].city,
-                        etype = objs[i].etype;
 
-                    let prop = {
-                        'city': city,
-                        'boundary': true
-                    };
-                   changeLoadState(`dimmer${i}`, false);
-                   maps[i].ClusterboundaryDrawing(res, prop);
-                   maps[i].flowerDrawing(res, city);
-    			}).catch(function(err) {
-    				console.error("Failed!", err);
-    			});		
-    			/*
-    			/////////////////// begin http request
-			/////////////////// sum and num are variables to be send
-			console.log("prepare to send msg to");
-			let hostname = window.location.hostname;
-			if (hostname === ""){
-				hostname = "127.0.0.1";
-			}					
-			hostname = "http://" + hostname + ":18263/?add1=" + s + "&add2=" + c + "&city=" + i;
-			console.log(hostname);
-			let prop = {
-                    'city': city,
-                    'boundary': true
-                };
-			$.ajax({
-				type: 'GET',
-				url: hostname,
-				dataType: 'jsonp', //希望服务器返回json格式的数据
-				jsonp: "callback",
-				jsonpCallback: "successCallback",//回调方法
-				success: function (data) {
-					// data is the json object you get from server
-					//vm.$set(vm.$data.history[0], 'sum', data['ans']);
-					getClusterboundaryDatasetsUpdate(objs[i].city, s, c).then(function(res){
-	       				 console.log(res.features.length,'gzc hahaha')
-                        let city = objs[i].city,
-                            etype = objs[i].etype;
+            let obj = objs[i],
+                city = obj.city,
+                rev = obj.reverse;
 
-                        let prop = {
-                            'city': city,
-                            'boundary': true
-                        };
-                        changeLoadState(`dimmer${i}`, false);
-                        maps[i].ClusterboundaryDrawing(res, prop);
-                        maps[i].flowerDrawing(res, city);
-					}).catch(function(err) {
-						console.error("Failed!", err);
-					});					
-				},
-				error: function (error) {
-					console.log("sth wrong with the server");
-				}
-			});		
-				
-			////////////////// end http request*/
-    		},
-/*
-            // 根据用户所选 metric 类型进行相应数据提取操作
-            if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
-                // 获取 slider 情况下的配置值域以及用户其余选项
-                // v.push(self.components.hrSlider.value);
-                let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
-                maps[i].mapcontourCDrawing({}, drawProps, true);
-            } else {
+            //非在线处理方法：
+            getClusterboundaryDatasetsUpdate(objs[i].city, s, c).then(function (res) {
+
+                let city = objs[i].city,
+                    etype = objs[i].etype;
+
                 let prop = {
                     'city': city,
-                    'etype': etype,
-                    'boundary': false,
-                    'slider': v
+                    'boundary': true
                 };
-
-                
-                maps[i].boundaryDrawing({}, prop, true);
-            }
+                changeLoadState(`dimmer${i}`, false);
+                maps[i].ClusterboundaryDrawing(res, prop);
+                maps[i].flowerDrawing(res, city);
+            }).catch(function (err) {
+                console.error("Failed!", err);
+            });
         },
-        
-  */
         /**
          * 添加分析对象
          * @return {[type]} [description]
          */
-        'addAnaObj': function() {
+        'addAnaObj': function () {
             let self = this,
                 currentSize = self.sels.objs.length;
             console.log('currentSize', currentSize);
@@ -575,7 +479,7 @@ const userpanel = new Vue({
                     break;
             }
         },
-        'delAnaObj': function() {
+        'delAnaObj': function () {
             let self = this,
                 currentSize = self.sels.objs.length;
 
@@ -587,7 +491,7 @@ const userpanel = new Vue({
                     charts.splice(-2, 2);
                     self.sels.lstnum = 2;
                     break;
-                // 删除一个对象
+                    // 删除一个对象
                 case 2:
                     maps[1].unsyncmap(maps[0].getMap());
                     maps[0].unsyncmap(maps[1].getMap());
@@ -609,7 +513,7 @@ const userpanel = new Vue({
          * @param  {[type]} type  [description]
          * @return {[type]}       [description]
          */
-        'updateSels': function(isize, type) {
+        'updateSels': function (isize, type) {
             let self = this;
 
             for (let i = 0; i < isize; i++) {
@@ -630,7 +534,7 @@ const userpanel = new Vue({
                 }
             }
         },
-        'optAreaSelect': function(index) {
+        'optAreaSelect': function (index) {
             let state = this.sels.areaselect,
                 objs = this.sels.objs;
             if (!state) {
@@ -650,7 +554,7 @@ const userpanel = new Vue({
             // 
             this.sels.areaselect = !state;
         },
-        'getTabImg': function(val, type) {
+        'getTabImg': function (val, type) {
             let cities = {
                 'bj': 0,
                 'tj': 1,
@@ -660,10 +564,10 @@ const userpanel = new Vue({
 
             return this.params.regions[`${type}url`];
         },
-        'bindTabClick': function(val) {
+        'bindTabClick': function (val) {
             this.sels.lstindex = val;
         },
-        'pradiusUpd': function() {
+        'pradiusUpd': function () {
             if (store.state.init) {
                 return;
             }
@@ -684,12 +588,12 @@ const userpanel = new Vue({
                         'etype': etype,
                         'rev': rev
                     };
-                
-                
+
+
                 // 根据用户所选 metric 类型进行相应数据提取操作
                 if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
                     // 获取 slider 情况下的配置值域以及用户其余选项
-                		let drawProps = getDrawProps(resp, v, self.sels.ctrsets, drawprop);
+                    let drawProps = getDrawProps(resp, v, self.sels.ctrsets, drawprop);
                     //let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
                     maps[i].mapcontourCDrawing({}, drawProps, true);
                 } else {
@@ -705,7 +609,7 @@ const userpanel = new Vue({
                 }
             }
         },
-        'revClick': function(index) {
+        'revClick': function (index) {
             if (store.state.init) {
                 return;
             }
@@ -728,7 +632,7 @@ const userpanel = new Vue({
             if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
                 // 获取 slider 情况下的配置值域以及用户其余选项
                 // v.push(self.components.hrSlider.value);
-            		let drawProps = getDrawProps(resp, v, self.sels.ctrsets, drawprop);
+                let drawProps = getDrawProps(resp, v, self.sels.ctrsets, drawprop);
                 //let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
                 maps[i].mapcontourCDrawing({}, drawProps, true);
             } else {
@@ -748,7 +652,7 @@ const userpanel = new Vue({
         /**
          * 计算 map 的 class name
          */
-        mapClass: function() {
+        mapClass: function () {
             let mapNumber = this.sels.objs.length;
             if (mapNumber === 1) {
                 return 'onemap';
@@ -761,7 +665,7 @@ const userpanel = new Vue({
         /**
          * 判断是否开启 area select 功能
          */
-        areaselState: function() {
+        areaselState: function () {
             if (this.sels.areaselect) {
                 return 'negative';
             } else {
@@ -771,7 +675,7 @@ const userpanel = new Vue({
     },
     watch: {
         'sels.otype': {
-            handler: function(val) {
+            handler: function (val) {
                 let self = this,
                     scale = null,
                     index = this.sels.lstindex,
@@ -792,7 +696,7 @@ const userpanel = new Vue({
 
                 // POI
                 if (val === 'p') {
-                    getAOIDatasets(objs[0].city, '0').then(function(res) {
+                    getAOIDatasets(objs[0].city, '0').then(function (res) {
                         for (let i = objs.length - 1; i >= 0; i--) {
                             let city = objs[i].city,
                                 etype = objs[i].etype,
@@ -805,40 +709,40 @@ const userpanel = new Vue({
                             // 每个窗口均填充上AOI点分布
                             maps[i].aoisDrawing(res, prop);
                         }
-                    }).catch(function(err) {
+                    }).catch(function (err) {
                         console.error("Failed!", err);
                     })
                 }
-                
+
                 //cluster
-                if (val === 'c'){
-                		getClusterboundaryDatasets(objs[0].city).then(function(res){
-                			 for (let i = objs.length - 1; i >= 0; i--) {
-                				 
-                                 let city = objs[i].city,
-                                     etype = objs[i].etype,
-                                     s = objs[i].slider1.value,
-                                     c = objs[i].slider2.value;
+                if (val === 'c') {
+                    getClusterboundaryDatasets(objs[0].city).then(function (res) {
+                        for (let i = objs.length - 1; i >= 0; i--) {
 
-                                 changeLoadState(`dimmer${i}`, false);
+                            let city = objs[i].city,
+                                etype = objs[i].etype,
+                                s = objs[i].slider1.value,
+                                c = objs[i].slider2.value;
 
-                                 maps[i].modelDrawing();
-                                 
-                                 let prop = {
-                                     'city': city,
-                                     'boundary': true
-                                 };
-                                 maps[i].ClusterboundaryDrawing(res, prop);
-                                 maps[i].flowerDrawing(res, city)
-                             }
-                		}).catch(function(err) {
-                            console.error("Failed!", err);
+                            changeLoadState(`dimmer${i}`, false);
+
+                            maps[i].modelDrawing();
+
+                            let prop = {
+                                'city': city,
+                                'boundary': true
+                            };
+                            maps[i].ClusterboundaryDrawing(res, prop);
+                            maps[i].flowerDrawing(res, city)
+                        }
+                    }).catch(function (err) {
+                        console.error("Failed!", err);
                     });
                 }
-                
+
                 // Districts
                 if (val === 'd') {
-                    getBoundaryDatasets(objs[0].city).then(function(res) {
+                    getBoundaryDatasets(objs[0].city).then(function (res) {
                         for (let i = objs.length - 1; i >= 0; i--) {
                             let city = objs[i].city,
                                 etype = objs[i].etype,
@@ -846,7 +750,7 @@ const userpanel = new Vue({
 
                             console.log("etype: " + etype)
                             console.log("svals: " + svals)
-                            
+
                             changeLoadState(`dimmer${i}`, false);
 
                             let prop = {
@@ -855,12 +759,12 @@ const userpanel = new Vue({
                                 'boundary': true,
                                 'slider': svals
                             };
-                            
+
                             maps[i].boundaryDrawing(res, prop);
                         }
 
 
-                    }).catch(function(err) {
+                    }).catch(function (err) {
                         console.error("Failed!", err);
                     });
                 }
@@ -871,9 +775,9 @@ const userpanel = new Vue({
                     let city = objs[index].city,
                         map = maps[index];
 
-                    map.modelDrawing();//蒙版
-                    
-                    getSMecDatasets(city).then(function(res) {
+                    map.modelDrawing(); //蒙版
+
+                    getSMecDatasets(city).then(function (res) {
                         for (let i = res.length - 1; i >= 0; i--) {
                             let prop = {
                                 'id': `${city}-radar${i}`,
@@ -883,11 +787,11 @@ const userpanel = new Vue({
                         }
 
                         changeLoadState(`dimmer${index}`, false);
-                    }).catch(function(err) {
+                    }).catch(function (err) {
                         console.error("Failed!", err);
                     });
-                    
-                    getBoundaryDatasets(objs[0].city).then(function(res) {
+
+                    getBoundaryDatasets(objs[0].city).then(function (res) {
                         for (let i = objs.length - 1; i >= 0; i--) {
                             let city = objs[i].city,
                                 etype = objs[i].etype,
@@ -905,15 +809,15 @@ const userpanel = new Vue({
                             maps[i].boundaryDrawing(res, prop);
                         }
 
-                    }).catch(function(err) {
+                    }).catch(function (err) {
                         console.error("Failed!", err);
                     });
-                		
+
                 }
             }
         },
         'sels.ctrsets.opacity': {
-            handler: function(val) {
+            handler: function (val) {
                 if (store.state.init) {
                     return;
                 }
@@ -939,7 +843,7 @@ const userpanel = new Vue({
                     if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
                         // 获取 slider 情况下的配置值域以及用户其余选项
                         // v.push(self.components.hrSlider.value);
-                    		let drawProps = getDrawProps(resp, v, self.sels.ctrsets, drawprop);
+                        let drawProps = getDrawProps(resp, v, self.sels.ctrsets, drawprop);
                         //let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
                         maps[i].mapcontourCDrawing({}, drawProps, true);
                     } else {
@@ -960,7 +864,7 @@ const userpanel = new Vue({
     },
     mounted() {
         let self = this;
-        this.$nextTick(function() {
+        this.$nextTick(function () {
             let firstcity = this.sels.objs[0].city;
             maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0', 'clusterslider0', 'baselyrtext0', firstcity);
             charts[0] = new chart('#estatChart0');
