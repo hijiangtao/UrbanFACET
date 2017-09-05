@@ -21,12 +21,6 @@ router.get('/filterviewQuery', function(req, res, next) {
 router.get('/boundaryQuery', function(req, res, next) {
 	apis.boundaryQuery(req, res, next);
 });
-router.get('/ClusterboundaryQuery', function(req, res, next) {
-	apis.ClusterboundaryQuery(req, res, next);
-});
-router.get('/ClusterboundaryQueryUpdate', function(req, res, next) {
-	apis.ClusterboundaryQueryUpdate(req, res, next);
-});
 router.get('/aoiQuery', function(req, res, next) {
 	apis.aoiQuery(req, res, next);
 });
@@ -43,10 +37,6 @@ router.get('/getJsonSum', function(req, res, next) {
 router.get('/getJsonAve', function(req, res, next) {
 	apis.getJsonAve(req, res, next);
 });
-router.get('/compareQuery', function(req, res, next) {
-	apis.compareQuery(req, res, next);
-});
-
 
 
 module.exports = router;

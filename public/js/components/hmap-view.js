@@ -11,7 +11,7 @@ import L from './map'
 import HeatmapOverlay from 'heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js'
 import * as d3 from 'd3'
 import { legendColor } from 'd3-svg-legend'
-import { getSubGrids, getLinearNum, getRandomCenter, getClusterboundaryDatasets, outOfRange, getPropName, extraInfoIndex } from './apis'
+import { getSubGrids, getLinearNum, getRandomCenter, outOfRange, getPropName, extraInfoIndex } from './apis'
 import { stats, regionRecords, smecMax } from './init'
 import * as coordtransform from 'coordtransform';
 import { RadarChart } from './RadarChart';
@@ -26,13 +26,12 @@ class mapview {
      * LMap class constructor
      * @return {[type]} [description]
      */
-    constructor(id, grdleg, ctrleg, cltsld, baselyr, city = "bj") {
+    constructor(id, grdleg, ctrleg, baselyr, city = "bj") {
         let self = this;
         this.ides = {
             'mapid': id,
             'grdleg': grdleg,
             'ctrleg': ctrleg,
-            'cltsld': cltsld,
             'baselyr': baselyr
         };
         /**
@@ -85,7 +84,6 @@ class mapview {
         });
         this.map.addControl(this.control);
         this.boundData = {};
-        this.clusterData = {};
         this.gridData = {};
         this.gridDataType = '';
 
@@ -119,18 +117,9 @@ class mapview {
     getBoundData() {
         return this.boundData;
     }
-    
-    getClusterBoundData(){
-    		return this.clusterboundData;
-    }
 
     setBoundData(data) {
         this.boundData = data;
-        return this;
-    }
-    
-    setClusterBoundData(data) {
-        this.clusterboundData = data;
         return this;
     }
 
@@ -231,260 +220,60 @@ class mapview {
         }
     }
 
-    modelDrawing(){
-		let self = this,
-			overlay = d3.select(self.map.getPanes().overlayPane);
-		
-		var svg = overlay.append("svg")
-			.attr("class", 'model')
-			.style("position", 'absolute')
-			.style("top", -1500)
-			.style("left", -1500)
-			//.style("display", 'none')
-			.style("background-color", 'rgba(255, 255, 255, 0.5)')
-			//.attr("width", '100%')
-			//.attr("height", '100%')
-			.attr("width", 3000)
-			.attr("height", 3000)
-			.style("z-index", 997);
-		console.log("map")
-    }
-    	
-    flowerDrawing(initial_data, city){
-    		let self = this,
-    			overlay = d3.select(self.map.getPanes().overlayPane),
-            width = 70,
-            height = 70,
-            ExtraLen = 10,
-            max_d = 0,
-            max_ad = 0,
-            max_ar = 0,
-            max_pr = 0,
-            max_ap = 0,
-            max_pp = 0,
-            data = initial_data['features'];
-    		
-    		for(let i = 0; i < data.length; i++){
-    			if(data[i]['properties']['d'] > max_d){
-    				max_d = data[i]['properties']['d'];
-    			}
-    			if(data[i]['properties']['ad'] > max_ad){
-    				max_ad = data[i]['properties']['ad'];
-    			}
-    			if(data[i]['properties']['ar'] > max_ar){
-    				max_ar = data[i]['properties']['ar'];
-    			}
-    			if(data[i]['properties']['pr'] > max_pr){
-    				max_pr = data[i]['properties']['pr'];
-    			}
-    			if(data[i]['properties']['ap'] > max_ap){
-    				max_ap = data[i]['properties']['ap'];
-    			}
-    			if(data[i]['properties']['pp'] > max_pp){
-    				max_pp = data[i]['properties']['pp'];
-    			}
-    		}
-    		
-    		console.log("data: "+ data.length)
-    		for(let i = 0; i < data.length; i++){
-    			let rdata = [
-                	[{
-                        'area': 'Fluidity',
-                        'value': data[i]['properties']['ar'],
-                        'd': data[i]['properties']['d'],
-                        'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
-                        'data': data[i]['properties']
-                    }, {
-                        'area': 'Diversity',
-                        'value': data[i]['properties']['pr'],
-                        'd': data[i]['properties']['d'],
-                        'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
-                        'data': data[i]['properties']
-                    }, {
-                        'area': 'Commutation',
-                        'value': data[i]['properties']['ap'],
-                        'd': data[i]['properties']['d'],
-                        'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
-                        'data': data[i]['properties']
-                    }, {
-                        'area': 'Vibrancy',
-                        'value': data[i]['properties']['pp'],
-                        'd': data[i]['properties']['d'],
-                        'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
-                        'data': data[i]['properties']
-                    }]
-                ],
-                 prop = {
-                        'id': `${city}-radar${i}`,
-                        'city': city
-                    };
-    			let s = data[i]['properties']['d']/Number.parseFloat(max_d),//"ad":  总统计点数，"d": 总统计数/面积
-                linear = d3.scaleLinear().domain([0,1]).range([50,100]),
-          
-            speColor = d3.hcl(359, 90, 100),
-            speColor1 = d3.hcl(0, 90, 100),
-            speColor2 = d3.hcl(90, 90, 100),
-            speColor3 = d3.hcl(150, 90, 100),
-            speColor4 = d3.hcl(280, 90, 100);
-            
-            let r = data[i]['properties']['d']/Number.parseFloat(max_d),
-            		linear0 = d3.scaleLinear().domain([0,1]).range([15,70]),
-            		r0 = linear0(r),
-            		R0 = Math.sqrt(Math.pow(r0, 1/0.7));
-            
-            let r1 = Math.sqrt(data[i]['properties']['ar']/Number.parseFloat(max_ar)),
-            		r2 = Math.sqrt(data[i]['properties']['pr']/Number.parseFloat(max_pr)),
-            		r3 = Math.sqrt(data[i]['properties']['ap']/Number.parseFloat(max_ap)),
-            		r4 = Math.sqrt(data[i]['properties']['pp']/Number.parseFloat(max_pp));
-            
-            let R5 = data[i]['properties']['d']/Number.parseFloat(max_d),
-    			linear1 = d3.scaleLinear().domain([0,1]).range([0,2]),
-    			R = linear1(R5),
-    			r5 = Math.sqrt(Math.pow(R, 1/0.7));
-
-            let svg = overlay.append("svg").attr('id', prop['id'])
-            		.attr("width", width)
-            		.attr("height", height)
-            		.style("z-index", 999),
-            config = {
-                w: width,
-                h: height,
-                maxValue: max_pr,
-                levels: 5,
-                speColor: speColor,
-                speColor1: speColor1,
-                speColor2: speColor2,
-                speColor3: speColor3,
-                speColor4: speColor4,
-                R0: R0,
-                r1: r1,
-                r2: r2,
-                r3: r3,
-                r4: r4,
-                r5: r5,
-                TranslateX: ExtraLen*1.8 / 2,
-                TranslateY: ExtraLen / 2,
-                ExtraWidthX: ExtraLen*1.8,
-                ExtraWidthY: ExtraLen
-            }
-
-            RadarChart.draw(`#${prop['id']}`, rdata, config);
-
-            self.map.on("viewreset", reset);
-            reset();
-
-            function reset() {
-                let point = self.map.latLngToLayerPoint(new L.LatLng(data[i]['properties']['c'][1], data[i]['properties']['c'][0]));
-                svg.style("left", (point.x - width / 2 - ExtraLen / 2) + "px")
-                    .style("top", (point.y - height / 2 - ExtraLen / 2) + "px");
-            }
-            
-    		}
-    		
-    }
-    
-    smecDrawing(data, prop = {}) {//绘制star plot
+    smecDrawing(data, prop = {}) {
         let self = this,
             overlay = d3.select(self.map.getPanes().overlayPane),
-            width = 70,
-            height = 70,
-            ExtraLen = 10,
+            width = 100,
+            height = 100,
+            ExtraLen = 50,
             rdata = [
-            	[{
-                    'area': 'Fluidity',
+                [{
+                    'area': 'F',
                     'value': data['ar'],
                     'name': data['name'],
                     'd': data['d'],
                     'data': data
                 }, {
-                    'area': 'Diversity',
+                    'area': 'E',
                     'value': data['pr'],
                     'name': data['name'],
                     'd': data['d'],
                     'data': data
                 }, {
-                    'area': 'Commutation',
+                    'area': 'C',
                     'value': data['ap'],
                     'name': data['name'],
                     'd': data['d'],
                     'data': data
                 }, {
-                    'area': 'Vibrancy',
+                    'area': 'A',
                     'value': data['pp'],
                     'name': data['name'],
                     'd': data['d'],
                     'data': data
                 }]
             ];
-        console.log("propssjjsjsjjs: " + JSON.stringify(prop))
-        console.log("data: " + JSON.stringify(rdata))
-        
-        let s = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),//"ad":  总统计点数，"d": 总统计数/面积
-            linear = d3.scaleLinear().domain([0,1]).range([50,100]),
-        //speColor = d3.hcl(359, 90, linear(s)),
-        speColor = d3.hcl(359, 90, 100),
-        speColor1 = d3.hcl(0, 90, 100),
-        speColor2 = d3.hcl(90, 90, 100),
-        speColor3 = d3.hcl(150, 90, 100),
-        speColor4 = d3.hcl(280, 90, 100);
-        /*
-        let s = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),
-        speColor = d3.hcl(359, 90, 100 - s*100),
-        speColor1 = d3.hcl(0, 90, 100 - s*100),
-        speColor2 = d3.hcl(90, 90, 100 - s*100),
-        speColor3 = d3.hcl(180, 90, 100 - s*100),
-        speColor4 = d3.hcl(270, 90, 100 - s*100);
-        /*let s = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),
-    		speColor = d3.hsl(359, s, 0.5),
-    		speColor1 = d3.hsl(0, s, 0.5),
-    		speColor2 = d3.hsl(90, s, 0.5),
-    		speColor3 = d3.hsl(120, s, 0.5),
-    		speColor4 = d3.hsl(270, s, 0.5);*/
 
-        //console.log("speColor", speColor, "val", s);
-        //console.log("speColor", speColor4, "val", s);
-        
-        let r = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),
-        		linear0 = d3.scaleLinear().domain([0,1]).range([10,70]),
-        		r0 = linear0(r),
-        		R0 = Math.sqrt(Math.pow(r0, 1/0.7));
-        
-        let r1 = data['ar']/Number.parseFloat(smecMax[prop['city']]['ar']),
-        		r2 = data['pr']/Number.parseFloat(smecMax[prop['city']]['pr']),
-        		r3 = data['ap']/Number.parseFloat(smecMax[prop['city']]['ap']),
-        		r4 = data['pp']/Number.parseFloat(smecMax[prop['city']]['pp']);
-        
-        let R5 = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),
-			linear1 = d3.scaleLinear().domain([0,1]).range([0,2]),
-			R = linear1(R5),
-			r5 = Math.sqrt(Math.pow(R, 1/0.7));
+        let s = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),
+            speColor = d3.hsl(0, s, 0.5);
+
+        console.log("speColor", speColor, "val", s);
 
         let svg = overlay.append("svg").attr('id', prop['id'])
-        		.attr("width", width)
-        		.attr("height", height)
-        		.style("z-index", 999),
-        config = {
-            w: width,
-            h: height,
-            maxValue: smecMax[prop['city']]['m'],
-            levels: 5,
-            speColor: speColor,
-            speColor1: speColor1,
-            speColor2: speColor2,
-            speColor3: speColor3,
-            speColor4: speColor4,
-            R0: R0,
-            r1: r1,
-            r2: r2,
-            r3: r3,
-            r4: r4,
-            r5: r5,
-            TranslateX: ExtraLen*1.8 / 2,
-            TranslateY: ExtraLen / 2,
-            ExtraWidthX: ExtraLen*1.8,
-            ExtraWidthY: ExtraLen
-        }
-        
+            .attr("width", width)
+            .attr("height", height),
+            config = {
+                w: width,
+                h: height,
+                maxValue: smecMax[prop['city']]['m'],
+                levels: 5,
+                speColor: speColor,
+                TranslateX: ExtraLen*1.8 / 2,
+                TranslateY: ExtraLen / 2,
+                ExtraWidthX: ExtraLen*1.8,
+                ExtraWidthY: ExtraLen
+            }
+
         RadarChart.draw(`#${prop['id']}`, rdata, config);
 
         self.map.on("viewreset", reset);
@@ -562,6 +351,7 @@ class mapview {
             .enter().append("path")
             .attr('fill', 'red')
             .attr('stroke', 'red');
+
         self.map.on('moveend', reset);
         reset();
 
@@ -679,81 +469,6 @@ class mapview {
             this.aoiLayers = null;
         }
     }
-    
-    ClusterboundaryDrawing(data, prop, update = false) {
-        let self = this,
-            city = prop['city'],
-            onlyBound = prop['boundary'],
-            statsdata = stats[city],
-            numid = self.ides.mapid.slice(-1),
-            svgid = `boundSVG${self.ides.mapid}`,
-            aoiid = `aoiCanvas${self.ides.mapid}`;
-        
-        this.switchLegDisplay('cltsld');
-        
-        if (!update) {
-        		console.log("first")
-            this.setClusterBoundData(data);
-        } else {
-        		console.log("second")
-            data = this.getClusterBoundData();
-        }
-        
-        //console.log("data:" + JSON.stringify(data))
-        d3.select(`#${svgid}`).remove();
-        d3.select(`#${aoiid}`).remove();
-        
-        let //color = d3.scaleLinear().domain([0, 14])
-        		//.range([ "rgba(255,255,255,0.9)", "rgba(255, 165, 0, 0.9)"]),
-        		color = ["rgba(255,0,0,0.5)", "rgba(255,69,0,0.5)", "rgba(160,32,240,0.5)", "rgba(255,215,0,0.5)", "rgba(255,255,0,0.5)", 
-        				"rgba(154,205,50,0.5)", "rgba(173,255,47,0.5)", "rgba(0,255,0,0.5)", "rgba(139,69,19,0.5)", "rgba(127,255,212,0.5)",
-        				"rgba(0,206,209,0.5)", "rgba(0,191,255,0.5)", "rgba(30,144,255,0.5)", "rgba(255,165,0,0.5)", "rgba(255,20,147,0.5)"],
-        		svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', svgid).style("z-index", 998),
-            g = svg.append("g").attr("class", "leaflet-zoom-hide");
-        
-        let transform = d3.geoTransform({ point: projectPoint }),
-            path = d3.geoPath().projection(transform);
-        
-            let feature = g.selectAll("path")
-                .data(data.features)
-                .enter().append("path")
-                .attr('fill', function(d) {
-                	console.log("d: " + JSON.stringify(d.properties))
-                let num = d.properties.color;
-                 console.log("num : " + num)
-                return color[num];
-                 })
-                .attr('stroke',  'gray')
-                //.style("stroke-dasharray", "4 5")
-                //.attr('fill', 'red')
-                .attr("stroke-width", 0.9);
-            
-            self.map.on("viewreset", reset);
-            reset();
-
-            // Reposition the SVG to cover the features.
-            function reset() {
-                let bounds = path.bounds(data),
-                    topLeft = bounds[0],
-                    bottomRight = bounds[1];
-
-                svg.attr("width", bottomRight[0] - topLeft[0])
-                    .attr("height", bottomRight[1] - topLeft[1])
-                    .style("left", topLeft[0] + "px")
-                    .style("top", topLeft[1] + "px");
-
-                g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
-
-                feature.attr("d", path);
-            }
-        
-        // Use Leaflet to implement a D3 geometric transformation.
-        function projectPoint(x, y) {
-            let point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
-            //console.log("x: " + x)
-            this.stream.point(point.x, point.y);
-        }
-    }
 
     boundaryDrawing(data, prop, update = false) {
         let self = this,
@@ -764,7 +479,7 @@ class mapview {
             numid = self.ides.mapid.slice(-1),
             svgid = `boundSVG${self.ides.mapid}`,
             aoiid = `aoiCanvas${self.ides.mapid}`;
-        
+
         if (!update) {
             this.setBoundData(data);
         } else {
@@ -787,7 +502,7 @@ class mapview {
             vmax = range[1] * prop['slider'][1] / 100.0,
             color = d3.scaleLinear().domain([vmin, vmax, range[1]])
             .range(["rgba(255,255,255,0.5)", "rgba(255, 0, 0, 0.9)", "rgba(255, 0, 0, 0.9)"]),
-            svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', svgid).style("z-index", 998),
+            svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', svgid),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
         console.log('vmin', vmin, 'vmax', vmax);
@@ -822,6 +537,7 @@ class mapview {
             self.drawGridLegend(`Content`, color);
         }
 
+
         let text = g.selectAll('text')
             .data(data.features)
             .enter().append('text')
@@ -843,7 +559,7 @@ class mapview {
                 let p = d['properties']['cp'];
                 return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 20;
             });
-        
+
         self.map.on("viewreset", reset);
         reset();
 
@@ -871,7 +587,7 @@ class mapview {
                     return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y;
                 });
         }
-		
+
         // Use Leaflet to implement a D3 geometric transformation.
         function projectPoint(x, y) {
             let point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
@@ -894,9 +610,6 @@ class mapview {
         // 删除 radar chart 图层
         d3.selectAll('.leaflet-radarchart').remove();
         
-        //d3.selectAll('.leaflet-zoom-hide').remove();
-        
-        d3.selectAll('.model').remove();
     }
 
     /**
@@ -905,7 +618,6 @@ class mapview {
      * @param  {[type]} prop [description]
      * @return {[type]}      [description]
      */
-   
     mapgridCDrawing(data, prop, update = false, split = false, random = false) {
         // update为false表示当前执行重绘操作, update为true则从实例中调用历史数据进行绘制
         if (!update) {
@@ -924,8 +636,7 @@ class mapview {
         let begVal = 0,
             minVal = prop[drawtype]['min'],
             maxVal = prop[drawtype]['max'],
-            //endVal = prop[drawtype]['scales'],
-            endVal = prop[drawtype]['max'],
+            endVal = prop[drawtype]['scales'],
             maxRate = maxVal / endVal,
             minRate = minVal / endVal,
             colordomain = [minVal, maxVal, endVal],
@@ -952,7 +663,6 @@ class mapview {
 
             let len = data.features.length;
             for (let i = 0; i < len; i++) {
-            	
                 let feature = data.features[i],
                     poly = feature.geometry.coordinates[0],
                     center = feature['prop']['c'], // center
@@ -970,7 +680,7 @@ class mapview {
                         let subgrids = getSubGrids(poly, center, SPLITNUMBER)
 
                         for (let subind = SPLITNUMBER - 1; subind >= 0; subind--) {
-                            
+                            // 
                             let nw = canvasOverlay._map.latLngToContainerPoint(subgrids[subind]['nw']),
                                 se = canvasOverlay._map.latLngToContainerPoint(subgrids[subind]['se']);
                             ctx.fillStyle = color(feature['prop'][drawtype] * (1 + Math.random() * 0.3)),
@@ -1005,7 +715,6 @@ class mapview {
      */
     mapcontourCDrawing(data, prop, update = false) {
         // update为false表示当前执行重绘操作, update为true则从实例中调用历史数据进行绘制
-    		//console.log("data:" +  JSON.stringify(data.features[0]))
         this.switchLegDisplay('ctrleg');
         
         if (!update) {
@@ -1020,81 +729,58 @@ class mapview {
         const drawtype = prop['prop']['drawtype'],
             resprop = data['prop'],
             SPLITNUMBER = 4;
-        
+
         // updated color scale
         let begVal = 0,
             minVal = prop[drawtype]['min'],
             maxVal = prop[drawtype]['max'],
-            endVal = prop[drawtype]['max'],
-            //maxRate = maxVal / endVal,
-            //minRate = minVal / endVal,
+            endVal = prop[drawtype]['scales'],
+            maxRate = maxVal / endVal,
+            minRate = minVal / endVal,
             judRate = Number.parseFloat((maxVal - minVal) / (endVal - minVal));
-            //judRate = Number.parseFloat((prop['d']['number'] - prop['e']['number']) / (100 - prop['e']['number']));
-    
+
         let len = data.features.length,
             hdata = {
                 max: endVal,
                 min: minVal,
-        			//max: len,
-        			//min: 1,
                 data: []
             }
-        let oneqVal = 0, twoqVal = 0, thrqVal =0;
-        if(minVal === maxVal){
-        		oneqVal = 1.0;
-        }
-        else{
-        		oneqVal = 0.3 * judRate,
-            twoqVal = 0.8 * judRate,
-            thrqVal = judRate;
-            if (thrqVal > 1.0) {
-                thrqVal = 1.0;
-            }
-        }
-        
-        
-       /* 
+
         let oneqVal = 0.25 * judRate,
             twoqVal = 0.5 * judRate,
-            thrqVal = 0.8 * judRate,
-            forqVal = judRate;  
-        if (forqVal > 1.0) {
-            forqVal = 1.0;
-        }
-        */
-        
+            thrqVal = 0.85 * judRate,
+            forqVal = judRate;
+
         // 根据绘制类型判断筛选条件最小值
         let emin = 0,
             dmin = 0;
-        if (drawtype === 'e') { 
-        		emin = prop['e']['min'];
+        if (drawtype === 'e') {
+            emin = prop['e']['min'];
         } else {
             dmin = prop['d']['min'];
         }
-        
+
+        if (forqVal > 1.0) {
+            forqVal = 1.0;
+        }
         this.clearLayers();
 
         let countVal = 0;
-        console.log("len=" + len)
-        
         for (let i = len - 1; i >= 0; i--) {
             let feature = data.features[i],
-                evalue = feature['prop']['e'], //网格具体的值
+                evalue = feature['prop']['e'],
                 dvalue = feature['prop']['d'],
                 center = data.features[i]['prop']['c'];
-           
 
             // 根据 filter 值及选中类型进行过滤
             if (outOfRange(drawtype, evalue, dvalue, prop['e']['min'], prop['d']['min'])) {
                 continue;
             }
             countVal += 1;
-            
+
             // 为 hdata 注入数据
             hdata.data.push({ 'lat': center[1], 'lng': center[0], 'c': feature['prop'][drawtype] })
-            //hdata.data.push({ 'lat': center[1], 'lng': center[0], 'c': len - i }) 
         }
-        
         console.log('Drawtype: ', drawtype, 'Contourmap Used point number', countVal);
 
         let cfg = {
@@ -1114,29 +800,7 @@ class mapview {
             "lngField": 'lng',
             "valueField": 'c'
         };
-        
-        let gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(255,0,0)'];
 
-        if (prop['prop']['rev']) {
-            gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,0,0)', 'rgb(255,255,0)', 'rgb(0,255,0)'];
-        }
-        
-        if(minVal === maxVal){
-        		console.log("balbalablablabl")
-        		cfg.gradient[oneqVal.toString()] = gradients[4];
-        }
-        else{
-        	 	 cfg.gradient[oneqVal.toString()] = gradients[2];
-             cfg.gradient[twoqVal.toString()] = gradients[3];
-             cfg.gradient[thrqVal.toString()] = gradients[4];
-        }
-        this.heatmapLayer = new HeatmapOverlay(cfg);
-        this.map.addLayer(this.heatmapLayer);
-        this.heatmapLayer.setData(hdata)
-    }
-
-        
-/*
         let gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(0,0,255)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(255,0,0)'];
 
         if (prop['prop']['rev']) {
@@ -1147,105 +811,21 @@ class mapview {
         cfg.gradient[twoqVal.toString()] = gradients[3];
         cfg.gradient[thrqVal.toString()] = gradients[4];
         cfg.gradient[forqVal.toString()] = gradients[5];
-        
-*/
+
+        if (judRate < 1.0) {
+            cfg.gradient['1.0'] = gradients[5];
+        }
+
         // draw legends
         // this.drawContourLegend(`Content ${getPropName(drawtype)}`, cfg.gradient);
 
-        
-    
-   /*     
-        let begVal = 0,
-        minVal = prop[drawtype]['min'],
-        maxVal = prop[drawtype]['max'],
-        endVal = prop[drawtype]['scales'];
-
-    let len = data.features.length,
-        hdata = {
-            max: 100,
-            min: minVal,
-            data: []
-        }
-
-    // 根据绘制类型判断筛选条件最小值
-    let emin = 0,
-        dmin = 0;
-    if (drawtype === 'e') {
-        emin = prop['e']['min'];
-    } else {
-        dmin = prop['d']['min'];
+        this.heatmapLayer = new HeatmapOverlay(cfg);
+        this.map.addLayer(this.heatmapLayer);
+        this.heatmapLayer.setData(hdata)
     }
-
-    this.clearLayers();
-
-    let countVal = 0;
-    for (let i = len - 1; i >= 0; i--) {
-        let feature = data.features[i],
-            evalue = feature['prop']['e'],
-            dvalue = feature['prop']['d'],
-            center = data.features[i]['prop']['c'];
-
-        // 根据 filter 值及选中类型进行过滤
-        if (outOfRange(drawtype, evalue, dvalue, prop['e']['min'], prop['d']['min'])) {
-            continue;
-        }
-        countVal += 1;
-
-        // 为 hdata 注入数据
-        hdata.data.push({ 'lat': center[1], 'lng': center[0], 'c': Math.ceil((len - i)/len*100) })
-        console.log("c:" + Math.ceil((len - i)/len*100))
-    }
-    console.log('Drawtype: ', drawtype, 'Contourmap Used point number', countVal);
-    //console.log("hdata" + JSON.stringify(hdata))
-
-    let cfg = {
-        // radius should be small ONLY if scaleRadius is true (or small radius is intended)
-        // if scaleRadius is false it will be the constant radius used in pixels
-        "radius": prop['prop']['radius'],
-        "maxOpacity": prop['prop']['opacity'],
-        "minOpacity": prop['prop']['opacity'],
-        // scales the radius based on map zoom
-        "scaleRadius": true,
-        "gradient": {
-            '0' : 'rgba(255,255,255,0)'
-        },
-        //   (there will always be a red spot with useLocalExtremas true)
-        "useLocalExtrema": prop['prop']['useLocalExtrema'],
-        "latField": 'lat',
-        "lngField": 'lng',
-        "valueField": 'c'
-    };
-    
-    console.log("stream" + prop['prop']['useLocalExtrema'])
-    
-    let gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(0,0,255)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(255,0,0)'];
-
-    if (prop['prop']['rev']) {
-        gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,0,0)', 'rgb(255,255,0)', 'rgb(0,255,0)', 'rgb(0,0,255)'];
-    }
-    
-    //set gradient depending on high point
-    for(let i = 0.25; i < 1; i+=0.25) {
-        cfg.gradient[i.toString()] = gradients[i*4+1];
-    }
-    let vv = Number.parseFloat(v[1] / 100.00);
-    cfg.gradient[vv.toString()] = gradients[5];
-    console.log("vvvv" + vv.toString())
-    if(vv < 1){
-        cfg.gradient['1.0'] = gradients[5];
-    }
-    
-    // draw legends
-    // this.drawContourLegend(`Content ${getPropName(drawtype)}`, cfg.gradient);
-
-    this.heatmapLayer = new HeatmapOverlay(cfg);
-    this.map.addLayer(this.heatmapLayer);
-    this.heatmapLayer.setData(hdata)
-}
-*/
 
     /**
-     * 绘制地图中的参考图标(图中指示4个方块）
+     * 绘制地图中的参考图标
      * @param  {String} title [description]
      * @param  {Array}  scale [description]
      * @param  {[type]} 100]  [description]
@@ -1356,7 +936,6 @@ class mapview {
             this.map.removeLayer(this.areaSelector);
             this.areaSelector = null;
         }
-        //	d3.selectAll('.leaflet-zoom-hide').remove();
     }
 
     /**
@@ -1366,19 +945,15 @@ class mapview {
      */
     switchLegDisplay(cfg) {
         for (let key in this.ides) {
-        		console.log("this.ides: " + key)
             if (key === 'mapid' || key === 'baselyr') {
                 continue;
             }
 
             let val = this.ides[key];
-            console.log("vals:" + val)
-            console.log("cfg:" + cfg)
             if (key !== cfg) {
                 let el = document.getElementById(val);
                 if (el) {
                     el.style.display = 'none';
-                		//el.style.display = 'inline';
                 }
             } else {
                 let el = document.getElementById(val);

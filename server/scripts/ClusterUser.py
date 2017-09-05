@@ -13,7 +13,6 @@ from sklearn.cluster import KMeans, DBSCAN
 from Util import func
 import matplotlib.patches as mpatches
 
-
 # 从文件中取出用户特征
 def getMatrixfromFile(file):
 	rawdata, feature, idlist = [], [], []

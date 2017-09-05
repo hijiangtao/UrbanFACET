@@ -10,8 +10,8 @@
 import Vue from 'vue'
 import mapview from './components/hmap-view'
 import $ from "jquery"
-import { regionRecords, regions, smecAve } from './components/init'
-import { getOverviewDatasets, getCompareDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getDrawProps } from './components/apis'
+import { regionRecords, regions } from './components/init'
+import { getOverviewDatasets, getBoundaryDatasets, getAOIDatasets, getDensity, getDrawProps } from './components/apis'
 import { changeLoadState } from './components/events'
 import vueSlider from 'vue-slider-component'
 
@@ -20,8 +20,7 @@ import vueSlider from 'vue-slider-component'
 // 地图实例对应 slider 设定
 
 const settings = {
-	//'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#0000ff 25%,#00ff00 45%,#ffff00 70%,#ff0000 100%)'
-		'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#00ff00 30%,#ffff00 55%,#ff0000 100%)'//白、绿、黄、红滑动条
+	'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#0000ff 25%,#00ff00 45%,#ffff00 70%,#ff0000 100%)'
 }
 class dydata {
 	constructor() {
@@ -48,7 +47,6 @@ class dydata {
 				'rp': 'Diversity',
 				'rd': 'Fluidity',
 				'de': 'Density',
-				'dd': 'Density Div',
 				'tg': 'Total GDP',
 				'ag': 'Ave GDP',
 				'po': 'Population',
@@ -99,7 +97,7 @@ class dynamicView {
             </div>
             <div class="content">
                 <div class="description">
-                    <vue-slider :id="'cdasli'+index" :ref="'cdasli'+index" v-bind="component[index]" @callback="updateSliderPoints(index)" @drag-end="updateSlider(index)" v-model="models[index].slider"></vue-slider>
+                    <vue-slider :id="'cdasli'+index" :ref="'cdasli'+index" v-bind="component[index]" @drag-end="updateSlider(index)" v-model="models[index].slider"></vue-slider>
                 </div>
             </div>
         </div>
@@ -171,11 +169,6 @@ class dynamicView {
 				tooltip: 'hover',
 				value: [0, 100],
 				clickable: false,
-				interval: 0.5,
-				formatter: function(value){
-            		//console.log("value" + (value + 1))
-            		return 	(100/Math.log(101) * Math.log(value + 1)).toFixed(2) + "%"
-				},
 				tooltipStyle: {
 					"backgroundColor": "#000",
 					"borderColor": "#000"
@@ -194,7 +187,6 @@ class dynamicView {
 
 	initView() {
 		let self = this,
-			resp = null,
 			cda = this.data.states.cda;
 		this.vue = new Vue({
 			el: `#${self.id}`,
@@ -206,33 +198,6 @@ class dynamicView {
 				'getOverview': function (index) {
 					// 初始化子模块并添加遮罩层
 				},
-				'updateSliderPoints': function(index){
-					//同步滑动条
-					let i = Number.parseInt(index),
-						cities = this.regions,
-						tps = this.tpfilters,
-						obj = this.models[i];
-					
-					if (cda) {
-						// city
-						for ( let j = 0; j < 4; j++)
-							{
-								if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(obj.etype) > -1) {
-									if (j !== i){
-										this.models[j]['slider'] = obj['slider'];
-										}									
-									}
-								}
-							}
-					else {
-						for ( let j = 0; j < 6; i++){
-							if (j !== i){
-								this.models[j]['slider'] = obj['slider'];
-								}
-						}
-					}
-				},
-				/*
 				'updateSlider': function (index) {
 					// city dynamic analysis
 					let i = Number.parseInt(index),
@@ -251,7 +216,7 @@ class dynamicView {
 								'etype': obj.etype,
 							};
 
-							let drawProps = getDrawProps(resp, obj['slider'], self.props, p);
+							let drawProps = getDrawProps(obj['scale'], obj['slider'], self.props, p);
 							self.maps[i].mapcontourCDrawing({}, drawProps, true);
 						} else {
 							self.maps[i].boundaryDrawing({}, obj, true);
@@ -261,68 +226,17 @@ class dynamicView {
 							'etype': obj.etype,
 							'rev': self.props.rev
 						}
-						let drawProps = getDrawProps(resp, obj.slider, self.props, p);
+						let drawProps = getDrawProps(obj.scale, obj.slider, self.props, p);
 						self.maps[i].mapcontourCDrawing({}, drawProps, true);
 					}
-				}*/
-				
-				'updateSlider': function (index) {
-					// city dynamic analysis
-					let i = Number.parseInt(index),
-						cities = this.regions,
-						tps = this.tpfilters,
-						obj = this.models[i];
-
-					this.component[i].bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${obj.slider[1] - 0.01}%, red ${obj.slider[1]}%, red 100%)`;
-
-					if (cda) {
-						// city
-						for ( let i = 0; i < 4; i++)
-							{
-								if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(obj.etype) > -1) {
-									
-									// 获取 slider 情况下的配置值域以及用户其余选项
-									let p = {
-											'rev': self.props.rev,
-											'etype': obj.etype,
-									};
-									
-									if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(obj.etype) > -1) {
-										if (i !== Number.parseInt(index)){
-											this.component[i].bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${obj.slider[1] - 0.01}%, red ${obj.slider[1]}%, red 100%)`;
-											this.models[i]['slider'] = obj['slider'];
-											}
-									}
-
-								let drawProps = getDrawProps(resp, obj['slider'], self.props, p);
-								self.maps[i].mapcontourCDrawing({}, drawProps, true);
-							} else {
-								self.maps[i].boundaryDrawing({}, obj, true);
-							}
-						}
-					} else {
-						//time
-						for ( let i = 0; i < 6; i++){
-							let p = {
-									'etype': obj.etype,
-									'rev': self.props.rev
-								}
-							if (i !== Number.parseInt(index)){
-								this.component[i].bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${obj.slider[1] - 0.01}%, red ${obj.slider[1]}%, red 100%)`;
-								this.models[i]['slider'] = obj['slider'];
-								}
-							let drawProps = getDrawProps(resp, obj.slider, self.props, p);
-								self.maps[i].mapcontourCDrawing({}, drawProps, true);
-						}
-					}
-				}			
+				}
 			},
 			mounted() {
 				// city dynamic analysis
 				let cities = this.regions,
 					tps = this.tpfilters,
 					models = this.models;
-				
+
 				if (cda) {
 					// city
 					for (let i = 0; i < 4; i++) {
@@ -333,102 +247,6 @@ class dynamicView {
 						let obj = models[i];
 						// 根据用户所选 metric 类型进行相应数据提取操作
 						if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(obj.etype) > -1) {
-								getCompareDatasets(obj).then(function(resu){
-									//changeLoadState(`cdadim${i}`, true),
-									resp = resu; 
-									console.log("resp" + JSON.stringify(resu.features[100]))
-									
-							// 获取 entropy 和 density 资源
-							getOverviewDatasets(obj).then(function (res) {
-								changeLoadState(`cdadim${i}`, false);
-
-								// 获取 slider 情况下的配置值域以及用户其余选项
-								let p = {
-									'rev': self.props.rev,
-									'etype': obj.etype,
-								}
-
-								models[i].scale = res['prop']['scales'];
-								//let drawProps = getDrawProps(res['prop']['scales'], obj['slider'], self.props, p);
-									
-								let drawProps = getDrawProps(resp, models[0]['slider'], self.props, p);
-									self.maps[i].panTo(regionRecords[cities[i].val]['center']);
-									self.maps[i].mapcontourCDrawing(res, drawProps);
-																		
-								}).catch(function (err) {
-									console.error("Failed!", err);
-								});
-							}).catch(function (err) {
-									console.error("Failed!", err);
-							});
-					
-						} else {
-							getBoundaryDatasets(obj.city).then(function (res) {
-								changeLoadState(`cdadim${i}`, false);
-								self.maps[i].boundaryDrawing(res, obj);
-							}).catch(function (err) {
-								console.error("Failed!", err);
-							});
-						}
-					}
-
-				} else {
-					// time periods
-					let etype = models[0].etype;
-					if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
-						for (let i = 0; i < 6; i++) {
-							let obj = models[i];
-							changeLoadState(`tdadim${i}`, true);
-							self.maps[i] = new mapview(`${tps[i].val}tdamap`, `tgridleg${i}`, `tctrleg${i}`, obj.city);
-							
-							getCompareDatasets(obj).then(function(resu){
-								resp = resu; 
-								console.log("resp" + JSON.stringify(resu.features[100]))
-
-								// 获取 entropy 和 density 资源
-								getOverviewDatasets(obj).then(function (res) {
-									changeLoadState(`tdadim${i}`, false);
-
-									let p = {
-											'rev': self.props.rev,
-											'etype': obj.etype
-									}
-
-									// 获取 slider 情况下的配置值域以及用户其余选项
-									//models[i].scale = res['prop']['scales'];
-									//let drawProps = getDrawProps(res['prop']['scales'], obj.slider, self.props, p);
-								console.log("laaaaaaaa")
-								let drawProps = getDrawProps(resp, obj.slider, self.props, p);
-								self.maps[i].mapcontourCDrawing(res, drawProps);
-							}).catch(function (err) {
-								console.error("Failed!", err);
-							});
-							}).catch(function (err) {
-								console.error("Failed!", err);
-							});
-					}
-
-						//for (let i = 1; i < 6; i++) {
-						//	self.maps[0].syncmap(self.maps[i].getMap());
-						//}
-
-					} else {
-						alert('Not able to deal with Stats Data in different time periods.');
-					}
-				}
-			}
-		})
-	}
-/*					
-					for (let i = 0; i < 4; i++) {
-						// 初始化子模块并添加遮罩层
-						changeLoadState(`cdadim${i}`, true);
-						self.maps[i] = new mapview(`${cities[i].val}cdamap`, `cgridleg${i}`, `cctrleg${i}`, cities[i].val);
-
-						let obj = models[i];
-						// 根据用户所选 metric 类型进行相应数据提取操作
-						if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(obj.etype) > -1) {
-									
 							// 获取 entropy 和 density 资源
 							getOverviewDatasets(obj).then(function (res) {
 								changeLoadState(`cdadim${i}`, false);
@@ -438,19 +256,15 @@ class dynamicView {
 									'rev': self.props.rev,
 									'etype': obj.etype,
 								};
-									
-								console.log("resp1: " + resp)
 
 								models[i].scale = res['prop']['scales'];
-								//let drawProps = getDrawProps(res['prop']['scales'], obj['slider'], self.props, p);
-									
-								let drawProps = getDrawProps(resp, models[0]['slider'], self.props, p);
-									self.maps[i].panTo(regionRecords[cities[i].val]['center']);
-									self.maps[i].mapcontourCDrawing(res, drawProps);																		
-								}).catch(function (err) {
-									console.error("Failed!", err);
-								});
-										} else {
+								let drawProps = getDrawProps(res['prop']['scales'], obj['slider'], self.props, p);
+								self.maps[i].panTo(regionRecords[cities[i].val]['center']);
+								self.maps[i].mapcontourCDrawing(res, drawProps);
+							}).catch(function (err) {
+								console.error("Failed!", err);
+							});
+						} else {
 							getBoundaryDatasets(obj.city).then(function (res) {
 								changeLoadState(`cdadim${i}`, false);
 								self.maps[i].boundaryDrawing(res, obj);
@@ -498,9 +312,7 @@ class dynamicView {
 				}
 			}
 		})
-	}	
-*/
-	
+	}
 
 	destroy() {
 		this.vue.$destroy();

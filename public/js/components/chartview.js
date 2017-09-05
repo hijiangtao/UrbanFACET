@@ -7,7 +7,7 @@
 
 'use strict'
 import * as d3 from 'd3'
-import { getRealProp, smecAve, smecMax } from './init'
+import { getRealProp } from './init'
 
 class chart {
     constructor(id) {
@@ -22,13 +22,12 @@ class chart {
      * @return {[type]}      [description]
      */
     lineChartDraw(id, data, prop) {
-    	
         let container = d3.select(`#${id}`),
             cWidth = container.node().getBoundingClientRect().width,
             cHeight = container.node().getBoundingClientRect().height,
             xname = prop['xname']; // x轴内容名字
         container.select('svg').remove();
-        
+
         console.log('Container', d3.select(`#${id}`), 'cWidth', cWidth, 'cHeight', cHeight);
         let svg = container.append("svg")
             .attr('width', cWidth)
@@ -167,7 +166,7 @@ class chart {
      * @param  {[type]} data [description]
      * @return {[type]}      [description]
      */
-    barChartDraw(city, id, data, prop) {
+    barChartDraw(id, data, prop) {
         let container = d3.select(`#${id}`),
             cWidth = container.node().getBoundingClientRect().width,
             cHeight = container.node().getBoundingClientRect().height,
@@ -175,9 +174,8 @@ class chart {
             xprop = 'english',
             yprop = getRealProp(prop['yprop']);
         container.select('svg').remove();
-        //console.log("data:" + JSON.stringify(data))
-        //console.log("large", smecAve[city][yprop]);
-        //console.log('bar Chart props', data);
+
+        // console.log('bar Chart props', prop);
 
         // console.log('Container', d3.select(`#${id}`), 'cWidth', cWidth, 'cHeight', cHeight);
         let svg = container.append("svg")
@@ -206,16 +204,10 @@ class chart {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         x.domain(data.map(function(d) {
-        		//console.log("d" + d[xprop])
                 return d[xprop]; }));
-        if (yprop === 'd'){
-        		y.domain([0, smecMax[city]['d']])
-        }else{
-        		y.domain([0, d3.max(data, function(d) {
-        				return d[yprop]; })]);
+        y.domain([0, d3.max(data, function(d) {
+            return d[yprop]; })]);
 
-        }
-        
         g.append("g")
             .attr("class", "axis axis--x")
             .attr("transform", "translate(0," + height + ")")
@@ -256,13 +248,11 @@ class chart {
             .enter().append("rect")
             .attr('class', 'redrect')
             .attr("x", function(d) {
-            		//console.log("xprop" + x)
                 return x(d[xprop]); })
             .attr("y", function(d) {
                 return y(d[yprop]); })
             .attr("width", x.bandwidth())
             .attr("height", function(d) {
-            	   //console.log("height" + height - y(d[yprop]))
                 return height - y(d[yprop]); })
             .attr("fill", 'rgba(250,150,30,1)')
             .on("mousemove", function(d) {
@@ -273,36 +263,6 @@ class chart {
                     .html((d[xprop]) + "<br>" + xname + ": " + d[yprop]);
             })
             .on("mouseout", function(d) { tooltip.style("display", "none"); });
-       
-        	/*
-        	   g.append("text")
-        		.text("smecAve[city][yprop]")
-            //.attr("x", -width)
-            .attr("y", y(smecAve[city][yprop]))
-            .attr("dy", "0.71em")
-            .attr("text-anchor", "end")
-            .attr("fill", "#5D6971")
-            .text(xname);
-		*/
-        
-        //console.log("height" + (height - y(smecAve[city][yprop])))
-        g.append("line")
-        		.attr("x1", -10)
-        		.attr("y1", y(smecAve[city][yprop]))
-        		.attr("x2", width+10)
-        		.attr("y2", y(smecAve[city][yprop]))
-        		.style("stroke", "green")
-            .style("stroke-dasharray", "5 5")
-            .style("stroke-width", "1.2px")
-            .on("mousemove", function(d) {
-                tooltip
-                    .style("left", d3.event.pageX - 50 + "px")
-                    .style("top", d3.event.pageY - 70 + "px")
-                    .style("display", "inline-block")
-                    .html(("Average") + "<br>" + xname + ": " + smecAve[city][yprop]);
-            })
-            .on("mouseout", function(d) { tooltip.style("display", "none"); });
-        		
     }
 
     /**
