@@ -43,3 +43,6 @@ server/data/label/*
 server/data/tmp/*
 
 *.DS_Store
+
+conf/data/bj_cluster*
+server/scripts/bj_initial_data.json
