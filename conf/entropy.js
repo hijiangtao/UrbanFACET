@@ -60,13 +60,26 @@ function getOverview(conn, prop) {
         typs = getTypeVals(prop['etype']),
         entropyattr = `${typs['etype']+typs['ctype']}sval`,
         densityattr = `w${typs['ctype']}number`,
-        etable = ftpval !== '' ? `${city==='bj'? 'wbj':city}F${ftpval}mat` : `${city==='bj'? 'wbj':city}Ematrix`,
+        etable,
         mtype = 'ave',
-        sqldoc = iMax[mtype],
-        eMax = Number.parseFloat(sqldoc[etable][entropyattr]),
-        dMax = Number.parseFloat(sqldoc[etable][densityattr]);
+        sqldoc = iMax[mtype];
 
-    console.log('Query table name: ', etable, 'eMax', eMax, 'dMax', dMax);
+    if (ftpval !== '') {
+        if (city === 'bj') {
+            etable = `wbjF${ftpval}mat`;
+        } else {
+            etable = `${city}F${ftpval}mat`;
+        }
+    } else {
+        if (city === 'bj') {
+            etable = `wbjEmatrix`;
+        } else {
+            etable = `${city}Ematrix`;
+        }
+    }
+
+    let eMax = Number.parseFloat(sqldoc[etable][entropyattr]),
+        dMax = Number.parseFloat(sqldoc[etable][densityattr]);
 
     let p = new Promise(function (resolve, reject) {
         let sql = $sql.getValScale[mtype] + $sql.getOverviewVal[mtype] + $sql.getDistribute(mtype, eMax) + $sql.getDistribute('sum', dMax),

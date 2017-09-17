@@ -14,7 +14,7 @@ let apis = {
 		let params = req.query;
 		// console.info('Going to connect MySQL.');
 		lib.connectMySQL().then(function (db) {
-			// console.info('Got data from MySQL.');
+			console.info('Got data from MySQL.');
 			return EP.getOverview(db, params);
 		}, function (err) {
 			console.error('error: ', err);

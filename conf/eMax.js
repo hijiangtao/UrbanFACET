@@ -7,6 +7,8 @@
 
 'use strict'
 
+// 所有北京数据均需要添加全量前缀
+
 let objs = {
 	'sum': {
 		"bjEmatrix": {
@@ -531,8 +533,8 @@ let objs = {
 		}
 	},
 	'ave': {
-		"bjEmatrix": {
-			"name": "bjEmatrix",
+		"wbjEmatrix": {
+			"name": "wbjEmatrix",
 			"wpnumber": 258670282,
 			"vpnumber": 258670282,
 			"wrnumber": 258670282,
