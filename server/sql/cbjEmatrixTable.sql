@@ -18,7 +18,7 @@
 
 -- LOAD DATA LOCAL INFILE "/enigma/tao.jiang/datasets/JingJinJi/entropy/matrix/beijing/respeo-xxx" INTO TABLE wbjEmatrix COLUMNS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '' ESCAPED BY '"' LINES TERMINATED BY '\n' (@col1,@col2,@col3,@col4,@col5,@col6,@col7,@col8,@col9) set id=@col1,wpnumber=@col2,vpnumber=@col3,ppsval=@col4,tpsval=@col5,apsval=@col6;
 
-CREATE TEMPORARY TABLE tmp LIKE wbjEmatrix;
+-- CREATE TEMPORARY TABLE tmp LIKE wbjEmatrix;
 LOAD DATA LOCAL INFILE "/enigma/tao.jiang/datasets/JingJinJi/entropy/matrix/beijing/resrec-xxx" INTO TABLE tmp COLUMNS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '' ESCAPED BY '"' LINES TERMINATED BY '\n' (@col1,@col2,@col3,@col4,@col5,@col6,@col7,@col8,@col9) set id=@col1,wrnumber=@col2,vrnumber=@col3,prsval=@col4,trsval=@col5,arsval=@col6;
 
 UPDATE wbjEmatrix
