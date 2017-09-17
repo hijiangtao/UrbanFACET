@@ -25,13 +25,13 @@ var devConfig = {
     },
     devtool: 'source-map',
     module: {
-        loaders: [{ 
-            test: /\.js$/, 
+        loaders: [{
+            test: /\.js$/,
             exclude: /(node_modules|bower_components)/,
             loader: 'babel-loader',
             query: {
                 presets: ['es2015']
-            } 
+            }
         }, {
             test: /\.(png|jpg)$/,
             loader: 'url?limit=8192&context=client&name=[path][name].[ext]'
@@ -41,12 +41,19 @@ var devConfig = {
         }, {
             test: /\.css$/,
             loader: 'style!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]'
-        }, { test: /\.ejs$/, loader: 'ejs-loader?variable=data' }]
+        }, {
+            test: /\.ejs$/,
+            loader: 'ejs-loader?variable=data'
+        }]
     },
     resolve: {
         alias: {
             'vue$': 'vue/dist/vue.js'
         }
+    },
+    node: {
+        fs: "empty",
+        child_process: "empty"
     }
 };
 
