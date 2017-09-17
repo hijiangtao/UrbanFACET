@@ -46,7 +46,7 @@ class entropySupCalModule(object):
 		entropyfile = os.path.join(self.DIRECTORY, 'entropy/matrix', self.CITY, ofilename)
 
 		for x in xrange(0,10000):
-			number = self.INDEX + 20 * x
+			number = self.INDEX + 10 * x
 			if number > self.FILENUM:
 				break
 
@@ -145,6 +145,10 @@ def processTask(PROP, DATA):
 	file = os.path.join(PROP['DIRECTORY'], 'entropy/distribution', PROP['CITY'], 'respeo-%03d' % PROP['INDEX'])
 	# disArrayNum = getCityDisInfo(PROP['CITY'])
 	DATA['record'] = getPeopleEntropyFromFile(file, PROP['CITYDISNUM'])
+	ti = int(PROP['INDEX'])+10
+	tmp = getPeopleEntropyFromFile(os.path.join(PROP['DIRECTORY'], 'entropy/distribution', PROP['CITY'], 'respeo-%03d' % ti), PROP['CITYDISNUM'])
+	for p in tmp:
+		DATA['record'][p] = tmp[p]
 
 	task = entropySupCalModule(PROP, DATA)
 	task.run()
@@ -163,7 +167,7 @@ def mergeMatrixFiles(city, GRIDSNUM, directory, filename='resrec'):
 	ematrix = np.array([np.array([x, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]) for x in xrange(0, GRIDSNUM)])
 	baseurl = os.path.join(directory, 'entropy/matrix', city)
 
-	for x in xrange(0,20):
+	for x in xrange(0,10):
 		with open(os.path.join(baseurl, '%s-%03d' % (filename, x)), 'rb') as stream:
 			for each in stream:
 				line = np.array(each.split(','), dtype='f')
@@ -237,7 +241,7 @@ def main(argv):
 		manager = Manager()
 		jobs = []
 
-		for x in xrange(0,20):
+		for x in xrange(0,10):
 			# time.sleep(random.random()*2)
 			PROP = {
 				'INDEX': x,

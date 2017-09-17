@@ -7,21 +7,20 @@
 
 'use strict'
 
-更新 sum ave 两个查询
 let objs = {
 	'sum': {
 		"bjEmatrix": {
 			"name": "bjEmatrix",
-			"wpnumber": 2551139,
-			"vpnumber": 2551139,
-			"wrnumber": 2551139,
-			"vrnumber": 2551139,
-			"prsval": 3402949.25,
-			"trsval": 4903684,
-			"arsval": 2069241,
-			"ppsval": 3474850.75,
-			"tpsval": 5212207,
-			"apsval": 944340.75
+			"wpnumber": 258670282,
+			"vpnumber": 258670282,
+			"wrnumber": 258670282,
+			"vrnumber": 258670282,
+			"prsval": 0,
+			"trsval": 0,
+			"arsval": 0,
+			"ppsval": 10234248,
+			"tpsval": 504871104,
+			"apsval": 2375665.75
 		},
 		"tjEmatrix": {
 			"name": "tjEmatrix",
@@ -534,16 +533,16 @@ let objs = {
 	'ave': {
 		"bjEmatrix": {
 			"name": "bjEmatrix",
-			"wpnumber": 2551139,
-			"vpnumber": 2551139,
-			"wrnumber": 2551139,
-			"vrnumber": 2551139,
-			"prsval": 5.75363032023112,
-			"trsval": 7.48268175125122,
-			"arsval": 9.21850681304932,
-			"ppsval": 2.10282874107361,
-			"tpsval": 2.59344506263733,
-			"apsval": 2.56651973724365
+			"wpnumber": 258670282,
+			"vpnumber": 258670282,
+			"wrnumber": 258670282,
+			"vrnumber": 258670282,
+			"prsval": 0,
+			"trsval": 0,
+			"arsval": 0,
+			"ppsval": 2.11396098136902,
+			"tpsval": 2.57290670606825,
+			"apsval": 2.51718482971191
 		},
 		"tjEmatrix": {
 			"name": "tjEmatrix",
