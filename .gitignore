@@ -46,4 +46,3 @@ server/data/tmp/*
 
 conf/data/bj_cluster*
 server/scripts/bj_initial_data.json
-server/scripts/bj_initial_15kmeans_data.json
