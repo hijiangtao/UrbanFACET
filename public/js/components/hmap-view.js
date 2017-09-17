@@ -22,6 +22,7 @@ const mapuid = 'hijiangtao'
 const accessToken = 'pk.eyJ1IjoiaGlqaWFuZ3RhbyIsImEiOiJjaWx1bGpldnowMWVwdGlrcm5rcDNiazU2In0.6bViwknzYRPVyqOj7JUuKw'
 
 class mapview {
+
     /**
      * LMap class constructor
      * @return {[type]} [description]
@@ -35,12 +36,20 @@ class mapview {
             'cltsld': cltsld,
             'baselyr': baselyr
         };
+        this.save_data = {
+            'data': null,
+            'city': ''
+        };
+        this.savef_data = {
+            'data': null,
+            'city': ''
+        };
         /**
          * 地图图层
          * @type {Object}
          */
         this.baseLayers = {
-            'FACET': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
+            'Road': L.tileLayer(`https://api.mapbox.com/styles/v1/{uid}/cisu4qyac00362wqbe6oejlfh/tiles/256/{z}/{x}/{y}?access_token=${accessToken}`, {
                 attribution: mapattr,
                 maxZoom: 18,
                 uid: mapuid
@@ -76,7 +85,7 @@ class mapview {
         this.map = new L.map(id, {
             center: L.latLng(regionRecords[city]['center']),
             zoom: 11,
-            layers: self.baseLayers['FACET'],
+            layers: self.baseLayers['Road'],
             crs: L.CRS.CustomZoom
         });
         this.map.zoomControl.setPosition('topright');
@@ -92,6 +101,16 @@ class mapview {
         this.map.on('zoomend', function(e) {
             console.log('Current Zoom Level', self.map.getZoom());
             if (true) {
+                if( d3.selectAll('.leaflet-radarchart')._groups[0].length != 0){
+                    console.log("redrawing")
+                    //console.log(JSON.stringify(d3.selectAll('.leaflet-radarchart')._groups[0].length))
+                    self.smecDrawing(self.save_data.data, self.save_data.city);
+                }
+                else if (d3.selectAll('.leaflet-flower')._groups[0].length != 0){
+                    console.log("redrawflower")
+                    //console.log(JSON.stringify(self.savef_data.data))
+                    self.flowerDrawing(self.savef_data.data, self.savef_data.city);
+                }
                 // 待完善
                 // 
                 // 如果存在contour map 则根据zoom level重绘
@@ -251,6 +270,10 @@ class mapview {
     }
     	
     flowerDrawing(initial_data, city){
+            d3.selectAll('.leaflet-flower').remove();
+            this.savef_data.data = initial_data;
+            this.savef_data.city = city;
+
     		let self = this,
     			overlay = d3.select(self.map.getPanes().overlayPane),
             width = 70,
@@ -292,25 +315,29 @@ class mapview {
                         'area': 'Fluidity',
                         'value': data[i]['properties']['ar'],
                         'd': data[i]['properties']['d'],
-                        'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
+                        //'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
+                        'name': 'FACET: ',
                         'data': data[i]['properties']
                     }, {
                         'area': 'Diversity',
                         'value': data[i]['properties']['pr'],
                         'd': data[i]['properties']['d'],
-                        'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
+                        //'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
+                        'name': 'FACET: ',
                         'data': data[i]['properties']
                     }, {
                         'area': 'Commutation',
                         'value': data[i]['properties']['ap'],
                         'd': data[i]['properties']['d'],
-                        'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
+                        //'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
+                        'name': 'FACET: ',
                         'data': data[i]['properties']
                     }, {
                         'area': 'Vibrancy',
                         'value': data[i]['properties']['pp'],
                         'd': data[i]['properties']['d'],
-                        'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
+                        //'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
+                        'name': 'FACET: ',
                         'data': data[i]['properties']
                     }]
                 ],
@@ -326,11 +353,39 @@ class mapview {
             speColor2 = d3.hcl(90, 90, 100),
             speColor3 = d3.hcl(150, 90, 100),
             speColor4 = d3.hcl(280, 90, 100);
+            let mag = 1.0;
+            if ( this.map.getZoom() == 9 ){
+                mag = 3.0;
+            }
+            else if (this.map.getZoom() == 10){
+                mag = 2.0;
+            }
+            else if (this.map.getZoom() == 11){
+                mag = 1.0;
+            }
+            else if (this.map.getZoom() == 12){
+                mag = 0.8;
+            }
+            else if (this.map.getZoom() == 13){
+                mag = 0.6;
+            } 
+            else if (this.map.getZoom() == 14){
+                mag = 0.4;
+            }
+            else if (this.map.getZoom() == 15){
+                mag = 0.2;
+            }
+            else{
+                mag = 6.0;
+            }
             
             let r = data[i]['properties']['d']/Number.parseFloat(max_d),
-            		linear0 = d3.scaleLinear().domain([0,1]).range([15,70]),
-            		r0 = linear0(r),
-            		R0 = Math.sqrt(Math.pow(r0, 1/0.7));
+            	linear0 = d3.scaleLinear().domain([0,1]).range([30/mag,70/mag]),
+            	r0 = linear0(r),
+            	R0 = Math.sqrt(Math.pow(r0, 1/0.7)),
+                r_max = Math.sqrt(Math.pow(linear0(1.0), 1/0.7));
+
+            console.log("radius: " + r0)
             
             let r1 = Math.sqrt(data[i]['properties']['ar']/Number.parseFloat(max_ar)),
             		r2 = Math.sqrt(data[i]['properties']['pr']/Number.parseFloat(max_pr)),
@@ -357,6 +412,7 @@ class mapview {
                 speColor3: speColor3,
                 speColor4: speColor4,
                 R0: R0,
+                r_max: r_max,
                 r1: r1,
                 r2: r2,
                 r3: r3,
@@ -368,7 +424,7 @@ class mapview {
                 ExtraWidthY: ExtraLen
             }
 
-            RadarChart.draw(`#${prop['id']}`, rdata, config);
+            RadarChart.draw(`#${prop['id']}`, rdata, config, 'c');
 
             self.map.on("viewreset", reset);
             reset();
@@ -382,8 +438,19 @@ class mapview {
     		}
     		
     }
-    
-    smecDrawing(data, prop = {}) {//绘制star plot
+
+    smecDrawing(data, city) {//绘制star plot
+        d3.selectAll('.leaflet-radarchart').remove();
+        this.save_data.data = data;
+        this.save_data.city = city;
+
+        for (let i = data.length - 1; i >= 0; i--) {
+            let prop = {
+                'id': `${city}-radar${i}`,
+                'city': city
+            }
+
+        //console.log(JSON.stringify(prop))
         let self = this,
             overlay = d3.select(self.map.getPanes().overlayPane),
             width = 70,
@@ -392,34 +459,32 @@ class mapview {
             rdata = [
             	[{
                     'area': 'Fluidity',
-                    'value': data['ar'],
-                    'name': data['name'],
-                    'd': data['d'],
-                    'data': data
+                    'value': data[i]['ar'],
+                    'name': data[i]['name'],
+                    'd': data[i]['d'],
+                    'data': data[i]
                 }, {
                     'area': 'Diversity',
-                    'value': data['pr'],
-                    'name': data['name'],
-                    'd': data['d'],
-                    'data': data
+                    'value': data[i]['pr'],
+                    'name': data[i]['name'],
+                    'd': data[i]['d'],
+                    'data': data[i]
                 }, {
                     'area': 'Commutation',
-                    'value': data['ap'],
-                    'name': data['name'],
-                    'd': data['d'],
-                    'data': data
+                    'value': data[i]['ap'],
+                    'name': data[i]['name'],
+                    'd': data[i]['d'],
+                    'data': data[i]
                 }, {
                     'area': 'Vibrancy',
-                    'value': data['pp'],
-                    'name': data['name'],
-                    'd': data['d'],
-                    'data': data
+                    'value': data[i]['pp'],
+                    'name': data[i]['name'],
+                    'd': data[i]['d'],
+                    'data': data[i]
                 }]
             ];
-        console.log("propssjjsjsjjs: " + JSON.stringify(prop))
-        console.log("data: " + JSON.stringify(rdata))
         
-        let s = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),//"ad":  总统计点数，"d": 总统计数/面积
+        let s = data[i]['d']/Number.parseFloat(smecMax[prop['city']]['d']),//"ad":  总统计点数，"d": 总统计数/面积
             linear = d3.scaleLinear().domain([0,1]).range([50,100]),
         //speColor = d3.hcl(359, 90, linear(s)),
         speColor = d3.hcl(359, 90, 100),
@@ -443,18 +508,53 @@ class mapview {
 
         //console.log("speColor", speColor, "val", s);
         //console.log("speColor", speColor4, "val", s);
-        
-        let r = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),
-        		linear0 = d3.scaleLinear().domain([0,1]).range([10,70]),
+        // zoom 9: 2.5
+                // 10: 2.25
+                // 11: 2
+                // 12: 1.75
+                // 13: 1.5
+                // 14: 1.25
+                // 15: 1
+        let mag = 1.0;
+        if ( this.map.getZoom() == 9 ){
+            mag = 3.5;
+        }
+        else if (this.map.getZoom() == 10){
+            mag = 1.5;
+        }
+        else if (this.map.getZoom() == 11){
+            mag = 1.0;
+        }
+        else if (this.map.getZoom() == 12){
+            mag = 0.875;
+        }
+        else if (this.map.getZoom() == 13){
+            mag = 0.6;
+        } 
+        else if (this.map.getZoom() == 14){
+            mag = 0.4;
+        }
+        else if (this.map.getZoom() == 15){
+            mag = 0.2;
+        }
+        else{
+            mag = 6.0;
+        }
+
+        let r = data[i]['d']/Number.parseFloat(smecMax[prop['city']]['d']),
+        		linear0 = d3.scaleLinear().domain([0,1]).range([30/mag,70/mag]),
         		r0 = linear0(r),
-        		R0 = Math.sqrt(Math.pow(r0, 1/0.7));
+        		R0 = Math.sqrt(Math.pow(r0, 1/0.7)),
+                r_max = Math.sqrt(Math.pow(linear0(1.0), 1/0.7));
+
+        console.log("radius: " + r0)
         
-        let r1 = data['ar']/Number.parseFloat(smecMax[prop['city']]['ar']),
-        		r2 = data['pr']/Number.parseFloat(smecMax[prop['city']]['pr']),
-        		r3 = data['ap']/Number.parseFloat(smecMax[prop['city']]['ap']),
-        		r4 = data['pp']/Number.parseFloat(smecMax[prop['city']]['pp']);
+        let r1 = data[i]['ar']/Number.parseFloat(smecMax[prop['city']]['ar']),
+        		r2 = data[i]['pr']/Number.parseFloat(smecMax[prop['city']]['pr']),
+        		r3 = data[i]['ap']/Number.parseFloat(smecMax[prop['city']]['ap']),
+        		r4 = data[i]['pp']/Number.parseFloat(smecMax[prop['city']]['pp']);
         
-        let R5 = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),
+        let R5 = data[i]['d']/Number.parseFloat(smecMax[prop['city']]['d']),
 			linear1 = d3.scaleLinear().domain([0,1]).range([0,2]),
 			R = linear1(R5),
 			r5 = Math.sqrt(Math.pow(R, 1/0.7));
@@ -474,6 +574,7 @@ class mapview {
             speColor3: speColor3,
             speColor4: speColor4,
             R0: R0,
+            r_max: r_max,
             r1: r1,
             r2: r2,
             r3: r3,
@@ -485,15 +586,17 @@ class mapview {
             ExtraWidthY: ExtraLen
         }
         
-        RadarChart.draw(`#${prop['id']}`, rdata, config);
+        RadarChart.draw(`#${prop['id']}`, rdata, config, 'd');
 
         self.map.on("viewreset", reset);
         reset();
 
         function reset() {
-            let point = self.map.latLngToLayerPoint(new L.LatLng(data['c'][1], data['c'][0]));
+            let point = self.map.latLngToLayerPoint(new L.LatLng(data[i]['c'][1], data[i]['c'][0]));
             svg.style("left", (point.x - width / 2 - ExtraLen / 2) + "px")
                 .style("top", (point.y - height / 2 - ExtraLen / 2) + "px");
+        }
+
         }
     }
 
@@ -718,9 +821,9 @@ class mapview {
                 .data(data.features)
                 .enter().append("path")
                 .attr('fill', function(d) {
-                	console.log("d: " + JSON.stringify(d.properties))
+                	//console.log("d: " + JSON.stringify(d.properties))
                 let num = d.properties.color;
-                 console.log("num : " + num)
+                 //console.log("num : " + num)
                 return color[num];
                  })
                 .attr('stroke',  'gray')
@@ -821,7 +924,7 @@ class mapview {
 
             self.drawGridLegend(`Content`, color);
         }
-
+        
         let text = g.selectAll('text')
             .data(data.features)
             .enter().append('text')
@@ -841,7 +944,8 @@ class mapview {
             })
             .attr('y', function(d) {
                 let p = d['properties']['cp'];
-                return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 20;
+                console.log("cp:  " + JSON.stringify(self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y + 40))
+                return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y -20;
             });
         
         self.map.on("viewreset", reset);
@@ -868,7 +972,7 @@ class mapview {
                 })
                 .attr('y', function(d) {
                     let p = d['properties']['cp'];
-                    return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y;
+                    return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 25;
                 });
         }
 		
@@ -893,7 +997,8 @@ class mapview {
 
         // 删除 radar chart 图层
         d3.selectAll('.leaflet-radarchart').remove();
-        
+
+        d3.selectAll('.leaflet-flower').remove();
         //d3.selectAll('.leaflet-zoom-hide').remove();
         
         d3.selectAll('.model').remove();
@@ -1044,13 +1149,21 @@ class mapview {
         		oneqVal = 1.0;
         }
         else{
-        		oneqVal = 0.3 * judRate,
+            oneqVal = 0.3 * judRate,
+            twoqVal = judRate;
+            if (twoqVal > 1.0) {
+                twoqVal = 1.0;
+            }
+        }
+        /*
+        else{
+        	oneqVal = 0.3 * judRate,
             twoqVal = 0.8 * judRate,
             thrqVal = judRate;
             if (thrqVal > 1.0) {
                 thrqVal = 1.0;
             }
-        }
+        }*/
         
         
        /* 
@@ -1120,7 +1233,14 @@ class mapview {
         if (prop['prop']['rev']) {
             gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,0,0)', 'rgb(255,255,0)', 'rgb(0,255,0)'];
         }
-        
+        if(minVal === maxVal){
+                cfg.gradient[oneqVal.toString()] = gradients[4];
+        }
+        else{
+                 cfg.gradient[oneqVal.toString()] = gradients[3];
+             cfg.gradient[twoqVal.toString()] = gradients[4];
+        }
+        /*
         if(minVal === maxVal){
         		console.log("balbalablablabl")
         		cfg.gradient[oneqVal.toString()] = gradients[4];
@@ -1129,7 +1249,7 @@ class mapview {
         	 	 cfg.gradient[oneqVal.toString()] = gradients[2];
              cfg.gradient[twoqVal.toString()] = gradients[3];
              cfg.gradient[thrqVal.toString()] = gradients[4];
-        }
+        }*/
         this.heatmapLayer = new HeatmapOverlay(cfg);
         this.map.addLayer(this.heatmapLayer);
         this.heatmapLayer.setData(hdata)

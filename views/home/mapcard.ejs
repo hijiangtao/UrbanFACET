@@ -14,6 +14,7 @@
 						<div>
 							<vue-slider :id="'slider'+index" :ref="'eSlider'+index" v-bind="sels.objs[index].slider" @drag-end="updateSlider(index)" v-model="sels.objs[index].slider.value"></vue-slider>
 						</div>
+						
 					</template>
 					<p>Reference: {{ cals.ops[ sels.otype ] }}</p>
 					<p>Base: <span :id="'baselyrtext'+index">FACET</span></p>

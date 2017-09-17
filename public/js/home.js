@@ -196,9 +196,9 @@ const userpanel = new Vue({
                         }).catch(function (err) {
                             console.error("Failed!", err);
                         });
-                    }).catch(function (err) {
+                        }).catch(function (err) {
                         console.error("Failed!", err);
-                    });
+                        });
                 } else {
                     self.sels.objs[i].slider.processStyle.background = `-webkit-repeating-linear-gradient(left, #ffffff 0%, #ff0000 100%)`;
                     self.sels.objs[i].slider.formatter = "{value}%";
@@ -620,6 +620,10 @@ const userpanel = new Vue({
                 v = obj.slider.value;
 
             this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
+            this.sels.objs[i].slider.formatter= function(value){
+                        //console.log("value" + (value + 1))
+                        return  (100-(100/Math.log(101) * Math.log(101-value))).toFixed(2) + "%"
+                };
 
             let city = obj.city,
                 etype = obj.etype,
@@ -716,25 +720,24 @@ const userpanel = new Vue({
 
                 //cluster
                 if (val === 'c') {
-                    getClusterboundaryDatasets(objs[0].city).then(function (res) {
+                    let city = objs[index].city,
+                        map = maps[index];
+
+                    getClusterboundaryDatasets(city).then(function (res) {
                         for (let i = objs.length - 1; i >= 0; i--) {
-
-                            let city = objs[i].city,
-                                etype = objs[i].etype,
-                                s = objs[i].slider1.value,
-                                c = objs[i].slider2.value;
-
                             changeLoadState(`dimmer${i}`, false);
+                        }
 
-                            maps[i].modelDrawing();
+                        map.modelDrawing();
+                        let s = objs[index].slider1.value,
+                            c = objs[index].slider2.value;
 
                             let prop = {
                                 'city': city,
                                 'boundary': true
                             };
-                            maps[i].ClusterboundaryDrawing(res, prop);
-                            maps[i].flowerDrawing(res, city)
-                        }
+                            map.ClusterboundaryDrawing(res, prop);
+                            map.flowerDrawing(res, city)
                     }).catch(function (err) {
                         console.error("Failed!", err);
                     });
@@ -778,36 +781,23 @@ const userpanel = new Vue({
                     map.modelDrawing(); //蒙版
 
                     getSMecDatasets(city).then(function (res) {
-                        for (let i = res.length - 1; i >= 0; i--) {
-                            let prop = {
-                                'id': `${city}-radar${i}`,
-                                'city': city
-                            }
-                            map.smecDrawing(res[i], prop);
-                        }
-
-                        changeLoadState(`dimmer${index}`, false);
+                            map.smecDrawing(res, city);
                     }).catch(function (err) {
                         console.error("Failed!", err);
                     });
 
-                    getBoundaryDatasets(objs[0].city).then(function (res) {
+                    getBoundaryDatasets(city).then(function (res) {
                         for (let i = objs.length - 1; i >= 0; i--) {
-                            let city = objs[i].city,
-                                etype = objs[i].etype,
-                                svals = objs[i].slider.value;
-
                             changeLoadState(`dimmer${i}`, false);
-
-                            let prop = {
-                                'city': city,
-                                'etype': etype,
-                                'boundary': true,
-                                'slider': svals
-                            };
-
-                            maps[i].boundaryDrawing(res, prop);
                         }
+
+                        let prop = {
+                            'city': city,
+                            'boundary': true,
+                            'slider': objs[index].slider.value
+                        };
+
+                        map.boundaryDrawing(res, prop);
 
                     }).catch(function (err) {
                         console.error("Failed!", err);

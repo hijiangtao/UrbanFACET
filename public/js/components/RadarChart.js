@@ -5,7 +5,7 @@ import * as d3 from 'd3'
 var series, dataValues;
 
 var RadarChart = {
-    draw: function(id, d, options) {
+    draw: function(id, d, options, kind) {
         var cfg = {
             radius: 2,
             w: 100,
@@ -36,7 +36,7 @@ var RadarChart = {
         let htmlStr = d[0].map((v)=>{
             return `<span>${v['area']}: ${v['value'].toFixed(2)}</span>`
         }).join('<br>');
-        htmlStr = `${d[0][0]['name']}<br>${htmlStr}<br>Density: ${d[0][0]['data']['d']}<br>${'/km^2'}`;
+        htmlStr = `${d[0][0]['name']}<br>${htmlStr}<br>Density: ${(d[0][0]['data']['d']/1000000).toFixed(2)}${'*10^6/km^2'}`;
         //console.log(d[0][0]['data']['d'])
 
         var allAxis = (d[0].map(function(i, j) {
@@ -46,12 +46,23 @@ var RadarChart = {
         var Format = d3.format('%');
         document.getElementById(id.substring(1)).innerHTML='';
        
-        var g = d3.select(id)
-        .attr('class', 'leaflet-radarchart') // 用于批量删除
-        .attr("width", cfg.w + cfg.ExtraWidthX)
-        .attr("height", cfg.h + cfg.ExtraWidthY)
-        .append("g")
-        .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
+       if(kind == 'd'){
+            var g = d3.select(id)
+            .attr('class', 'leaflet-radarchart') // 用于批量删除
+            .attr("width", cfg.w + cfg.ExtraWidthX)
+            .attr("height", cfg.h + cfg.ExtraWidthY)
+            .append("g")
+            .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
+       }
+       else if (kind == 'c'){
+            var g = d3.select(id)
+            .attr('class', 'leaflet-flower') // 用于批量删除
+            .attr("width", cfg.w + cfg.ExtraWidthX)
+            .attr("height", cfg.h + cfg.ExtraWidthY)
+            .append("g")
+            .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
+       }
+        
 
         series = 0;
             
@@ -68,7 +79,211 @@ var RadarChart = {
             .style("stroke-width", "1.5px")
             .style('stroke', d3.hcl(359, 60, 40))
             //.style('stroke', d3.hcl(359, 0, 30))
-            .style("fill-opacity", 0); 
+            .style("fill-opacity", 0)
+            .on('mouseover', function(d) {
+                let z = "path." + d3.select(this).attr("class");
+                d3.select(this)
+                    .style("cursor", "pointer");
+
+                g.selectAll("path")
+                 .transition(200)
+                 .style("stroke", d3.hcl(359, 100, 60))
+                 .style("stroke-width", "1.5px")
+                 .style("fill-opacity", 1.0)
+                 .attr("d", function(j,i){
+                   /*dataValues.push([
+                    cfg.w / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) * cfg.factor * Math.sin(i * cfg.radians / total)) - cfg.w/2,
+                    cfg.h / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) * cfg.factor * Math.cos(i * cfg.radians / total)) - cfg.h/2
+                ]);*/
+                   var cx = 0, cy = 0,
+                       r = 0, s = 0, e = 0, m = 0;
+                   if (i == 0){
+                           cy = cfg.r1 * cfg.r_max,
+                           r = cy,
+                           s = {x: 0, y: -r/2},
+                           e = {x: -r/2, y: 0},
+                           m = {x: -Math.sqrt(2) * r / 2 , y: -Math.sqrt(2) * r / 2};
+                           //console.log("1s: " + JSON.stringify(m))
+                   } 
+                   else if(i == 1){
+                           cx = cfg.r2 * cfg.r_max,
+                           r = cx,
+                           s = {x: -r/2, y: 0},
+                           e = {x: 0, y: r/2},
+                           m = {x: -Math.sqrt(2) * r / 2 , y: Math.sqrt(2) * r / 2};
+                         //console.log("2s: " + JSON.stringify(m))
+                   }
+                   else if(i == 2){
+                           cy = cfg.r3 * cfg.r_max,
+                           r = cy,
+                           s = {x: 0, y: r/2},
+                           e = {x: r/2, y: 0},
+                           m = {x: Math.sqrt(2) * r / 2 , y: Math.sqrt(2) * r / 2};
+                         //console.log("3s: " + JSON.stringify(m))
+                   }
+                   else if(i == 3){
+                           cx = cfg.r4 * cfg.r_max,
+                           r = cx,
+                           s = {x: r/2, y: 0},
+                           e = {x: 0, y: -r/2},
+                           m = {x: Math.sqrt(2) * r / 2 , y: -Math.sqrt(2) * r / 2};
+                         //console.log("4s: " + JSON.stringify(m))
+                   }
+                    return "M0,0Q" + s.x + "," + s.y + " " + m.x + "," + m.y + 
+                            "M0,0Q" + e.x + "," + e.y + " " + m.x + "," + m.y ;
+            });
+                
+                g.select("circle")
+                 .transition(200)
+                 .attr('r', cfg.r_max)
+                 .style("stroke", d3.hcl(359, 100, 60));
+                
+                g.selectAll("text")
+                .transition(200)
+                .style("fill-opacity", 1.0)
+                .attr("x", function(j, i) {
+                    if(i == 0){
+                            var r = cfg.r_max + 10;
+                            return -Math.sqrt(2) * r / 2;
+                    } 
+                    else if( i == 1){
+                            var r = cfg.r_max + 10;
+                            return -Math.sqrt(2) * r / 2;
+                    }
+                    else if( i == 2){
+                            var r = cfg.r_max + 10;
+                            return Math.sqrt(2) * r / 2;
+                    }
+                    else if( i == 3){
+                            var r = cfg.r_max + 6;
+                            return Math.sqrt(2) * r / 2;
+                    }
+                })
+                .attr("y", function(j, i) {
+                        if(i == 0){
+                            var r = cfg.r_max + 3;
+                            return -Math.sqrt(2) * r / 2;
+                        } 
+                        else if( i == 1){
+                            var r = cfg.r_max + 10;
+                            return Math.sqrt(2) * r / 2;
+                        }
+                        else if( i == 2){
+                            var r = cfg.r_max + 10;
+                            return Math.sqrt(2) * r / 2;
+                        }
+                        else if( i == 3){
+                            var r = cfg.r_max + 6;
+                            return -Math.sqrt(2) * r / 2;
+                        }
+                });
+                            
+                tooltip.style("left", d3.event.pageX + 30 + "px")
+                       .style("top", d3.event.pageY - 160 + "px")
+                       .style("display", "inline-block")
+                       .html(htmlStr);
+
+               })
+            .on('mouseout', function() {
+               g.selectAll("path")
+                  .transition(200)
+                  .style("stroke",function(i, j){
+                      //console.log("i" + j)
+                        return d3.hcl(j / 4 * 360, 60, 40);
+                 })
+                 .style("fill-opacity", cfg.opacityArea)
+                 .style("stroke-width", "1.0px")
+                 .attr("d", function(j,i){
+                   /*dataValues.push([
+                    cfg.w / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) * cfg.factor * Math.sin(i * cfg.radians / total)) - cfg.w/2,
+                    cfg.h / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) * cfg.factor * Math.cos(i * cfg.radians / total)) - cfg.h/2
+                ]);*/
+                   var cx = 0, cy = 0,
+                       r = 0, s = 0, e = 0, m = 0;
+                   if (i == 0){
+                           cy = cfg.r1 * cfg.R0,
+                           r = cy,
+                           s = {x: 0, y: -r/2},
+                           e = {x: -r/2, y: 0},
+                           m = {x: -Math.sqrt(2) * r / 2 , y: -Math.sqrt(2) * r / 2};
+                           //console.log("1s: " + JSON.stringify(m))
+                   } 
+                   else if(i == 1){
+                           cx = cfg.r2 * cfg.R0,
+                           r = cx,
+                           s = {x: -r/2, y: 0},
+                           e = {x: 0, y: r/2},
+                           m = {x: -Math.sqrt(2) * r / 2 , y: Math.sqrt(2) * r / 2};
+                         //console.log("2s: " + JSON.stringify(m))
+                   }
+                   else if(i == 2){
+                           cy = cfg.r3 * cfg.R0,
+                           r = cy,
+                           s = {x: 0, y: r/2},
+                           e = {x: r/2, y: 0},
+                           m = {x: Math.sqrt(2) * r / 2 , y: Math.sqrt(2) * r / 2};
+                         //console.log("3s: " + JSON.stringify(m))
+                   }
+                   else if(i == 3){
+                           cx = cfg.r4 * cfg.R0,
+                           r = cx,
+                           s = {x: r/2, y: 0},
+                           e = {x: 0, y: -r/2},
+                           m = {x: Math.sqrt(2) * r / 2 , y: -Math.sqrt(2) * r / 2};
+                         //console.log("4s: " + JSON.stringify(m))
+                   }
+                    return "M0,0Q" + s.x + "," + s.y + " " + m.x + "," + m.y + 
+                            "M0,0Q" + e.x + "," + e.y + " " + m.x + "," + m.y ;
+            });
+               
+               g.select("circle")
+                .transition(200)
+                .attr('r', cfg.R0)
+                .style('stroke', d3.hcl(359, 60, 40));
+                 //.style('stroke', d3.hcl(359, 0, 30));
+               
+               g.selectAll("text")
+                .transition(200)
+                .style("fill-opacity", 0.0)
+                .attr("x", function(j, i) {
+                    if(i == 0){
+                            var r = cfg.R0 + 10;
+                            return -Math.sqrt(2) * r / 2;
+                    } 
+                    else if( i == 1){
+                            var r = cfg.R0 + 10;
+                            return -Math.sqrt(2) * r / 2;
+                    }
+                    else if( i == 2){
+                            var r = cfg.R0 + 10;
+                            return Math.sqrt(2) * r / 2;
+                    }
+                    else if( i == 3){
+                            var r = cfg.R0 + 6;
+                            return Math.sqrt(2) * r / 2;
+                    }
+                })
+                .attr("y", function(j, i) {
+                        if(i == 0){
+                            var r = cfg.R0 + 3;
+                            return -Math.sqrt(2) * r / 2;
+                        } 
+                        else if( i == 1){
+                            var r = cfg.R0 + 10;
+                            return Math.sqrt(2) * r / 2;
+                        }
+                        else if( i == 2){
+                            var r = cfg.R0 + 10;
+                            return Math.sqrt(2) * r / 2;
+                        }
+                        else if( i == 3){
+                            var r = cfg.R0 + 6;
+                            return -Math.sqrt(2) * r / 2;
+                        }
+                });
+                
+                tooltip.style("display", "none");
+                }); 
             
             g.selectAll(".nodes")
             .data(y).enter()
@@ -90,7 +305,7 @@ var RadarChart = {
             		       s = {x: 0, y: -r/2},
             		       e = {x: -r/2, y: 0},
             		       m = {x: -Math.sqrt(2) * r / 2 , y: -Math.sqrt(2) * r / 2};
-            		   	   console.log("1s: " + JSON.stringify(m))
+            		   	   //console.log("1s: " + JSON.stringify(m))
             	   } 
             	   else if(i == 1){
             		   	   cx = cfg.r2 * cfg.R0,
@@ -98,7 +313,7 @@ var RadarChart = {
             		       s = {x: -r/2, y: 0},
             		       e = {x: 0, y: r/2},
             		       m = {x: -Math.sqrt(2) * r / 2 , y: Math.sqrt(2) * r / 2};
-            		   	 console.log("2s: " + JSON.stringify(m))
+            		   	 //console.log("2s: " + JSON.stringify(m))
             	   }
             	   else if(i == 2){
             		   	   cy = cfg.r3 * cfg.R0,
@@ -106,7 +321,7 @@ var RadarChart = {
             		       s = {x: 0, y: r/2},
             		       e = {x: r/2, y: 0},
             		       m = {x: Math.sqrt(2) * r / 2 , y: Math.sqrt(2) * r / 2};
-            		   	 console.log("3s: " + JSON.stringify(m))
+            		   	 //console.log("3s: " + JSON.stringify(m))
             	   }
             	   else if(i == 3){
             		   	   cx = cfg.r4 * cfg.R0,
@@ -114,7 +329,7 @@ var RadarChart = {
             		       s = {x: r/2, y: 0},
             		       e = {x: 0, y: -r/2},
             		       m = {x: Math.sqrt(2) * r / 2 , y: -Math.sqrt(2) * r / 2};
-            		   	 console.log("4s: " + JSON.stringify(m))
+            		   	 //console.log("4s: " + JSON.stringify(m))
             	   }
             		return "M0,0Q" + s.x + "," + s.y + " " + m.x + "," + m.y + 
             				"M0,0Q" + e.x + "," + e.y + " " + m.x + "," + m.y ;
@@ -132,8 +347,8 @@ var RadarChart = {
             		else if (i == 3)
             			return cfg.speColor4;
             })
-            .style("fill-opacity", cfg.opacityArea)
-            .on('mouseover', function(d) {
+            .style("fill-opacity", cfg.opacityArea);
+            /*.on('mouseover', function(d) {
                 let z = "path." + d3.select(this).attr("class");
                 g.selectAll("path")
                  .transition(200)
@@ -175,10 +390,10 @@ var RadarChart = {
          	 	.style("fill-opacity", 0.0);
 
                 tooltip.style("display", "none");
-                });
+                });*/
             var s = d[0][0]['data']['d']
-            console.log("data"+ d[0][0]['data']['d'])
-            
+            //console.log("data"+ d[0][0]['data']['d'])
+            /*
             g.append("text")
             .attr("class", "radar-chart-serie" + series)
             .attr("x", cfg.w/2)
@@ -202,7 +417,7 @@ var RadarChart = {
             		g.selectAll("text")
             		 .style("fill-opacity", 0.0);
             		
-            		tooltip.style("display", "none"); });
+            		tooltip.style("display", "none"); });*/
             
             g.selectAll(".area")
              .data([dataValues])
@@ -314,7 +529,10 @@ var RadarChart = {
                 //.style("fill-opacity", .9)
                 
                 .on('mouseover', function(d) {
-                    console.log(d.area);
+                    //console.log(d.area);
+                    d3.select(this)
+                      .style("cursor", "pointer");
+
                     g.selectAll("text")
                     	//.transition(200)
                     	.style("fill-opacity", 1.0);

@@ -11,7 +11,10 @@ const settings = {
     // 'whiteToRed': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
     // 与实际设置不同,因为有遮挡所以微调过
     //'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#0000ff 25%,#00ff00 45%,#ffff00 70%,#ff0000 100%)' //白、蓝、绿、黄、红滑动条
-		'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#00ff00 30%,#ffff00 55%,#ff0000 100%)'//白、绿、黄、红滑动条
+		//'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#00ff00 30%,#ffff00 55%,#ff0000 100%)'//白、绿、黄、红滑动条
+        'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%, #ffff00 55%,#ff0000 100%)'//白黄红滑动条
+        
+
 }
 
 /**
@@ -132,7 +135,8 @@ let home = {
                 interval: 0.5,
                 tooltipStyle: {
                     "backgroundColor": "#000",
-                    "borderColor": "#000"
+                    "borderColor": "#000",
+                    "Opacity": 0.6
                 },
                 bgStyle: {
                     'background': settings['whiteToRed']
@@ -164,7 +168,7 @@ let home = {
                 // width: 140,
                 tooltip: 'hover',
                 value: '20',
-                dotSize:10,
+                dotSize:15,
                 piecewise: true,
                 piecewiseLabel: true,
                 clickable: false,
@@ -189,7 +193,8 @@ let home = {
                 },
                 tooltipStyle: {
                     "backgroundColor": "#000",
-                    "borderColor": "#000"
+                    "borderColor": "#000",
+                    "opacity": 0.6
                 },
                 piecewiseActiveStyle: {
                 		"backgroundColor": "orange"
@@ -205,7 +210,7 @@ let home = {
                 // width: 140,
                 tooltip: 'hover',
                 value: '100',
-                dotSize:10,
+                dotSize:15,
                 piecewise: true,
                 piecewiseLabel: true,
                 clickable: false,
@@ -226,7 +231,8 @@ let home = {
                 },
                 tooltipStyle: {
                     "backgroundColor": "#000",
-                    "borderColor": "#000"
+                    "borderColor": "#000",
+                    "opacity": 0.6
                 },
                 piecewiseActiveStyle: {
                 		"backgroundColor": "orange"
