@@ -66,7 +66,7 @@ function getOverview(conn, prop) {
 
     if (ftpval !== '') {
         if (city === 'bj') {
-            etable = `wbjF${ftpval}mat`;
+            etable = `bjF${ftpval}mat`;
         } else {
             etable = `${city}F${ftpval}mat`;
         }
