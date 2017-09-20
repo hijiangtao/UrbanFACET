@@ -61,17 +61,32 @@ function getOverview(conn, prop) {
         typs = getTypeVals(prop['etype']),
         entropyattr = `${typs['etype']+typs['ctype']}sval`,
         densityattr = `w${typs['ctype']}number`,
-        etable = ftpval !== '' ? `${city}F${ftpval}mat` : `${city}Ematrix`,
+        etable,
         mtype = 'ave',
-        sqldoc = iMax[mtype],
-        eMax = Number.parseFloat(sqldoc[etable][entropyattr]),
-        dMax = Number.parseFloat(sqldoc[etable][densityattr]);
+        sqldoc = iMax[mtype];
     
     console.log("typs: " + JSON.stringify(typs))
     console.log("ftp:" + ftpval)
     //console.log("sqldoc" + JSON.stringify(sqldoc))
-    
-    console.log('Query table name: ', etable, 'eMax', eMax, 'dMax', dMax);
+
+    if(ftpval !== ''){
+        if (city === 'bj'){
+            etable = `bjF${ftpval}mat`;
+        }else {
+            etable = `${city}F${ftpval}mat`;
+        }
+    }else {
+        if (city === 'bj'){
+            etable = `wbjEmatrix`;
+        }else {
+            etable = `${city}Ematrix`;
+        }
+    }
+
+    let eMax = Number.parseFloat(sqldoc[etable][entropyattr]),
+        dMax = Number.parseFloat(sqldoc[etable][densityattr]);
+
+    console.log('city: ', city, 'Query table name: ', etable, 'eMax', eMax, 'dMax', dMax);
    
     let p = new Promise(function(resolve, reject) {
 		let sql = $sql.getValScale[mtype] + $sql.getOverviewValE[mtype] + $sql.getDistribute(mtype, eMax) + $sql.getDistribute('sum', dMax),
@@ -302,10 +317,10 @@ function getCompareview(conn, prop) {
         densityattr = `w${typs['ctype']}number`,
         etable0 = ftpval !== '' ? `${city}F0mat` : `${city}Ematrix`,
         etable1 = ftpval !== '' ? `${city}F1mat` : `${city}Ematrix`,
-        	etable2 = ftpval !== '' ? `${city}F2mat` : `${city}Ematrix`,
-        	etable3 = ftpval !== '' ? `${city}F3mat` : `${city}Ematrix`,
-        	etable4 = ftpval !== '' ? `${city}F4mat` : `${city}Ematrix`,
-        	etable5 = ftpval !== '' ? `${city}F5mat` : `${city}Ematrix`,
+        etable2 = ftpval !== '' ? `${city}F2mat` : `${city}Ematrix`,
+        etable3 = ftpval !== '' ? `${city}F3mat` : `${city}Ematrix`,
+        etable4 = ftpval !== '' ? `${city}F4mat` : `${city}Ematrix`,
+        etable5 = ftpval !== '' ? `${city}F5mat` : `${city}Ematrix`,
         mtype = 'ave',
         sqldoc = iMax[mtype];
     

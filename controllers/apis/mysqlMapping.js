@@ -54,24 +54,24 @@ let mapping = {
 				"ORDER BY val;"
 	},
 	getCompareValCityE:{
-		'sum': "SELECT id, ?? AS 'val' FROM bjEmatrix WHERE ?? >= 0 AND ?? > 0 " +
+		'sum': "SELECT id, ?? AS 'val' FROM wbjEmatrix WHERE ?? >= 0 AND ?? > 0 " +
 				"UNION SELECT id, ?? AS 'val' FROM tsEmatrix WHERE ?? >= 0 AND ?? > 0 " +
 				"UNION SELECT id, ?? AS 'val' FROM tjEmatrix WHERE ?? >= 0 AND ?? > 0 " +
 				"UNION SELECT id, ?? AS 'val' FROM zjkEmatrix WHERE ?? >= 0 AND ?? > 0 " +
 				"ORDER BY val;",
-		'ave': "SELECT id, ??/?? AS 'val' FROM bjEmatrix WHERE ?? >= 0 AND ?? > 0 " +
+		'ave': "SELECT id, ??/?? AS 'val' FROM wbjEmatrix WHERE ?? >= 0 AND ?? > 0 " +
 				"UNION SELECT id, ??/?? AS 'val' FROM tsEmatrix WHERE ?? >= 0 AND ?? > 0 " +
 				"UNION SELECT id, ??/?? AS 'val' FROM tjEmatrix WHERE ?? >= 0 AND ?? > 0 " +
 				"UNION SELECT id, ??/?? AS 'val' FROM zjkEmatrix WHERE ?? >= 0 AND ?? > 0 " +
 				"ORDER BY val;"
 	},
 	getCompareValCityD:{
-		'sum': "SELECT id, ?? AS 'val' FROM bjEmatrix WHERE ?? > 0 " +
+		'sum': "SELECT id, ?? AS 'val' FROM wbjEmatrix WHERE ?? > 0 " +
 				"UNION SELECT id, ?? AS 'val' FROM tsEmatrix WHERE ?? > 0 " +
 				"UNION SELECT id, ?? AS 'val' FROM tjEmatrix WHERE ?? > 0 " +
 				"UNION SELECT id, ?? AS 'val' FROM zjkEmatrix WHERE ?? > 0 " +
 				"ORDER BY val;",
-		'ave': "SELECT id, ?? AS 'val' FROM bjEmatrix WHERE ?? > 0 " +
+		'ave': "SELECT id, ?? AS 'val' FROM wbjEmatrix WHERE ?? > 0 " +
 				"UNION SELECT id, ?? AS 'val' FROM tsEmatrix WHERE ?? > 0 " +
 				"UNION SELECT id, ?? AS 'val' FROM tjEmatrix WHERE ?? > 0 " +
 				"UNION SELECT id, ?? AS 'val' FROM zjkEmatrix WHERE ?? > 0 " +

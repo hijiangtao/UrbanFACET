@@ -550,7 +550,7 @@ def main(s, c, ct):
     file = open('../../conf/data/' + city + '_cluster_' + str(s) + '_' + str(c) + '.json', 'w')
     file.write(json.dumps(result))
     file.close()
-
+    
 
 if __name__ == '__main__':
     s = 20

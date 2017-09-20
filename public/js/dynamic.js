@@ -22,7 +22,7 @@ import vueSlider from 'vue-slider-component'
 const settings = {
 	//'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#0000ff 25%,#00ff00 45%,#ffff00 70%,#ff0000 100%)'
 	//'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#00ff00 30%,#ffff00 55%,#ff0000 100%)'//白、绿、黄、红滑动条
-	'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#ffff00 55%,#ff0000 100%)'//白、绿、黄、红滑动条
+	'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#ffff00 40%,#ff0000 100%)'//白、绿、黄、红滑动条
 }
 class dydata {
 	constructor() {

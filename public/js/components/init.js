@@ -12,9 +12,7 @@ const settings = {
     // 与实际设置不同,因为有遮挡所以微调过
     //'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#0000ff 25%,#00ff00 45%,#ffff00 70%,#ff0000 100%)' //白、蓝、绿、黄、红滑动条
 		//'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#00ff00 30%,#ffff00 55%,#ff0000 100%)'//白、绿、黄、红滑动条
-        'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%, #ffff00 55%,#ff0000 100%)'//白黄红滑动条
-        
-
+        'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%, #ffff00 40%,#ff0000 100%)'//白黄红滑动条
 }
 
 /**
@@ -125,12 +123,13 @@ let home = {
                 // width: 140,
                 tooltip: 'hover',
                 value: [0, 100],
+                dotSize:13,
                 min: 0,
                 max: 100,
                 clickable: false,
                 formatter: function(value){
-                		//console.log("value" + (value + 1))
-                		return  (100/Math.log(101) * Math.log(value + 1)).toFixed(2) + "%"
+                	//console.log("value" + (value + 1))
+                	return  (100/Math.log(101) * Math.log(value + 1)).toFixed(2) + "%"
                 },
                 interval: 0.5,
                 tooltipStyle: {
@@ -168,7 +167,7 @@ let home = {
                 // width: 140,
                 tooltip: 'hover',
                 value: '20',
-                dotSize:15,
+                dotSize:13,
                 piecewise: true,
                 piecewiseLabel: true,
                 clickable: false,
@@ -210,7 +209,7 @@ let home = {
                 // width: 140,
                 tooltip: 'hover',
                 value: '100',
-                dotSize:15,
+                dotSize:13,
                 piecewise: true,
                 piecewiseLabel: true,
                 clickable: false,

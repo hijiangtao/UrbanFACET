@@ -318,23 +318,23 @@ class mapview {
                         //'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
                         'name': 'FACET: ',
                         'data': data[i]['properties']
-                    }, {
-                        'area': 'Diversity',
-                        'value': data[i]['properties']['pr'],
+                    },  {
+                        'area': 'vibrAncy',
+                        'value': data[i]['properties']['pp'],
                         'd': data[i]['properties']['d'],
                         //'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
                         'name': 'FACET: ',
                         'data': data[i]['properties']
-                    }, {
+                    },  {
                         'area': 'Commutation',
                         'value': data[i]['properties']['ap'],
                         'd': data[i]['properties']['d'],
                         //'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
                         'name': 'FACET: ',
                         'data': data[i]['properties']
-                    }, {
-                        'area': 'Vibrancy',
-                        'value': data[i]['properties']['pp'],
+                    },  {
+                        'area': 'divErsity',
+                        'value': data[i]['properties']['pr'],
                         'd': data[i]['properties']['d'],
                         //'name': "k: "+ data[i]['properties']['color'] + "  d: " + data[i]['properties']['db_num'],
                         'name': 'FACET: ',
@@ -354,43 +354,25 @@ class mapview {
             speColor3 = d3.hcl(150, 90, 100),
             speColor4 = d3.hcl(280, 90, 100);
             let mag = 1.0;
-            if ( this.map.getZoom() == 9 ){
-                mag = 3.0;
+            if ( this.map.getZoom() > 11 ){
+                mag = Math.pow(2.0, (this.map.getZoom() - 11));
+                //console.log("mag: " + mag)
             }
-            else if (this.map.getZoom() == 10){
-                mag = 2.0;
-            }
-            else if (this.map.getZoom() == 11){
-                mag = 1.0;
-            }
-            else if (this.map.getZoom() == 12){
-                mag = 0.8;
-            }
-            else if (this.map.getZoom() == 13){
-                mag = 0.6;
-            } 
-            else if (this.map.getZoom() == 14){
-                mag = 0.4;
-            }
-            else if (this.map.getZoom() == 15){
-                mag = 0.2;
-            }
-            else{
-                mag = 6.0;
+            else if (this.map.getZoom() < 11){
+                mag = Math.pow(0.5, (11 - this.map.getZoom()));
+                //console.log("mag: " + mag)
             }
             
             let r = data[i]['properties']['d']/Number.parseFloat(max_d),
-            	linear0 = d3.scaleLinear().domain([0,1]).range([30/mag,70/mag]),
+            	linear0 = d3.scaleLinear().domain([0,1]).range([45*mag,90*mag]),
             	r0 = linear0(r),
             	R0 = Math.sqrt(Math.pow(r0, 1/0.7)),
                 r_max = Math.sqrt(Math.pow(linear0(1.0), 1/0.7));
-
-            console.log("radius: " + r0)
             
             let r1 = Math.sqrt(data[i]['properties']['ar']/Number.parseFloat(max_ar)),
-            		r2 = Math.sqrt(data[i]['properties']['pr']/Number.parseFloat(max_pr)),
+            		r2 = Math.sqrt(data[i]['properties']['pp']/Number.parseFloat(max_pr)),
             		r3 = Math.sqrt(data[i]['properties']['ap']/Number.parseFloat(max_ap)),
-            		r4 = Math.sqrt(data[i]['properties']['pp']/Number.parseFloat(max_pp));
+            		r4 = Math.sqrt(data[i]['properties']['pr']/Number.parseFloat(max_pp));
             
             let R5 = data[i]['properties']['d']/Number.parseFloat(max_d),
     			linear1 = d3.scaleLinear().domain([0,1]).range([0,2]),
@@ -464,8 +446,8 @@ class mapview {
                     'd': data[i]['d'],
                     'data': data[i]
                 }, {
-                    'area': 'Diversity',
-                    'value': data[i]['pr'],
+                    'area': 'vibrAncy',
+                    'value': data[i]['pp'],
                     'name': data[i]['name'],
                     'd': data[i]['d'],
                     'data': data[i]
@@ -476,8 +458,8 @@ class mapview {
                     'd': data[i]['d'],
                     'data': data[i]
                 }, {
-                    'area': 'Vibrancy',
-                    'value': data[i]['pp'],
+                    'area': 'divErsity',
+                    'value': data[i]['pr'],
                     'name': data[i]['name'],
                     'd': data[i]['d'],
                     'data': data[i]
@@ -516,43 +498,24 @@ class mapview {
                 // 14: 1.25
                 // 15: 1
         let mag = 1.0;
-        if ( this.map.getZoom() == 9 ){
-            mag = 3.5;
+        if ( this.map.getZoom() > 11 ){
+            mag = Math.pow(2.0, (this.map.getZoom() - 11));
         }
-        else if (this.map.getZoom() == 10){
-            mag = 1.5;
+        else if (this.map.getZoom() < 11){
+            mag = Math.pow(0.5, (11 - this.map.getZoom()));
         }
-        else if (this.map.getZoom() == 11){
-            mag = 1.0;
-        }
-        else if (this.map.getZoom() == 12){
-            mag = 0.875;
-        }
-        else if (this.map.getZoom() == 13){
-            mag = 0.6;
-        } 
-        else if (this.map.getZoom() == 14){
-            mag = 0.4;
-        }
-        else if (this.map.getZoom() == 15){
-            mag = 0.2;
-        }
-        else{
-            mag = 6.0;
-        }
+        
 
         let r = data[i]['d']/Number.parseFloat(smecMax[prop['city']]['d']),
-        		linear0 = d3.scaleLinear().domain([0,1]).range([30/mag,70/mag]),
+        		linear0 = d3.scaleLinear().domain([0,1]).range([45*mag,90*mag]),
         		r0 = linear0(r),
         		R0 = Math.sqrt(Math.pow(r0, 1/0.7)),
                 r_max = Math.sqrt(Math.pow(linear0(1.0), 1/0.7));
-
-        console.log("radius: " + r0)
         
         let r1 = data[i]['ar']/Number.parseFloat(smecMax[prop['city']]['ar']),
-        		r2 = data[i]['pr']/Number.parseFloat(smecMax[prop['city']]['pr']),
+        		r2 = data[i]['pp']/Number.parseFloat(smecMax[prop['city']]['pp']),
         		r3 = data[i]['ap']/Number.parseFloat(smecMax[prop['city']]['ap']),
-        		r4 = data[i]['pp']/Number.parseFloat(smecMax[prop['city']]['pp']);
+        		r4 = data[i]['pr']/Number.parseFloat(smecMax[prop['city']]['pr']);
         
         let R5 = data[i]['d']/Number.parseFloat(smecMax[prop['city']]['d']),
 			linear1 = d3.scaleLinear().domain([0,1]).range([0,2]),
@@ -972,7 +935,7 @@ class mapview {
                 })
                 .attr('y', function(d) {
                     let p = d['properties']['cp'];
-                    return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 25;
+                    return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 30;
                 });
         }
 		
@@ -1228,17 +1191,17 @@ class mapview {
             "valueField": 'c'
         };
         
-        let gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(255,0,0)'];
+        let gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,255,0)', 'rgb(255,0,0)'];
 
         if (prop['prop']['rev']) {
-            gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,0,0)', 'rgb(255,255,0)', 'rgb(0,255,0)'];
+            gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,0,0)', 'rgb(255,255,0)'];
         }
         if(minVal === maxVal){
-                cfg.gradient[oneqVal.toString()] = gradients[4];
+                cfg.gradient[oneqVal.toString()] = gradients[3];
         }
         else{
-                 cfg.gradient[oneqVal.toString()] = gradients[3];
-             cfg.gradient[twoqVal.toString()] = gradients[4];
+                 cfg.gradient[oneqVal.toString()] = gradients[2];
+             cfg.gradient[twoqVal.toString()] = gradients[3];
         }
         /*
         if(minVal === maxVal){

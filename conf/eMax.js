@@ -7,20 +7,22 @@
 
 'use strict'
 
+// 所有北京数据均需要添加全量前缀
+
 let objs = {
 	'sum': {
 		"bjEmatrix": {
 			"name": "bjEmatrix",
-			"wpnumber": 2551139,
-			"vpnumber": 2551139,
-			"wrnumber": 2551139,
-			"vrnumber": 2551139,
-			"prsval": 3402949.25,
-			"trsval": 4903684,
-			"arsval": 2069241,
-			"ppsval": 3474850.75,
-			"tpsval": 5212207,
-			"apsval": 944340.75
+			"wpnumber": 258670282,
+			"vpnumber": 258670282,
+			"wrnumber": 258670282,
+			"vrnumber": 258670282,
+			"prsval": 8188341,
+			"trsval": 11727706,
+			"arsval": 5205805,
+			"ppsval": 10234248,
+			"tpsval": 504871104,
+			"apsval": 2375665.75
 		},
 		"tjEmatrix": {
 			"name": "tjEmatrix",
@@ -531,18 +533,18 @@ let objs = {
 		}
 	},
 	'ave': {
-		"bjEmatrix": {
-			"name": "bjEmatrix",
-			"wpnumber": 2551139,
-			"vpnumber": 2551139,
-			"wrnumber": 2551139,
-			"vrnumber": 2551139,
-			"prsval": 5.75363032023112,
-			"trsval": 7.48268175125122,
-			"arsval": 9.21850681304932,
-			"ppsval": 2.10282874107361,
-			"tpsval": 2.59344506263733,
-			"apsval": 2.56651973724365
+		"wbjEmatrix": {
+			"name": "wbjEmatrix",
+			"wpnumber": 258670282,
+			"vpnumber": 258670282,
+			"wrnumber": 258670282,
+			"vrnumber": 258670282,
+			"prsval": 5.12605810165405,
+			"trsval": 5.91530323028564,
+			"arsval": 9.2136344909668,
+			"ppsval": 2.11396098136902,
+			"tpsval": 2.57290670606825,
+			"apsval": 2.51718482971191
 		},
 		"tjEmatrix": {
 			"name": "tjEmatrix",

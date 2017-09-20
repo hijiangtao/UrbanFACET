@@ -14,10 +14,10 @@
 						<div>
 							<vue-slider :id="'slider'+index" :ref="'eSlider'+index" v-bind="sels.objs[index].slider" @drag-end="updateSlider(index)" v-model="sels.objs[index].slider.value"></vue-slider>
 						</div>
-						
+
 					</template>
 					<p>Reference: {{ cals.ops[ sels.otype ] }}</p>
-					<p>Base: <span :id="'baselyrtext'+index">FACET</span></p>
+					<p>Base: <span :id="'baselyrtext'+index">Road</span></p>
 				</div>
 				<div class="sixteen wide column" style="margin-bottom: .4rem; padding-top: 0;">
 					<button style="float: left;" class="ui tiny button" :class="areaselState" v-on:click="optAreaSelect(index)">Area Select</button>

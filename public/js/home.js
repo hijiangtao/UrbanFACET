@@ -619,7 +619,7 @@ const userpanel = new Vue({
                 obj = self.sels.objs[i],
                 v = obj.slider.value;
 
-            this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
+            this.sels.objs[i].slider.bgStyle.background = '-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, yellow ${v[1]}%, yellow 100%)';
             this.sels.objs[i].slider.formatter= function(value){
                         //console.log("value" + (value + 1))
                         return  (100-(100/Math.log(101) * Math.log(101-value))).toFixed(2) + "%"
@@ -636,6 +636,8 @@ const userpanel = new Vue({
             if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
                 // 获取 slider 情况下的配置值域以及用户其余选项
                 // v.push(self.components.hrSlider.value);
+                this.sels.objs[i].slider.processStyle.background = '-webkit-linear-gradient(left, #ffffff 0%, #ff0000 5%,#ffff00 100%)';
+                this.sels.objs[i].slider.bgStyle.backgroundColor = 'yellow';
                 let drawProps = getDrawProps(resp, v, self.sels.ctrsets, drawprop);
                 //let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
                 maps[i].mapcontourCDrawing({}, drawProps, true);
@@ -800,7 +802,144 @@ const userpanel = new Vue({
                         map.boundaryDrawing(res, prop);
 
                     }).catch(function (err) {
-                        console.error("Failed!", err);
+                        console
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        .error("Failed!", err);
                     });
 
                 }

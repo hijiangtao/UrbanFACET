@@ -36,7 +36,7 @@ var RadarChart = {
         let htmlStr = d[0].map((v)=>{
             return `<span>${v['area']}: ${v['value'].toFixed(2)}</span>`
         }).join('<br>');
-        htmlStr = `${d[0][0]['name']}<br>${htmlStr}<br>Density: ${(d[0][0]['data']['d']/1000000).toFixed(2)}${'*10^6/km^2'}`;
+        htmlStr = `${d[0][0]['name']}<br>${htmlStr}<br>densiTy: ${(d[0][0]['data']['d']/1000000).toFixed(2)}${'*10^6/km^2'}`;
         //console.log(d[0][0]['data']['d'])
 
         var allAxis = (d[0].map(function(i, j) {
@@ -461,9 +461,9 @@ var RadarChart = {
                 .attr("transform", "translate(" + cfg.w/2 + "," + cfg.h/2 + ")")
                 .text(function(j, i) {
                 		if (i == 0) return "F";
-                		if (i == 1) return "E";
+                		if (i == 1) return "A";
                 		if (i == 2) return "C";
-                		if (i == 3) return "A";})
+                		if (i == 3) return "E";})
                 //.style("font-family", "sans-serif")
                 .style("font-family", "Microsoft YaHei")	
                 .style("font-size", "11px")
