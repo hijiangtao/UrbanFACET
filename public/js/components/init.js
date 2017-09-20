@@ -17,11 +17,30 @@ const settings = {
  * 储存四个城市图标及属性信息
  * @type {Array}
  */
-const regions = [
-    { 'name': 'Beijing', 'val': 'bj', 'aurl': '/assets/bj-aicon.png', 'nurl': '/assets/bj-icon.png' },
-    { 'name': 'Tianjin', 'val': 'tj', 'aurl': '/assets/tj-aicon.png', 'nurl': '/assets/tj-icon.png' },
-    { 'name': 'Zhangjiakou', 'val': 'zjk', 'aurl': '/assets/zjk-aicon.png', 'nurl': '/assets/zjk-icon.png' },
-    { 'name': 'Tangshan', 'val': 'ts', 'aurl': '/assets/ts-aicon.png', 'nurl': '/assets/ts-icon.png' }
+const regions = [{
+        'name': 'Beijing',
+        'val': 'bj',
+        'aurl': '/assets/bj-aicon.png',
+        'nurl': '/assets/bj-icon.png'
+    },
+    {
+        'name': 'Tianjin',
+        'val': 'tj',
+        'aurl': '/assets/tj-aicon.png',
+        'nurl': '/assets/tj-icon.png'
+    },
+    {
+        'name': 'Zhangjiakou',
+        'val': 'zjk',
+        'aurl': '/assets/zjk-aicon.png',
+        'nurl': '/assets/zjk-icon.png'
+    },
+    {
+        'name': 'Tangshan',
+        'val': 'ts',
+        'aurl': '/assets/ts-aicon.png',
+        'nurl': '/assets/ts-icon.png'
+    }
 ]
 
 let home = {
@@ -33,58 +52,183 @@ let home = {
         /**
          * entropy types
          */
-        'etypes': [
-            { 'name': 'Vibrancy', 'val': 'pp' },
-            { 'name': 'Commutation', 'val': 'pd' },
-            { 'name': 'Diversity', 'val': 'rp' },
-            { 'name': 'Fluidity', 'val': 'rd' },
-            { 'name': 'Density', 'val': 'de' },
-            { 'name': 'GDP', 'val': 'ag' },
-            { 'name': 'Population', 'val': 'po' },
-            { 'name': 'House Price', 'val': 'hp' }
+        'etypes': [{
+                'name': 'Vibrancy',
+                'val': 'pp'
+            },
+            {
+                'name': 'Commutation',
+                'val': 'pd'
+            },
+            {
+                'name': 'Diversity',
+                'val': 'rp'
+            },
+            {
+                'name': 'Fluidity',
+                'val': 'rd'
+            },
+            {
+                'name': 'Density',
+                'val': 'de'
+            },
+            {
+                'name': 'GDP',
+                'val': 'ag'
+            },
+            {
+                'name': 'Population',
+                'val': 'po'
+            },
+            {
+                'name': 'House Price',
+                'val': 'hp'
+            }
         ],
-        'otypes': [
-            { 'name': 'Empty', 'val': 'e' },
-            { 'name': 'POI', 'val': 'p' },
-            { 'name': 'District', 'val': 'd' },
+        'otypes': [{
+                'name': 'Empty',
+                'val': 'e'
+            },
+            {
+                'name': 'POI',
+                'val': 'p'
+            },
+            {
+                'name': 'District',
+                'val': 'd'
+            },
             // { 'name': 'Density', 'val': 2 },
-            { 'name': 'FACET', 'val': 'f' }
+            {
+                'name': 'FACET',
+                'val': 'f'
+            }
         ],
         /**
          * timeblock filters object
          */
-        'tpfilters': [
-            { 'name': 'Allday', 'val': '9', 'aurl': '/assets/tp9-aicon.png', 'nurl': '/assets/tp9-icon.png' },
-            { 'name': 'Morning', 'val': '0', 'aurl': '/assets/tp0-aicon.png', 'nurl': '/assets/tp0-icon.png' },
-            { 'name': 'Forenoon', 'val': '1', 'aurl': '/assets/tp1-aicon.png', 'nurl': '/assets/tp1-icon.png' },
-            { 'name': 'Noon', 'val': '2', 'aurl': '/assets/tp2-aicon.png', 'nurl': '/assets/tp2-icon.png' },
-            { 'name': 'Afternoon', 'val': '3', 'aurl': '/assets/tp3-aicon.png', 'nurl': '/assets/tp3-icon.png' },
-            { 'name': 'Evening', 'val': '4', 'aurl': '/assets/tp4-aicon.png', 'nurl': '/assets/tp4-icon.png' },
-            { 'name': 'Night', 'val': '5', 'aurl': '/assets/tp5-aicon.png', 'nurl': '/assets/tp5-icon.png' }
+        'tpfilters': [{
+                'name': 'Allday',
+                'val': '9',
+                'aurl': '/assets/tp9-aicon.png',
+                'nurl': '/assets/tp9-icon.png'
+            },
+            {
+                'name': 'Morning',
+                'val': '0',
+                'aurl': '/assets/tp0-aicon.png',
+                'nurl': '/assets/tp0-icon.png'
+            },
+            {
+                'name': 'Forenoon',
+                'val': '1',
+                'aurl': '/assets/tp1-aicon.png',
+                'nurl': '/assets/tp1-icon.png'
+            },
+            {
+                'name': 'Noon',
+                'val': '2',
+                'aurl': '/assets/tp2-aicon.png',
+                'nurl': '/assets/tp2-icon.png'
+            },
+            {
+                'name': 'Afternoon',
+                'val': '3',
+                'aurl': '/assets/tp3-aicon.png',
+                'nurl': '/assets/tp3-icon.png'
+            },
+            {
+                'name': 'Evening',
+                'val': '4',
+                'aurl': '/assets/tp4-aicon.png',
+                'nurl': '/assets/tp4-icon.png'
+            },
+            {
+                'name': 'Night',
+                'val': '5',
+                'aurl': '/assets/tp5-aicon.png',
+                'nurl': '/assets/tp5-icon.png'
+            }
         ],
-        'tpfilters2': [
-            { 'name': 'Allday', 'val': '10', 'aurl': '/assets/tp10-aicon.png', 'nurl': '/assets/tp10-icon.png' },
-            { 'name': 'Weekday', 'val': '7', 'aurl': '/assets/tp7-aicon.png', 'nurl': '/assets/tp7-icon.png' },
-            { 'name': 'Weekend', 'val': '8', 'aurl': '/assets/tp8-aicon.png', 'nurl': '/assets/tp8-icon.png' }
+        'tpfilters2': [{
+                'name': 'Allday',
+                'val': '10',
+                'aurl': '/assets/tp10-aicon.png',
+                'nurl': '/assets/tp10-icon.png'
+            },
+            {
+                'name': 'Weekday',
+                'val': '7',
+                'aurl': '/assets/tp7-aicon.png',
+                'nurl': '/assets/tp7-icon.png'
+            },
+            {
+                'name': 'Weekend',
+                'val': '8',
+                'aurl': '/assets/tp8-aicon.png',
+                'nurl': '/assets/tp8-icon.png'
+            }
         ],
-        'pois': [
-            { 'name': 'All', 'val': 0 },
-            { 'name': 'Food&Supply', 'val': 1 },
-            { 'name': 'Entertainment&Leisure', 'val': 2 },
-            { 'name': 'Education', 'val': 3 },
-            { 'name': 'Transportation', 'val': 4 },
-            { 'name': 'Healthcare&Emergency', 'val': 5 },
-            { 'name': 'Financial&Bank', 'val': 6 },
-            { 'name': 'Accommodation', 'val': 7 },
-            { 'name': 'Office&Commercial', 'val': 8 },
-            { 'name': 'Natural Landscape', 'val': 9 },
-            { 'name': 'Factory&Manufacturer', 'val': 10 }
+        'pois': [{
+                'name': 'All',
+                'val': 0
+            },
+            {
+                'name': 'Food&Supply',
+                'val': 1
+            },
+            {
+                'name': 'Entertainment&Leisure',
+                'val': 2
+            },
+            {
+                'name': 'Education',
+                'val': 3
+            },
+            {
+                'name': 'Transportation',
+                'val': 4
+            },
+            {
+                'name': 'Healthcare&Emergency',
+                'val': 5
+            },
+            {
+                'name': 'Financial&Bank',
+                'val': 6
+            },
+            {
+                'name': 'Accommodation',
+                'val': 7
+            },
+            {
+                'name': 'Office&Commercial',
+                'val': 8
+            },
+            {
+                'name': 'Natural Landscape',
+                'val': 9
+            },
+            {
+                'name': 'Factory&Manufacturer',
+                'val': 10
+            }
         ],
-        'scales': [
-            { 'name': 'City', 'val': 0 },
-            { 'name': 'Division', 'val': 1 },
-            { 'name': 'Region', 'val': 2 },
-            { 'name': 'Street', 'val': 3 }
+        'scales': [{
+                'name': 'City',
+                'val': 0
+            },
+            {
+                'name': 'Division',
+                'val': 1
+            },
+            {
+                'name': 'Region',
+                'val': 2
+            },
+            {
+                'name': 'Street',
+                'val': 3
+            }
         ]
     },
     /**
@@ -213,10 +357,22 @@ let home = {
         'pois': ['All', 'Food&Supply', 'Entertainment&Leisure', 'Education', 'Transportation', 'Healthcare&Emergency', 'Financial&Bank', 'Accommodation', 'Office&Commercial', 'Natural Landscape', 'Factory&Manufacturer'],
         'scales': ['City', 'Division', 'Region', 'Street'],
         'cimgs': {
-            'bj': { 'aurl': '/assets/bj-aicon.png', 'nurl': '/assets/bj-icon.png' },
-            'tj': { 'aurl': '/assets/tj-aicon.png', 'nurl': '/assets/tj-icon.png' },
-            'zjk': { 'aurl': '/assets/zjk-aicon.png', 'nurl': '/assets/zjk-icon.png' },
-            'ts': { 'aurl': '/assets/ts-aicon.png', 'nurl': '/assets/ts-icon.png' }
+            'bj': {
+                'aurl': '/assets/bj-aicon.png',
+                'nurl': '/assets/bj-icon.png'
+            },
+            'tj': {
+                'aurl': '/assets/tj-aicon.png',
+                'nurl': '/assets/tj-icon.png'
+            },
+            'zjk': {
+                'aurl': '/assets/zjk-aicon.png',
+                'nurl': '/assets/zjk-icon.png'
+            },
+            'ts': {
+                'aurl': '/assets/ts-aicon.png',
+                'nurl': '/assets/ts-icon.png'
+            }
         }
     }
 };
@@ -241,22 +397,22 @@ const stats = {
      * [TotalGDP, Population, Area, AveGDP, HousePrice]
      */
     'bj': {
-        "东城区": [1857.8, 90.5, 42, 205282, 64670],
-        "西城区": [3270.40, 129.80, 51, 251957, 78831],
-        "丰台区": [1169.9, 232.4, 306, 50340, 35245],
-        "海淀区": [4613.50, 369.4, 431, 124892, 53347],
-        "石景山区": [430.2, 65.2, 84, 65982, 32827],
-        "门头沟区": [144.5, 30.8, 1451, 46916, 22077],
-        "顺义区": [1440.9, 102.0, 1020, 141265, 22821],
-        "通州区": [594.5, 137.8, 906, 43142, 24825],
-        "朝阳区": [4640.2, 395.5, 455, 117325, 44608],
-        "大兴区": [1591.6, 156.2, 1026, 101895, 25370],
-        "昌平区": [657.3, 196.3, 1344, 33484, 21831],
-        "平谷区": [196.2, 42.3, 950, 46383, 13965],
-        "怀柔区": [234.2, 38.4, 2123, 60990, 19665],
-        "延庆区": [107.35, 31.4, 1994, 34188, 16754],
-        "房山区": [554.7, 104.6, 1990, 53031, 15784],
-        "密云区": [226.7, 47.9, 2229, 47328, 15475]
+        "东城区": [1857.8, 90.5, 42, 205282, 90807],
+        "西城区": [3270.40, 129.80, 51, 251957, 107297],
+        "丰台区": [1169.9, 232.4, 306, 50340, 50576],
+        "海淀区": [4613.50, 369.4, 431, 124892, 75902],
+        "石景山区": [430.2, 65.2, 84, 65982, 48387],
+        "门头沟区": [144.5, 30.8, 1451, 46916, 34046],
+        "顺义区": [1440.9, 102.0, 1020, 141265, 33008],
+        "通州区": [594.5, 137.8, 906, 43142, 39507],
+        "朝阳区": [4640.2, 395.5, 455, 117325, 62235],
+        "大兴区": [1591.6, 156.2, 1026, 101895, 36091],
+        "昌平区": [657.3, 196.3, 1344, 33484, 30583],
+        "平谷区": [196.2, 42.3, 950, 46383, 17873],
+        "怀柔区": [234.2, 38.4, 2123, 60990, 23268],
+        "延庆区": [107.35, 31.4, 1994, 34188, 20894],
+        "房山区": [554.7, 104.6, 1990, 53031, 21976],
+        "密云区": [226.7, 47.9, 2229, 47328, 20437]
     },
     'tj': {
         "蓟州区": [409.00, 90.71, 1593.0, 45089.0, 8200],
@@ -379,7 +535,7 @@ let smecAve = {
     }
 }
 
-let getRealProp = function(prop) {
+let getRealProp = function (prop) {
     let arr = {
         'pp': 'pp',
         'pd': 'ap',
