@@ -134,6 +134,7 @@ const userpanel = new Vue({
                 //console.log("etype:" +  JSON.stringify(drawprop))
 
                 // 添加 loading 效果 & 移动地图
+                changeLoadState(`dimmer${i}`, true);
                 maps[i].panTo(regionRecords[city]['center']);
 
                 // 根据用户所选 metric 类型进行相应数据提取操作
@@ -196,9 +197,9 @@ const userpanel = new Vue({
                         }).catch(function (err) {
                             console.error("Failed!", err);
                         });
-                        }).catch(function (err) {
+                    }).catch(function (err) {
                         console.error("Failed!", err);
-                        });
+                    });
                 } else {
                     self.sels.objs[i].slider.processStyle.background = `-webkit-repeating-linear-gradient(left, #ffffff 0%, #ff0000 100%)`;
                     self.sels.objs[i].slider.formatter = "{value}%";
@@ -734,12 +735,12 @@ const userpanel = new Vue({
                         let s = objs[index].slider1.value,
                             c = objs[index].slider2.value;
 
-                            let prop = {
-                                'city': city,
-                                'boundary': true
-                            };
-                            map.ClusterboundaryDrawing(res, prop);
-                            map.flowerDrawing(res, city)
+                        let prop = {
+                            'city': city,
+                            'boundary': true
+                        };
+                        map.ClusterboundaryDrawing(res, prop);
+                        map.flowerDrawing(res, city)
                     }).catch(function (err) {
                         console.error("Failed!", err);
                     });
@@ -783,7 +784,7 @@ const userpanel = new Vue({
                     map.modelDrawing(); //蒙版
 
                     getSMecDatasets(city).then(function (res) {
-                            map.smecDrawing(res, city);
+                        map.smecDrawing(res, city);
                     }).catch(function (err) {
                         console.error("Failed!", err);
                     });
