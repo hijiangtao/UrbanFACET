@@ -7,7 +7,9 @@
 
 'use strict'
 import * as d3 from 'd3'
-import { getRealProp } from './init'
+import {
+    getRealProp
+} from './init'
 
 class chart {
     constructor(id) {
@@ -32,11 +34,16 @@ class chart {
         let svg = container.append("svg")
             .attr('width', cWidth)
             .attr('height', cHeight),
-            margin = { top: 10, right: 5, bottom: 30, left: 25 },
+            margin = {
+                top: 10,
+                right: 5,
+                bottom: 30,
+                left: 25
+            },
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
 
-        let bisectDate = d3.bisector(function(d) {
+        let bisectDate = d3.bisector(function (d) {
                 return d.k;
             }).left,
             x = d3.scaleLinear().range([0, width]),
@@ -44,29 +51,29 @@ class chart {
 
         let line = d3.line()
             .curve(d3.curveNatural) // .interpolate("monotone")
-            .x(function(d) {
+            .x(function (d) {
                 return x(d.k);
             })
-            .y(function(d) {
+            .y(function (d) {
                 return y(d.v);
             });
 
         let g = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        x.domain(d3.extent(data, function(d) {
+        x.domain(d3.extent(data, function (d) {
             return d.k;
         }));
-        y.domain([d3.min(data, function(d) {
+        y.domain([d3.min(data, function (d) {
             return d.v;
-        }) / 1.005, d3.max(data, function(d) {
+        }) / 1.005, d3.max(data, function (d) {
             return d.v;
         }) * 1.005]);
 
         g.append("g")
             .attr("class", "axis axis--x")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x).tickFormat(function(d) {
+            .call(d3.axisBottom(x).tickFormat(function (d) {
                 return `${d}%`;
             }))
             .append("text")
@@ -80,7 +87,7 @@ class chart {
 
         g.append("g")
             .attr("class", "axis axis--y")
-            .call(d3.axisLeft(y).ticks(6).tickFormat(function(d) {
+            .call(d3.axisLeft(y).ticks(6).tickFormat(function (d) {
                 return parseInt(d / 1000) + "K";
             }))
             .append("text")
@@ -99,14 +106,14 @@ class chart {
 
         let tooltip = d3.select('#cTipContainer');
         if (tooltip.empty()) {
-            tooltip = d3.select("body").append("div").attr("id","cTipContainer")
-            .style('display', 'none')
-            .style('background-color', 'white')
-            .style('border', '2px solid rgba(250,150,30,1)')
-            .style('padding', '4px')
-            .style('border-radius', '5px')
-            .style('position', 'absolute')
-            .attr("class", "toolTip");
+            tooltip = d3.select("body").append("div").attr("id", "cTipContainer")
+                .style('display', 'none')
+                .style('background-color', 'white')
+                .style('border', '2px solid rgba(250,150,30,1)')
+                .style('padding', '4px')
+                .style('border-radius', '5px')
+                .style('position', 'absolute')
+                .attr("class", "toolTip");
         }
 
         let focus = g.append("g")
@@ -135,8 +142,10 @@ class chart {
             .attr("class", "overlay")
             .attr("width", width)
             .attr("height", height)
-            .on("mouseover", function() { focus.style("display", null); })
-            .on("mouseout", function() {
+            .on("mouseover", function () {
+                focus.style("display", null);
+            })
+            .on("mouseout", function () {
                 focus.style("display", "none");
                 tooltip.style("display", 'none');
             })
@@ -152,9 +161,9 @@ class chart {
 
             tooltip
                 .style("left", d3.event.pageX - 50 + "px")
-                    .style("top", d3.event.pageY - 40 + "px")
-                    .style("display", "inline-block")
-                    .html(`${prop['xname']}: ${d.k}%, Count: ${d.v}`);
+                .style("top", d3.event.pageY - 40 + "px")
+                .style("display", "inline-block")
+                .html(`${prop['xname']}: ${d.k}%, Count: ${d.v}`);
             focus.select(".x-hover-line").attr("y2", height - y(d.v));
             focus.select(".y-hover-line").attr("x2", -x(d.k));
         }
@@ -181,20 +190,25 @@ class chart {
         let svg = container.append("svg")
             .attr('width', cWidth)
             .attr('height', cHeight),
-            margin = { top: 5, right: 5, bottom: 55, left: 30 },
+            margin = {
+                top: 5,
+                right: 5,
+                bottom: 55,
+                left: 30
+            },
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
 
         let tooltip = d3.select('#cTipContainer');
         if (tooltip.empty()) {
-            tooltip = d3.select("body").append("div").attr("id","cTipContainer")
-            .style('display', 'none')
-            .style('background-color', 'white')
-            .style('border', '2px solid rgba(250,150,30,1)')
-            .style('padding', '4px')
-            .style('border-radius', '5px')
-            .style('position', 'absolute')
-            .attr("class", "toolTip");
+            tooltip = d3.select("body").append("div").attr("id", "cTipContainer")
+                .style('display', 'none')
+                .style('background-color', 'white')
+                .style('border', '2px solid rgba(250,150,30,1)')
+                .style('padding', '4px')
+                .style('border-radius', '5px')
+                .style('position', 'absolute')
+                .attr("class", "toolTip");
         }
 
         let x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
@@ -203,20 +217,22 @@ class chart {
         let g = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        x.domain(data.map(function(d) {
-                return d[xprop]; }));
-        y.domain([0, d3.max(data, function(d) {
-            return d[yprop]; })]);
+        x.domain(data.map(function (d) {
+            return d[xprop];
+        }));
+        y.domain([0, d3.max(data, function (d) {
+            return d[yprop];
+        })]);
 
         g.append("g")
             .attr("class", "axis axis--x")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x))
-            .selectAll("text")  
+            .selectAll("text")
             .style("text-anchor", "end")
-            .attr("transform", function(d) {
-                return "rotate(-40)" 
-                });
+            .attr("transform", function (d) {
+                return "rotate(-40)"
+            });
         g.select('.axis.axis--x').append("text")
             .attr("class", "axis-title")
             .attr("y", -16)
@@ -228,7 +244,7 @@ class chart {
 
         g.append("g")
             .attr("class", "axis axis--y")
-            .call(d3.axisLeft(y).ticks(5).tickFormat(function(d) {
+            .call(d3.axisLeft(y).ticks(5).tickFormat(function (d) {
                 if (yprop === 'd') {
                     return Number.parseInt(d / 1000000) + "M";
                 } else {
@@ -247,22 +263,27 @@ class chart {
             .data(data)
             .enter().append("rect")
             .attr('class', 'redrect')
-            .attr("x", function(d) {
-                return x(d[xprop]); })
-            .attr("y", function(d) {
-                return y(d[yprop]); })
+            .attr("x", function (d) {
+                return x(d[xprop]);
+            })
+            .attr("y", function (d) {
+                return y(d[yprop]);
+            })
             .attr("width", x.bandwidth())
-            .attr("height", function(d) {
-                return height - y(d[yprop]); })
+            .attr("height", function (d) {
+                return height - y(d[yprop]);
+            })
             .attr("fill", 'rgba(250,150,30,1)')
-            .on("mousemove", function(d) {
+            .on("mousemove", function (d) {
                 tooltip
                     .style("left", d3.event.pageX - 50 + "px")
                     .style("top", d3.event.pageY - 70 + "px")
                     .style("display", "inline-block")
                     .html((d[xprop]) + "<br>" + xname + ": " + d[yprop]);
             })
-            .on("mouseout", function(d) { tooltip.style("display", "none"); });
+            .on("mouseout", function (d) {
+                tooltip.style("display", "none");
+            });
     }
 
     /**
@@ -288,20 +309,25 @@ class chart {
         let svg = container.append("svg")
             .attr('width', cWidth)
             .attr('height', cHeight),
-            margin = { top: 10, right: 5, bottom: 60, left: 30 },
+            margin = {
+                top: 10,
+                right: 5,
+                bottom: 60,
+                left: 30
+            },
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
 
         let tooltip = d3.select('#cTipContainer');
         if (tooltip.empty()) {
-            tooltip = d3.select("body").append("div").attr("id","cTipContainer")
-            .style('display', 'none')
-            .style('background-color', 'white')
-            .style('border', '2px solid rgba(250,150,30,1)')
-            .style('padding', '4px')
-            .style('border-radius', '5px')
-            .style('position', 'absolute')
-            .attr("class", "toolTip");
+            tooltip = d3.select("body").append("div").attr("id", "cTipContainer")
+                .style('display', 'none')
+                .style('background-color', 'white')
+                .style('border', '2px solid rgba(250,150,30,1)')
+                .style('padding', '4px')
+                .style('border-radius', '5px')
+                .style('position', 'absolute')
+                .attr("class", "toolTip");
         }
 
         let x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
@@ -310,21 +336,23 @@ class chart {
         let g = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        x.domain(kdata.map(function(d) {
-                return d; }));
-        let ymax = d3.max(vdata, function(d) {
-            return d; });
+        x.domain(kdata.map(function (d) {
+            return d;
+        }));
+        let ymax = d3.max(vdata, function (d) {
+            return d;
+        });
         y.domain([0, ymax]);
 
         g.append("g")
             .attr("class", "axis axis--x")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x))
-            .selectAll("text")  
+            .selectAll("text")
             .style("text-anchor", "end")
-            .attr("transform", function(d) {
-                return "rotate(-40)" 
-                });
+            .attr("transform", function (d) {
+                return "rotate(-40)"
+            });
         g.select('.axis.axis--x').append("text")
             .attr("class", "axis-title")
             .attr("y", -16)
@@ -336,7 +364,7 @@ class chart {
 
         g.append("g")
             .attr("class", "axis axis--y")
-            .call(d3.axisLeft(y).ticks(5).tickFormat(function(d) {
+            .call(d3.axisLeft(y).ticks(5).tickFormat(function (d) {
                 return Number.parseInt(d * 100 / ymax) + "%";
             }).tickSizeInner([-width]))
             .append("text")
@@ -351,22 +379,27 @@ class chart {
             .data(vdata)
             .enter().append("rect")
             .attr('class', 'redrect')
-            .attr("x", function(d, i) {
-                return x( kdata[i] ); })
-            .attr("y", function(d) {
-                return y( d ); })
+            .attr("x", function (d, i) {
+                return x(kdata[i]);
+            })
+            .attr("y", function (d) {
+                return y(d);
+            })
             .attr("width", x.bandwidth())
-            .attr("height", function(d) {
-                return height - y(d); })
+            .attr("height", function (d) {
+                return height - y(d);
+            })
             .attr("fill", 'rgba(250,150,30,1)')
-            .on("mousemove", function(d, i) {
+            .on("mousemove", function (d, i) {
                 tooltip
                     .style("left", d3.event.pageX - 50 + "px")
                     .style("top", d3.event.pageY - 70 + "px")
                     .style("display", "inline-block")
                     .html(kdata[i] + " POI<br>" + yname + ": " + d.toFixed(1));
             })
-            .on("mouseout", function(d) { tooltip.style("display", "none"); });
+            .on("mouseout", function (d) {
+                tooltip.style("display", "none");
+            });
     }
 }
 
