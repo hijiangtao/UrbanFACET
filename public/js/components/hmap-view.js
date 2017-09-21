@@ -1194,7 +1194,8 @@ class mapview {
         let gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,255,0)', 'rgb(255,0,0)'];
 
         if (prop['prop']['rev']) {
-            gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,0,0)', 'rgb(255,255,0)'];
+            gradients = ['rgba(255,0,0,1)', 'rgba(255,255,255,0)', 'rgb(255,0,0)', 'rgb(255,255,0)'],
+            cfg.gradient[0] = 'rgba(255,0,0,1)';
         }
         if(minVal === maxVal){
                 cfg.gradient[oneqVal.toString()] = gradients[3];

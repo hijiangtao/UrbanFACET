@@ -218,9 +218,10 @@ let home = {
                 },
             		data: [
             			"50",
+            			"75",
             			"100",
-            			"200",
-            			"400"
+            			"150",
+                        "200"
             		],
                 piecewiseStyle: {
                     "backgroundColor": "orange",
