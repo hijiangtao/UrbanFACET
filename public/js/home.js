@@ -341,14 +341,19 @@ const userpanel = new Vue({
 
             console.log('v', v);
             // 改变背景色
-            if ((this.sels.objs[i].slider.bgStyle.background).indexOf("yellow") > 0){
+            if ((this.sels.objs[i].slider.bgStyle.background).indexOf("yellow") > 0) {
                 this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, yellow ${v[1]}%, yellow 100%)`;
-            } else{
+            } else {
                 this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
             }
 
+<<<<<<< HEAD
             console.log('lalalalalalalalala: ' + JSON.stringify(this.sels.objs[i].slider.bgStyle.background)) 
             
+=======
+            console.log('lallallaallala: ' + JSON.stringify(this.sels.objs[i].slider.bgStyle.background))
+
+>>>>>>> 44dc35c2c2221ffe48b91d7fc104a09f03165071
             // 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
             if (store.state.init) {
                 return;
@@ -478,7 +483,7 @@ const userpanel = new Vue({
             if (store.state.init) {
                 return;
             }
-            
+
             let self = this,
                 objs = self.sels.objs;
 
@@ -501,11 +506,15 @@ const userpanel = new Vue({
                 console.error("Failed!", err);
             });
 
+<<<<<<< HEAD
             getSMecDatasets(city).then(function (res) {
                 map[i].smecDrawing(res, city);
             }).catch(function (err) {
                 console.error("Failed!", err);
             });
+=======
+
+>>>>>>> 44dc35c2c2221ffe48b91d7fc104a09f03165071
 
         },
         /**
@@ -672,10 +681,10 @@ const userpanel = new Vue({
                 v = obj.slider.value;
 
             //this.sels.objs[i].slider.bgStyle.background = '-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)';
-            this.sels.objs[i].slider.formatter= function(value){
-                        //console.log("value" + (value + 1))
-                        return  (100-(100/Math.log(101) * Math.log(101-value))).toFixed(2) + "%"
-                };
+            this.sels.objs[i].slider.formatter = function (value) {
+                //console.log("value" + (value + 1))
+                return (100 - (100 / Math.log(101) * Math.log(101 - value))).toFixed(2) + "%"
+            };
 
             let city = obj.city,
                 etype = obj.etype,
@@ -818,7 +827,38 @@ const userpanel = new Vue({
                                 'city': city,
                                 'etype': etype,
                                 'boundary': true,
-                                'slider': svals
+                                'slider': svals,
+                                'revColor': false
+                            };
+
+                            maps[i].boundaryDrawing(res, prop);
+                        }
+
+
+                    }).catch(function (err) {
+                        console.error("Failed!", err);
+                    });
+                }
+
+                // District Extra
+                if (val === 'de') {
+                    getBoundaryDatasets(objs[0].city).then(function (res) {
+                        for (let i = objs.length - 1; i >= 0; i--) {
+                            let city = objs[i].city,
+                                etype = objs[i].etype,
+                                svals = objs[i].slider.value;
+
+                            console.log("etype: " + etype)
+                            console.log("svals: " + svals)
+
+                            changeLoadState(`dimmer${i}`, false);
+
+                            let prop = {
+                                'city': city,
+                                'etype': etype,
+                                'boundary': true,
+                                'slider': svals,
+                                'revColor': true
                             };
 
                             maps[i].boundaryDrawing(res, prop);

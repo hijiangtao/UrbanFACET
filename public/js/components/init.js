@@ -11,19 +11,38 @@ const settings = {
     // 'whiteToRed': '-webkit-gradient(linear, 0 0, 100% 0, from(white), to(red))'
     // 与实际设置不同,因为有遮挡所以微调过
     //'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#0000ff 25%,#00ff00 45%,#ffff00 70%,#ff0000 100%)' //白、蓝、绿、黄、红滑动条
-		//'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#00ff00 30%,#ffff00 55%,#ff0000 100%)'//白、绿、黄、红滑动条
-        'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%, #ffff00 40%,#ff0000 100%)'//白黄红滑动条
+    //'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%,#00ff00 30%,#ffff00 55%,#ff0000 100%)'//白、绿、黄、红滑动条
+    'whiteToRed': '-webkit-linear-gradient(left, #ffffff 0%, #ffff00 40%,#ff0000 100%)' //白黄红滑动条
 }
 
 /**
  * 储存四个城市图标及属性信息
  * @type {Array}
  */
-const regions = [
-    { 'name': 'Beijing', 'val': 'bj', 'aurl': '/assets/bj-aicon.png', 'nurl': '/assets/bj-icon.png' },
-    { 'name': 'Tianjin', 'val': 'tj', 'aurl': '/assets/tj-aicon.png', 'nurl': '/assets/tj-icon.png' },
-    { 'name': 'Zhangjiakou', 'val': 'zjk', 'aurl': '/assets/zjk-aicon.png', 'nurl': '/assets/zjk-icon.png' },
-    { 'name': 'Tangshan', 'val': 'ts', 'aurl': '/assets/ts-aicon.png', 'nurl': '/assets/ts-icon.png' }
+const regions = [{
+        'name': 'Beijing',
+        'val': 'bj',
+        'aurl': '/assets/bj-aicon.png',
+        'nurl': '/assets/bj-icon.png'
+    },
+    {
+        'name': 'Tianjin',
+        'val': 'tj',
+        'aurl': '/assets/tj-aicon.png',
+        'nurl': '/assets/tj-icon.png'
+    },
+    {
+        'name': 'Zhangjiakou',
+        'val': 'zjk',
+        'aurl': '/assets/zjk-aicon.png',
+        'nurl': '/assets/zjk-icon.png'
+    },
+    {
+        'name': 'Tangshan',
+        'val': 'ts',
+        'aurl': '/assets/ts-aicon.png',
+        'nurl': '/assets/ts-icon.png'
+    }
 ]
 
 let home = {
@@ -35,60 +54,198 @@ let home = {
         /**
          * entropy types
          */
-        'etypes': [
-            { 'name': 'Fluidity', 'val': 'rd' },
-            { 'name': 'vibrAncy', 'val': 'pp' },
-            { 'name': 'Commutation', 'val': 'pd' },
-            { 'name': 'Commutation Div', 'val': 'cd' },
-            { 'name': 'divErsity', 'val': 'rp' },
-            { 'name': 'densiTy', 'val': 'de' },
-            { 'name': 'Density Div', 'val': 'dd'},
-            { 'name': 'Ave GDP', 'val': 'ag' },
-            { 'name': 'Population', 'val': 'po' },
-            { 'name': 'House Price', 'val': 'hp' }
+        'etypes': [{
+                'name': 'Fluidity',
+                'val': 'rd'
+            },
+            {
+                'name': 'vibrAncy',
+                'val': 'pp'
+            },
+            {
+                'name': 'Commutation',
+                'val': 'pd'
+            },
+            {
+                'name': 'Commutation Div',
+                'val': 'cd'
+            },
+            {
+                'name': 'divErsity',
+                'val': 'rp'
+            },
+            {
+                'name': 'densiTy',
+                'val': 'de'
+            },
+            {
+                'name': 'Density Div',
+                'val': 'dd'
+            },
+            {
+                'name': 'Ave GDP',
+                'val': 'ag'
+            },
+            {
+                'name': 'Population',
+                'val': 'po'
+            },
+            {
+                'name': 'House Price',
+                'val': 'hp'
+            }
         ],
-        'otypes': [
-            { 'name': 'Empty', 'val': 'e' },
-            { 'name': 'POI', 'val': 'p' },
-            { 'name': 'District', 'val': 'd' },
-            { 'name': 'FACET-District', 'val': 'f' },
-            { 'name': 'FACET-Cluster', 'val': 'c' }
+        'otypes': [{
+                'name': 'Empty',
+                'val': 'e'
+            },
+            {
+                'name': 'POI',
+                'val': 'p'
+            },
+            {
+                'name': 'District',
+                'val': 'd'
+            },
+            {
+                'name': 'District-Extra',
+                'val': 'de'
+            },
+            {
+                'name': 'FACET-District',
+                'val': 'f'
+            },
+            {
+                'name': 'FACET-Cluster',
+                'val': 'c'
+            }
         ],
         /**
          * timeblock filters object
          */
-        'tpfilters': [
-            { 'name': 'Allday', 'val': '9', 'aurl': '/assets/tp9-aicon.png', 'nurl': '/assets/tp9-icon.png' },
-            { 'name': 'Morning', 'val': '0', 'aurl': '/assets/tp0-aicon.png', 'nurl': '/assets/tp0-icon.png' },
-            { 'name': 'Forenoon', 'val': '1', 'aurl': '/assets/tp1-aicon.png', 'nurl': '/assets/tp1-icon.png' },
-            { 'name': 'Noon', 'val': '2', 'aurl': '/assets/tp2-aicon.png', 'nurl': '/assets/tp2-icon.png' },
-            { 'name': 'Afternoon', 'val': '3', 'aurl': '/assets/tp3-aicon.png', 'nurl': '/assets/tp3-icon.png' },
-            { 'name': 'Evening', 'val': '4', 'aurl': '/assets/tp4-aicon.png', 'nurl': '/assets/tp4-icon.png' },
-            { 'name': 'Night', 'val': '5', 'aurl': '/assets/tp5-aicon.png', 'nurl': '/assets/tp5-icon.png' }
+        'tpfilters': [{
+                'name': 'Allday',
+                'val': '9',
+                'aurl': '/assets/tp9-aicon.png',
+                'nurl': '/assets/tp9-icon.png'
+            },
+            {
+                'name': 'Morning',
+                'val': '0',
+                'aurl': '/assets/tp0-aicon.png',
+                'nurl': '/assets/tp0-icon.png'
+            },
+            {
+                'name': 'Forenoon',
+                'val': '1',
+                'aurl': '/assets/tp1-aicon.png',
+                'nurl': '/assets/tp1-icon.png'
+            },
+            {
+                'name': 'Noon',
+                'val': '2',
+                'aurl': '/assets/tp2-aicon.png',
+                'nurl': '/assets/tp2-icon.png'
+            },
+            {
+                'name': 'Afternoon',
+                'val': '3',
+                'aurl': '/assets/tp3-aicon.png',
+                'nurl': '/assets/tp3-icon.png'
+            },
+            {
+                'name': 'Evening',
+                'val': '4',
+                'aurl': '/assets/tp4-aicon.png',
+                'nurl': '/assets/tp4-icon.png'
+            },
+            {
+                'name': 'Night',
+                'val': '5',
+                'aurl': '/assets/tp5-aicon.png',
+                'nurl': '/assets/tp5-icon.png'
+            }
         ],
-        'tpfilters2': [
-            { 'name': 'Allday', 'val': '10', 'aurl': '/assets/tp10-aicon.png', 'nurl': '/assets/tp10-icon.png' },
-            { 'name': 'Weekday', 'val': '7', 'aurl': '/assets/tp7-aicon.png', 'nurl': '/assets/tp7-icon.png' },
-            { 'name': 'Weekend', 'val': '8', 'aurl': '/assets/tp8-aicon.png', 'nurl': '/assets/tp8-icon.png' }
+        'tpfilters2': [{
+                'name': 'Allday',
+                'val': '10',
+                'aurl': '/assets/tp10-aicon.png',
+                'nurl': '/assets/tp10-icon.png'
+            },
+            {
+                'name': 'Weekday',
+                'val': '7',
+                'aurl': '/assets/tp7-aicon.png',
+                'nurl': '/assets/tp7-icon.png'
+            },
+            {
+                'name': 'Weekend',
+                'val': '8',
+                'aurl': '/assets/tp8-aicon.png',
+                'nurl': '/assets/tp8-icon.png'
+            }
         ],
-        'pois': [
-            { 'name': 'All', 'val': 0 },
-            { 'name': 'Food&Supply', 'val': 1 },
-            { 'name': 'Entertainment&Leisure', 'val': 2 },
-            { 'name': 'Education', 'val': 3 },
-            { 'name': 'Transportation', 'val': 4 },
-            { 'name': 'Healthcare&Emergency', 'val': 5 },
-            { 'name': 'Financial&Bank', 'val': 6 },
-            { 'name': 'Accommodation', 'val': 7 },
-            { 'name': 'Office&Commercial', 'val': 8 },
-            { 'name': 'Natural Landscape', 'val': 9 },
-            { 'name': 'Factory&Manufacturer', 'val': 10 }
+        'pois': [{
+                'name': 'All',
+                'val': 0
+            },
+            {
+                'name': 'Food&Supply',
+                'val': 1
+            },
+            {
+                'name': 'Entertainment&Leisure',
+                'val': 2
+            },
+            {
+                'name': 'Education',
+                'val': 3
+            },
+            {
+                'name': 'Transportation',
+                'val': 4
+            },
+            {
+                'name': 'Healthcare&Emergency',
+                'val': 5
+            },
+            {
+                'name': 'Financial&Bank',
+                'val': 6
+            },
+            {
+                'name': 'Accommodation',
+                'val': 7
+            },
+            {
+                'name': 'Office&Commercial',
+                'val': 8
+            },
+            {
+                'name': 'Natural Landscape',
+                'val': 9
+            },
+            {
+                'name': 'Factory&Manufacturer',
+                'val': 10
+            }
         ],
-        'scales': [
-            { 'name': 'City', 'val': 0 },
-            { 'name': 'Division', 'val': 1 },
-            { 'name': 'Region', 'val': 2 },
-            { 'name': 'Street', 'val': 3 }
+        'scales': [{
+                'name': 'City',
+                'val': 0
+            },
+            {
+                'name': 'Division',
+                'val': 1
+            },
+            {
+                'name': 'Region',
+                'val': 2
+            },
+            {
+                'name': 'Street',
+                'val': 3
+            }
         ]
     },
     /**
@@ -123,13 +280,13 @@ let home = {
                 // width: 140,
                 tooltip: 'hover',
                 value: [0, 100],
-                dotSize:13,
+                dotSize: 13,
                 min: 0,
                 max: 100,
                 clickable: false,
-                formatter: function(value){
-                	//console.log("value" + (value + 1))
-                	return  (100/Math.log(101) * Math.log(value + 1)).toFixed(2) + "%"
+                formatter: function (value) {
+                    //console.log("value" + (value + 1))
+                    return (100 / Math.log(101) * Math.log(value + 1)).toFixed(2) + "%"
                 },
                 interval: 0.5,
                 tooltipStyle: {
@@ -166,20 +323,20 @@ let home = {
             'slider3': {
                 tooltip: 'hover',
                 value: '2',
-                dotSize:13,
+                dotSize: 13,
                 piecewise: true,
                 piecewiseLabel: true,
                 clickable: false,
                 style: {
-                		"marginLeft": "0%"
+                    "marginLeft": "0%"
                 },
-            		data: [
-            			"2",
-            			"3",
-            			"4",
-            			"5",
-                     "6"
-            		],
+                data: [
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6"
+                ],
                 piecewiseStyle: {
                     "backgroundColor": "orange",
                     "visibility": "visible",
@@ -192,10 +349,10 @@ let home = {
                     "opacity": 0.6
                 },
                 piecewiseActiveStyle: {
-                		"backgroundColor": "orange"
+                    "backgroundColor": "orange"
                 },
                 labelActiveStyle: {
-                		"color": "orange"
+                    "color": "orange"
                 },
                 processStyle: {
                     'background': "orange"
@@ -205,22 +362,22 @@ let home = {
                 // width: 140,
                 tooltip: 'hover',
                 value: '20',
-                dotSize:13,
+                dotSize: 13,
                 piecewise: true,
                 piecewiseLabel: true,
                 clickable: false,
                 style: {
-                		"marginLeft": "0%"
+                    "marginLeft": "0%"
                 },
-            		data: [
-            			"10",
-            			"20",
-            			"30",
-            			"40",
-            			"50"
-            		],
-            		formatter: function(value){
-                		return  value + "%"
+                data: [
+                    "10",
+                    "20",
+                    "30",
+                    "40",
+                    "50"
+                ],
+                formatter: function (value) {
+                    return value + "%"
                 },
                 piecewiseStyle: {
                     "backgroundColor": "orange",
@@ -234,10 +391,10 @@ let home = {
                     "opacity": 0.6
                 },
                 piecewiseActiveStyle: {
-                		"backgroundColor": "orange"
+                    "backgroundColor": "orange"
                 },
                 labelActiveStyle: {
-                		"color": "orange"
+                    "color": "orange"
                 },
                 processStyle: {
                     'background': "orange"
@@ -247,20 +404,20 @@ let home = {
                 // width: 140,
                 tooltip: 'hover',
                 value: '100',
-                dotSize:13,
+                dotSize: 13,
                 piecewise: true,
                 piecewiseLabel: true,
                 clickable: false,
                 style: {
-                		"marginLeft": "0%"
+                    "marginLeft": "0%"
                 },
-            		data: [
-            			"50",
-            			"75",
-            			"100",
-            			"150",
-                        "200"
-            		],
+                data: [
+                    "50",
+                    "75",
+                    "100",
+                    "150",
+                    "200"
+                ],
                 piecewiseStyle: {
                     "backgroundColor": "orange",
                     "visibility": "visible",
@@ -273,10 +430,10 @@ let home = {
                     "opacity": 0.6
                 },
                 piecewiseActiveStyle: {
-                		"backgroundColor": "orange"
+                    "backgroundColor": "orange"
                 },
                 labelActiveStyle: {
-                		"color": "orange"
+                    "color": "orange"
                 },
                 processStyle: {
                     'background': "orange"
@@ -305,16 +462,16 @@ let home = {
             },*/
             'data': {
                 'smec': {
-                	 "ap": 0.349552064745511,
-                     "ar": 0.349529453722475,
-                     "pp": 1.10768395047002,
-                     "pr": 1.13533312941438,
-                     "c": [116.3907, 39.9120],
-                     "d": 512286.68,
-                     "s": 16412,
-                     "ad": 8407648917,
-                     "name": "Beijing",
-                     "disnum": 16
+                    "ap": 0.349552064745511,
+                    "ar": 0.349529453722475,
+                    "pp": 1.10768395047002,
+                    "pr": 1.13533312941438,
+                    "c": [116.3907, 39.9120],
+                    "d": 512286.68,
+                    "s": 16412,
+                    "ad": 8407648917,
+                    "name": "Beijing",
+                    "disnum": 16
                 }
             }
         }],
@@ -346,7 +503,7 @@ let home = {
             processStyle: {
                 'background': settings['whiteToRed']
             }
-        },      
+        },
         'hrSlider': {
             width: "auto",
             tooltip: 'hover',
@@ -391,10 +548,22 @@ let home = {
         'pois': ['All', 'Food&Supply', 'Entertainment&Leisure', 'Education', 'Transportation', 'Healthcare&Emergency', 'Financial&Bank', 'Accommodation', 'Office&Commercial', 'Natural Landscape', 'Factory&Manufacturer'],
         'scales': ['City', 'Division', 'Region', 'Street'],
         'cimgs': {
-            'bj': { 'aurl': '/assets/bj-aicon.png', 'nurl': '/assets/bj-icon.png' },
-            'tj': { 'aurl': '/assets/tj-aicon.png', 'nurl': '/assets/tj-icon.png' },
-            'zjk': { 'aurl': '/assets/zjk-aicon.png', 'nurl': '/assets/zjk-icon.png' },
-            'ts': { 'aurl': '/assets/ts-aicon.png', 'nurl': '/assets/ts-icon.png' }
+            'bj': {
+                'aurl': '/assets/bj-aicon.png',
+                'nurl': '/assets/bj-icon.png'
+            },
+            'tj': {
+                'aurl': '/assets/tj-aicon.png',
+                'nurl': '/assets/tj-icon.png'
+            },
+            'zjk': {
+                'aurl': '/assets/zjk-aicon.png',
+                'nurl': '/assets/zjk-icon.png'
+            },
+            'ts': {
+                'aurl': '/assets/ts-aicon.png',
+                'nurl': '/assets/ts-icon.png'
+            }
         }
     }
 };
@@ -422,7 +591,7 @@ const stats = {
         "东城区": [1857.8, 90.5, 42, 205282, 90807, 3932365.05, 0.5098208237393245],
         "西城区": [3270.40, 129.80, 51, 251957, 107297, 3874272.94, 0.4917419805387299],
         "丰台区": [1169.9, 232.4, 306, 50340, 50576, 1123416.75, 0.3934156081076796],
-        "海淀区": [4613.50, 369.4, 431, 124892, 75902,1185430.84, 0.3624047931886339],
+        "海淀区": [4613.50, 369.4, 431, 124892, 75902, 1185430.84, 0.3624047931886339],
         "石景山区": [430.2, 65.2, 84, 65982, 48387, 1016305.02, 0.4030370121039125],
         "门头沟区": [144.5, 30.8, 1451, 46916, 34046, 25512.87, 0.3587561231269324],
         "顺义区": [1440.9, 102.0, 1020, 141265, 33008, 135184.43, 0.276135817710448],
@@ -452,7 +621,7 @@ const stats = {
         "宝坻区": [630.0, 90.04, 1523.0, 69969.0, 6779, 50536.30, 0.13490554453590484],
         "东丽区": [905.56, 71.70, 460.0, 126298.0, 10095, 495526.99, 0.3379284717356014],
         "滨海新区": [9270.31, 297.01, 2270.0, 312121.0, 9693, 215569.95, 0.1299322293952447],
-        "红桥区": [196.0, 58.76, 21.0, 33356.0, 15717,4536264.14, 0.48317721876762026]
+        "红桥区": [196.0, 58.76, 21.0, 33356.0, 15717, 4536264.14, 0.48317721876762026]
     },
     'ts': {
         "古冶区": [],
@@ -585,7 +754,7 @@ let smecAve = {
     }
 }
 
-let getRealProp = function(prop) {
+let getRealProp = function (prop) {
     let arr = {
         'pp': 'pp',
         'pd': 'ap',
