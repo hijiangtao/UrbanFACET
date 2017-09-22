@@ -29,16 +29,38 @@ let getDrawProps = function(res, sels, ctrsets, props) {
 			maxfeature = res.features[0];
 		}
 		else{
+			//(100-(100/Math.log(101) * Math.log(101-value))).toFixed(2) + "%"
+			//(100/Math.log(101) * Math.log(value + 1)).toFixed(2) + "%"
 			minfeature = res.features[res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[1])+1)/100)],
 			maxfeature = res.features[res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[1])+1)/100)];
+
+			if(props['rev']){
+				minfeature = res.features[res.features.length - Math.floor( res.features.length *  (100 - 100/Math.log(101) * Math.log(101 - parseFloat(sels[1])))/100)],
+				maxfeature = res.features[res.features.length - Math.floor( res.features.length *  (100 - 100/Math.log(101) * Math.log(101 - parseFloat(sels[1])))/100)];
+			}
 		}
 	}
 	else{
 		//let  minfeature = res.features[res.features.length - Math.floor(res.features.length * parseFloat(sels[0]) / 100) - 1],
 		//	maxfeature = res.features[res.features.length - Math.floor(res.features.length * parseFloat(sels[1]) / 100) ],
+	
 		minfeature = res.features[res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[0])+1)/100)- 1],
 		maxfeature = res.features[res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[1])+1)/100)];
+
+		console.log("revvvvvvvvvvv======= " + JSON.stringify(props['rev']))
+
+		if(props['rev']){
+			console.log('enterrrrrrrrrrrrrrrrrrr')
+
+
+			minfeature = res.features[res.features.length - Math.floor( res.features.length *  (100 - 100/Math.log(101) * Math.log(101 - parseFloat(sels[0])))/100) - 1],
+			console.log("sels:       " + JSON.stringify(minfeature))
+			maxfeature = res.features[res.features.length - Math.floor( res.features.length *  (100 - 100/Math.log(101) * Math.log(101 - parseFloat(sels[1])))/100)];
+		}
 	}
+
+	console.log('minnnnnnnnnnnnnn: ' + JSON.stringify(minfeature))
+
 	let	min = minfeature['prop']['v'],
 		max = maxfeature['prop']['v'],
 		//escales = res['prop']['scales']['e'],
