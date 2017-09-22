@@ -74,6 +74,8 @@ let apis = {
 	'DistrictClusterQuery': function(req, res, next) {
 		let params = req.query,
 			data = EP.getDistrictClusterDatasets(params);
+
+		console.log("this is first step")
 		
 		res.json({
 			'scode': 1,

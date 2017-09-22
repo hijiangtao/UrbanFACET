@@ -472,7 +472,7 @@ function getClusterBoundaryUpdate(prop) {
     return data;
 }
 
-function getClusterBoundaryUpdate(prop) {
+function getDistrictClusterDatasets(prop) {
 	let city = prop['city'],
 		k = prop['k'];
 	
@@ -643,6 +643,7 @@ module.exports = {
     getBoundary: getBoundary,
     getClusterBoundary: getClusterBoundary,
     getClusterBoundaryUpdate: getClusterBoundaryUpdate,
+    getDistrictClusterDatasets: getDistrictClusterDatasets,
     getAoiNum: getAoiNum,
     getAoiDetails: getAoiDetails,
     getMecStat: getMecStat,
