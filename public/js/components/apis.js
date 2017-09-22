@@ -264,7 +264,6 @@ let getClusterboundaryDatasetsUpdate = function(city, s, c){
 let getDistrictClusterDatasets = function(city, k){
 	let p = new Promise(function(resolve, reject) {
 		$.get(`/comp/DistrictClusterQuery?city=${city}&k=${k}`, function(res, err) {
-			console.log("this is second step")
 			if (res['scode']) {
 				resolve(res['data']);
 			} else {
