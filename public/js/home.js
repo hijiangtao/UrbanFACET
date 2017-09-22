@@ -347,13 +347,8 @@ const userpanel = new Vue({
                 this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
             }
 
-<<<<<<< HEAD
             console.log('lalalalalalalalala: ' + JSON.stringify(this.sels.objs[i].slider.bgStyle.background)) 
             
-=======
-            console.log('lallallaallala: ' + JSON.stringify(this.sels.objs[i].slider.bgStyle.background))
-
->>>>>>> 44dc35c2c2221ffe48b91d7fc104a09f03165071
             // 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
             if (store.state.init) {
                 return;
@@ -506,15 +501,11 @@ const userpanel = new Vue({
                 console.error("Failed!", err);
             });
 
-<<<<<<< HEAD
             getSMecDatasets(city).then(function (res) {
                 map[i].smecDrawing(res, city);
             }).catch(function (err) {
                 console.error("Failed!", err);
             });
-=======
-
->>>>>>> 44dc35c2c2221ffe48b91d7fc104a09f03165071
 
         },
         /**

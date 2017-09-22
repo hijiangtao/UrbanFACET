@@ -843,6 +843,117 @@ class mapview {
             this.stream.point(point.x, point.y);
         }
     }
+    
+    DistrictClusterDrawing(data, prop, update = false) {
+        let self = this,
+            city = prop['city'],
+            onlyBound = prop['boundary'],
+            statsdata = stats[city],
+            numid = self.ides.mapid.slice(-1),
+            svgid = `boundSVG${self.ides.mapid}`,
+            aoiid = `aoiCanvas${self.ides.mapid}`;
+
+        this.switchLegDisplay('cltsld');
+
+        if (!update) {
+            console.log("first")
+            this.setClusterBoundData(data);
+        } else {
+            console.log("second")
+            data = this.getClusterBoundData();
+        }
+
+        //console.log("data:" + JSON.stringify(data))
+        d3.select(`#${svgid}`).remove();
+        d3.select(`#${aoiid}`).remove();
+
+        let //color = d3.scaleLinear().domain([0, 14])
+            //.range([ "rgba(255,255,255,0.9)", "rgba(255, 165, 0, 0.9)"]),
+            color = ["rgba(255,0,0,0.5)", "rgba(255,69,0,0.5)", "rgba(160,32,240,0.5)", "rgba(255,215,0,0.5)", "rgba(255,255,0,0.5)",
+                "rgba(154,205,50,0.5)", "rgba(173,255,47,0.5)", "rgba(0,255,0,0.5)", "rgba(139,69,19,0.5)", "rgba(127,255,212,0.5)",
+                "rgba(0,206,209,0.5)", "rgba(0,191,255,0.5)", "rgba(30,144,255,0.5)", "rgba(255,165,0,0.5)", "rgba(255,20,147,0.5)"
+            ],
+            svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', svgid).style("z-index", 998),
+            g = svg.append("g").attr("class", "leaflet-zoom-hide");
+
+        let transform = d3.geoTransform({
+                point: projectPoint
+            }),
+            path = d3.geoPath().projection(transform);
+
+        let feature = g.selectAll("path")
+            .data(data.features)
+            .enter().append("path")
+            .attr('fill', function (d) {
+                //console.log("d: " + JSON.stringify(d.properties))
+                let num = d.properties.color;
+                //console.log("num : " + num)
+                return color[num];
+            })
+            .attr('stroke', 'gray')
+            //.style("stroke-dasharray", "4 5")
+            //.attr('fill', 'red')
+            .attr("stroke-width", 0.9);
+        
+        let text = g.selectAll('text')
+        .data(data.features)
+        .enter().append('text')
+        .style("font-family", "sans-serif")
+        .style("font-size", "1rem")
+        .attr("text-anchor", "middle")
+        .text(function (d) {
+            let name = d['properties']['english'];
+            if (name) {
+                return name
+            }
+            return d['properties']['name'];
+        })
+        .attr('x', function (d) {
+            let p = d['properties']['cp'];
+            return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).x;
+        })
+        .attr('y', function (d) {
+            let p = d['properties']['cp'];
+            console.log("cp:  " + JSON.stringify(self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y + 40))
+            return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 20;
+        });
+
+        self.map.on("viewreset", reset);
+        reset();
+
+        // Reposition the SVG to cover the features.
+        function reset() {
+            let bounds = path.bounds(data),
+                topLeft = bounds[0],
+                bottomRight = bounds[1];
+
+            svg.attr("width", bottomRight[0] - topLeft[0])
+                .attr("height", bottomRight[1] - topLeft[1])
+                .style("left", topLeft[0] + "px")
+                .style("top", topLeft[1] + "px");
+
+            g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+
+            feature.attr("d", path);
+            
+            text.data(data.features)
+            .attr('x', function (d) {
+                let p = d['properties']['cp'];
+                return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).x;
+            })
+            .attr('y', function (d) {
+                let p = d['properties']['cp'];
+                return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 30;
+            });
+        }
+
+        // Use Leaflet to implement a D3 geometric transformation.
+        function projectPoint(x, y) {
+            let point = self.map.latLngToLayerPoint(new L.LatLng(y, x));
+            //console.log("x: " + x)
+            this.stream.point(point.x, point.y);
+        }
+    }
 
     boundaryDrawing(data, prop, update = false) {
         let self = this,
