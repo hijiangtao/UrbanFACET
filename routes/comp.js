@@ -27,6 +27,12 @@ router.get('/ClusterboundaryQuery', function(req, res, next) {
 router.get('/ClusterboundaryQueryUpdate', function(req, res, next) {
 	apis.ClusterboundaryQueryUpdate(req, res, next);
 });
+router.get('/ClusterboundaryQueryUpdate', function(req, res, next) {
+	apis.ClusterboundaryQueryUpdate(req, res, next);
+});
+router.get('/DistrictClusterQuery', function(req, res, next) {
+	apis.DistrictClusterQuery(req, res, next);
+});
 router.get('/aoiQuery', function(req, res, next) {
 	apis.aoiQuery(req, res, next);
 });
@@ -36,7 +42,6 @@ router.get('/mecStatQuery',function(req, res, next) {
 router.get('/aoiDisQuery',function(req, res, next) {
 	apis.aoiDisQuery(req, res, next);
 });
-
 router.get('/getJsonSum', function(req, res, next) {
 	apis.getJsonSum(req, res, next);
 });

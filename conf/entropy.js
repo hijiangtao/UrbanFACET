@@ -472,6 +472,15 @@ function getClusterBoundaryUpdate(prop) {
     return data;
 }
 
+function getClusterBoundaryUpdate(prop) {
+	let city = prop['city'],
+		k = prop['k'];
+	
+	let data = require(`./data/${city}` + `_district_cluster_` + `${k}` + `.json`);
+	
+    return data;
+}
+
 function getMecStat(city) {
     // console.log(city);
     return sMec[city];

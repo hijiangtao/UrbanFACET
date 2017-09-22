@@ -22,6 +22,7 @@ import {
     getBoundaryDatasets,
     getClusterboundaryDatasets,
     getClusterboundaryDatasetsUpdate,
+    getDistrictClusterDatasets,
     getAOIDatasets,
     getDensity,
     getSMecDatasets,
@@ -365,12 +366,10 @@ const userpanel = new Vue({
                     'etype': etype,
                     'rev': rev
                 };
-
             if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
                 // 获取 slider 情况下的配置值域以及用户其余选项
                 // v.push(self.components.hrSlider.value);
                 //console.log("rsp: " + JSON.stringify(resp.features[resp.features.length * 0.8]['prop']['v']))
-                console.log('revvvvvvvvvvvvvstyle: ' + JSON.stringify(rev))
                 let drawProps = getDrawProps(resp, v, self.sels.ctrsets, drawprop);
                 maps[i].mapcontourCDrawing({}, drawProps, true);
             } else {
@@ -465,6 +464,44 @@ const userpanel = new Vue({
             }).catch(function (err) {
                 console.error("Failed!", err);
             });
+        },
+        'updateSlider3': function (index) {
+            // 定位 slider
+            let i = Number.parseInt(index),
+                k = this.sels.objs[i].slider3.value;
+
+            maps[i].boundaryRemove();
+            maps[i].modelDrawing();
+
+            changeLoadState(`dimmer${i}`, true);
+
+            // 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
+            if (store.state.init) {
+                return;
+            }
+            
+            let self = this,
+                objs = self.sels.objs;
+
+            let obj = objs[i],
+                city = obj.city;
+
+            //非在线处理方法：
+            getDistrictClusterDatasets(objs[i].city, k).then(function (res) {
+
+                let city = objs[i].city,
+                    etype = objs[i].etype;
+
+                let prop = {
+                    'city': city,
+                    'boundary': true
+                };
+                changeLoadState(`dimmer${i}`, false);
+                maps[i].DistrictClusterDrawing(res, prop);
+            }).catch(function (err) {
+                console.error("Failed!", err);
+            });
+
         },
         /**
          * 添加分析对象
@@ -646,12 +683,12 @@ const userpanel = new Vue({
             if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
                 // 获取 slider 情况下的配置值域以及用户其余选项
                 // v.push(self.components.hrSlider.value);
-                //console.log("revvvvvvvvvvvvvvalue: " + JSON.stringify(v))
+                console.log("revvvvvvvvvvvvvvalue: " + JSON.stringify(v))
                 this.sels.objs[i].slider.processStyle.background = '-webkit-linear-gradient(left, #ffffff 0%, #ff0000 25%,#ffff00 87%)';
                 this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, yellow ${v[1]}%, yellow 100%)`;
                 //this.sels.objs[i].slider.bgStyle.background = '-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, yellow ${v[1]}%, yellow 100%)';
 
-                //console.log("revvvvvvvvvvv: " + JSON.stringify(this.sels.objs[i].slider.bgStyle.background))
+                console.log("revvvvvvvvvvv: " + JSON.stringify(this.sels.objs[i].slider.bgStyle.background))
                 let drawProps = getDrawProps(resp, v, self.sels.ctrsets, drawprop);
                 //let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
                 maps[i].mapcontourCDrawing({}, drawProps, true);
@@ -792,7 +829,8 @@ const userpanel = new Vue({
                 if (val === 'f') {
                     // 只处理一个页面下的绘制逻辑
                     let city = objs[index].city,
-                        map = maps[index];
+                        map = maps[index],
+                        k = objs[index].slider3.value;
 
                     map.modelDrawing(); //蒙版
 
@@ -802,7 +840,7 @@ const userpanel = new Vue({
                         console.error("Failed!", err);
                     });
 
-                    getBoundaryDatasets(city).then(function (res) {
+                    getDistrictClusterDatasets(city, k).then(function (res) {
                         for (let i = objs.length - 1; i >= 0; i--) {
                             changeLoadState(`dimmer${i}`, false);
                         }
@@ -810,150 +848,13 @@ const userpanel = new Vue({
                         let prop = {
                             'city': city,
                             'boundary': true,
-                            'slider': objs[index].slider.value
+                            'slider': objs[index].slider3.value
                         };
 
-                        map.boundaryDrawing(res, prop);
+                        map.DistrictClusterDrawing(res, prop);
 
                     }).catch(function (err) {
-                        console
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        .error("Failed!", err);
+                        console.error("Failed!", err);
                     });
 
                 }

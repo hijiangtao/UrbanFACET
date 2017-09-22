@@ -163,6 +163,45 @@ let home = {
                 }
             },
             */
+            'slider3': {
+                // width: 140,
+                tooltip: 'hover',
+                value: '2',
+                dotSize:13,
+                piecewise: true,
+                piecewiseLabel: true,
+                clickable: false,
+                style: {
+                		"marginLeft": "0%"
+                },
+            		data: [
+            			"2",
+            			"3",
+            			"4",
+            			"5",
+                     "6"
+            		],
+                piecewiseStyle: {
+                    "backgroundColor": "orange",
+                    "visibility": "visible",
+                    "width": "6px",
+                    "height": "6px"
+                },
+                tooltipStyle: {
+                    "backgroundColor": "#000",
+                    "borderColor": "#000",
+                    "opacity": 0.6
+                },
+                piecewiseActiveStyle: {
+                		"backgroundColor": "orange"
+                },
+                labelActiveStyle: {
+                		"color": "orange"
+                },
+                processStyle: {
+                    'background': "orange"
+                }
+            },
             'slider1': {
                 // width: 140,
                 tooltip: 'hover',

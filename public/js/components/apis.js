@@ -261,6 +261,20 @@ let getClusterboundaryDatasetsUpdate = function(city, s, c){
 	return p;
 }
 
+let getDistrictClusterDatasets = function(city, k){
+	let p = new Promise(function(resolve, reject) {
+		$.get(`/comp/DistrictClusterQuery?city=${city}&k=${k}`, function(res, err) {
+			if (res['scode']) {
+				resolve(res['data']);
+			} else {
+				reject(err);
+			}
+		})
+	});
+
+	return p;
+}
+
 
 let getAOIDatasets = function(city, type) {
 	let p = new Promise(function(resolve, reject) {
@@ -386,6 +400,7 @@ export {
 	getBoundaryDatasets,
 	getClusterboundaryDatasets,
 	getClusterboundaryDatasetsUpdate,
+	getDistrictClusterDatasets,
 	getAOIDatasets,
 	getSMecDatasets,
 	getAoiDisDatasets,

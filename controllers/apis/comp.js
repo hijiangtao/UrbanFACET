@@ -71,6 +71,15 @@ let apis = {
 			'data': data
 		});
 	},
+	'DistrictClusterQuery': function(req, res, next) {
+		let params = req.query,
+			data = EP.getDistrictClusterDatasets(params);
+		
+		res.json({
+			'scode': 1,
+			'data': data
+		});
+	},
 	'mecStatQuery': function(req, res, next) {
 		let params = req.query,
 			data = EP.getMecStat(params.city);
