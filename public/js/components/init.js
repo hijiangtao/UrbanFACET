@@ -321,7 +321,6 @@ let home = {
             },
             */
             'slider3': {
-                // width: 140,
                 tooltip: 'hover',
                 value: '2',
                 dotSize: 13,

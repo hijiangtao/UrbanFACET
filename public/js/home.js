@@ -344,7 +344,6 @@ const userpanel = new Vue({
             if ((this.sels.objs[i].slider.bgStyle.background).indexOf("yellow") > 0) {
                 this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, yellow ${v[1]}%, yellow 100%)`;
             } else {
-                console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
                 this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
             }
 
@@ -501,6 +500,8 @@ const userpanel = new Vue({
             }).catch(function (err) {
                 console.error("Failed!", err);
             });
+
+
 
         },
         /**
