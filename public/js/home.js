@@ -943,7 +943,7 @@ const userpanel = new Vue({
         let self = this;
         this.$nextTick(function () {
             let firstcity = this.sels.objs[0].city;
-            maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0', 'clusterslider0', 'baselyrtext0', firstcity);
+            maps[0] = new mapview('map0', 'gridmaplegend0', 'contourmaplegend0', 'districtslider0', 'clusterslider0', 'baselyrtext0', firstcity);
             charts[0] = new chart('#estatChart0');
             self.getOverview(0);
         });
@@ -969,7 +969,7 @@ const userpanel = new Vue({
 
             for (let i = curnum - 1; i >= lstnum; i--) {
                 // 新建 map & chart model view
-                maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`, `clusterslider${i}`, `baselyrtext${i}`, self.sels.objs[i].city);
+                maps[i] = new mapview(`map${i}`, `gridmaplegend${i}`, `contourmaplegend${i}`, `districtslider${i}`, `clusterslider${i}`, `baselyrtext${i}`, self.sels.objs[i].city);
                 maps[i].syncmap(maps[0].getMap());
                 maps[0].syncmap(maps[i].getMap());
 

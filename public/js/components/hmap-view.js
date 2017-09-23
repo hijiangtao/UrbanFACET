@@ -43,12 +43,13 @@ class mapview {
      * LMap class constructor
      * @return {[type]} [description]
      */
-    constructor(id, grdleg, ctrleg, cltsld, baselyr, city = "bj") {
+    constructor(id, grdleg, ctrleg, disclsld, cltsld, baselyr, city = "bj") {
         let self = this;
         this.ides = {
             'mapid': id,
             'grdleg': grdleg,
             'ctrleg': ctrleg,
+            'disclsld': disclsld,
             'cltsld': cltsld,
             'baselyr': baselyr
         };
@@ -853,15 +854,7 @@ class mapview {
             svgid = `boundSVG${self.ides.mapid}`,
             aoiid = `aoiCanvas${self.ides.mapid}`;
 
-        this.switchLegDisplay('cltsld');
-
-        if (!update) {
-            console.log("first")
-            this.setClusterBoundData(data);
-        } else {
-            console.log("second")
-            data = this.getClusterBoundData();
-        }
+        this.switchLegDisplay('disclsld');
 
         //console.log("data:" + JSON.stringify(data))
         d3.select(`#${svgid}`).remove();
@@ -1076,7 +1069,7 @@ class mapview {
                 })
                 .attr('y', function (d) {
                     let p = d['properties']['cp'];
-                    return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 30;
+                    return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y;
                 });
         }
 
@@ -1088,6 +1081,8 @@ class mapview {
     }
 
     boundaryRemove() {
+        this.switchLegDisplay(null)
+
         // 删除行政边界图层
         let svgid = `boundSVG${this.ides.mapid}`;
         d3.select(`#${svgid}`).remove();
