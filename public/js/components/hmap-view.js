@@ -499,11 +499,11 @@ class mapview {
         speColor3 = d3.hcl(180, 90, 100 - s*100),
         speColor4 = d3.hcl(270, 90, 100 - s*100);
         /*let s = data['d']/Number.parseFloat(smecMax[prop['city']]['d']),
-    		speColor = d3.hsl(359, s, 0.5),
-    		speColor1 = d3.hsl(0, s, 0.5),
-    		speColor2 = d3.hsl(90, s, 0.5),
-    		speColor3 = d3.hsl(120, s, 0.5),
-    		speColor4 = d3.hsl(270, s, 0.5);*/
+            speColor = d3.hsl(359, s, 0.5),
+            speColor1 = d3.hsl(0, s, 0.5),
+            speColor2 = d3.hsl(90, s, 0.5),
+            speColor3 = d3.hsl(120, s, 0.5),
+            speColor4 = d3.hsl(270, s, 0.5);*/
 
             //console.log("speColor", speColor, "val", s);
             //console.log("speColor", speColor4, "val", s);
@@ -869,9 +869,8 @@ class mapview {
 
         let //color = d3.scaleLinear().domain([0, 14])
             //.range([ "rgba(255,255,255,0.9)", "rgba(255, 165, 0, 0.9)"]),
-            color = ["rgba(255,0,0,0.5)", "rgba(255,69,0,0.5)", "rgba(160,32,240,0.5)", "rgba(255,215,0,0.5)", "rgba(255,255,0,0.5)",
-                "rgba(154,205,50,0.5)", "rgba(173,255,47,0.5)", "rgba(0,255,0,0.5)", "rgba(139,69,19,0.5)", "rgba(127,255,212,0.5)",
-                "rgba(0,206,209,0.5)", "rgba(0,191,255,0.5)", "rgba(30,144,255,0.5)", "rgba(255,165,0,0.5)", "rgba(255,20,147,0.5)"
+            color = ["rgba(255,0,0,0.5)", "rgba(255,255,0,0.5)",  "rgba(0,191,255,0.5)", "rgba(139,69,19,0.5)", "rgba(160,32,240,0.5)", "rgba(0,255,0,0.5)",  "rgba(127,255,212,0.5)",
+                "rgba(0,206,209,0.5)", "rgba(30,144,255,0.5)", "rgba(255,165,0,0.5)"
             ],
             svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', svgid).style("z-index", 998),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -1240,56 +1239,33 @@ class mapview {
             //minRate = minVal / endVal,
             judRate = Number.parseFloat((maxVal - minVal) / (endVal - minVal));
         //judRate = Number.parseFloat((prop['d']['number'] - prop['e']['number']) / (100 - prop['e']['number']));
+        
+        console.log("judRate      : " + JSON.stringify(judRate))
 
         let len = data.features.length,
             hdata = {
-                max: endVal,
+                max: maxVal,
                 min: minVal,
-                //max: len,
-                //min: 1,
                 data: []
-            }
-        let oneqVal = 0,
-            twoqVal = 0,
-            thrqVal = 0;
-        if (minVal === maxVal) {
-            oneqVal = 1.0;
-        } else {
-            oneqVal = 0.3 * judRate,
-                twoqVal = judRate;
-            if (twoqVal > 1.0) {
-                twoqVal = 1.0;
-            }
-        }
-        /*
-        else{
-        	oneqVal = 0.3 * judRate,
-            twoqVal = 0.8 * judRate,
-            thrqVal = judRate;
-            if (thrqVal > 1.0) {
-                thrqVal = 1.0;
-            }
-        }*/
-
-
-        /* 
-         let oneqVal = 0.25 * judRate,
-             twoqVal = 0.5 * judRate,
-             thrqVal = 0.8 * judRate,
-             forqVal = judRate;  
-         if (forqVal > 1.0) {
-             forqVal = 1.0;
-         }
-         */
-
-        // 根据绘制类型判断筛选条件最小值
-        let emin = 0,
-            dmin = 0;
-        if (drawtype === 'e') {
-            emin = prop['e']['min'];
-        } else {
-            dmin = prop['d']['min'];
-        }
+            };
+        // let oneqVal = 0,
+        //     twoqVal = 0,
+        //     thrqVal = 0;
+        // if (minVal === maxVal) {
+        //     oneqVal = 1.0;
+        // } else {
+        //     oneqVal = 0.3 * judRate,
+        //     twoqVal = judRate;
+        // }
+        
+        // // 根据绘制类型判断筛选条件最小值
+        // let emin = 0,
+        //     dmin = 0;
+        // if (drawtype === 'e') {
+        //     emin = prop['e']['min'];
+        // } else {
+        //     dmin = prop['d']['min'];
+        // }
 
         this.clearLayers();
 
@@ -1304,9 +1280,9 @@ class mapview {
 
 
             // 根据 filter 值及选中类型进行过滤
-            if (outOfRange(drawtype, evalue, dvalue, prop['e']['min'], prop['d']['min'])) {
-                continue;
-            }
+            // if (outOfRange(drawtype, evalue, dvalue, prop['e']['min'], prop['d']['min'])) {
+            //     continue;
+            // }
             countVal += 1;
 
             // 为 hdata 注入数据
@@ -1320,6 +1296,10 @@ class mapview {
 
         console.log('Drawtype: ', drawtype, 'Contourmap Used point number', countVal);
 
+        let clr_trans = 'rgba(255,255,255,0)';
+        let clr_red = 'rgba(255,0,0,1)';
+        let clr_yl = 'rgba(255,255,0,1)';
+
         let cfg = {
             // radius should be small ONLY if scaleRadius is true (or small radius is intended)
             // if scaleRadius is false it will be the constant radius used in pixels
@@ -1329,7 +1309,7 @@ class mapview {
             // scales the radius based on map zoom
             "scaleRadius": true,
             "gradient": {
-                '0': 'rgba(255,255,255,0)'
+                '0': clr_trans
             },
             //   (there will always be a red spot with useLocalExtremas true)
             "useLocalExtrema": prop['prop']['useLocalExtrema'],
@@ -1338,27 +1318,19 @@ class mapview {
             "valueField": 'c'
         };
 
-        let gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,255,0)', 'rgb(255,0,0)'];
-
-        if (prop['prop']['rev']) {
-            gradients = ['rgba(255,255,255,0)', 'rgba(255,0,0,1)', 'rgb(255,0,0)', 'rgb(255,255,0)'];
-        }
-        if (minVal === maxVal) {
-            cfg.gradient[oneqVal.toString()] = gradients[3];
+        if (minVal==maxVal) {
+            cfg.gradient['1'] = clr_red;
+        } else if (prop['prop']['rev']){
+            cfg.gradient['0'] = clr_red;
+            cfg.gradient['.3'] = clr_red;
+            cfg.gradient['.7'] = clr_yl;
+            cfg.gradient['1.0'] = clr_trans;
         } else {
-            cfg.gradient[oneqVal.toString()] = gradients[2];
-            cfg.gradient[twoqVal.toString()] = gradients[3];
+            cfg.gradient['.3'] = clr_yl;
+            cfg.gradient['1.0'] = clr_red;
         }
-        /*
-        if(minVal === maxVal){
-        		console.log("balbalablablabl")
-        		cfg.gradient[oneqVal.toString()] = gradients[4];
-        }
-        else{
-        	 	 cfg.gradient[oneqVal.toString()] = gradients[2];
-             cfg.gradient[twoqVal.toString()] = gradients[3];
-             cfg.gradient[thrqVal.toString()] = gradients[4];
-        }*/
+
+        console.log("gradients   : " + JSON.stringify(cfg.gradient))
         this.heatmapLayer = new HeatmapOverlay(cfg);
         this.map.addLayer(this.heatmapLayer);
         this.heatmapLayer.setData(hdata)
@@ -1585,7 +1557,7 @@ class mapview {
             this.map.removeLayer(this.areaSelector);
             this.areaSelector = null;
         }
-        //	d3.selectAll('.leaflet-zoom-hide').remove();
+        //  d3.selectAll('.leaflet-zoom-hide').remove();
     }
 
     /**

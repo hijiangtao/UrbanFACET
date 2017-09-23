@@ -341,13 +341,11 @@ const userpanel = new Vue({
 
             console.log('v', v);
             // 改变背景色
-            if ((this.sels.objs[i].slider.bgStyle.background).indexOf("yellow") > 0) {
-                this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, yellow ${v[1]}%, yellow 100%)`;
+            if (this.sels.objs[i].reverse) {
+                this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, red 0%, red ${v[1]-0.01}%, white ${v[1]}%, white 100%)`;
             } else {
                 this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, red ${v[1]}%, red 100%)`;
             }
-
-            console.log('lalalalalalalalala: ' + JSON.stringify(this.sels.objs[i].slider.bgStyle.background)) 
             
             // 如果初始化操作未曾进行,此方法直接返回结果不做更新操作
             if (store.state.init) {
@@ -502,7 +500,7 @@ const userpanel = new Vue({
             });
 
             getSMecDatasets(city).then(function (res) {
-                map[i].smecDrawing(res, city);
+                maps[i].smecDrawing(res, city);
             }).catch(function (err) {
                 console.error("Failed!", err);
             });
@@ -688,12 +686,11 @@ const userpanel = new Vue({
             if (['pp', 'pd', 'rp', 'rd', 'de'].indexOf(etype) > -1) {
                 // 获取 slider 情况下的配置值域以及用户其余选项
                 // v.push(self.components.hrSlider.value);
-                console.log("revvvvvvvvvvvvvvalue: " + JSON.stringify(v))
-                this.sels.objs[i].slider.processStyle.background = '-webkit-linear-gradient(left, #ffffff 0%, #ff0000 25%,#ffff00 87%)';
-                this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, yellow ${v[1]}%, yellow 100%)`;
+                this.sels.objs[i].slider.processStyle.background = '-webkit-linear-gradient(left, #ffffff 0%, #ff0000 5%,#ffff00 87%)';
+                this.sels.objs[i].slider.bgStyle.background = `-webkit-repeating-linear-gradient(left, red 0%, red ${v[1]-0.01}%, white ${v[1]}%, white 100%)`;
                 //this.sels.objs[i].slider.bgStyle.background = '-webkit-repeating-linear-gradient(left, white 0%, white ${v[1]-0.01}%, yellow ${v[1]}%, yellow 100%)';
 
-                console.log("revvvvvvvvvvv: " + JSON.stringify(this.sels.objs[i].slider.bgStyle.background))
+                //console.log("revvvvvvvvvvv: " + JSON.stringify(this.sels.objs[i].slider.bgStyle.background))
                 let drawProps = getDrawProps(resp, v, self.sels.ctrsets, drawprop);
                 //let drawProps = getDrawProps(obj.scales, v, self.sels.ctrsets, drawprop);
                 maps[i].mapcontourCDrawing({}, drawProps, true);

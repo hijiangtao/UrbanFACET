@@ -18,7 +18,8 @@ import $ from "jquery"
  */
 
 let getDrawProps = function(res, sels, ctrsets, props) {
-	let minfeature = null, maxfeature = null;
+	let minfeature = null, maxfeature = null,
+		scales = res.features[0]['prop']['v'];
 	if(sels[0] === sels[1]){
 		if(sels[0] == 0){
 			minfeature = res.features[res.features.length -1],
@@ -47,19 +48,16 @@ let getDrawProps = function(res, sels, ctrsets, props) {
 		minfeature = res.features[res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[0])+1)/100)- 1],
 		maxfeature = res.features[res.features.length - Math.floor( res.features.length *  100/Math.log(101) * Math.log(parseFloat(sels[1])+1)/100)];
 
-		console.log("revvvvvvvvvvv======= " + JSON.stringify(props['rev']))
+		//console.log("revvvvvvvvvvv======= " + JSON.stringify(props['rev']))
 
 		if(props['rev']){
-			console.log('enterrrrrrrrrrrrrrrrrrr')
-
-
+		
 			minfeature = res.features[res.features.length - Math.floor( res.features.length *  (100 - 100/Math.log(101) * Math.log(101 - parseFloat(sels[0])))/100) - 1],
-			console.log("sels:       " + JSON.stringify(minfeature))
 			maxfeature = res.features[res.features.length - Math.floor( res.features.length *  (100 - 100/Math.log(101) * Math.log(101 - parseFloat(sels[1])))/100)];
 		}
 	}
 
-	console.log('minnnnnnnnnnnnnn: ' + JSON.stringify(minfeature))
+	//console.log('minnnnnnnnnnnnnn: ' + JSON.stringify(minfeature))
 
 	let	min = minfeature['prop']['v'],
 		max = maxfeature['prop']['v'],
@@ -80,15 +78,15 @@ let getDrawProps = function(res, sels, ctrsets, props) {
 	return {
 		'e': { // entropy
 			'min': min,
-			'max': max
+			'max': max,
 			//'number': sels[0]
-			//'scales': escales
+			'scales': scales
 		},
 		'd': { // density
 			'min': min,
-			'max': max
+			'max': max,
 			//'number': sels[1]
-			//'scales': dscales
+			'scales': scales
 		},
 		'prop': { // prop
 			'rev': props['rev'],
