@@ -530,7 +530,7 @@ def main(s, c, ct):
     # file.write(json.dumps(splits))
     # file.close()
 
-    file = open('./' + city + '_initial_15kmeans_data.json', 'r')
+    file = open('./' + city + '_initial_15kmeans_16w_data.json', 'r')
     splits = json.load(file)
     file.close()
 
