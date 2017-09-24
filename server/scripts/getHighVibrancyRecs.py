@@ -76,8 +76,8 @@ def judInBox(index, aim):
 	LNGNUM = int((locs['east'] - locs['west']) / SPLIT + 1)
 	latind = int(index / LNGNUM)
 	lngind = index - latind * LNGNUM
-	lat = locs['south'] + latind * SPLIT + SPLIT/2
-	lng = locs['west'] + lngind * SPLIT + SPLIT/2
+	lat = locs['south'] + latind * SPLIT + SPLIT/2 # 维度
+	lng = locs['west'] + lngind * SPLIT + SPLIT/2 # 经度
 	if lat > aim['south'] and lat < aim['north'] and lng > aim['west'] and lng < aim['east']:
 		return True
 	
@@ -121,7 +121,12 @@ def countRecords(arg):
 				continue
 			reclist = onerec.split(',')
 
-			if judInBox(int(reclist[6]), aim['locs']):
+			lat = float(reclist[2])
+			lng = float(reclist[3])
+
+			# if judInBox(int(reclist[6]), aim['locs']):
+			# 	count += 1
+			if lat > aim['locs']['south'] and lat < aim['locs']['north'] and lng > aim['locs']['west'] and lng < aim['locs']['east']:
 				count += 1
 
 	return count
@@ -139,19 +144,30 @@ def main():
 	# 		stream.write('\n'.join(recs))
 
 	# 逻辑二
-	count = [0 for x in xrange(0, 5)]
-	inpath = '/enigma/tao.jiang/datasets/JingJinJi/records/filter'
-	for i in xrange(0, 4): # file name
-		print 'Counting file res-%05d' % i
+	# count = [0 for x in xrange(0, 5)]
+	# inpath = '/enigma/tao.jiang/datasets/JingJinJi/records/filter'
+	# for i in xrange(0, 4): # file name
+	# 	print 'Counting file res-%05d' % i
 
-		for x in xrange(0, 5): # area name
-			count[x] += countRecords({
-				'file': os.path.join(inpath, 'res-%05d' % i), 
-				'aim': disaim[x]
-				})
+	# 	for x in xrange(0, 5): # area name
+	# 		count[x] += countRecords({
+	# 			'file': os.path.join(inpath, 'res-%05d' % i), 
+	# 			'aim': disaim[x]
+	# 			})
 
-	for x in xrange(0, 5):
-		print '%s area: %d records' (disaim[x]['name'], count[x])
+	# for x in xrange(0, 5):
+	# 	print '%s area: %d records' (disaim[x]['name'], count[x])
+
+	count = 0
+	inpath = '/enigma/tao.jiang/datasets/JingJinJi/records/allIndex1/'
+	for x in range(0, 10000):
+		print 'Counting file res-%05d' % x
+		count += countRecords({
+			'file': os.path.join(inpath, 'part-%05d' % x), 
+			'aim': disaim[4]
+		})
+	
+	print count
 
 if __name__ == '__main__':
 	main()
