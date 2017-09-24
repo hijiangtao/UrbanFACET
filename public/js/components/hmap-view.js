@@ -525,7 +525,8 @@ class mapview {
 
             let r = data[i]['d'] / Number.parseFloat(smecMax[prop['city']]['d']),
                 linear0 = d3.scaleLinear().domain([0, 1]).range([45 * mag, 90 * mag]),
-                r0 = linear0(r),
+                //r0 = linear0(r),
+                r0 = 90 * mag,
                 R0 = Math.sqrt(Math.pow(r0, 1 / 0.7)),
                 r_max = Math.sqrt(Math.pow(linear0(1.0), 1 / 0.7));
 
@@ -861,8 +862,8 @@ class mapview {
 
         let //color = d3.scaleLinear().domain([0, 14])
             //.range([ "rgba(255,255,255,0.9)", "rgba(255, 165, 0, 0.9)"]),
-            color = ["rgba(255,0,0,0.5)", "rgba(255,255,0,0.5)",  "rgba(0,191,255,0.5)", "rgba(139,69,19,0.5)", "rgba(160,32,240,0.5)", "rgba(0,255,0,0.5)",  "rgba(127,255,212,0.5)",
-                "rgba(0,206,209,0.5)", "rgba(30,144,255,0.5)", "rgba(255,165,0,0.5)"
+            color = [ "rgba(0,206,209,0.5)","rgba(127,255,212,0.5)",  "rgba(0,191,255,0.5)", "rgba(139,69,19,0.5)", "rgba(160,32,240,0.5)", "rgba(0,255,0,0.5)",  "rgba(127,255,212,0.5)",
+            	"rgba(255,0,0,0.5)", "rgba(30,144,255,0.5)", "rgba(255,165,0,0.5)"
             ],
             svg = d3.select(self.map.getPanes().overlayPane).append("svg").attr('id', svgid).style("z-index", 998),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");

@@ -387,7 +387,9 @@ let extraInfoIndex = function(val) {
 		return 5;
 	} else if (val === 'cd') {
 		return 6;
-	} else {
+	}else if (val === 'vd') {
+		return 7;
+	}else {
 		return 4;
 	}
 }
