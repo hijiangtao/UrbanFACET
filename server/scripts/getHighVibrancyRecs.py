@@ -69,6 +69,14 @@ disaim = [{
 		'west': 116.1996,
 		'east': 116.5430
 	}
+},{
+	'name': 'sixring',
+	'locs': {
+		'north': 40.1736,
+		'south': 39.6913,
+		'west': 116.0898,
+		'east': 116.6858
+	}
 }]
 
 
@@ -158,13 +166,24 @@ def main():
 	# for x in xrange(0, 5):
 	# 	print '%s area: %d records' (disaim[x]['name'], count[x])
 
+	precount
+	preinpath = '/enigma/tao.jiang/datasets/JingJinJi/records/filter'
+	for x in range(0, 4):
+		print 'Counting file res-%05d' % x
+		precount += countRecords({
+			'file': os.path.join(preinpath, 'res-%05d' % x), 
+			'aim': disaim[5]
+		})
+	
+	print precount
+
 	count = 0
 	inpath = '/enigma/tao.jiang/datasets/JingJinJi/records/allIndex1/'
 	for x in range(0, 10000):
 		print 'Counting file res-%05d' % x
 		count += countRecords({
 			'file': os.path.join(inpath, 'part-%05d' % x), 
-			'aim': disaim[4]
+			'aim': disaim[5]
 		})
 	
 	print count
