@@ -139,6 +139,22 @@ def countRecords(arg):
 
 	return count
 
+def countRecordsVALID(arg):
+	file = arg['file']
+	aim = arg['aim']
+	count = 0
+
+	with open(file, 'rb') as f:
+		for line in f:
+			onerec = line.strip('\n')
+			if onerec == '':
+				continue
+			reclist = onerec.split(',')
+
+			if judInBox(int(reclist[6]), aim['locs']):
+				count += 1
+
+	return count
 
 def main():
 	# 逻辑一
@@ -170,7 +186,7 @@ def main():
 	preinpath = '/enigma/tao.jiang/datasets/JingJinJi/records/filter'
 	for x in range(0, 4):
 		print 'Counting file res-%05d' % x
-		precount += countRecords({
+		precount += countRecordsVALID({
 			'file': os.path.join(preinpath, 'res-%05d' % x), 
 			'aim': disaim[5]
 		})
