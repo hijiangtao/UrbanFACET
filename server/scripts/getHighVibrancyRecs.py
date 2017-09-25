@@ -166,7 +166,7 @@ def main():
 	# for x in xrange(0, 5):
 	# 	print '%s area: %d records' (disaim[x]['name'], count[x])
 
-	precount
+	precount = 0
 	preinpath = '/enigma/tao.jiang/datasets/JingJinJi/records/filter'
 	for x in range(0, 4):
 		print 'Counting file res-%05d' % x
