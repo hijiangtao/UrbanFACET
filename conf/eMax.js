@@ -544,7 +544,7 @@ let objs = {
 			"arsval": 9.2136344909668,
 			"ppsval": 2.11396098136902,
 			"tpsval": 2.57290670606825,
-			"apsval": 2.51718482971191
+			"apsval": 2.56651973724365
 		},
 		"tjEmatrix": {
 			"name": "tjEmatrix",

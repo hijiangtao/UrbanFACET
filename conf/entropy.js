@@ -78,8 +78,9 @@ function getOverview(conn, prop) {
         }
     }
 
-    let eMax = Number.parseFloat(sqldoc[etable][entropyattr]),
-        dMax = Number.parseFloat(sqldoc[etable][densityattr]);
+    // etable 用 写死的属性替代
+    let eMax = Number.parseFloat(sqldoc['wbjEmatrix'][entropyattr]),
+        dMax = Number.parseFloat(sqldoc['wbjEmatrix'][densityattr]);
 
     let p = new Promise(function (resolve, reject) {
         let sql = $sql.getValScale[mtype] + $sql.getOverviewVal[mtype] + $sql.getDistribute(mtype, eMax) + $sql.getDistribute('sum', dMax),
@@ -159,6 +160,20 @@ function getOverview(conn, prop) {
 
                 result[2][result[2].length - 1]['v'] += lste['v'];
                 result[3][result[3].length - 1]['v'] += lstd['v'];
+
+                // 补全 100 个空位
+                for (let i = result[2].length; i < 100; i++) {
+                    result[2].push({
+                        'k': i,
+                        'v': 0
+                    });
+                }
+                for (let i = result[3].length; i < 100; i++) {
+                    result[3].push({
+                        'k': i,
+                        'v': 0
+                    });
+                }
 
                 resolve({
                     'scode': 1,
