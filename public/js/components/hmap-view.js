@@ -282,8 +282,8 @@ class mapview {
             .style("background-color", 'rgba(255, 255, 255, 0.5)')
             //.attr("width", '100%')
             //.attr("height", '100%')
-            .attr("width", 3000)
-            .attr("height", 3000)
+            .attr("width", 6000)
+            .attr("height", 6000)
             .style("z-index", 997);
         console.log("map")
     }
@@ -524,9 +524,9 @@ class mapview {
 
 
             let r = data[i]['d'] / Number.parseFloat(smecMax[prop['city']]['d']),
-                linear0 = d3.scaleLinear().domain([0, 1]).range([45 * mag, 90 * mag]),
+                linear0 = d3.scaleLinear().domain([0, 1]).range([90 * mag, 180 * mag]),
                 //r0 = linear0(r),
-                r0 = 90 * mag,
+                r0 = 180 * mag,
                 R0 = Math.sqrt(Math.pow(r0, 1 / 0.7)),
                 r_max = Math.sqrt(Math.pow(linear0(1.0), 1 / 0.7));
 
@@ -935,7 +935,7 @@ class mapview {
             })
             .attr('y', function (d) {
                 let p = d['properties']['cp'];
-                return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 30;
+                return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 15;
             });
         }
 
