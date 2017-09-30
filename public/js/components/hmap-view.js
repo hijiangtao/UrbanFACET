@@ -526,7 +526,7 @@ class mapview {
             let r = data[i]['d'] / Number.parseFloat(smecMax[prop['city']]['d']),
                 linear0 = d3.scaleLinear().domain([0, 1]).range([90 * mag, 180 * mag]),
                 //r0 = linear0(r),
-                r0 = 180 * mag,
+                r0 = 90 * mag,
                 R0 = Math.sqrt(Math.pow(r0, 1 / 0.7)),
                 r_max = Math.sqrt(Math.pow(linear0(1.0), 1 / 0.7));
 
@@ -935,7 +935,7 @@ class mapview {
             })
             .attr('y', function (d) {
                 let p = d['properties']['cp'];
-                return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 15;
+                return self.map.latLngToLayerPoint(new L.LatLng(p[1], p[0])).y - 30;
             });
         }
 
@@ -1460,8 +1460,10 @@ class mapview {
 
         let legendLinear = legendColor()
             .labelFormat(function (d) {
-                if (d <= 1) {
-                    return `${Number.parseInt(d*100)}%`
+                console.log("dddddddddd: " + d)
+                if (d <= 100) {
+                    return `${(d).toFixed(2)}`;
+                    //return `${Number.parseInt(d*100)}%`
                 } else {
                     return `${(d/1000.0).toFixed(1)}K`;
                 }
