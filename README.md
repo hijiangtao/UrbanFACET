@@ -1,4 +1,5 @@
-# UrbanFACET
+# UrbanFACET: Visually Profiling Cities from Mobile Device Recorded Movement Data of Millions of City Residents
+
 
 This is the codes repository of UrbanFACET, includes data cleaning and entropy calucaltion scripts, as well as system implements and front-end web parts.
 
@@ -29,7 +30,7 @@ The `semantic` version used in this project is `^2.2.6`, complied file is stored
 
 ## Contact
 
-* Github - [hijiangtao](https:github.com/hijiangtao)
+* Github - [hijiangtao](https://github.com/hijiangtao)
 * [Email](mailto:hijiangtao@gmail.com)
 
 ## LICENSE
