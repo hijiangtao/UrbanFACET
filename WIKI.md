@@ -1,10 +1,10 @@
 # UrbanFACET Wiki
 
-以下内容为 UrbanFACET 项目中文 Wiki，其中包含前后端代码功能说明以及数据分析处理脚本介绍。注意，本项目的代码 summer 分支中存储的是改动至2017年9月的代码（TVCG），master 分支中存储的是改动至2017年3月的代码（IEEEVIS），dev 分支与其他分支可不作考虑。
+以下内容为 UrbanFACET 项目中文 Wiki，其中包含前后端代码功能说明以及数据分析处理脚本介绍。注意，本项目的代码 summer 分支中存储的是改动至2017年9月的代码（TVCG），master 分支以及 vast17 分支中存储的是改动至2017年3月的代码（IEEEVIS），dev 分支与其他分支可不作考虑。
 
-代码可以通过 SSH 或者 HTTPS 的方式拉取到本地进行开发，也可以整体打包下载，下载地址见 <https://github.com/visdata/UrbanFACET/releases> 描述。
+**下载说明**：代码可以通过 SSH 或者 HTTPS 的方式拉取到本地进行开发，也可以整体打包下载，下载地址见 <https://github.com/visdata/UrbanFACET/releases> 描述。
 
-## 目录
+## WIKI 目录
 
 1. [页面 | Pages](#页面) 
 2. [绘制与模型 | Visualization and Models](#绘制与模型)
@@ -174,4 +174,6 @@
 
 该部分文件为自定义的脚本代码、可不作考虑，以上内容已经包含实现。
 
-（完）
+## 联系
+
+[hijiangtao](https://github.com/hijiangtao)
