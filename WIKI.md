@@ -1,19 +1,23 @@
 # UrbanFACET Wiki
 
-## Outline
+以下内容为 UrbanFACET 项目中文 Wiki，其中包含前后端代码功能说明以及数据分析处理脚本介绍。注意，本项目的代码 summer 分支中存储的是改动至2017年9月的代码（TVCG），master 分支中存储的是改动至2017年3月的代码（IEEEVIS），dev 分支与其他分支可不作考虑。
 
-* [页面] | [Pages]
-* [绘制与模型] | [Visualization and Models]
-* [路由] | [Routes]
-* [APIs] | [APIs]
-* [数据处理脚本] | [Scripts]
-* [批处理与数据库信息] | [Shell and Databases]
+代码可以通过 SSH 或者 HTTPS 的方式拉取到本地进行开发，也可以整体打包下载，下载地址见 <https://github.com/visdata/UrbanFACET/releases> 描述。
+
+## 目录
+
+1. [页面 | Pages](#页面) 
+2. [绘制与模型 | Visualization and Models](#绘制与模型)
+3. [路由 | Routes](#路由)
+4. [APIs](#APIs)
+5. [数据处理脚本 | Scripts](#数据处理脚本)
+6. [批处理与数据库信息 | Shell and Databases](#批处理与数据库信息)
 
 ## 页面
 
 ### EJS 模板（视图）
 
-文件夹 `/views`
+文件夹 `/views`，存放 HTML 渲染所用到的模板信息，以下为该部分目录结构：
 
 ```
 ├── error.ejs
@@ -23,6 +27,8 @@
 │   └── panel.ejs
 └── home.ejs
 ```
+
+几点说明：
 
 * home: 用于存储组成 home 页面的展示组件，其中 `panel.ejs` 为配置面板展示组件， `dynamic.ejs` 为对比分析展示页面组件， `mapcard.ejs` 为地图信息卡片组件
 * error.ejs: 404 页面
@@ -34,7 +40,7 @@
 
 ## 绘制与模型
 
-文件夹 `/public/js/`
+文件夹 `/public/js/`，以下为该部分目录结构：
 
 ```
 ├── components
@@ -55,6 +61,8 @@
 
 ### 可视化绘制与前台数据处理方法相关
 
+详细说明如下：
+
 * components/
 	* apis.js: 对通过 HTTP 请求获取到的数据做进一步处理，以便于将数据传入相应绘制函数执行，例如：阈值调控、绘制对象封装等
 	* chartview.js: 可视化表格绘制类，包含折线图、条形图等
@@ -66,7 +74,7 @@
 	* RadarChart.js: Star plot 绘制类，由 radar chart 类改进而来
 * home.js: 页面构建与状态管理、实现查询及可视化交互，系统脚本主入口
 * dynamic.js: 动态查询页面生成组件
-* lib/: 存储第三方 UI 库
+* lib/: 存储已编译好的第三方 UI 库代码文件
 	* semantic.js
 	* semantic.min.js
 
@@ -76,19 +84,21 @@
 
 ## 路由
 
-文件夹 `/routes`
+文件夹 `/routes`，以下为该部分目录结构：
 
 ```
 ├── comp.js
 └── index.js
 ```
 
+几点说明：
+
 * index: 渲染页面路由
 * comp: 查询路由 API
 
 ## APIs
 
-文件夹 `controllers`
+文件夹 `controllers`，以下为该部分目录结构：
 
 ```
 └── apis
@@ -97,6 +107,8 @@
 ```
 
 ### 服务端配置
+
+服务端部分服务涉及到的文件与作用说明如下所示：
 
 * data.js: 储存关键的一些 key-value 描述词-对应查询词，通过 getValue 函数传参的形式获取 value 并返回
 * db.js: MySQL 配置设置，请根据本地环境或者服务器环境更换相应配置
@@ -107,6 +119,8 @@
 	* mongoQueries: Mongodb 用户 idlist/records 三段联合查询
 * lib.js: 通用函数
 * records.js: 定位记录处理相关函数
+
+以下为该部分目录结构：
 
 ```
 ├── data
@@ -132,7 +146,7 @@
 
 ### FACET Metric 计算逻辑部分
 
-文件夹 `/server/scripts`
+文件夹 `/server/scripts`，以下为该部分目录结构：
 
 ```
 ├── augmentRawData.py
@@ -144,7 +158,7 @@
 ├── tpEnpSupCalModule.py
 ```
 
-以上文件包含原始数据清洗与扩充、people entropy 计算、record entropy 计算部分。
+以上文件包含原始数据清洗与扩充、people entropy 计算、record entropy 计算部分，以下为数据计算处理部分脚本的几点说明：
 
 * augmentRawData.py 从原始数据中提取行政区划，时间段等信息并按照用户ID分块文件存储，保证同一用户所有记录存在于一个文件中
 * entropyMatrixCalModule.py: 全量 people entropy 计算
@@ -158,10 +172,6 @@
 
 ## 批处理与数据库信息
 
-### data
+该部分文件为自定义的脚本代码、可不作考虑，以上内容已经包含实现。
 
-* cluster
-* decompose
-* init
-* label
-* tmp
+（完）

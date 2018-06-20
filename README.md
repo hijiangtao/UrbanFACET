@@ -14,15 +14,17 @@ All data analyzing scripts and configuration files are put in `server` folder, `
 ## Installation
 
 ```
-git clone repo-url # replace repo-url with actual address
+# replace repo-url with actual address
+git clone repo-url 
 cd UrbanFACET
+
 npm install
 npm run start
 ```
 
 ## Documents
 
-[Wiki](./WIKI.md)
+[中文 Wiki](./WIKI.md)
 
 ## Dependency
 
@@ -31,7 +33,6 @@ The `semantic` version used in this project is `^2.2.6`, complied file is stored
 ## Contact
 
 * Github - [hijiangtao](https://github.com/hijiangtao)
-* [Email](mailto:hijiangtao@gmail.com)
 
 ## LICENSE
 
