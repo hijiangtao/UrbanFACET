@@ -11,7 +11,8 @@
 3. [路由 | Routes](#路由)
 4. [APIs](#APIs)
 5. [数据处理脚本 | Scripts](#数据处理脚本)
-6. [批处理与数据库信息 | Shell and Databases](#批处理与数据库信息)
+6. [数据库信息 | DataBases](#数据库信息)
+7. [批处理与数据库信息 | Shell and Databases](#批处理与数据库信息)
 
 ## 页面
 
