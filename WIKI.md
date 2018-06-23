@@ -170,6 +170,72 @@
 
 后四个文件和第二、第三个文件类似，只是加了时间段筛选。
 
+## 数据表名单
+
+| Tables_in_tdnormal |
+|--------------------|
+| bjCPOI             |
+| bjDis              |
+| bjEmatrix          |
+| bjF0mat            |
+| bjF1mat            |
+| bjF2mat            |
+| bjF3mat            |
+| bjF4mat            |
+| bjF5mat            |
+| bjF6mat            |
+| bjF7mat            |
+| bjF8mat            |
+| tempDis            |
+| tjCPOI             |
+| tjDis              |
+| tjEmatrix          |
+| tjF0mat            |
+| tjF1mat            |
+| tjF2mat            |
+| tjF3mat            |
+| tjF4mat            |
+| tjF5mat            |
+| tjF6mat            |
+| tjF7mat            |
+| tjF8mat            |
+| tsCPOI             |
+| tsDis              |
+| tsEmatrix          |
+| tsF0mat            |
+| tsF1mat            |
+| tsF2mat            |
+| tsF3mat            |
+| tsF4mat            |
+| tsF5mat            |
+| tsF6mat            |
+| tsF7mat            |
+| tsF8mat            |
+| validrecs          |
+| wbjEmatrix         |
+| wbjF0mat           |
+| wbjF1mat           |
+| wbjF2mat           |
+| wbjF3mat           |
+| wbjF4mat           |
+| wbjF5mat           |
+| wbjF6mat           |
+| wbjF7mat           |
+| wbjF8mat           |
+| zjkCPOI            |
+| zjkDis             |
+| zjkEmatrix         |
+| zjkF0mat           |
+| zjkF1mat           |
+| zjkF2mat           |
+| zjkF3mat           |
+| zjkF4mat           |
+| zjkF5mat           |
+| zjkF6mat           |
+| zjkF7mat           |
+| zjkF8mat           |
+
+
 ## 批处理与数据库信息
 
 该部分文件为自定义的脚本代码、可不作考虑，以上内容已经包含实现。
