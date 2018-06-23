@@ -170,7 +170,9 @@
 
 后四个文件和第二、第三个文件类似，只是加了时间段筛选。
 
-## 数据表名单
+## 数据库信息
+
+### 数据表
 
 | Tables_in_tdnormal |
 |--------------------|
@@ -235,6 +237,24 @@
 | zjkF7mat           |
 | zjkF8mat           |
 
+### 表结构
+
+|----------|-----------------------|------|-----|---------|-------|
+| Field    | Type                  | Null | Key | Default | Extra |
+|----------|-----------------------|------|-----|---------|-------|
+| id       | mediumint(8) unsigned | NO   | PRI | NULL    |       |
+| wpnumber | int(10) unsigned      | NO   | MUL | 0       |       |
+| vpnumber | int(10) unsigned      | NO   |     | 0       |       |
+| wrnumber | int(10) unsigned      | NO   | MUL | 0       |       |
+| vrnumber | int(10) unsigned      | NO   |     | 0       |       |
+| poinum   | mediumint(8) unsigned | NO   |     | 0       |       |
+| prsval   | float                 | NO   |     | -1      |       |
+| trsval   | float                 | NO   |     | -1      |       |
+| arsval   | float                 | NO   |     | -1      |       |
+| ppsval   | float                 | NO   |     | -1      |       |
+| tpsval   | float                 | NO   |     | -1      |       |
+| apsval   | float                 | NO   |     | -1      |       |
+| dis      | tinyint(3) unsigned   | NO   |     | 0       |       |
 
 ## 批处理与数据库信息
 
