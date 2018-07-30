@@ -76,7 +76,7 @@ class EntropyMatrixModule(object):
 		# print 'Finished calculate function in %s' % (time.time()-self.starttime)
 		
 		# 处理完数据，将 EMATRIX 信息写入文件
-		with open(entropyfile, 'ab') as res:
+		with open(entropyfile, 'wb') as res:
 			res.write(self.ematrixToStr(self.EMATRIX))
 		res.close()
 
@@ -192,7 +192,7 @@ class EntropyMatrixModule(object):
 		# print 'Finished EMATRIX update in %s' % (time.time()-self.starttime)
 
 		# 写入 idInfoStr
-		with open(outputfile, 'ab') as res:
+		with open(outputfile, 'wb') as res:
 			res.write( idInfoStr )
 		res.close()
 
@@ -261,7 +261,7 @@ def mergeDistributionFiles(city, directory):
 	file = os.path.join(baseurl, city, 'respeo-xxx')
 	number = 0
 
-	with open(file, 'ab') as res:
+	with open(file, 'wb') as res:
 		for x in xrange(0,20):
 			# 
 			onefile = []
@@ -319,7 +319,7 @@ def mergeMatrixFiles(city, GRIDSNUM, directory):
 		resString += linestr
 
 
-	with open(os.path.join(baseurl, 'respeo-xxx'), 'ab') as res:
+	with open(os.path.join(baseurl, 'respeo-xxx'), 'wb') as res:
 		res.write(resString)
 	res.close()
 
